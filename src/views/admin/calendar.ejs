@@ -1,0 +1,34 @@
+<%- include('partials/header') %>
+
+<div class="admin-toolbar">
+  <h1>Календарь публикаций</h1>
+  <a class="btn" href="/admin/calendar/new">+ Запланировать пост</a>
+</div>
+
+<div class="admin-toolbar">
+  <a href="/admin/calendar?year=<%= prevYear %>&month=<%= prevMonth %>">← Пред. месяц</a>
+  <strong><%= year %>-<%= String(month).padStart(2, '0') %></strong>
+  <a href="/admin/calendar?year=<%= nextYear %>&month=<%= nextMonth %>">След. месяц →</a>
+</div>
+
+<div class="calendar-grid">
+  <% ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].forEach(function(d) { %>
+    <div class="calendar-weekday"><%= d %></div>
+  <% }); %>
+  <% for (let i = 0; i < firstWeekday; i++) { %>
+    <div class="calendar-cell calendar-cell-empty"></div>
+  <% } %>
+  <% for (let day = 1; day <= daysInMonth; day++) { %>
+    <div class="calendar-cell">
+      <div class="calendar-cell-date"><%= day %></div>
+      <% (postsByDay[String(day).padStart(2, '0')] || []).forEach(function(post) { %>
+        <a class="calendar-post" href="/admin/calendar/<%= post.id %>">
+          <span class="badge badge-<%= post.status %>"><%= post.scheduled_at.slice(11, 16) %></span>
+          <%= (post.text || '(без текста)').slice(0, 24) %>
+        </a>
+      <% }); %>
+    </div>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>

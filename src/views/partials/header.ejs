@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title : [settings.site_name, settings.site_alt_name, settings.site_tagline].filter(Boolean).join(' — ') %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-top">
+      <a class="logo" href="/">
+        <span class="logo-names">
+          <span class="logo-name">
+            <%= settings.site_name %>
+            <svg class="badge-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="12" fill="currentColor"/>
+              <path d="M7.5 12.5l2.7 2.7L16.5 9" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <% if (settings.site_alt_name) { %>
+            <span class="logo-name">
+              <%= settings.site_alt_name %>
+              <svg class="badge-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="12" fill="currentColor"/>
+                <path d="M7.5 12.5l2.7 2.7L16.5 9" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          <% } %>
+        </span>
+        <% if (settings.site_tagline) { %><span class="logo-tagline"><%= settings.site_tagline %></span><% } %>
+      </a>
+      <div class="shop-nav">
+        <a href="/catalog" class="shop-link">Каталог</a>
+        <a href="/brands" class="shop-link">Брендам</a>
+        <a href="/cart" class="cart-btn">
+          <svg class="cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/>
+            <path d="M3 6h18"/>
+            <path d="M16 10a4 4 0 0 1-8 0"/>
+          </svg>
+          Корзина<% if (cartCount > 0) { %><span class="cart-badge"><%= cartCount %></span><% } %>
+        </a>
+      </div>
+    </div>
+    <nav class="site-nav">
+      <div class="container nav-inner">
+        <a href="/">Главная</a>
+        <a href="/news">Новости</a>
+        <a href="/about">Обо мне</a>
+        <span class="nav-divider" aria-hidden="true"></span>
+        <a href="/music">Музыка</a>
+        <a href="/style">Стиль</a>
+        <a href="/video">Видео</a>
+        <a href="/gallery">Галерея</a>
+      </div>
+    </nav>
+  </header>
+  <main class="container">

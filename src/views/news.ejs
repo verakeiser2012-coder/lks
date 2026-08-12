@@ -1,0 +1,27 @@
+<%- include('partials/header') %>
+
+<h1>Новости</h1>
+
+<% if (posts.length === 0) { %>
+  <p>Пока новостей нет.</p>
+<% } else { %>
+  <div class="news-list">
+    <% posts.forEach(function(post) { %>
+      <a class="news-card" href="/news/<%= post.slug %>">
+        <div class="news-card-image">
+          <% if (coverByNewsId[post.id]) { %>
+            <img src="<%= coverByNewsId[post.id] %>" alt="<%= post.title %>">
+          <% } else { %>
+            <div class="no-image">Нет фото</div>
+          <% } %>
+        </div>
+        <div>
+          <div class="news-date"><%= post.created_at %></div>
+          <div class="news-title"><%= post.title %></div>
+        </div>
+      </a>
+    <% }); %>
+  </div>
+<% } %>
+
+<%- include('partials/footer') %>

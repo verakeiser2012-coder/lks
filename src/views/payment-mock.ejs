@@ -1,0 +1,16 @@
+<%- include('partials/header') %>
+
+<h1>Тестовая оплата</h1>
+
+<div class="flash flash-success">
+  Реальная оплата пока не подключена. Это тестовая страница — в реальном режиме
+  здесь будет форма оплаты ЮKassa.
+</div>
+
+<p>Заказ №<%= order.id %> на сумму <strong><%= order.total %> ₽</strong></p>
+
+<form action="/checkout/pay/<%= order.id %>/confirm" method="POST">
+  <button class="btn" type="submit">Подтвердить оплату (тест)</button>
+</form>
+
+<%- include('partials/footer') %>

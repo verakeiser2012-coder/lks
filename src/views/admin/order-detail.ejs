@@ -1,0 +1,42 @@
+<%- include('partials/header') %>
+
+<h1>Заказ №<%= order.id %></h1>
+
+<p>Клиент: <%= order.customer_name %> · <%= order.phone %> <% if (order.email) { %>· <%= order.email %><% } %></p>
+<% if (order.address) { %><p>Адрес: <%= order.address %></p><% } %>
+<% if (order.comment) { %><p>Комментарий: <%= order.comment %></p><% } %>
+<p>Оплата: <%= order.payment_status %> (<%= order.payment_provider || '—' %>)</p>
+
+<table>
+  <thead>
+    <tr><th>Товар</th><th>Цена</th><th>Кол-во</th><th>Сумма</th></tr>
+  </thead>
+  <tbody>
+    <% items.forEach(function(item) { %>
+      <tr>
+        <td><%= item.product_name %></td>
+        <td><%= item.price %> ₽</td>
+        <td><%= item.qty %></td>
+        <td><%= item.price * item.qty %> ₽</td>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>
+
+<p><strong>Итого: <%= order.total %> ₽</strong></p>
+
+<form action="/admin/orders/<%= order.id %>/status" method="POST">
+  <label>
+    Статус заказа
+    <select name="status">
+      <% ['new', 'processing', 'shipped', 'completed', 'cancelled'].forEach(function(s) { %>
+        <option value="<%= s %>" <%= order.status === s ? 'selected' : '' %>><%= s %></option>
+      <% }); %>
+    </select>
+  </label>
+  <button class="btn" type="submit">Сохранить статус</button>
+</form>
+
+<p><a href="/admin/orders">← Ко всем заказам</a></p>
+
+<%- include('partials/footer') %>

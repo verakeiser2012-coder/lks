@@ -1,0 +1,27 @@
+<%- include('partials/header') %>
+
+<section class="hero">
+  <h1>Музыка</h1>
+  <% if (intro) { %><p class="hero-tagline"><%- renderLinkedText(intro) %></p><% } %>
+</section>
+
+<section class="link-section">
+  <h2>Слушать</h2>
+  <div class="player-embed-grid">
+    <iframe class="player-embed" src="https://open.spotify.com/embed/artist/2Yk65GNoUclS0VKtyvCebY" width="100%" height="352" frameborder="0" allow="encrypted-media" loading="lazy"></iframe>
+    <iframe class="player-embed" src="https://embed.music.apple.com/us/artist/dj-levka/1631413541" width="100%" height="352" frameborder="0" allow="autoplay *; encrypted-media *;" loading="lazy"></iframe>
+  </div>
+</section>
+
+<% groups.forEach(function(group) { %>
+  <section class="link-section">
+    <% if (group.name) { %><h2><%= group.name %></h2><% } %>
+    <div class="link-grid">
+      <% group.items.forEach(function(link) { %>
+        <a class="link-card" href="<%= link.url %>" target="_blank" rel="noopener"><%= link.label %></a>
+      <% }); %>
+    </div>
+  </section>
+<% }); %>
+
+<%- include('partials/footer') %>

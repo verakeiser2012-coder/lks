@@ -1,0 +1,77 @@
+<%- include('partials/header') %>
+
+<h1>Настройки</h1>
+
+<% if (saved) { %>
+  <div class="flash flash-success">Сохранено.</div>
+<% } %>
+
+<form action="/admin/settings" method="POST">
+  <label>
+    Название / имя
+    <input type="text" name="site_name" value="<%= settingsMap.site_name || '' %>">
+  </label>
+  <label>
+    Второе имя (псевдоним, показывается рядом со значком в шапке)
+    <input type="text" name="site_alt_name" value="<%= settingsMap.site_alt_name || '' %>">
+  </label>
+  <label>
+    Слоган (подзаголовок под названием)
+    <input type="text" name="site_tagline" value="<%= settingsMap.site_tagline || '' %>">
+  </label>
+  <label>
+    Телефон
+    <input type="text" name="phone" value="<%= settingsMap.phone || '' %>">
+  </label>
+  <label>
+    Email
+    <input type="email" name="email" value="<%= settingsMap.email || '' %>">
+  </label>
+  <label>
+    Адрес
+    <input type="text" name="address" value="<%= settingsMap.address || '' %>">
+  </label>
+  <label>
+    Ссылка VK
+    <input type="url" name="vk_url" value="<%= settingsMap.vk_url || '' %>">
+  </label>
+  <label>
+    Ссылка Telegram
+    <input type="url" name="telegram_url" value="<%= settingsMap.telegram_url || '' %>">
+  </label>
+  <label>
+    Ссылка WhatsApp
+    <input type="url" name="whatsapp_url" value="<%= settingsMap.whatsapp_url || '' %>">
+  </label>
+  <label>
+    Ссылка Instagram
+    <input type="url" name="instagram_url" value="<%= settingsMap.instagram_url || '' %>">
+  </label>
+  <label>
+    Ссылка YouTube
+    <input type="url" name="youtube_url" value="<%= settingsMap.youtube_url || '' %>">
+  </label>
+  <label>
+    Ссылка TikTok
+    <input type="url" name="tiktok_url" value="<%= settingsMap.tiktok_url || '' %>">
+  </label>
+  <label>
+    Ссылка Pinterest
+    <input type="url" name="pinterest_url" value="<%= settingsMap.pinterest_url || '' %>">
+  </label>
+  <label>
+    Ссылка Rutube
+    <input type="url" name="rutube_url" value="<%= settingsMap.rutube_url || '' %>">
+  </label>
+  <label>
+    Ссылка Одноклассники
+    <input type="url" name="ok_url" value="<%= settingsMap.ok_url || '' %>">
+  </label>
+  <label>
+    Ссылка Дзен
+    <input type="url" name="dzen_url" value="<%= settingsMap.dzen_url || '' %>">
+  </label>
+  <button class="btn" type="submit">Сохранить</button>
+</form>
+
+<%- include('partials/footer') %>

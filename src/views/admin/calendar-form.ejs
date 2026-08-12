@@ -1,0 +1,56 @@
+<%- include('partials/header') %>
+
+<h1><%= post ? 'Редактировать пост' : 'Запланировать пост' %></h1>
+
+<% if (error) { %>
+  <div class="flash flash-error"><%= error %></div>
+<% } %>
+
+<form
+  action="<%= post ? `/admin/calendar/${post.id}/edit` : '/admin/calendar' %>"
+  method="POST"
+  enctype="multipart/form-data"
+>
+  <label>
+    Текст поста
+    <textarea name="text" rows="5"><%= post ? post.text : '' %></textarea>
+  </label>
+  <label>
+    Дата и время публикации
+    <input
+      type="datetime-local"
+      name="scheduledAt"
+      required
+      value="<%= post ? post.scheduled_at.replace(' ', 'T').slice(0, 16) : '' %>"
+    >
+  </label>
+  <label>
+    Тип медиа (если прикладываете файл)
+    <select name="type">
+      <option value="photo" <%= post && post.media_type === 'photo' ? 'selected' : '' %>>Фото</option>
+      <option value="video" <%= post && post.media_type === 'video' ? 'selected' : '' %>>Видео</option>
+    </select>
+  </label>
+  <label>
+    Файл <%= post && post.media_path ? '(оставьте пустым, чтобы не менять)' : '(необязательно)' %>
+    <input type="file" name="file" accept="image/*,video/*">
+  </label>
+  <% if (post) { %>
+    <p class="hint">Соцсети нельзя изменить после создания поста — удалите и создайте новый с другим набором.</p>
+  <% } else { %>
+    <label>
+      Соцсети
+      <% networks.forEach(function(n) { %>
+        <div>
+          <input type="checkbox" name="networks" value="<%= n.key %>" id="net-<%= n.key %>" style="width:auto;display:inline-block;">
+          <label for="net-<%= n.key %>" style="display:inline;font-weight:normal;">
+            <%= n.label %><% if (!n.enabled) { %> <span class="badge badge-disabled">не подключено</span><% } %>
+          </label>
+        </div>
+      <% }); %>
+    </label>
+  <% } %>
+  <button class="btn" type="submit"><%= post ? 'Сохранить' : 'Запланировать' %></button>
+</form>
+
+<%- include('partials/footer') %>

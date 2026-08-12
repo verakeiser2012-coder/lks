@@ -1,0 +1,20 @@
+<%- include('partials/header') %>
+
+<h1>Дашборд</h1>
+
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="stat-value"><%= productsCount %></div>
+    <div class="stat-label">Товаров</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value"><%= ordersCount %></div>
+    <div class="stat-label">Заказов всего</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value"><%= newOrdersCount %></div>
+    <div class="stat-label">Новых заказов</div>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

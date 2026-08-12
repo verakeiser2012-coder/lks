@@ -1,0 +1,19 @@
+<%- include('partials/header') %>
+
+<section class="hero">
+  <h1>Видео</h1>
+  <% if (intro) { %><p class="hero-tagline"><%- renderLinkedText(intro) %></p><% } %>
+</section>
+
+<% groups.forEach(function(group) { %>
+  <section class="link-section">
+    <% if (group.name) { %><h2><%= group.name %></h2><% } %>
+    <div class="link-grid">
+      <% group.items.forEach(function(link) { %>
+        <a class="link-card" href="<%= link.url %>" target="_blank" rel="noopener"><%= link.label %></a>
+      <% }); %>
+    </div>
+  </section>
+<% }); %>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,62 @@
+<%- include('partials/header') %>
+
+<h1>Обо мне</h1>
+
+<% if (saved) { %>
+  <div class="flash flash-success">Сохранено.</div>
+<% } %>
+<% if (error) { %>
+  <div class="flash flash-error"><%= error %></div>
+<% } %>
+
+<form action="/admin/about" method="POST">
+  <label>
+    Текст страницы
+    <textarea name="aboutText" rows="10"><%= aboutText %></textarea>
+  </label>
+  <p class="hint">Чтобы вставить ссылку в текст: <code>[текст ссылки](https://example.com)</code></p>
+  <button class="btn" type="submit">Сохранить текст</button>
+</form>
+
+<h2>Фото и видео</h2>
+
+<form action="/admin/about/media" method="POST" enctype="multipart/form-data" class="gallery-upload-form">
+  <label>
+    Тип
+    <select name="type" required>
+      <option value="photo">Фото</option>
+      <option value="video">Видео</option>
+    </select>
+  </label>
+  <label>
+    Подпись
+    <input type="text" name="title">
+  </label>
+  <label>
+    Порядок сортировки
+    <input type="number" name="sortOrder" value="0">
+  </label>
+  <label>
+    Файл *
+    <input type="file" name="file" accept="image/*,video/*" required>
+  </label>
+  <button class="btn" type="submit">Загрузить</button>
+</form>
+
+<div class="admin-media-grid">
+  <% media.forEach(function(item) { %>
+    <div class="admin-media-item">
+      <% if (item.type === 'photo') { %>
+        <img src="<%= item.file_path %>" alt="<%= item.title %>">
+      <% } else { %>
+        <video src="<%= item.file_path %>" controls></video>
+      <% } %>
+      <div class="admin-media-caption"><%= item.title || '(без подписи)' %></div>
+      <form action="/admin/about/media/<%= item.id %>/delete" method="POST" onsubmit="return confirm('Удалить файл?');">
+        <button class="link-btn" type="submit">Удалить</button>
+      </form>
+    </div>
+  <% }); %>
+</div>
+
+<%- include('partials/footer') %>

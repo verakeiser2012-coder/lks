@@ -1,0 +1,12 @@
+<%- include('partials/header') %>
+
+<div class="not-found">
+  <h1>Спасибо за заказ!</h1>
+  <% if (order) { %>
+    <p>Номер заказа: №<%= order.id %></p>
+    <p>Статус оплаты: <%= order.payment_status === 'paid' ? 'оплачен' : 'ожидает оплаты' %></p>
+  <% } %>
+  <a class="btn" href="/catalog">Вернуться в каталог</a>
+</div>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,68 @@
+<%- include('partials/header') %>
+
+<h1>Соцсети</h1>
+
+<% if (error) { %>
+  <div class="flash flash-error"><%= error %></div>
+<% } %>
+
+<% networks.forEach(function(n) { %>
+  <div class="network-row">
+    <div class="network-row-main">
+      <strong><%= n.label %></strong>
+      <span class="badge badge-<%= n.enabled ? 'published' : 'disabled' %>">
+        <%= n.enabled ? 'подключено' : 'не подключено' %>
+      </span>
+      <span class="badge">коннектор: <%= n.connector %></span>
+    </div>
+    <div class="network-row-actions">
+      <form class="inline" action="/admin/social-networks/<%= n.id %>/toggle" method="POST">
+        <button class="link-btn" type="submit"><%= n.enabled ? 'Отключить' : 'Включить' %></button>
+      </form>
+      <form class="inline" action="/admin/social-networks/<%= n.id %>/delete" method="POST" onsubmit="return confirm('Удалить соцсеть?');">
+        <button class="link-btn" type="submit">Удалить</button>
+      </form>
+    </div>
+  </div>
+
+  <% const connectorDef = connectors.find(function(c) { return c.key === n.connector; }); %>
+  <% if (connectorDef && connectorDef.fields.length > 0) { %>
+    <% let savedCredentials = {}; try { savedCredentials = JSON.parse(n.credentials || '{}'); } catch (e) {} %>
+    <form class="credentials-form" action="/admin/social-networks/<%= n.id %>/credentials" method="POST">
+      <% connectorDef.fields.forEach(function(field) { %>
+        <label>
+          <%= field.label %>
+          <input
+            type="<%= field.type %>"
+            name="<%= field.name %>"
+            value="<%= savedCredentials[field.name] || '' %>"
+          >
+        </label>
+      <% }); %>
+      <button class="btn" type="submit">Сохранить данные</button>
+    </form>
+  <% } %>
+<% }); %>
+
+<h2>Добавить соцсеть</h2>
+<form action="/admin/social-networks" method="POST" class="gallery-upload-form">
+  <label>
+    Название
+    <input type="text" name="label" placeholder="Например, Личный канал новостей" required>
+  </label>
+  <label>
+    Ключ (уникальный, латиницей)
+    <input type="text" name="key" placeholder="telegram-news" required>
+  </label>
+  <label>
+    Тип коннектора
+    <select name="connector" required>
+      <% connectors.forEach(function(c) { %>
+        <option value="<%= c.key %>"><%= c.label %></option>
+      <% }); %>
+    </select>
+  </label>
+  <button class="btn" type="submit">Добавить</button>
+</form>
+
+<%- include('partials/footer') %>

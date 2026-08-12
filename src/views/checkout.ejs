@@ -1,0 +1,47 @@
+<%- include('partials/header') %>
+
+<h1>Оформление заказа</h1>
+
+<% if (error) { %>
+  <div class="flash flash-error"><%= error %></div>
+<% } %>
+
+<div class="catalog-layout">
+  <div class="catalog-main">
+    <form action="/checkout" method="POST">
+      <label>
+        Имя *
+        <input type="text" name="customerName" required>
+      </label>
+      <label>
+        Телефон *
+        <input type="tel" name="phone" required>
+      </label>
+      <label>
+        Email
+        <input type="email" name="email">
+      </label>
+      <label>
+        Адрес доставки
+        <input type="text" name="address">
+      </label>
+      <label>
+        Комментарий к заказу
+        <textarea name="comment" rows="3"></textarea>
+      </label>
+      <button class="btn" type="submit">Перейти к оплате</button>
+    </form>
+  </div>
+
+  <aside class="category-filter">
+    <h3>Ваш заказ</h3>
+    <ul>
+      <% items.forEach(function(item) { %>
+        <li><%= item.product.name %> × <%= item.qty %> — <%= item.subtotal %> ₽</li>
+      <% }); %>
+    </ul>
+    <p><strong>Итого: <%= total %> ₽</strong></p>
+  </aside>
+</div>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title : 'Админка' %></title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin-body">
+  <header class="admin-header">
+    <div class="container admin-header-inner">
+      <a class="logo" href="/admin">Админка</a>
+      <nav class="main-nav">
+        <a href="/admin/products">Товары</a>
+        <a href="/admin/orders">Заказы</a>
+        <a href="/admin/gallery">Галерея</a>
+        <a href="/admin/about">Обо мне</a>
+        <a href="/admin/pages/music">Музыка</a>
+        <a href="/admin/pages/style">Стиль</a>
+        <a href="/admin/pages/video">Видео</a>
+        <a href="/admin/news">Новости</a>
+        <a href="/admin/brands">Брендам</a>
+        <a href="/admin/calendar">Календарь</a>
+        <a href="/admin/social-networks">Соцсети</a>
+        <a href="/admin/settings">Настройки</a>
+        <a href="/" target="_blank">Сайт ↗</a>
+        <form class="inline" action="/admin/logout" method="POST">
+          <button class="link-btn" type="submit">Выйти</button>
+        </form>
+      </nav>
+    </div>
+  </header>
+  <main class="container admin-main">

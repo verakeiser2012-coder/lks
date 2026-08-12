@@ -1,0 +1,48 @@
+<%- include('partials/header') %>
+
+<h1>Галерея</h1>
+
+<% if (error) { %>
+  <div class="flash flash-error"><%= error %></div>
+<% } %>
+
+<form action="/admin/gallery" method="POST" enctype="multipart/form-data" class="gallery-upload-form">
+  <label>
+    Тип
+    <select name="type" required>
+      <option value="photo">Фото</option>
+      <option value="video">Видео</option>
+    </select>
+  </label>
+  <label>
+    Подпись
+    <input type="text" name="title">
+  </label>
+  <label>
+    Порядок сортировки
+    <input type="number" name="sortOrder" value="0">
+  </label>
+  <label>
+    Файл *
+    <input type="file" name="file" accept="image/*,video/*" required>
+  </label>
+  <button class="btn" type="submit">Загрузить</button>
+</form>
+
+<div class="admin-media-grid">
+  <% items.forEach(function(item) { %>
+    <div class="admin-media-item">
+      <% if (item.type === 'photo') { %>
+        <img src="<%= item.file_path %>" alt="<%= item.title %>">
+      <% } else { %>
+        <video src="<%= item.file_path %>" controls></video>
+      <% } %>
+      <div class="admin-media-caption"><%= item.title || '(без подписи)' %></div>
+      <form action="/admin/gallery/<%= item.id %>/delete" method="POST" onsubmit="return confirm('Удалить файл?');">
+        <button class="link-btn" type="submit">Удалить</button>
+      </form>
+    </div>
+  <% }); %>
+</div>
+
+<%- include('partials/footer') %>

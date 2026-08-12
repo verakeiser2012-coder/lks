@@ -1,0 +1,40 @@
+<%- include('partials/header') %>
+
+<div class="admin-toolbar">
+  <h1>Товары</h1>
+  <a class="btn" href="/admin/products/new">+ Добавить товар</a>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Фото</th>
+      <th>Название</th>
+      <th>Цена</th>
+      <th>Остаток</th>
+      <th>Активен</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% products.forEach(function(product) { %>
+      <tr>
+        <td>
+          <% if (product.image) { %><img src="<%= product.image %>" alt="" style="width:48px;height:48px;object-fit:cover;border-radius:4px;"><% } %>
+        </td>
+        <td><%= product.name %></td>
+        <td><%= product.price %> ₽</td>
+        <td><%= product.stock %></td>
+        <td><%= product.is_active ? 'Да' : 'Нет' %></td>
+        <td>
+          <a href="/admin/products/<%= product.id %>/edit">Изменить</a>
+          <form class="inline" action="/admin/products/<%= product.id %>/delete" method="POST" onsubmit="return confirm('Удалить товар?');">
+            <button class="link-btn" type="submit">Удалить</button>
+          </form>
+        </td>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>
+
+<%- include('partials/footer') %>

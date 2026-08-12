@@ -1,0 +1,43 @@
+<%- include('partials/header') %>
+
+<h1>Каталог</h1>
+
+<div class="catalog-layout">
+  <aside class="category-filter">
+    <h3>Категории</h3>
+    <ul>
+      <li><a href="/catalog" class="<%= !activeCategory ? 'active' : '' %>">Все товары</a></li>
+      <% categories.forEach(function(cat) { %>
+        <li>
+          <a href="/catalog?category=<%= cat.slug %>" class="<%= activeCategory === cat.slug ? 'active' : '' %>">
+            <%= cat.name %>
+          </a>
+        </li>
+      <% }); %>
+    </ul>
+  </aside>
+
+  <div class="catalog-main">
+    <% if (products.length === 0) { %>
+      <p>В этой категории пока нет товаров.</p>
+    <% } else { %>
+      <div class="product-grid">
+        <% products.forEach(function(product) { %>
+          <a class="product-card" href="/catalog/<%= product.slug %>">
+            <div class="product-image">
+              <% if (product.image) { %>
+                <img src="<%= product.image %>" alt="<%= product.name %>">
+              <% } else { %>
+                <div class="no-image">Нет фото</div>
+              <% } %>
+            </div>
+            <div class="product-name"><%= product.name %></div>
+            <div class="product-price"><%= product.price %> ₽</div>
+          </a>
+        <% }); %>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

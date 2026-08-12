@@ -1,0 +1,34 @@
+<%- include('partials/header') %>
+
+<h1>Заказы</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>№</th>
+      <th>Клиент</th>
+      <th>Телефон</th>
+      <th>Сумма</th>
+      <th>Статус</th>
+      <th>Оплата</th>
+      <th>Дата</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% orders.forEach(function(order) { %>
+      <tr>
+        <td><%= order.id %></td>
+        <td><%= order.customer_name %></td>
+        <td><%= order.phone %></td>
+        <td><%= order.total %> ₽</td>
+        <td><%= order.status %></td>
+        <td><%= order.payment_status %></td>
+        <td><%= order.created_at %></td>
+        <td><a href="/admin/orders/<%= order.id %>">Открыть</a></td>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>
+
+<%- include('partials/footer') %>

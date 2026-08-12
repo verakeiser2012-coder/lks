@@ -1,0 +1,48 @@
+<%- include('partials/header') %>
+
+<h1>Корзина</h1>
+
+<% if (items.length === 0) { %>
+  <p>Корзина пуста. <a href="/catalog">Перейти в каталог</a></p>
+<% } else { %>
+  <table class="cart-table">
+    <thead>
+      <tr>
+        <th>Товар</th>
+        <th>Цена</th>
+        <th>Кол-во</th>
+        <th>Сумма</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% items.forEach(function(item) { %>
+        <tr>
+          <td>
+            <% if (item.product.image) { %><img src="<%= item.product.image %>" alt=""><% } %>
+            <a href="/catalog/<%= item.product.slug %>"><%= item.product.name %></a>
+          </td>
+          <td><%= item.product.price %> ₽</td>
+          <td>
+            <form class="inline" action="/cart/update" method="POST">
+              <input type="hidden" name="productId" value="<%= item.product.id %>">
+              <input type="number" name="qty" value="<%= item.qty %>" min="1" max="<%= item.product.stock %>" style="width:70px" onchange="this.form.submit()">
+            </form>
+          </td>
+          <td><%= item.subtotal %> ₽</td>
+          <td>
+            <form class="inline" action="/cart/remove" method="POST">
+              <input type="hidden" name="productId" value="<%= item.product.id %>">
+              <button class="btn" type="submit">Удалить</button>
+            </form>
+          </td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+
+  <p><strong>Итого: <%= total %> ₽</strong></p>
+  <a class="btn" href="/checkout">Оформить заказ</a>
+<% } %>
+
+<%- include('partials/footer') %>

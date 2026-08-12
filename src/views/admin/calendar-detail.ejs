@@ -1,0 +1,52 @@
+<%- include('partials/header') %>
+
+<div class="admin-toolbar">
+  <h1>Пост от <%= post.scheduled_at %></h1>
+  <span class="badge badge-<%= post.status %>"><%= post.status %></span>
+</div>
+
+<p><%= post.text %></p>
+
+<% if (post.media_path) { %>
+  <% if (post.media_type === 'video') { %>
+    <video src="<%= post.media_path %>" controls style="max-width:360px;"></video>
+  <% } else { %>
+    <img src="<%= post.media_path %>" alt="" style="max-width:360px;border-radius:8px;">
+  <% } %>
+<% } %>
+
+<h2>Статус по соцсетям</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Сеть</th>
+      <th>Статус</th>
+      <th>Ссылка</th>
+      <th>Ошибка</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% targets.forEach(function(t) { %>
+      <tr>
+        <td><%= t.network_key %></td>
+        <td><span class="badge badge-<%= t.status %>"><%= t.status %></span></td>
+        <td><% if (t.published_url) { %><a href="<%= t.published_url %>" target="_blank"><%= t.published_url %></a><% } %></td>
+        <td><%= t.error %></td>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>
+
+<% if (post.status === 'scheduled') { %>
+  <a class="btn" href="/admin/calendar/<%= post.id %>/edit">Редактировать</a>
+<% } %>
+<form class="inline" action="/admin/calendar/<%= post.id %>/publish" method="POST">
+  <button class="btn" type="submit">Опубликовать сейчас</button>
+</form>
+<form class="inline" action="/admin/calendar/<%= post.id %>/delete" method="POST" onsubmit="return confirm('Удалить пост?');">
+  <button class="link-btn" type="submit">Удалить</button>
+</form>
+
+<p><a href="/admin/calendar">← Ко всем постам</a></p>
+
+<%- include('partials/footer') %>

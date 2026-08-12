@@ -1,0 +1,22 @@
+<%- include('partials/header') %>
+
+<h1>Обо мне</h1>
+
+<div class="prose"><%- renderLinkedText(aboutText) %></div>
+
+<% if (media.length > 0) { %>
+  <div class="gallery-grid">
+    <% media.forEach(function(item) { %>
+      <div class="gallery-item <%= item.type === 'video' ? 'is-video' : '' %>">
+        <% if (item.type === 'photo') { %>
+          <img src="<%= item.file_path %>" alt="<%= item.title %>" loading="lazy">
+        <% } else { %>
+          <video src="<%= item.file_path %>" muted loop playsinline preload="metadata"></video>
+        <% } %>
+        <% if (item.title) { %><div class="gallery-caption"><%= item.title %></div><% } %>
+      </div>
+    <% }); %>
+  </div>
+<% } %>
+
+<%- include('partials/footer') %>

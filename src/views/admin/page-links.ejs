@@ -1,0 +1,54 @@
+<%- include('partials/header') %>
+
+<h1><%= sectionLabel %></h1>
+
+<% if (saved) { %>
+  <div class="flash flash-success">Сохранено.</div>
+<% } %>
+<% if (error) { %>
+  <div class="flash flash-error"><%= error %></div>
+<% } %>
+
+<form action="/admin/pages/<%= section %>" method="POST">
+  <label>
+    Вводный текст
+    <textarea name="intro" rows="4"><%= intro %></textarea>
+  </label>
+  <p class="hint">Чтобы вставить ссылку в текст: <code>[текст ссылки](https://example.com)</code></p>
+  <button class="btn" type="submit">Сохранить текст</button>
+</form>
+
+<h2>Ссылки</h2>
+
+<% groups.forEach(function(group) { %>
+  <div class="admin-links-group">
+    <% if (group.name) { %><h3><%= group.name %></h3><% } %>
+    <div class="admin-links-list">
+      <% group.items.forEach(function(link) { %>
+        <div class="admin-links-row">
+          <form action="/admin/pages/<%= section %>/links/<%= link.id %>" method="POST" class="admin-links-row-form">
+            <input type="text" name="groupName" value="<%= link.group_name %>" placeholder="Группа">
+            <input type="text" name="label" value="<%= link.label %>" placeholder="Текст ссылки" required>
+            <input type="url" name="url" value="<%= link.url %>" placeholder="https://..." required>
+            <input type="number" name="sortOrder" value="<%= link.sort_order %>" class="sort-input">
+            <button class="btn" type="submit">Сохранить</button>
+          </form>
+          <form action="/admin/pages/<%= section %>/links/<%= link.id %>/delete" method="POST" class="inline" onsubmit="return confirm('Удалить ссылку?');">
+            <button class="link-btn" type="submit">Удалить</button>
+          </form>
+        </div>
+      <% }); %>
+    </div>
+  </div>
+<% }); %>
+
+<h2>Добавить ссылку</h2>
+<form action="/admin/pages/<%= section %>/links" method="POST" class="admin-links-row-form">
+  <input type="text" name="groupName" placeholder="Группа (напр. Соцсети)">
+  <input type="text" name="label" placeholder="Текст ссылки" required>
+  <input type="url" name="url" placeholder="https://..." required>
+  <input type="number" name="sortOrder" value="0" class="sort-input">
+  <button class="btn" type="submit">Добавить</button>
+</form>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,63 @@
+<%- include('partials/header') %>
+
+<h1>Редактировать новость</h1>
+
+<% if (error) { %>
+  <div class="flash flash-error"><%= error %></div>
+<% } %>
+
+<form action="/admin/news/<%= post.id %>" method="POST">
+  <label>
+    Заголовок *
+    <input type="text" name="title" value="<%= post.title %>" required>
+  </label>
+  <label>
+    Текст
+    <textarea name="content" rows="8"><%= post.content %></textarea>
+  </label>
+  <label>
+    <input type="checkbox" name="isPublished" value="1" style="width:auto;display:inline-block;" <%= post.is_published ? 'checked' : '' %>>
+    Опубликовать
+  </label>
+  <button class="btn" type="submit">Сохранить</button>
+</form>
+
+<h2>Фото и видео</h2>
+
+<form action="/admin/news/<%= post.id %>/media" method="POST" enctype="multipart/form-data" class="gallery-upload-form">
+  <label>
+    Тип
+    <select name="type" required>
+      <option value="photo">Фото</option>
+      <option value="video">Видео</option>
+    </select>
+  </label>
+  <label>
+    Порядок сортировки
+    <input type="number" name="sortOrder" value="0">
+  </label>
+  <label>
+    Файл *
+    <input type="file" name="file" accept="image/*,video/*" required>
+  </label>
+  <button class="btn" type="submit">Загрузить</button>
+</form>
+
+<div class="admin-media-grid">
+  <% media.forEach(function(item) { %>
+    <div class="admin-media-item">
+      <% if (item.type === 'photo') { %>
+        <img src="<%= item.file_path %>" alt="">
+      <% } else { %>
+        <video src="<%= item.file_path %>" controls></video>
+      <% } %>
+      <form action="/admin/news/<%= post.id %>/media/<%= item.id %>/delete" method="POST" onsubmit="return confirm('Удалить файл?');">
+        <button class="link-btn" type="submit">Удалить</button>
+      </form>
+    </div>
+  <% }); %>
+</div>
+
+<p><a href="/admin/news">← Ко всем новостям</a></p>
+
+<%- include('partials/footer') %>

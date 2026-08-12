@@ -1,0 +1,75 @@
+<%- include('partials/header') %>
+
+<h1>Брендам</h1>
+
+<p class="prose">Если вы представляете бренд и хотите сотрудничать с нами — заполните форму ниже, и мы свяжемся с вами.</p>
+
+<div class="link-section offer-section">
+  <h2>Что мы предлагаем</h2>
+  <div class="offer-grid">
+    <% offers.forEach(function(offer) { %>
+      <div class="offer-card">
+        <h3><%= offer.title %></h3>
+        <p><%= offer.description %></p>
+        <% if (offer.example.type === 'photo') { %>
+          <div class="offer-example">
+            <img src="<%= offer.example.src %>" alt="<%= offer.title %>" loading="lazy">
+          </div>
+        <% } else if (offer.example.type === 'video') { %>
+          <div class="offer-example">
+            <video src="<%= offer.example.src %>" muted loop playsinline preload="metadata"></video>
+          </div>
+        <% } else if (offer.example.type === 'link') { %>
+          <div class="offer-example offer-example-link-wrap">
+            <a href="<%= offer.example.url %>" <% if (offer.example.url.startsWith('http')) { %>target="_blank" rel="noopener"<% } %> class="offer-example-link"><%= offer.example.label %> →</a>
+          </div>
+        <% } else { %>
+          <div class="offer-example is-placeholder">Пример скоро добавим</div>
+        <% } %>
+      </div>
+    <% }); %>
+  </div>
+  <p class="offer-note">Льву 14 лет — все съёмки и договорённости проходят с участием родителя.</p>
+</div>
+
+<% if (success) { %>
+  <div class="flash flash-success">Спасибо! Заявка отправлена, мы свяжемся с вами в ближайшее время.</div>
+<% } %>
+
+<% if (error) { %>
+  <div class="flash flash-error"><%= error %></div>
+<% } %>
+
+<div class="catalog-layout">
+  <div class="catalog-main">
+    <form action="/brands" method="POST">
+      <label>
+        Название бренда/компании *
+        <input type="text" name="companyName" value="<%= values.companyName || '' %>" required>
+      </label>
+      <label>
+        Контактное лицо *
+        <input type="text" name="contactName" value="<%= values.contactName || '' %>" required>
+      </label>
+      <label>
+        Телефон *
+        <input type="tel" name="phone" value="<%= values.phone || '' %>" required>
+      </label>
+      <label>
+        Email
+        <input type="email" name="email" value="<%= values.email || '' %>">
+      </label>
+      <label>
+        Сайт бренда
+        <input type="text" name="website" value="<%= values.website || '' %>">
+      </label>
+      <label>
+        Сообщение
+        <textarea name="message" rows="4"><%= values.message || '' %></textarea>
+      </label>
+      <button class="btn" type="submit">Отправить заявку</button>
+    </form>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

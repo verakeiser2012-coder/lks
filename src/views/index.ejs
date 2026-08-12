@@ -1,0 +1,33 @@
+<%- include('partials/header') %>
+
+<section class="hero">
+  <h1><%= settings.site_name %></h1>
+  <% if (settings.site_tagline) { %><p class="hero-tagline"><%= settings.site_tagline %></p><% } %>
+  <p>Добро пожаловать! Смотрите каталог товаров и нашу галерею.</p>
+  <a class="btn" href="/catalog">Перейти в каталог</a>
+</section>
+
+<section>
+  <h2>Новые товары</h2>
+  <% if (products.length === 0) { %>
+    <p>Товаров пока нет.</p>
+  <% } else { %>
+    <div class="product-grid">
+      <% products.forEach(function(product) { %>
+        <a class="product-card" href="/catalog/<%= product.slug %>">
+          <div class="product-image">
+            <% if (product.image) { %>
+              <img src="<%= product.image %>" alt="<%= product.name %>">
+            <% } else { %>
+              <div class="no-image">Нет фото</div>
+            <% } %>
+          </div>
+          <div class="product-name"><%= product.name %></div>
+          <div class="product-price"><%= product.price %> ₽</div>
+        </a>
+      <% }); %>
+    </div>
+  <% } %>
+</section>
+
+<%- include('partials/footer') %>

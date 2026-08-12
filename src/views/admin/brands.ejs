@@ -1,0 +1,48 @@
+<%- include('partials/header') %>
+
+<h1>Заявки брендов</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>№</th>
+      <th>Бренд/компания</th>
+      <th>Контакт</th>
+      <th>Телефон</th>
+      <th>Email</th>
+      <th>Сайт</th>
+      <th>Сообщение</th>
+      <th>Статус</th>
+      <th>Дата</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% requests.forEach(function(item) { %>
+      <tr>
+        <td><%= item.id %></td>
+        <td><%= item.company_name %></td>
+        <td><%= item.contact_name %></td>
+        <td><%= item.phone %></td>
+        <td><%= item.email %></td>
+        <td><% if (item.website) { %><a href="<%= item.website %>" target="_blank" rel="noopener"><%= item.website %></a><% } %></td>
+        <td><%= item.message %></td>
+        <td><%= item.status %></td>
+        <td><%= item.created_at %></td>
+        <td>
+          <form class="inline" action="/admin/brands/<%= item.id %>/status" method="POST">
+            <% if (item.status === 'new') { %>
+              <input type="hidden" name="status" value="processed">
+              <button class="link-btn" type="submit">Отметить обработанной</button>
+            <% } else { %>
+              <input type="hidden" name="status" value="new">
+              <button class="link-btn" type="submit">Вернуть в новые</button>
+            <% } %>
+          </form>
+        </td>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>
+
+<%- include('partials/footer') %>
