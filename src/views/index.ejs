@@ -7,6 +7,30 @@
   <a class="btn" href="/catalog">Перейти в каталог</a>
 </section>
 
+<% if (news.length > 0) { %>
+<section>
+  <h2>Новости</h2>
+  <div class="news-list">
+    <% news.forEach(function(post) { %>
+      <a class="news-card" href="/news/<%= post.slug %>">
+        <div class="news-card-image">
+          <% if (coverByNewsId[post.id]) { %>
+            <img src="<%= coverByNewsId[post.id] %>" alt="<%= post.title %>">
+          <% } else { %>
+            <div class="no-image">Нет фото</div>
+          <% } %>
+        </div>
+        <div>
+          <div class="news-date"><%= post.created_at %></div>
+          <div class="news-title"><%= post.title %></div>
+        </div>
+      </a>
+    <% }); %>
+  </div>
+  <p><a href="/news">Все новости →</a></p>
+</section>
+<% } %>
+
 <section>
   <h2>Новые товары</h2>
   <% if (products.length === 0) { %>

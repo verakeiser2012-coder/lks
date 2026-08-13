@@ -3,7 +3,7 @@
 <article>
   <div class="news-date"><%= post.created_at %></div>
   <h1><%= post.title %></h1>
-  <div class="prose"><%= post.content %></div>
+  <div class="prose"><%- renderLinkedText(post.content) %></div>
 
   <% if (media.length > 0) { %>
     <div class="gallery-grid">

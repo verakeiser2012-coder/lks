@@ -1,0 +1,71 @@
+<%- include('partials/header') %>
+
+<section class="hero">
+  <h1>Рыжие, которые вдохновляют</h1>
+  <% if (intro) { %><p class="hero-tagline"><%- renderLinkedText(intro) %></p><% } %>
+</section>
+
+<% if (people.length === 0) { %>
+  <p>Подборка скоро появится.</p>
+<% } else { %>
+  <div class="spotlight-grid">
+    <% people.forEach(function(person) { %>
+      <div class="spotlight-card">
+        <% if (person.photo) { %>
+          <img class="spotlight-photo" src="<%= person.photo %>" alt="<%= person.name %>">
+        <% } else { %>
+          <div class="spotlight-photo no-image">Нет фото</div>
+        <% } %>
+        <div class="spotlight-body">
+          <div class="spotlight-name"><%= person.name %></div>
+          <% if (person.role) { %><div class="spotlight-role"><%= person.role %></div><% } %>
+          <% if (person.note) { %><p class="spotlight-note"><%= person.note %></p><% } %>
+          <% if (person.link_url) { %>
+            <a class="spotlight-link" href="<%= person.link_url %>" target="_blank" rel="noopener">
+              <%= person.link_label || 'Смотреть' %> →
+            </a>
+          <% } %>
+        </div>
+      </div>
+    <% }); %>
+  </div>
+<% } %>
+
+<section class="link-section redhead-apply">
+  <h2>Хотите, чтобы вас заметили?</h2>
+  <p style="color:var(--color-muted); max-width:60ch;">
+    Открытой регистрации нет — подборку курирует команда сайта. Оставьте о себе пару слов и ссылку на свою
+    работу, мы посмотрим и, если подходит, добавим в подборку сами.
+  </p>
+  <% if (submitted) { %>
+    <div class="flash flash-success">Спасибо! Заявка отправлена, мы её рассмотрим.</div>
+  <% } %>
+  <% if (error) { %>
+    <div class="flash flash-error"><%= error %></div>
+  <% } %>
+  <form action="/redheads/submit" method="POST" style="max-width:480px;">
+    <label>
+      Имя *
+      <input type="text" name="name" value="<%= values.name || '' %>" required>
+    </label>
+    <label>
+      Род деятельности
+      <input type="text" name="role" value="<%= values.role || '' %>" placeholder="Модель, музыкант...">
+    </label>
+    <label>
+      Пара слов о себе
+      <textarea name="note" rows="3"><%= values.note || '' %></textarea>
+    </label>
+    <label>
+      Ссылка на работу/соцсеть
+      <input type="url" name="linkUrl" value="<%= values.linkUrl || '' %>" placeholder="https://...">
+    </label>
+    <label>
+      Контакт для связи (почта или телеграм) *
+      <input type="text" name="contact" value="<%= values.contact || '' %>" required>
+    </label>
+    <button class="btn" type="submit">Отправить заявку</button>
+  </form>
+</section>
+
+<%- include('partials/footer') %>

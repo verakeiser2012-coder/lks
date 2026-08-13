@@ -8,6 +8,13 @@ const SECTIONS = {
   music: 'Музыка',
   style: 'Стиль',
   video: 'Видео',
+  gigs: 'Выступления',
+};
+
+const FEATURED_KEYS = {
+  title: 'music_featured_title',
+  note: 'music_featured_note',
+  url: 'music_featured_url',
 };
 
 function loadSectionData(section) {
@@ -15,7 +22,22 @@ function loadSectionData(section) {
   const links = db
     .prepare('SELECT * FROM page_links WHERE section = ? ORDER BY sort_order ASC, id ASC')
     .all(section);
-  return { intro: introRow ? introRow.value : '', links, groups: groupLinks(links) };
+  const data = { intro: introRow ? introRow.value : '', links, groups: groupLinks(links), featured: null };
+
+  if (section === 'music') {
+    const rows = db
+      .prepare('SELECT key, value FROM settings WHERE key IN (?, ?, ?)')
+      .all(FEATURED_KEYS.title, FEATURED_KEYS.note, FEATURED_KEYS.url);
+    const map = {};
+    for (const row of rows) map[row.key] = row.value;
+    data.featured = {
+      title: map[FEATURED_KEYS.title] || '',
+      note: map[FEATURED_KEYS.note] || '',
+      url: map[FEATURED_KEYS.url] || '',
+    };
+  }
+
+  return data;
 }
 
 router.param('section', (req, res, next, section) => {
@@ -36,10 +58,17 @@ router.get('/:section', (req, res) => {
 
 router.post('/:section', (req, res) => {
   const { section } = req.params;
-  db.prepare(`
+  const upsert = db.prepare(`
     INSERT INTO settings (key, value) VALUES (?, ?)
     ON CONFLICT(key) DO UPDATE SET value = excluded.value
-  `).run(`${section}_intro`, req.body.intro || '');
+  `);
+  upsert.run(`${section}_intro`, req.body.intro || '');
+
+  if (section === 'music') {
+    upsert.run(FEATURED_KEYS.title, req.body.featuredTitle || '');
+    upsert.run(FEATURED_KEYS.note, req.body.featuredNote || '');
+    upsert.run(FEATURED_KEYS.url, req.body.featuredUrl || '');
+  }
 
   res.render('admin/page-links', {
     section,

@@ -22,6 +22,9 @@ const musicRoutes = require('./routes/music');
 const styleRoutes = require('./routes/style');
 const videoRoutes = require('./routes/video');
 const brandsRoutes = require('./routes/brands');
+const gigsRoutes = require('./routes/gigs');
+const collectionsRoutes = require('./routes/collections');
+const redheadsRoutes = require('./routes/redheads');
 const subscribeRoutes = require('./routes/subscribe');
 const adminRoutes = require('./routes/admin');
 
@@ -85,6 +88,9 @@ app.use('/music', musicRoutes);
 app.use('/style', styleRoutes);
 app.use('/video', videoRoutes);
 app.use('/brands', brandsRoutes);
+app.use('/gigs', gigsRoutes);
+app.use('/drops', collectionsRoutes);
+app.use('/redheads', redheadsRoutes);
 app.use('/subscribe', subscribeRoutes);
 app.use('/admin', adminRoutes);
 

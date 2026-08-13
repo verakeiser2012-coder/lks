@@ -15,6 +15,7 @@
     Текст
     <textarea name="content" rows="8"><%= post.content %></textarea>
   </label>
+  <p class="flash">Чтобы вставить ссылку в текст, используйте формат: <code>[текст ссылки](https://...)</code></p>
   <label>
     <input type="checkbox" name="isPublished" value="1" style="width:auto;display:inline-block;" <%= post.is_published ? 'checked' : '' %>>
     Опубликовать

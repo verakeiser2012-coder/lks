@@ -1,0 +1,45 @@
+<%- include('partials/header') %>
+
+<h1><%= banner && banner.id ? 'Редактировать баннер' : 'Новый баннер' %></h1>
+
+<% if (error) { %>
+  <div class="flash flash-error"><%= error %></div>
+<% } %>
+
+<form
+  action="<%= banner && banner.id ? `/admin/banners/${banner.id}` : '/admin/banners' %>"
+  method="POST"
+>
+  <label>
+    Страница (page_key) *
+    <input type="text" name="pageKey" value="<%= banner ? banner.page_key : '' %>" placeholder="style" required>
+  </label>
+  <label>
+    Заголовок *
+    <input type="text" name="title" value="<%= banner ? banner.title : '' %>" required>
+  </label>
+  <label>
+    Подзаголовок
+    <textarea name="subtitle" rows="2"><%= banner ? banner.subtitle : '' %></textarea>
+  </label>
+  <label>
+    Текст кнопки
+    <input type="text" name="ctaLabel" value="<%= banner ? banner.cta_label : '' %>" placeholder="Смотреть подборку">
+  </label>
+  <label>
+    Ссылка кнопки
+    <input type="text" name="ctaUrl" value="<%= banner ? banner.cta_url : '' %>" placeholder="/redheads">
+  </label>
+  <label>
+    Порядок сортировки
+    <input type="number" name="sortOrder" value="<%= banner ? banner.sort_order : 0 %>">
+  </label>
+  <label>
+    <input type="checkbox" name="isPublished" value="1" style="width:auto;display:inline-block;"
+      <%= !banner || banner.is_published ? 'checked' : '' %>>
+    Опубликован
+  </label>
+  <button class="btn" type="submit">Сохранить</button>
+</form>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,35 @@
+<%- include('partials/header') %>
+
+<div class="admin-toolbar">
+  <h1>Дропы</h1>
+  <a class="btn" href="/admin/collections/new">+ Новый дроп</a>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Название</th>
+      <th>Сезон</th>
+      <th>Опубликован</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% collections.forEach(function(c) { %>
+      <tr>
+        <td><%= c.name %></td>
+        <td><%= c.season_label %></td>
+        <td><%= c.is_published ? 'Да' : 'Нет' %></td>
+        <td>
+          <a href="/admin/collections/<%= c.id %>/edit">Изменить</a>
+          <a href="/drops/<%= c.slug %>" target="_blank">Смотреть ↗</a>
+          <form class="inline" action="/admin/collections/<%= c.id %>/delete" method="POST" onsubmit="return confirm('Удалить дроп? Товары останутся, но потеряют привязку к нему.');">
+            <button class="link-btn" type="submit">Удалить</button>
+          </form>
+        </td>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>
+
+<%- include('partials/footer') %>

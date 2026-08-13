@@ -13,6 +13,9 @@ const calendarRoutes = require('./calendar');
 const socialNetworksRoutes = require('./social-networks');
 const pagesRoutes = require('./pages');
 const brandsRoutes = require('./brands');
+const collectionsRoutes = require('./collections');
+const redheadsRoutes = require('./redheads');
+const bannersRoutes = require('./banners');
 
 const router = express.Router();
 
@@ -37,6 +40,9 @@ router.use('/news', newsRoutes);
 router.use('/settings', settingsRoutes);
 router.use('/pages', pagesRoutes);
 router.use('/brands', brandsRoutes);
+router.use('/collections', collectionsRoutes);
+router.use('/redheads', redheadsRoutes);
+router.use('/banners', bannersRoutes);
 router.use('/calendar', calendarRoutes);
 router.use('/social-networks', socialNetworksRoutes);
 

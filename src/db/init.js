@@ -150,7 +150,60 @@ function init() {
       email TEXT UNIQUE NOT NULL,
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
+
+    CREATE TABLE IF NOT EXISTS redhead_spotlights (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      role TEXT DEFAULT '',
+      note TEXT DEFAULT '',
+      link_url TEXT DEFAULT '',
+      link_label TEXT DEFAULT '',
+      photo TEXT DEFAULT '',
+      sort_order INTEGER NOT NULL DEFAULT 0,
+      is_published INTEGER NOT NULL DEFAULT 1,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS redhead_submissions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      role TEXT DEFAULT '',
+      note TEXT DEFAULT '',
+      link_url TEXT DEFAULT '',
+      contact TEXT DEFAULT '',
+      status TEXT NOT NULL DEFAULT 'new',
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS promo_banners (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      page_key TEXT NOT NULL,
+      title TEXT NOT NULL,
+      subtitle TEXT DEFAULT '',
+      cta_label TEXT DEFAULT '',
+      cta_url TEXT DEFAULT '',
+      is_published INTEGER NOT NULL DEFAULT 1,
+      sort_order INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS collections (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      slug TEXT UNIQUE NOT NULL,
+      subtitle TEXT DEFAULT '',
+      description TEXT DEFAULT '',
+      season_label TEXT DEFAULT '',
+      is_published INTEGER NOT NULL DEFAULT 1,
+      sort_order INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
   `);
+
+  const productCols = db.prepare('PRAGMA table_info(products)').all();
+  if (!productCols.some((c) => c.name === 'collection_id')) {
+    db.exec('ALTER TABLE products ADD COLUMN collection_id INTEGER REFERENCES collections(id) ON DELETE SET NULL');
+  }
 
   const defaultNetworks = [
     { key: 'telegram', label: 'Telegram', connector: 'telegram' },
@@ -174,7 +227,14 @@ function init() {
     music_intro: 'DJ Levka — треки, релизы и все площадки в одном месте',
     style_intro: 'Актёрство и моделинг — портфолио, кастинги и соцсети',
     video_intro: 'Каналы и площадки с видео',
+    gigs_intro: 'DJ Levka выступает на праздниках — танцевальная музыка, lounge и lo-fi',
+    redheads_intro: 'Рыжий цвет волос встречается всего у 1–2% людей на планете — редкая генетика, а не '
+      + 'случайность. Здесь — рыжие, которые вдохновляют: модели, музыканты, актёры, творческие люди. '
+      + 'Подборку собираем сами, без открытой регистрации.',
     site_alt_name: 'DJ Levka',
+    music_featured_title: 'Soundstates',
+    music_featured_note: 'Новый EP — в день релиза попал в плейлист рядом с Moby, Moderat и Röyksopp',
+    music_featured_url: 'https://band.link/soundstates',
   };
   const insertSetting = db.prepare('INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)');
   for (const [key, value] of Object.entries(defaultIntros)) {
@@ -221,6 +281,71 @@ function init() {
     for (const row of defaultLinks) {
       insertLink.run(...row);
     }
+  }
+
+  const gigsLinksCount = db.prepare("SELECT COUNT(*) AS c FROM page_links WHERE section = 'gigs'").get().c;
+  if (gigsLinksCount === 0) {
+    db.prepare(`
+      INSERT INTO page_links (section, group_name, label, url, sort_order) VALUES (?, ?, ?, ?, ?)
+    `).run('gigs', 'Контакты', 'Написать на почту', 'mailto:dj.levka.music@gmail.com', 0);
+  }
+
+  const bannersCount = db.prepare('SELECT COUNT(*) AS c FROM promo_banners').get().c;
+  if (bannersCount === 0) {
+    const insertBanner = db.prepare(`
+      INSERT INTO promo_banners (page_key, title, subtitle, cta_label, cta_url, sort_order)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `);
+    insertBanner.run(
+      'style',
+      'Рыжие, которые вдохновляют',
+      'Редкая генетика — 1–2% людей на планете. Подборка рыжих моделей, музыкантов и творческих людей — от Льва и не только.',
+      'Смотреть подборку',
+      '/redheads',
+      0
+    );
+    insertBanner.run(
+      'news',
+      'Рыжие, которые вдохновляют',
+      'Новый раздел стиля: курируемая подборка рыжих людей, которые вдохновляют — без открытой регистрации.',
+      'Открыть раздел',
+      '/redheads',
+      0
+    );
+  }
+
+  const spotlightsCount = db.prepare('SELECT COUNT(*) AS c FROM redhead_spotlights').get().c;
+  if (spotlightsCount === 0) {
+    db.prepare(`
+      INSERT INTO redhead_spotlights (name, role, note, link_url, link_label, sort_order)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `).run(
+      'Лев Кейсер',
+      'Модель, актёр, DJ Levka',
+      'Начинаем подборку с себя — портфолио с 4 лет, сейчас ещё и музыка под именем DJ Levka.',
+      '/style',
+      'Смотреть портфолио',
+      0
+    );
+  }
+
+  const collectionsCount = db.prepare('SELECT COUNT(*) AS c FROM collections').get().c;
+  if (collectionsCount === 0) {
+    db.prepare(`
+      INSERT INTO collections (name, slug, subtitle, description, season_label, is_published, sort_order)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `).run(
+      'Флёр × Лев',
+      'fleur-x-lev',
+      'Кастомные светильники — коллаборация с мастерской «Флёр»',
+      'Абажуры декорирует ателье «Флёр» (Екатеринбург, 28+ лет на рынке), основания — от «Сима-ленд». '
+        + 'На части абажуров — сублимационная печать с обложками альбомов DJ Levka. '
+        + 'Этот дроп — в первую очередь витрина: показывает, как может выглядеть коллаборация с Львом, '
+        + 'для других мастерских и брендов.',
+      'Осень 2026',
+      1,
+      0
+    );
   }
 }
 

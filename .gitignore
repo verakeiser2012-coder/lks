@@ -2,6 +2,8 @@ node_modules/
 .env
 data/*.db
 data/*.db-journal
+data/*.db-shm
+data/*.db-wal
 public/uploads/*
 !public/uploads/.gitkeep
 npm-debug.log*

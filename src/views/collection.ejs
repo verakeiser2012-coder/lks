@@ -1,0 +1,33 @@
+<%- include('partials/header') %>
+
+<section class="hero drop-hero">
+  <% if (collection.season_label) { %><p class="drop-season">Дроп · <%= collection.season_label %></p><% } %>
+  <h1><%= collection.name %></h1>
+  <% if (collection.subtitle) { %><p class="hero-tagline"><%= collection.subtitle %></p><% } %>
+</section>
+
+<% if (collection.description) { %>
+  <div class="prose drop-description"><%- renderLinkedText(collection.description) %></div>
+<% } %>
+
+<% if (products.length === 0) { %>
+  <p class="drop-soon">Товары этого дропа появятся в каталоге совсем скоро.</p>
+<% } else { %>
+  <div class="product-grid">
+    <% products.forEach(function(product) { %>
+      <a class="product-card" href="/catalog/<%= product.slug %>">
+        <div class="product-image">
+          <% if (product.image) { %>
+            <img src="<%= product.image %>" alt="<%= product.name %>">
+          <% } else { %>
+            <div class="no-image">Нет фото</div>
+          <% } %>
+        </div>
+        <div class="product-name"><%= product.name %></div>
+        <div class="product-price"><%= product.price %> ₽</div>
+      </a>
+    <% }); %>
+  </div>
+<% } %>
+
+<%- include('partials/footer') %>

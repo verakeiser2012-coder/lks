@@ -5,6 +5,15 @@
   <% if (intro) { %><p class="hero-tagline"><%- renderLinkedText(intro) %></p><% } %>
 </section>
 
+<% if (featured && featured.title) { %>
+  <section class="featured-release">
+    <p class="featured-eyebrow">Сейчас</p>
+    <h2 class="featured-title"><%= featured.title %></h2>
+    <% if (featured.note) { %><p class="featured-note"><%= featured.note %></p><% } %>
+    <% if (featured.url) { %><a class="btn featured-listen" href="<%= featured.url %>" target="_blank" rel="noopener">Слушать</a><% } %>
+  </section>
+<% } %>
+
 <section class="link-section">
   <h2>Слушать</h2>
   <div class="player-embed-grid">

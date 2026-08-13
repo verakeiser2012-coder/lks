@@ -1,13 +1,18 @@
 <%- include('partials/header') %>
 
 <section class="hero">
-  <h1>Стиль</h1>
+  <h1>Выступления</h1>
   <% if (intro) { %><p class="hero-tagline"><%- renderLinkedText(intro) %></p><% } %>
 </section>
 
-<% banners.forEach(function(banner) { %>
-  <%- include('partials/banner', { banner }) %>
-<% }); %>
+<section class="link-section">
+  <h2>Жанры</h2>
+  <div class="chip-row">
+    <% genres.forEach(function(genre) { %>
+      <span class="genre-chip"><%= genre %></span>
+    <% }); %>
+  </div>
+</section>
 
 <% groups.forEach(function(group) { %>
   <section class="link-section">

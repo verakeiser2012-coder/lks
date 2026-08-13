@@ -15,6 +15,24 @@
     <textarea name="intro" rows="4"><%= intro %></textarea>
   </label>
   <p class="hint">Чтобы вставить ссылку в текст: <code>[текст ссылки](https://example.com)</code></p>
+
+  <% if (featured) { %>
+    <h3>Витрина последнего релиза</h3>
+    <p class="hint">Показывается крупным блоком наверху страницы «Музыка» — как обложка-хиро на артист-сайтах.</p>
+    <label>
+      Название релиза
+      <input type="text" name="featuredTitle" value="<%= featured.title %>" placeholder="Soundstates">
+    </label>
+    <label>
+      Подпись/повод
+      <input type="text" name="featuredNote" value="<%= featured.note %>" placeholder="Новый EP — ...">
+    </label>
+    <label>
+      Ссылка «Слушать»
+      <input type="url" name="featuredUrl" value="<%= featured.url %>" placeholder="https://band.link/...">
+    </label>
+  <% } %>
+
   <button class="btn" type="submit">Сохранить текст</button>
 </form>
 

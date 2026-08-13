@@ -2,6 +2,10 @@
 
 <h1>Новости</h1>
 
+<% banners.forEach(function(banner) { %>
+  <%- include('partials/banner', { banner }) %>
+<% }); %>
+
 <% if (posts.length === 0) { %>
   <p>Пока новостей нет.</p>
 <% } else { %>

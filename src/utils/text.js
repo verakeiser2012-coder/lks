@@ -6,13 +6,16 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
-const LINK_PATTERN = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
+const LINK_PATTERN = /\[([^\]]+)\]\(((?:https?:\/\/|\/)[^\s)]+)\)/g;
 
 // Экранирует HTML и превращает разметку [текст](url) в ссылку <a>.
+// Поддерживает внешние (http://...) и внутренние (/путь) ссылки.
 function renderLinkedText(text) {
   if (!text) return '';
   return escapeHtml(text).replace(LINK_PATTERN, (match, label, url) => {
-    return `<a href="${url}" target="_blank" rel="noopener">${label}</a>`;
+    const isExternal = url.startsWith('http');
+    const attrs = isExternal ? ' target="_blank" rel="noopener"' : '';
+    return `<a href="${url}"${attrs}>${label}</a>`;
   });
 }
 

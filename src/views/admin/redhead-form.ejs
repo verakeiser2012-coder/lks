@@ -1,0 +1,53 @@
+<%- include('partials/header') %>
+
+<h1><%= person && person.id ? 'Редактировать' : 'Добавить человека' %></h1>
+
+<% if (error) { %>
+  <div class="flash flash-error"><%= error %></div>
+<% } %>
+
+<form
+  action="<%= person && person.id ? `/admin/redheads/${person.id}` : '/admin/redheads' %>"
+  method="POST"
+  enctype="multipart/form-data"
+>
+  <label>
+    Имя *
+    <input type="text" name="name" value="<%= person ? person.name : '' %>" required>
+  </label>
+  <label>
+    Роль/род деятельности
+    <input type="text" name="role" value="<%= person ? person.role : '' %>" placeholder="Модель, музыкант...">
+  </label>
+  <label>
+    Пара слов
+    <textarea name="note" rows="3"><%= person ? person.note : '' %></textarea>
+  </label>
+  <label>
+    Ссылка на работу/соцсеть
+    <input type="url" name="linkUrl" value="<%= person ? person.link_url : '' %>" placeholder="https://...">
+  </label>
+  <label>
+    Текст ссылки
+    <input type="text" name="linkLabel" value="<%= person ? person.link_label : '' %>" placeholder="Смотреть портфолио">
+  </label>
+  <label>
+    Фото
+    <input type="file" name="photo" accept="image/*">
+  </label>
+  <% if (person && person.photo) { %>
+    <img src="<%= person.photo %>" alt="" style="width:120px;border-radius:8px;margin-bottom:14px;">
+  <% } %>
+  <label>
+    Порядок сортировки
+    <input type="number" name="sortOrder" value="<%= person ? person.sort_order : 0 %>">
+  </label>
+  <label>
+    <input type="checkbox" name="isPublished" value="1" style="width:auto;display:inline-block;"
+      <%= !person || person.is_published ? 'checked' : '' %>>
+    Опубликован
+  </label>
+  <button class="btn" type="submit">Сохранить</button>
+</form>
+
+<%- include('partials/footer') %>

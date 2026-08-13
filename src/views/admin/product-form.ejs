@@ -43,6 +43,17 @@
     <input type="text" name="newCategory" placeholder="Название новой категории">
   </label>
   <label>
+    Дроп
+    <select name="collectionId">
+      <option value="">— без дропа —</option>
+      <% collections.forEach(function(c) { %>
+        <option value="<%= c.id %>" <%= product && Number(product.collection_id) === c.id ? 'selected' : '' %>>
+          <%= c.name %>
+        </option>
+      <% }); %>
+    </select>
+  </label>
+  <label>
     Фото товара
     <input type="file" name="image" accept="image/*">
   </label>

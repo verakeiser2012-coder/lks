@@ -1,6 +1,7 @@
 const express = require('express');
 const db = require('../db');
 const { groupLinks } = require('../utils/links');
+const { getBanners } = require('../utils/banners');
 
 const router = express.Router();
 
@@ -9,7 +10,11 @@ router.get('/', (req, res) => {
   const links = db.prepare(
     "SELECT * FROM page_links WHERE section = 'style' ORDER BY sort_order ASC, id ASC"
   ).all();
-  res.render('style', { intro: introRow ? introRow.value : '', groups: groupLinks(links) });
+  res.render('style', {
+    intro: introRow ? introRow.value : '',
+    groups: groupLinks(links),
+    banners: getBanners('style'),
+  });
 });
 
 module.exports = router;

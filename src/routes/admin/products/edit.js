@@ -7,7 +7,8 @@ function editForm(req, res) {
     return res.status(404).render('404');
   }
   const categories = db.prepare('SELECT * FROM categories ORDER BY name').all();
-  res.render('admin/product-form', { product, categories, error: null });
+  const collections = db.prepare('SELECT * FROM collections ORDER BY name').all();
+  res.render('admin/product-form', { product, categories, collections, error: null });
 }
 
 function update(req, res) {
@@ -16,12 +17,14 @@ function update(req, res) {
     return res.status(404).render('404');
   }
 
-  const { name, description, price, categoryId, newCategory, stock, isActive } = req.body;
+  const { name, description, price, categoryId, newCategory, collectionId, stock, isActive } = req.body;
   if (!name || !price) {
     const categories = db.prepare('SELECT * FROM categories ORDER BY name').all();
+    const collections = db.prepare('SELECT * FROM collections ORDER BY name').all();
     return res.render('admin/product-form', {
       product: { ...product, ...req.body },
       categories,
+      collections,
       error: 'Заполните название и цену.',
     });
   }
@@ -30,13 +33,14 @@ function update(req, res) {
   const resolvedCategoryId = resolveCategoryId(categoryId, newCategory);
 
   db.prepare(`
-    UPDATE products SET name = ?, description = ?, price = ?, category_id = ?, image = ?, stock = ?, is_active = ?
+    UPDATE products SET name = ?, description = ?, price = ?, category_id = ?, collection_id = ?, image = ?, stock = ?, is_active = ?
     WHERE id = ?
   `).run(
     name,
     description || '',
     Number(price),
     resolvedCategoryId,
+    collectionId ? Number(collectionId) : null,
     image,
     Number(stock) || 0,
     isActive ? 1 : 0,

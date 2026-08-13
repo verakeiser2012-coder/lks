@@ -1,0 +1,9 @@
+<div class="promo-banner">
+  <div class="promo-banner-text">
+    <p class="promo-banner-title"><%= banner.title %></p>
+    <% if (banner.subtitle) { %><p class="promo-banner-subtitle"><%= banner.subtitle %></p><% } %>
+  </div>
+  <% if (banner.cta_url) { %>
+    <a class="btn promo-banner-cta" href="<%= banner.cta_url %>"><%= banner.cta_label || 'Подробнее' %></a>
+  <% } %>
+</div>

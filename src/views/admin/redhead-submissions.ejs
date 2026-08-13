@@ -1,0 +1,41 @@
+<%- include('partials/header') %>
+
+<h1>Заявки в «Рыжие»</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Имя</th>
+      <th>Род деятельности</th>
+      <th>О себе</th>
+      <th>Ссылка</th>
+      <th>Контакт</th>
+      <th>Статус</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% submissions.forEach(function(s) { %>
+      <tr>
+        <td><%= s.name %></td>
+        <td><%= s.role %></td>
+        <td style="max-width:220px;"><%= s.note %></td>
+        <td><% if (s.link_url) { %><a href="<%= s.link_url %>" target="_blank" rel="noopener">ссылка ↗</a><% } %></td>
+        <td><%= s.contact %></td>
+        <td><%= s.status %></td>
+        <td>
+          <% if (s.status === 'new') { %>
+            <form class="inline" action="/admin/redheads/submissions/<%= s.id %>/approve" method="POST">
+              <button class="btn" type="submit" style="padding:6px 12px;font-size:0.85rem;">Опубликовать</button>
+            </form>
+            <form class="inline" action="/admin/redheads/submissions/<%= s.id %>/reject" method="POST">
+              <button class="link-btn" type="submit">Отклонить</button>
+            </form>
+          <% } %>
+        </td>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>
+
+<%- include('partials/footer') %>

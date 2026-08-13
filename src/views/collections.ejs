@@ -1,0 +1,34 @@
+<%- include('partials/header') %>
+
+<section class="hero">
+  <h1>Дропы</h1>
+  <p class="hero-tagline">Именные капсульные коллекции — не плоский каталог, а архив релизов</p>
+</section>
+
+<% if (collections.length === 0) { %>
+  <p>Дропов пока нет.</p>
+<% } else { %>
+  <div class="drops-list">
+    <%
+      function productWord(n) {
+        const mod10 = n % 10;
+        const mod100 = n % 100;
+        if (mod10 === 1 && mod100 !== 11) return 'товар';
+        if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return 'товара';
+        return 'товаров';
+      }
+    %>
+    <% collections.forEach(function(c) { %>
+      <a class="drop-card" href="/drops/<%= c.slug %>">
+        <div class="drop-card-head">
+          <% if (c.season_label) { %><span class="drop-season"><%= c.season_label %></span><% } %>
+          <span class="drop-count"><%= c.productCount %> <%= productWord(c.productCount) %></span>
+        </div>
+        <h2 class="drop-name"><%= c.name %></h2>
+        <% if (c.subtitle) { %><p class="drop-subtitle"><%= c.subtitle %></p><% } %>
+      </a>
+    <% }); %>
+  </div>
+<% } %>
+
+<%- include('partials/footer') %>

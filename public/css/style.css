@@ -177,6 +177,7 @@ a:hover { color: var(--color-accent-hover); }
 @media (max-width: 860px) {
   .header-top { justify-content: space-between; }
   .nav-inner { justify-content: flex-start; gap: 16px; }
+  .shop-nav { flex-wrap: wrap; justify-content: center; }
 }
 
 h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.01em; }
@@ -196,6 +197,9 @@ main.container { padding-top: 32px; padding-bottom: 60px; min-height: 60vh; }
   color: var(--color-text);
   letter-spacing: -0.02em;
   margin: 0 0 4px;
+}
+@media (max-width: 480px) {
+  .hero h1 { font-size: 2.1rem; }
 }
 
 @keyframes gold-shine {
@@ -560,6 +564,141 @@ form.inline { display: inline; }
   font-size: 0.85rem;
   margin-top: 4px;
 }
+
+/* Витрина последнего релиза — крупный хиро-блок над плеерами */
+.featured-release {
+  border: 1px solid var(--color-border);
+  border-radius: calc(var(--radius) * 2);
+  padding: 32px 28px;
+  margin-bottom: 40px;
+  text-align: center;
+  background: linear-gradient(180deg, #fffdf5 0%, #fff 100%);
+}
+.featured-eyebrow {
+  margin: 0 0 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+.featured-title {
+  margin: 0 0 8px;
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.featured-note {
+  margin: 0 0 18px;
+  color: var(--color-muted);
+  font-size: 0.95rem;
+}
+.featured-listen { font-size: 1rem; padding: 12px 28px; }
+
+.chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.genre-chip {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #fdf6e0;
+  border: 1px solid #e6cf8a;
+  color: var(--color-text);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+/* Дропы — архив капсульных коллекций, как страница дропов у брендов одежды */
+.drops-list { display: flex; flex-direction: column; gap: 14px; }
+.drop-card {
+  display: block;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  color: var(--color-text);
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+.drop-card:hover {
+  border-color: var(--color-accent);
+  color: var(--color-text);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(184, 134, 11, 0.12);
+}
+.drop-card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.drop-season {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+.drop-count { font-size: 0.8rem; color: var(--color-muted); }
+.drop-name { margin: 0 0 4px; font-size: 1.3rem; }
+.drop-subtitle { margin: 0; color: var(--color-muted); }
+.drop-hero .drop-season { display: block; margin-bottom: 6px; }
+.drop-description { max-width: 640px; margin-left: auto; margin-right: auto; }
+.drop-soon { text-align: center; color: var(--color-muted); padding: 40px 0; }
+
+/* Баннеры кросс-промо между разделами — админ-управляемые, привязаны к странице (page_key) */
+.promo-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  border-radius: calc(var(--radius) * 1.5);
+  padding: 22px 26px;
+  margin-bottom: 32px;
+  background: linear-gradient(120deg, #fff6da 0%, #fdf0c8 60%, #f7e2a3 100%);
+  border: 1px solid #e6cf8a;
+}
+.promo-banner-title {
+  margin: 0 0 4px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+.promo-banner-subtitle { margin: 0; color: var(--color-muted); font-size: 0.9rem; max-width: 46ch; }
+.promo-banner-cta { flex-shrink: 0; white-space: nowrap; }
+@media (max-width: 560px) {
+  .promo-banner { flex-direction: column; align-items: flex-start; }
+}
+
+/* Рыжие, которые вдохновляют — курируемая витрина, без открытой регистрации */
+.spotlight-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+.spotlight-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #fff;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+.spotlight-card:hover {
+  border-color: var(--color-accent);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(184, 134, 11, 0.12);
+}
+.spotlight-photo {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  background: #f2f2f2;
+}
+.spotlight-photo.no-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-muted);
+}
+.spotlight-body { padding: 16px; }
+.spotlight-name { font-weight: 700; font-size: 1.05rem; }
+.spotlight-role { font-size: 0.82rem; color: var(--color-accent); font-weight: 600; margin-top: 2px; }
+.spotlight-note { font-size: 0.88rem; color: var(--color-muted); margin: 8px 0; }
+.spotlight-link { font-weight: 600; font-size: 0.88rem; }
 
 .player-embed-grid {
   display: grid;

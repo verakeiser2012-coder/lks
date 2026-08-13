@@ -9,6 +9,9 @@ const CANONICAL_RU = 'левкейсер.рф';
 const REDIRECT_MAP = {
   'djlevka.store': CANONICAL_STORE,
   'djlevka.online': CANONICAL_MAIN,
+  'djlevka.ru': CANONICAL_MAIN,
+  'djlevka.com': CANONICAL_MAIN,
+  'djlevka.shop': CANONICAL_STORE,
   'levkeiser.ru': CANONICAL_MAIN,
   'levkeiser.store': CANONICAL_STORE,
   'levkeiser.online': CANONICAL_MAIN,

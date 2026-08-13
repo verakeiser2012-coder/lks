@@ -1,5 +1,6 @@
 const express = require('express');
 const db = require('../db');
+const { getBanners } = require('../utils/banners');
 
 const router = express.Router();
 
@@ -16,7 +17,7 @@ router.get('/', (req, res) => {
   const coverByNewsId = {};
   covers.forEach((c) => { coverByNewsId[c.news_id] = c.file_path; });
 
-  res.render('news', { posts, coverByNewsId });
+  res.render('news', { posts, coverByNewsId, banners: getBanners('news') });
 });
 
 router.get('/:slug', (req, res) => {
