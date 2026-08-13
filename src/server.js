@@ -25,6 +25,7 @@ const brandsRoutes = require('./routes/brands');
 const gigsRoutes = require('./routes/gigs');
 const collectionsRoutes = require('./routes/collections');
 const redheadsRoutes = require('./routes/redheads');
+const contestRoutes = require('./routes/contest');
 const subscribeRoutes = require('./routes/subscribe');
 const adminRoutes = require('./routes/admin');
 
@@ -91,6 +92,7 @@ app.use('/brands', brandsRoutes);
 app.use('/gigs', gigsRoutes);
 app.use('/drops', collectionsRoutes);
 app.use('/redheads', redheadsRoutes);
+app.use('/contest', contestRoutes);
 app.use('/subscribe', subscribeRoutes);
 app.use('/admin', adminRoutes);
 

@@ -1,0 +1,52 @@
+<%- include('partials/header') %>
+
+<section class="hero">
+  <h1>Пройдись как Лев</h1>
+  <% if (intro) { %><p class="hero-tagline"><%- renderLinkedText(intro) %></p><% } %>
+</section>
+
+<% if (prize) { %>
+  <section class="link-section">
+    <h2>Приз</h2>
+    <p style="color:var(--color-muted); max-width:60ch;"><%- renderLinkedText(prize) %></p>
+  </section>
+<% } %>
+
+<section class="link-section redhead-apply">
+  <h2>Участвовать</h2>
+  <p style="color:var(--color-muted); max-width:60ch;">
+    Снимите видео модельной проходки под мою музыку и пришлите ссылку — на YouTube, TikTok, VK или Instagram,
+    главное чтобы видео было доступно по ссылке. Отбираем и судим сами, лучших объявим отдельно.
+  </p>
+  <% if (submitted) { %>
+    <div class="flash flash-success">Спасибо! Заявка отправлена, мы её рассмотрим.</div>
+  <% } %>
+  <% if (error) { %>
+    <div class="flash flash-error"><%= error %></div>
+  <% } %>
+  <form action="/contest/submit" method="POST" style="max-width:480px;">
+    <label>
+      Имя *
+      <input type="text" name="name" value="<%= values.name || '' %>" required>
+    </label>
+    <label>
+      Ссылка на видео *
+      <input type="url" name="videoUrl" value="<%= values.videoUrl || '' %>" placeholder="https://..." required>
+    </label>
+    <label>
+      Комментарий
+      <textarea name="note" rows="3"><%= values.note || '' %></textarea>
+    </label>
+    <label>
+      Контакт для связи (почта или телеграм) *
+      <input type="text" name="contact" value="<%= values.contact || '' %>" required>
+    </label>
+    <label style="display:flex; align-items:flex-start; gap:8px;">
+      <input type="checkbox" name="ageConsent" value="1" style="width:auto; margin-top:4px;" <%= values.ageConsent ? 'checked' : '' %> required>
+      <span>Мне есть 18 лет, либо согласие законного представителя на участие и обработку данных получено *</span>
+    </label>
+    <button class="btn" type="submit">Отправить заявку</button>
+  </form>
+</section>
+
+<%- include('partials/footer') %>

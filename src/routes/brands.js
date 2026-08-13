@@ -1,5 +1,6 @@
 const express = require('express');
 const db = require('../db');
+const { notify } = require('../services/mail');
 
 const router = express.Router();
 
@@ -79,8 +80,8 @@ function getOffers() {
     {
       title: 'Судейство в конкурсах',
       description:
-        'Приглашаем представителя бренда в жюри наших конкурсов — например, «Пройдись как Лев» (конкурс модельной проходки под мою музыку, открыт для всех возрастов). Это медийность и ассоциация с ярким событием для бренда, а логотип и упоминание — во всех анонсах конкурса.',
-      example: { type: 'placeholder' },
+        'Приглашаем представителя бренда в жюри наших конкурсов — сейчас идёт «Пройдись как Лев» (конкурс модельной проходки под мою музыку, участники присылают ссылку на видео, участие возможно с согласия законного представителя для несовершеннолетних). Это медийность и ассоциация с ярким событием для бренда, а логотип и упоминание — во всех анонсах конкурса.',
+      example: { type: 'link', url: '/contest', label: 'Смотреть конкурс' },
     },
   ];
 }
@@ -105,6 +106,11 @@ router.post('/', (req, res) => {
     INSERT INTO brand_requests (company_name, contact_name, phone, email, website, message)
     VALUES (?, ?, ?, ?, ?, ?)
   `).run(companyName, contactName, phone, email || '', website || '', message || '');
+
+  notify(
+    `Новая заявка от бренда: ${companyName}`,
+    `Компания: ${companyName}\nКонтакт: ${contactName}\nТелефон: ${phone}\nEmail: ${email || '—'}\nСайт: ${website || '—'}\nСообщение: ${message || '—'}\n\nПосмотреть: /admin/brands`
+  );
 
   res.render('brands', { error: null, success: true, values: {}, offers: getOffers() });
 });

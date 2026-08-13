@@ -171,6 +171,18 @@ function init() {
       note TEXT DEFAULT '',
       link_url TEXT DEFAULT '',
       contact TEXT DEFAULT '',
+      age_consent INTEGER NOT NULL DEFAULT 0,
+      status TEXT NOT NULL DEFAULT 'new',
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS contest_submissions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      contact TEXT NOT NULL,
+      video_url TEXT NOT NULL,
+      note TEXT DEFAULT '',
+      age_consent INTEGER NOT NULL DEFAULT 0,
       status TEXT NOT NULL DEFAULT 'new',
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
@@ -205,6 +217,11 @@ function init() {
     db.exec('ALTER TABLE products ADD COLUMN collection_id INTEGER REFERENCES collections(id) ON DELETE SET NULL');
   }
 
+  const redheadSubmissionCols = db.prepare('PRAGMA table_info(redhead_submissions)').all();
+  if (!redheadSubmissionCols.some((c) => c.name === 'age_consent')) {
+    db.exec("ALTER TABLE redhead_submissions ADD COLUMN age_consent INTEGER NOT NULL DEFAULT 0");
+  }
+
   const defaultNetworks = [
     { key: 'telegram', label: 'Telegram', connector: 'telegram' },
     { key: 'vk', label: 'VK', connector: 'vk' },
@@ -231,6 +248,9 @@ function init() {
     redheads_intro: 'Рыжий цвет волос встречается всего у 1–2% людей на планете — редкая генетика, а не '
       + 'случайность. Здесь — рыжие, которые вдохновляют: модели, музыканты, актёры, творческие люди. '
       + 'Подборку собираем сами, без открытой регистрации.',
+    contest_intro: 'Снимите видео модельной проходки под мою музыку и пришлите ссылку — оцениваем сами, '
+      + 'лучших объявим отдельно.',
+    contest_prize: 'Победитель выбирает приз сам: товары из нашего магазина или денежный приз — на выбор.',
     site_alt_name: 'DJ Levka',
     music_featured_title: 'Soundstates',
     music_featured_note: 'Новый EP — в день релиза попал в плейлист рядом с Moby, Moderat и Röyksopp',

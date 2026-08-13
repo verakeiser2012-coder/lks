@@ -10,6 +10,7 @@
       <th>О себе</th>
       <th>Ссылка</th>
       <th>Контакт</th>
+      <th>18+/согласие</th>
       <th>Статус</th>
       <th></th>
     </tr>
@@ -22,6 +23,7 @@
         <td style="max-width:220px;"><%= s.note %></td>
         <td><% if (s.link_url) { %><a href="<%= s.link_url %>" target="_blank" rel="noopener">ссылка ↗</a><% } %></td>
         <td><%= s.contact %></td>
+        <td><%= s.age_consent ? 'Да' : 'Нет' %></td>
         <td><%= s.status %></td>
         <td>
           <% if (s.status === 'new') { %>

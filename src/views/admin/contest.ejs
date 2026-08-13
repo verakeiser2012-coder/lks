@@ -1,0 +1,24 @@
+<%- include('partials/header') %>
+
+<h1>Конкурс «Пройдись как Лев»</h1>
+
+<% if (saved) { %>
+  <div class="flash flash-success">Сохранено.</div>
+<% } %>
+
+<form action="/admin/contest" method="POST">
+  <label>
+    Вводный текст (правила, условия)
+    <textarea name="intro" rows="4"><%= intro %></textarea>
+  </label>
+  <label>
+    Текст про приз
+    <textarea name="prize" rows="3"><%= prize %></textarea>
+  </label>
+  <p class="hint">Чтобы вставить ссылку в текст: <code>[текст ссылки](https://example.com)</code></p>
+  <button class="btn" type="submit">Сохранить</button>
+</form>
+
+<p><a href="/admin/contest/submissions">Смотреть заявки →</a></p>
+
+<%- include('partials/footer') %>

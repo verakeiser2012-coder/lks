@@ -6,7 +6,7 @@
   <title><%= typeof title !== 'undefined' ? title : [settings.site_name, settings.site_alt_name, settings.site_tagline].filter(Boolean).join(' — ') %></title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
@@ -45,10 +45,15 @@
           </svg>
           Корзина<% if (cartCount > 0) { %><span class="cart-badge"><%= cartCount %></span><% } %>
         </a>
+        <button type="button" class="nav-toggle" aria-label="Меню" aria-expanded="false" aria-controls="site-nav-inner">
+          <span class="nav-toggle-bar"></span>
+          <span class="nav-toggle-bar"></span>
+          <span class="nav-toggle-bar"></span>
+        </button>
       </div>
     </div>
     <nav class="site-nav">
-      <div class="container nav-inner">
+      <div class="container nav-inner" id="site-nav-inner">
         <a href="/">Главная</a>
         <a href="/news">Новости</a>
         <a href="/about">Обо мне</a>
@@ -59,6 +64,7 @@
         <a href="/video">Видео</a>
         <a href="/gallery">Галерея</a>
         <a href="/redheads">Рыжие</a>
+        <a href="/contest">Конкурс</a>
       </div>
     </nav>
   </header>

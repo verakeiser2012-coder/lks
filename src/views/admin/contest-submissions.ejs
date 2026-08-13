@@ -1,0 +1,40 @@
+<%- include('partials/header') %>
+
+<h1>Заявки на конкурс «Пройдись как Лев»</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Имя</th>
+      <th>Видео</th>
+      <th>Комментарий</th>
+      <th>Контакт</th>
+      <th>18+/согласие</th>
+      <th>Статус</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% submissions.forEach(function(s) { %>
+      <tr>
+        <td><%= s.name %></td>
+        <td><a href="<%= s.video_url %>" target="_blank" rel="noopener">видео ↗</a></td>
+        <td style="max-width:220px;"><%= s.note %></td>
+        <td><%= s.contact %></td>
+        <td><%= s.age_consent ? 'Да' : 'Нет' %></td>
+        <td><%= s.status %></td>
+        <td>
+          <form class="inline" action="/admin/contest/submissions/<%= s.id %>/status" method="POST">
+            <select name="status" onchange="this.form.submit()">
+              <% ['new', 'shortlisted', 'winner', 'rejected'].forEach(function(st) { %>
+                <option value="<%= st %>" <%= s.status === st ? 'selected' : '' %>><%= st %></option>
+              <% }); %>
+            </select>
+          </form>
+        </td>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>
+
+<%- include('partials/footer') %>
