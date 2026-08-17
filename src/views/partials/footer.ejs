@@ -1,16 +1,22 @@
   </main>
   <audio id="bg-audio" preload="none"></audio>
-  <button type="button" id="bg-audio-toggle" class="bg-audio-toggle" aria-pressed="false" aria-label="Включить музыку">
-    <svg class="bg-audio-icon bg-audio-icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M9 6v12l-5-4H2V10h2l5-4Z" fill="currentColor" stroke="none"/>
-      <path d="M15.5 8.5a5 5 0 0 1 0 7"/>
-      <path d="M18 6a8.5 8.5 0 0 1 0 12"/>
-    </svg>
-    <svg class="bg-audio-icon bg-audio-icon-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M9 6v12l-5-4H2V10h2l5-4Z" fill="currentColor" stroke="none"/>
-      <path d="M16 9l5 5M21 9l-5 5"/>
-    </svg>
-  </button>
+  <div class="bg-audio-widget">
+    <a href="/music" class="bg-audio-link" aria-label="Перейти к музыке">
+      <svg class="bg-audio-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M9 6v12l-5-4H2V10h2l5-4Z" fill="currentColor" stroke="none"/>
+        <path d="M15.5 8.5a5 5 0 0 1 0 7"/>
+        <path d="M18 6a8.5 8.5 0 0 1 0 12"/>
+      </svg>
+    </a>
+    <button type="button" id="bg-audio-toggle" class="bg-audio-mute" aria-pressed="false" aria-label="Включить музыку">
+      <svg class="bg-audio-mute-icon bg-audio-mute-icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/>
+      </svg>
+      <svg class="bg-audio-mute-icon bg-audio-mute-icon-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M6 6l12 12M18 6 6 18"/>
+      </svg>
+    </button>
+  </div>
   <%
     const icons = {
       youtube: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5.5" width="19" height="13" rx="3.5"/><path d="M10.5 9.5l5 2.5-5 2.5Z" fill="currentColor" stroke="none"/></svg>',
