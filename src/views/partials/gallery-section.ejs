@@ -1,0 +1,17 @@
+<% if (typeof galleryItems !== 'undefined' && galleryItems.length > 0) { %>
+  <section class="link-section">
+    <h2><%= typeof galleryTitle !== 'undefined' ? galleryTitle : 'Фото и видео' %></h2>
+    <div class="gallery-grid">
+      <% galleryItems.forEach(function(item) { %>
+        <div class="gallery-item <%= item.type === 'video' ? 'is-video' : '' %>">
+          <% if (item.type === 'photo') { %>
+            <img src="<%= item.file_path %>" alt="<%= item.title %>" loading="lazy">
+          <% } else { %>
+            <video src="<%= item.file_path %>" muted loop playsinline preload="metadata"></video>
+          <% } %>
+          <% if (item.title) { %><div class="gallery-caption"><%= item.title %></div><% } %>
+        </div>
+      <% }); %>
+    </div>
+  </section>
+<% } %>

@@ -15,7 +15,14 @@
     Текст
     <textarea name="content" rows="8"></textarea>
   </label>
-  <p class="flash">Чтобы вставить ссылку в текст, используйте формат: <code>[текст ссылки](https://...)</code></p>
+  <p class="flash">Чтобы вставить ссылку в текст, используйте формат: <code>[текст ссылки](https://...)</code> — работает и с внутренними ссылками вида <code>/news/...</code></p>
+  <label>
+    Язык
+    <select name="lang">
+      <option value="ru" selected>Русский (/news)</option>
+      <option value="en">English (/en/news)</option>
+    </select>
+  </label>
   <label>
     <input type="checkbox" name="isPublished" value="1" style="width:auto;display:inline-block;" checked>
     Опубликовать

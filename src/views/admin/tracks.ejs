@@ -1,0 +1,36 @@
+<%- include('partials/header') %>
+
+<div class="admin-toolbar">
+  <h1>Треки и синглы</h1>
+  <a class="btn" href="/admin/tracks/new">+ Добавить трек</a>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Обложка</th>
+      <th>Название</th>
+      <th>Опубликован</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% tracks.forEach(function(track) { %>
+      <tr>
+        <td>
+          <% if (track.cover_image) { %><img src="<%= track.cover_image %>" alt="" style="width:48px;height:48px;object-fit:cover;border-radius:4px;"><% } %>
+        </td>
+        <td><%= track.title %></td>
+        <td><%= track.is_published ? 'Да' : 'Нет' %></td>
+        <td>
+          <a href="/admin/tracks/<%= track.id %>/edit">Изменить</a>
+          <form class="inline" action="/admin/tracks/<%= track.id %>/delete" method="POST" onsubmit="return confirm('Удалить трек?');">
+            <button class="link-btn" type="submit">Удалить</button>
+          </form>
+        </td>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>
+
+<%- include('partials/footer') %>

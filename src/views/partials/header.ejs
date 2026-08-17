@@ -6,10 +6,26 @@
   <title><%= typeof title !== 'undefined' ? title : [settings.site_name, settings.site_alt_name, settings.site_tagline].filter(Boolean).join(' — ') %></title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@500;600;700;800&family=Marck+Script&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <filter id="gold-emboss" x="-30%" y="-30%" width="160%" height="160%">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="2.6" result="blur"/>
+        <feDiffuseLighting in="blur" surfaceScale="7" diffuseConstant="1.15" lighting-color="#e0a418" result="diffuse">
+          <fePointLight x="-4000" y="-9000" z="8000"/>
+        </feDiffuseLighting>
+        <feComposite in="diffuse" in2="SourceAlpha" operator="in" result="diffuseClipped"/>
+        <feSpecularLighting in="blur" surfaceScale="7" specularConstant="1.4" specularExponent="22" lighting-color="#fffef2" result="spec">
+          <fePointLight x="-4000" y="-9000" z="8000"/>
+        </feSpecularLighting>
+        <feComposite in="spec" in2="SourceAlpha" operator="in" result="specClipped"/>
+        <feComposite in="specClipped" in2="diffuseClipped" operator="arithmetic" k1="0" k2="1" k3="1" k4="0"/>
+      </filter>
+    </defs>
+  </svg>
   <header class="site-header">
     <div class="container header-top">
       <a class="logo" href="/">
@@ -61,8 +77,6 @@
         <a href="/music">Музыка</a>
         <a href="/gigs">Выступления</a>
         <a href="/style">Стиль</a>
-        <a href="/video">Видео</a>
-        <a href="/gallery">Галерея</a>
         <a href="/redheads">Рыжие</a>
         <a href="/contest">Конкурс</a>
       </div>

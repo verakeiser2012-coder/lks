@@ -9,6 +9,8 @@
   <%- include('partials/banner', { banner }) %>
 <% }); %>
 
+<%- include('partials/gallery-section', { galleryItems: galleryItems, galleryTitle: 'Образы' }) %>
+
 <% groups.forEach(function(group) { %>
   <section class="link-section">
     <% if (group.name) { %><h2><%= group.name %></h2><% } %>

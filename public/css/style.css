@@ -12,6 +12,7 @@
   --color-gold-ink: #3b2a06;
   --radius: 8px;
   --font-display: 'Roboto Slab', Rockwell, 'Arial Black', Georgia, serif;
+  --font-script: 'Marck Script', 'Segoe Script', cursive;
 }
 
 * { box-sizing: border-box; }
@@ -227,17 +228,24 @@ main.container { padding-top: 32px; padding-bottom: 60px; min-height: 60vh; }
   margin-bottom: 32px;
 }
 
+/* Заголовок страницы — золотая проволочная вязь, как на постере фильма "Michael":
+   свет ложится поперёк каждой буквы (тёмный край / яркий центр / тёмный край по вертикали),
+   плюс отдельный бегущий блик поверх — как отражение на круглом металле. */
 .hero h1 {
-  font-size: 3rem;
-  font-weight: 800;
-  color: var(--color-text);
-  letter-spacing: -0.02em;
+  font-family: var(--font-script);
+  font-size: 5rem;
+  font-weight: 400;
+  letter-spacing: 0;
   margin: 0 0 4px;
+  line-height: 1.15;
+  color: var(--color-gold-bright);
+  filter:
+    url(#gold-emboss)
+    drop-shadow(0 3px 4px rgba(90, 60, 10, 0.45));
 }
 @media (max-width: 480px) {
-  .hero h1 { font-size: 2.1rem; }
+  .hero h1 { font-size: 3rem; }
 }
-
 @keyframes gold-shine {
   to { background-position: -250% center; }
 }
@@ -620,9 +628,15 @@ form.inline { display: inline; }
 }
 .featured-title {
   margin: 0 0 8px;
-  font-size: 2.4rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  font-family: var(--font-script);
+  font-size: 3.6rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.2;
+  color: var(--color-gold-bright);
+  filter:
+    url(#gold-emboss)
+    drop-shadow(0 3px 4px rgba(90, 60, 10, 0.45));
 }
 .featured-note {
   margin: 0 0 18px;
@@ -630,6 +644,32 @@ form.inline { display: inline; }
   font-size: 0.95rem;
 }
 .featured-listen { font-size: 1rem; padding: 12px 28px; }
+
+/* Список треков с описанием — история/смысл каждого трека */
+.track-list { display: flex; flex-direction: column; gap: 16px; }
+.track-card {
+  display: flex;
+  gap: 18px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 18px;
+  background: #fff;
+}
+.track-cover {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: calc(var(--radius) - 2px);
+  flex-shrink: 0;
+}
+.track-body { flex: 1; min-width: 0; }
+.track-title { margin: 0 0 6px; font-size: 1.15rem; }
+.track-description { margin: 0 0 10px; color: var(--color-muted); font-size: 0.95rem; line-height: 1.55; }
+.track-listen { font-weight: 600; }
+@media (max-width: 560px) {
+  .track-card { flex-direction: column; }
+  .track-cover { width: 100%; height: auto; aspect-ratio: 1 / 1; }
+}
 
 .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
 .genre-chip {

@@ -2,6 +2,7 @@ const express = require('express');
 const db = require('../db');
 const { groupLinks } = require('../utils/links');
 const { getBanners } = require('../utils/banners');
+const { getGalleryItems } = require('../utils/gallery');
 
 const router = express.Router();
 
@@ -14,6 +15,7 @@ router.get('/', (req, res) => {
     intro: introRow ? introRow.value : '',
     groups: groupLinks(links),
     banners: getBanners('style'),
+    galleryItems: getGalleryItems('style'),
   });
 });
 

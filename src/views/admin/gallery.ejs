@@ -23,11 +23,23 @@
     <input type="number" name="sortOrder" value="0">
   </label>
   <label>
+    Показывать на странице
+    <select name="pageKey">
+      <option value="">— нигде (только в админке) —</option>
+      <option value="home">Главная</option>
+      <option value="music">Музыка</option>
+      <option value="style">Стиль</option>
+      <option value="gigs">Выступления</option>
+    </select>
+  </label>
+  <label>
     Файл *
     <input type="file" name="file" accept="image/*,video/*" required>
   </label>
   <button class="btn" type="submit">Загрузить</button>
 </form>
+
+<p class="hint">Отдельных страниц «Видео» и «Галерея» больше нет — фото и видео отсюда вставляются на страницы через поле «Показывать на странице» ниже, у каждого файла отдельно.</p>
 
 <div class="admin-media-grid">
   <% items.forEach(function(item) { %>
@@ -38,6 +50,15 @@
         <video src="<%= item.file_path %>" controls></video>
       <% } %>
       <div class="admin-media-caption"><%= item.title || '(без подписи)' %></div>
+      <form action="/admin/gallery/<%= item.id %>/page" method="POST">
+        <select name="pageKey" onchange="this.form.submit()">
+          <option value="" <%= !item.page_key ? 'selected' : '' %>>— нигде —</option>
+          <option value="home" <%= item.page_key === 'home' ? 'selected' : '' %>>Главная</option>
+          <option value="music" <%= item.page_key === 'music' ? 'selected' : '' %>>Музыка</option>
+          <option value="style" <%= item.page_key === 'style' ? 'selected' : '' %>>Стиль</option>
+          <option value="gigs" <%= item.page_key === 'gigs' ? 'selected' : '' %>>Выступления</option>
+        </select>
+      </form>
       <form action="/admin/gallery/<%= item.id %>/delete" method="POST" onsubmit="return confirm('Удалить файл?');">
         <button class="link-btn" type="submit">Удалить</button>
       </form>

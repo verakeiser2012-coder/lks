@@ -1,0 +1,46 @@
+<%- include('partials/header') %>
+
+<h1><%= track && track.id ? 'Редактировать трек' : 'Новый трек' %></h1>
+
+<% if (error) { %>
+  <div class="flash flash-error"><%= error %></div>
+<% } %>
+
+<form
+  action="<%= track && track.id ? `/admin/tracks/${track.id}` : '/admin/tracks' %>"
+  method="POST"
+  enctype="multipart/form-data"
+>
+  <label>
+    Название *
+    <input type="text" name="title" value="<%= track ? track.title : '' %>" required>
+  </label>
+  <label>
+    О чём трек — смысл, история написания
+    <textarea name="description" rows="6"><%= track ? track.description : '' %></textarea>
+  </label>
+  <p class="hint">Чтобы вставить ссылку в текст: <code>[текст ссылки](https://example.com)</code></p>
+  <label>
+    Ссылка «слушать»
+    <input type="url" name="url" value="<%= track ? track.url : '' %>" placeholder="https://...">
+  </label>
+  <label>
+    Обложка
+    <input type="file" name="cover" accept="image/*">
+  </label>
+  <% if (track && track.cover_image) { %>
+    <img src="<%= track.cover_image %>" alt="" style="width:120px;border-radius:8px;margin-bottom:14px;">
+  <% } %>
+  <label>
+    Порядок сортировки
+    <input type="number" name="sortOrder" value="<%= track ? track.sort_order : 0 %>">
+  </label>
+  <label>
+    <input type="checkbox" name="isPublished" value="1" style="width:auto;display:inline-block;"
+      <%= !track || track.is_published ? 'checked' : '' %>>
+    Опубликован
+  </label>
+  <button class="btn" type="submit">Сохранить</button>
+</form>
+
+<%- include('partials/footer') %>

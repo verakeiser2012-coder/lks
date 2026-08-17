@@ -20,6 +20,12 @@
   <% } %>
 </article>
 
-<p><a href="/news">← Ко всем новостям</a></p>
+<p>
+  <% if (post.lang === 'en') { %>
+    <a href="/en/news">← Back to news</a>
+  <% } else { %>
+    <a href="/news">← Ко всем новостям</a>
+  <% } %>
+</p>
 
 <%- include('partials/footer') %>

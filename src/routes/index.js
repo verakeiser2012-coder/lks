@@ -1,5 +1,6 @@
 const express = require('express');
 const db = require('../db');
+const { getGalleryItems } = require('../utils/gallery');
 
 const router = express.Router();
 
@@ -18,7 +19,7 @@ router.get('/', (req, res) => {
   `).all();
   const coverByNewsId = {};
   covers.forEach((c) => { coverByNewsId[c.news_id] = c.file_path; });
-  res.render('index', { products, news, coverByNewsId });
+  res.render('index', { products, news, coverByNewsId, galleryItems: getGalleryItems('home') });
 });
 
 module.exports = router;

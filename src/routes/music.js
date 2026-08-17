@@ -1,6 +1,7 @@
 const express = require('express');
 const db = require('../db');
 const { groupLinks } = require('../utils/links');
+const { getGalleryItems } = require('../utils/gallery');
 
 const router = express.Router();
 
@@ -15,6 +16,10 @@ router.get('/', (req, res) => {
   const featuredMap = {};
   for (const row of featuredRows) featuredMap[row.key] = row.value;
 
+  const tracks = db
+    .prepare('SELECT * FROM tracks WHERE is_published = 1 ORDER BY sort_order ASC, created_at DESC')
+    .all();
+
   res.render('music', {
     intro: introRow ? introRow.value : '',
     groups: groupLinks(links),
@@ -23,6 +28,8 @@ router.get('/', (req, res) => {
       note: featuredMap.music_featured_note || '',
       url: featuredMap.music_featured_url || '',
     },
+    tracks,
+    galleryItems: getGalleryItems('music'),
   });
 });
 

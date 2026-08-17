@@ -16,16 +16,16 @@ router.get('/new', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const { title, content, isPublished } = req.body;
+  const { title, content, isPublished, lang } = req.body;
   if (!title) {
     return res.render('admin/news-new', { error: 'Укажите заголовок.' });
   }
 
   const slug = slugify(title);
   const info = db.prepare(`
-    INSERT INTO news (title, slug, content, is_published)
-    VALUES (?, ?, ?, ?)
-  `).run(title, slug, content || '', isPublished ? 1 : 0);
+    INSERT INTO news (title, slug, content, is_published, lang)
+    VALUES (?, ?, ?, ?, ?)
+  `).run(title, slug, content || '', isPublished ? 1 : 0, lang === 'en' ? 'en' : 'ru');
 
   res.redirect(`/admin/news/${info.lastInsertRowid}/edit`);
 });
@@ -44,14 +44,14 @@ router.post('/:id', (req, res) => {
     return res.status(404).render('404');
   }
 
-  const { title, content, isPublished } = req.body;
+  const { title, content, isPublished, lang } = req.body;
   if (!title) {
     return res.render('admin/news-edit', { post, media: getMedia(post.id), error: 'Укажите заголовок.' });
   }
 
   db.prepare(`
-    UPDATE news SET title = ?, content = ?, is_published = ? WHERE id = ?
-  `).run(title, content || '', isPublished ? 1 : 0, post.id);
+    UPDATE news SET title = ?, content = ?, is_published = ?, lang = ? WHERE id = ?
+  `).run(title, content || '', isPublished ? 1 : 0, lang === 'en' ? 'en' : 'ru', post.id);
 
   res.redirect(`/admin/news/${post.id}/edit`);
 });

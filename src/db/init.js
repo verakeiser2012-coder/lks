@@ -57,7 +57,19 @@ function init() {
       type TEXT NOT NULL CHECK (type IN ('photo', 'video')),
       title TEXT DEFAULT '',
       file_path TEXT NOT NULL,
+      page_key TEXT NOT NULL DEFAULT '',
       sort_order INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS tracks (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      description TEXT DEFAULT '',
+      url TEXT DEFAULT '',
+      cover_image TEXT DEFAULT '',
+      sort_order INTEGER NOT NULL DEFAULT 0,
+      is_published INTEGER NOT NULL DEFAULT 1,
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
 
@@ -220,6 +232,16 @@ function init() {
   const redheadSubmissionCols = db.prepare('PRAGMA table_info(redhead_submissions)').all();
   if (!redheadSubmissionCols.some((c) => c.name === 'age_consent')) {
     db.exec("ALTER TABLE redhead_submissions ADD COLUMN age_consent INTEGER NOT NULL DEFAULT 0");
+  }
+
+  const newsCols = db.prepare('PRAGMA table_info(news)').all();
+  if (!newsCols.some((c) => c.name === 'lang')) {
+    db.exec("ALTER TABLE news ADD COLUMN lang TEXT NOT NULL DEFAULT 'ru'");
+  }
+
+  const galleryItemCols = db.prepare('PRAGMA table_info(gallery_items)').all();
+  if (!galleryItemCols.some((c) => c.name === 'page_key')) {
+    db.exec("ALTER TABLE gallery_items ADD COLUMN page_key TEXT NOT NULL DEFAULT ''");
   }
 
   const defaultNetworks = [

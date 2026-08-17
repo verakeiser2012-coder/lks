@@ -17,6 +17,7 @@ const collectionsRoutes = require('./collections');
 const redheadsRoutes = require('./redheads');
 const contestRoutes = require('./contest');
 const bannersRoutes = require('./banners');
+const tracksRoutes = require('./tracks');
 
 const router = express.Router();
 
@@ -45,6 +46,7 @@ router.use('/collections', collectionsRoutes);
 router.use('/redheads', redheadsRoutes);
 router.use('/contest', contestRoutes);
 router.use('/banners', bannersRoutes);
+router.use('/tracks', tracksRoutes);
 router.use('/calendar', calendarRoutes);
 router.use('/social-networks', socialNetworksRoutes);
 

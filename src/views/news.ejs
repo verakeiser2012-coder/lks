@@ -1,6 +1,13 @@
 <%- include('partials/header') %>
 
-<h1>Новости</h1>
+<div class="admin-toolbar">
+  <h1><%= lang === 'en' ? 'News' : 'Новости' %></h1>
+  <% if (lang === 'en') { %>
+    <a href="/news">На русском</a>
+  <% } else { %>
+    <a href="/en/news">English version</a>
+  <% } %>
+</div>
 
 <% banners.forEach(function(banner) { %>
   <%- include('partials/banner', { banner }) %>
@@ -11,7 +18,7 @@
 <% } else { %>
   <div class="news-list">
     <% posts.forEach(function(post) { %>
-      <a class="news-card" href="/news/<%= post.slug %>">
+      <a class="news-card" href="<%= lang === 'en' ? '/en/news/' : '/news/' %><%= post.slug %>">
         <div class="news-card-image">
           <% if (coverByNewsId[post.id]) { %>
             <img src="<%= coverByNewsId[post.id] %>" alt="<%= post.title %>">
