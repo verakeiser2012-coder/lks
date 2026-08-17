@@ -28,27 +28,27 @@
   </svg>
   <header class="site-header">
     <div class="container header-top">
-      <a class="logo" href="/">
+      <div class="logo">
         <span class="logo-names">
-          <span class="logo-name">
+          <a class="logo-name" href="/">
             <%= settings.site_name %>
             <svg class="badge-icon" viewBox="0 0 24 24" aria-hidden="true">
               <circle cx="12" cy="12" r="12" fill="currentColor"/>
               <path d="M7.5 12.5l2.7 2.7L16.5 9" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-          </span>
+          </a>
           <% if (settings.site_alt_name) { %>
-            <span class="logo-name">
+            <a class="logo-name" href="/music">
               <%= settings.site_alt_name %>
               <svg class="badge-icon" viewBox="0 0 24 24" aria-hidden="true">
                 <circle cx="12" cy="12" r="12" fill="currentColor"/>
                 <path d="M7.5 12.5l2.7 2.7L16.5 9" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-            </span>
+            </a>
           <% } %>
         </span>
         <% if (settings.site_tagline) { %><span class="logo-tagline"><%= settings.site_tagline %></span><% } %>
-      </a>
+      </div>
       <div class="shop-nav">
         <a href="/catalog" class="shop-link">Каталог</a>
         <a href="/drops" class="shop-link">Дропы</a>
