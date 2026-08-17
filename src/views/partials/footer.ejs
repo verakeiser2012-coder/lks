@@ -1,4 +1,16 @@
   </main>
+  <audio id="bg-audio" preload="none"></audio>
+  <button type="button" id="bg-audio-toggle" class="bg-audio-toggle" aria-pressed="false" aria-label="Включить музыку">
+    <svg class="bg-audio-icon bg-audio-icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M9 6v12l-5-4H2V10h2l5-4Z" fill="currentColor" stroke="none"/>
+      <path d="M15.5 8.5a5 5 0 0 1 0 7"/>
+      <path d="M18 6a8.5 8.5 0 0 1 0 12"/>
+    </svg>
+    <svg class="bg-audio-icon bg-audio-icon-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M9 6v12l-5-4H2V10h2l5-4Z" fill="currentColor" stroke="none"/>
+      <path d="M16 9l5 5M21 9l-5 5"/>
+    </svg>
+  </button>
   <%
     const icons = {
       youtube: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5.5" width="19" height="13" rx="3.5"/><path d="M10.5 9.5l5 2.5-5 2.5Z" fill="currentColor" stroke="none"/></svg>',
@@ -93,5 +105,6 @@
   </footer>
   <script src="/js/lightbox.js" defer></script>
   <script src="/js/nav.js" defer></script>
+  <script src="/js/bg-music.js" defer></script>
 </body>
 </html>
