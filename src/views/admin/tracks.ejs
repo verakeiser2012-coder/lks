@@ -10,6 +10,7 @@
     <tr>
       <th>Обложка</th>
       <th>Название</th>
+      <th>Релиз</th>
       <th>Опубликован</th>
       <th></th>
     </tr>
@@ -21,6 +22,7 @@
           <% if (track.cover_image) { %><img src="<%= track.cover_image %>" alt="" style="width:48px;height:48px;object-fit:cover;border-radius:4px;"><% } %>
         </td>
         <td><%= track.title %></td>
+        <td><%= track.release_title || '—' %></td>
         <td><%= track.is_published ? 'Да' : 'Нет' %></td>
         <td>
           <a href="/admin/tracks/<%= track.id %>/edit">Изменить</a>

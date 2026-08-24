@@ -9,3 +9,4 @@ public/uploads/*
 npm-debug.log*
 .claude/
 tools/
+PLAN.md

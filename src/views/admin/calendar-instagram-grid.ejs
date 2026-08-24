@@ -1,0 +1,30 @@
+<%- include('partials/header') %>
+
+<div class="admin-toolbar">
+  <h1>Превью Instagram-сетки</h1>
+  <a href="/admin/calendar">← К календарю</a>
+</div>
+
+<p class="hint">
+  Так будущие посты будут смотреться подряд в ленте — по порядку даты публикации. Публикация в Instagram
+  вручную, эта страница только помогает выбрать, что и в каком порядке постить.
+</p>
+
+<% if (posts.length === 0) { %>
+  <p>Пока нет постов с фото/видео, отмеченных для Instagram.</p>
+<% } %>
+
+<div class="ig-grid">
+  <% posts.forEach(function(post) { %>
+    <a class="ig-grid-cell" href="/admin/calendar/<%= post.id %>" title="<%= post.scheduled_at %>">
+      <% if (post.media_type === 'video') { %>
+        <video src="<%= post.media_path %>" muted></video>
+      <% } else { %>
+        <img src="<%= post.media_path %>" alt="">
+      <% } %>
+      <span class="ig-grid-date"><%= post.scheduled_at.slice(0, 10) %></span>
+    </a>
+  <% }); %>
+</div>
+
+<%- include('partials/footer') %>

@@ -35,7 +35,11 @@ router.get('/:slug', (req, res) => {
     return res.status(404).render('404');
   }
 
-  res.render('product', { product });
+  const release = product.release_id
+    ? db.prepare('SELECT * FROM releases WHERE id = ?').get(product.release_id)
+    : null;
+
+  res.render('product', { product, release });
 });
 
 module.exports = router;

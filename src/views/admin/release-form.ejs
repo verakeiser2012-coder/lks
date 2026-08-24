@@ -1,0 +1,79 @@
+<%- include('partials/header') %>
+
+<h1><%= release && release.id ? 'Редактировать релиз' : 'Новый релиз' %></h1>
+
+<% if (error) { %>
+  <div class="flash flash-error"><%= error %></div>
+<% } %>
+
+<form
+  action="<%= release && release.id ? `/admin/releases/${release.id}` : '/admin/releases' %>"
+  method="POST"
+  enctype="multipart/form-data"
+>
+  <label>
+    Название *
+    <input type="text" name="title" value="<%= release ? release.title : '' %>" required>
+  </label>
+  <label>
+    Тип
+    <select name="releaseType">
+      <% ['EP', 'Альбом', 'Сингл'].forEach(function(t) { %>
+        <option value="<%= t %>" <%= release && release.release_type === t ? 'selected' : '' %>><%= t %></option>
+      <% }); %>
+    </select>
+  </label>
+  <label>
+    Год
+    <input type="text" name="year" value="<%= release ? release.year : '' %>" placeholder="2026">
+  </label>
+  <label>
+    Описание
+    <textarea name="description" rows="5"><%= release ? release.description : '' %></textarea>
+  </label>
+  <p class="hint">Чтобы вставить ссылку в текст: <code>[текст ссылки](https://example.com)</code></p>
+  <label>
+    Ссылка «слушать целиком» (band.link / Spotify / Яндекс Музыка)
+    <input type="url" name="streamingUrl" value="<%= release ? release.streaming_url : '' %>" placeholder="https://band.link/...">
+  </label>
+  <label>
+    Обложка
+    <input type="file" name="cover" accept="image/*">
+  </label>
+  <% if (release && release.cover_image) { %>
+    <img src="<%= release.cover_image %>" alt="" style="width:120px;border-radius:8px;margin-bottom:14px;">
+  <% } %>
+  <label>
+    Порядок сортировки
+    <input type="number" name="sortOrder" value="<%= release ? release.sort_order : 0 %>">
+  </label>
+  <label>
+    <input type="checkbox" name="isPublished" value="1" style="width:auto;display:inline-block;"
+      <%= !release || release.is_published ? 'checked' : '' %>>
+    Опубликован
+  </label>
+  <button class="btn" type="submit">Сохранить</button>
+</form>
+
+<% if (release && release.id) { %>
+  <h2 style="margin-top:32px;">Треки этого релиза</h2>
+  <% if (tracks && tracks.length > 0) { %>
+    <table>
+      <thead><tr><th>№</th><th>Название</th><th></th></tr></thead>
+      <tbody>
+        <% tracks.forEach(function(t, i) { %>
+          <tr>
+            <td><%= i + 1 %></td>
+            <td><%= t.title %></td>
+            <td><a href="/admin/tracks/<%= t.id %>/edit">Изменить</a></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  <% } else { %>
+    <p class="hint">У релиза пока нет треков.</p>
+  <% } %>
+  <p class="hint">Чтобы привязать трек к этому релизу — откройте трек в разделе «Треки» и выберите релиз в форме.</p>
+<% } %>
+
+<%- include('partials/footer') %>

@@ -25,7 +25,7 @@ router.get('/', (req, res) => {
 });
 
 router.post('/submit', (req, res) => {
-  const { name, contact, videoUrl, note, ageConsent } = req.body;
+  const { name, contact, videoUrl, note, ageConsent, dataConsent } = req.body;
 
   if (!name || !contact || !videoUrl) {
     return res.render('contest', {
@@ -47,8 +47,18 @@ router.post('/submit', (req, res) => {
     });
   }
 
+  if (!dataConsent) {
+    return res.render('contest', {
+      intro: loadIntro(),
+      prize: loadPrize(),
+      submitted: false,
+      error: 'Подтвердите согласие на обработку персональных данных.',
+      values: req.body,
+    });
+  }
+
   db.prepare(`
-    INSERT INTO contest_submissions (name, contact, video_url, note, age_consent) VALUES (?, ?, ?, ?, 1)
+    INSERT INTO contest_submissions (name, contact, video_url, note, age_consent, data_consent) VALUES (?, ?, ?, ?, 1, 1)
   `).run(name, contact, videoUrl, note || '');
 
   notify(

@@ -25,6 +25,7 @@ const collectionsRoutes = require('./routes/collections');
 const redheadsRoutes = require('./routes/redheads');
 const contestRoutes = require('./routes/contest');
 const subscribeRoutes = require('./routes/subscribe');
+const legalRoutes = require('./routes/legal');
 const adminRoutes = require('./routes/admin');
 
 const app = express();
@@ -91,6 +92,7 @@ app.use('/drops', collectionsRoutes);
 app.use('/redheads', redheadsRoutes);
 app.use('/contest', contestRoutes);
 app.use('/subscribe', subscribeRoutes);
+app.use('/legal', legalRoutes);
 app.use('/admin', adminRoutes);
 
 app.use((req, res) => {

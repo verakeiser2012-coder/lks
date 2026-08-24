@@ -19,7 +19,7 @@ router.get('/', (req, res) => {
 });
 
 router.post('/submit', (req, res) => {
-  const { name, role, note, linkUrl, contact, ageConsent } = req.body;
+  const { name, role, note, linkUrl, contact, ageConsent, dataConsent } = req.body;
   const introRow = db.prepare("SELECT value FROM settings WHERE key = 'redheads_intro'").get();
   const people = db
     .prepare('SELECT * FROM redhead_spotlights WHERE is_published = 1 ORDER BY sort_order ASC, created_at ASC')
@@ -45,8 +45,18 @@ router.post('/submit', (req, res) => {
     });
   }
 
+  if (!dataConsent) {
+    return res.render('redheads', {
+      intro: introRow ? introRow.value : '',
+      people,
+      submitted: false,
+      error: 'Подтвердите согласие на обработку персональных данных.',
+      values: req.body,
+    });
+  }
+
   db.prepare(`
-    INSERT INTO redhead_submissions (name, role, note, link_url, contact, age_consent) VALUES (?, ?, ?, ?, ?, 1)
+    INSERT INTO redhead_submissions (name, role, note, link_url, contact, age_consent, data_consent) VALUES (?, ?, ?, ?, ?, 1, 1)
   `).run(name, role || '', note || '', linkUrl || '', contact);
 
   notify(

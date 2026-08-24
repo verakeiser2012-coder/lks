@@ -20,7 +20,26 @@ function getPost(id) {
 }
 
 function getTargets(postId) {
-  return db.prepare('SELECT * FROM social_post_targets WHERE post_id = ?').all(postId);
+  return db
+    .prepare(`
+      SELECT t.*, n.connector AS network_connector, n.label AS network_label
+      FROM social_post_targets t
+      LEFT JOIN social_networks n ON n.key = t.network_key
+      WHERE t.post_id = ?
+    `)
+    .all(postId);
+}
+
+function listInstagramGridPosts() {
+  return db
+    .prepare(`
+      SELECT p.*
+      FROM social_posts p
+      JOIN social_post_targets t ON t.post_id = p.id
+      WHERE t.network_key = 'instagram' AND p.media_path != ''
+      ORDER BY p.scheduled_at ASC
+    `)
+    .all();
 }
 
 function normalizeScheduledAt(value) {
@@ -29,4 +48,11 @@ function normalizeScheduledAt(value) {
   return normalized;
 }
 
-module.exports = { listNetworks, listPostsForMonth, getPost, getTargets, normalizeScheduledAt };
+module.exports = {
+  listNetworks,
+  listPostsForMonth,
+  getPost,
+  getTargets,
+  listInstagramGridPosts,
+  normalizeScheduledAt,
+};

@@ -2,8 +2,15 @@ const express = require('express');
 const db = require('../../../db');
 const { uploadGalleryFile } = require('../../../middleware/upload');
 const { isValidMediaUpload, mediaFilePath } = require('../../../services/media');
-const { publishPost } = require('../../../services/social/publish');
-const { listNetworks, listPostsForMonth, getPost, getTargets, normalizeScheduledAt } = require('./helpers');
+const { publishPost, refreshStats } = require('../../../services/social/publish');
+const {
+  listNetworks,
+  listPostsForMonth,
+  getPost,
+  getTargets,
+  listInstagramGridPosts,
+  normalizeScheduledAt,
+} = require('./helpers');
 
 const router = express.Router();
 
@@ -53,28 +60,44 @@ router.get('/', (req, res) => {
 });
 
 router.get('/new', (req, res) => {
-  res.render('admin/calendar-form', { post: null, networks: listNetworks(), error: null });
+  let prefill = null;
+  if (req.query.fromNews) {
+    const news = db.prepare('SELECT * FROM news WHERE id = ?').get(req.query.fromNews);
+    if (news) {
+      const media = db
+        .prepare("SELECT * FROM news_media WHERE news_id = ? ORDER BY sort_order ASC, created_at DESC")
+        .get(news.id);
+      prefill = {
+        text: `${news.title}\n\n${news.content || ''}`.trim(),
+        mediaPath: media ? media.file_path : '',
+        mediaType: media ? media.type : '',
+      };
+    }
+  }
+  res.render('admin/calendar-form', { post: null, prefill, networks: listNetworks(), error: null });
 });
 
 router.post('/', uploadGalleryFile.single('file'), (req, res) => {
-  const { text, scheduledAt } = req.body;
+  const { text, scheduledAt, prefillMediaPath, prefillMediaType } = req.body;
   const rawNetworks = req.body.networks;
   const selectedNetworks = Array.isArray(rawNetworks) ? rawNetworks : rawNetworks ? [rawNetworks] : [];
 
   if (!scheduledAt || selectedNetworks.length === 0) {
     return res.render('admin/calendar-form', {
       post: null,
+      prefill: null,
       networks: listNetworks(),
       error: 'Укажите дату публикации и хотя бы одну соцсеть.',
     });
   }
 
-  let mediaPath = '';
-  let mediaType = '';
+  let mediaPath = prefillMediaPath || '';
+  let mediaType = prefillMediaType || '';
   if (req.file) {
     if (!isValidMediaUpload(req)) {
       return res.render('admin/calendar-form', {
         post: null,
+        prefill: null,
         networks: listNetworks(),
         error: 'Некорректный тип медиафайла.',
       });
@@ -96,6 +119,10 @@ router.post('/', uploadGalleryFile.single('file'), (req, res) => {
   res.redirect(`/admin/calendar/${info.lastInsertRowid}`);
 });
 
+router.get('/instagram-grid', (req, res) => {
+  res.render('admin/calendar-instagram-grid', { posts: listInstagramGridPosts() });
+});
+
 router.get('/:id', (req, res) => {
   const post = getPost(req.params.id);
   if (!post) {
@@ -112,7 +139,7 @@ router.get('/:id/edit', (req, res) => {
   if (post.status !== 'scheduled') {
     return res.redirect(`/admin/calendar/${post.id}`);
   }
-  res.render('admin/calendar-form', { post, networks: listNetworks(), error: null });
+  res.render('admin/calendar-form', { post, prefill: null, networks: listNetworks(), error: null });
 });
 
 router.post('/:id/edit', uploadGalleryFile.single('file'), (req, res) => {
@@ -128,6 +155,7 @@ router.post('/:id/edit', uploadGalleryFile.single('file'), (req, res) => {
   if (!scheduledAt) {
     return res.render('admin/calendar-form', {
       post,
+      prefill: null,
       networks: listNetworks(),
       error: 'Укажите дату публикации.',
     });
@@ -139,6 +167,7 @@ router.post('/:id/edit', uploadGalleryFile.single('file'), (req, res) => {
     if (!isValidMediaUpload(req)) {
       return res.render('admin/calendar-form', {
         post,
+        prefill: null,
         networks: listNetworks(),
         error: 'Некорректный тип медиафайла.',
       });
@@ -161,6 +190,11 @@ router.post('/:id/publish', async (req, res) => {
   }
   await publishPost(post.id);
   res.redirect(`/admin/calendar/${post.id}`);
+});
+
+router.post('/:id/targets/:targetId/refresh-stats', async (req, res) => {
+  await refreshStats(req.params.targetId);
+  res.redirect(`/admin/calendar/${req.params.id}`);
 });
 
 router.post('/:id/delete', (req, res) => {

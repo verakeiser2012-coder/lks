@@ -1,6 +1,9 @@
 <%- include('partials/header') %>
 
-<h1>Редактировать новость</h1>
+<div class="admin-toolbar">
+  <h1>Редактировать новость</h1>
+  <a class="btn" href="/admin/calendar/new?fromNews=<%= post.id %>">Создать пост в календаре</a>
+</div>
 
 <% if (error) { %>
   <div class="flash flash-error"><%= error %></div>

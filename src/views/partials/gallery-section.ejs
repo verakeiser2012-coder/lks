@@ -2,10 +2,16 @@
   <section class="link-section">
     <h2><%= typeof galleryTitle !== 'undefined' ? galleryTitle : 'Фото и видео' %></h2>
     <div class="gallery-grid">
-      <% galleryItems.forEach(function(item) { %>
-        <div class="gallery-item <%= item.type === 'video' ? 'is-video' : '' %>">
+      <% galleryItems.forEach(function(item) {
+        var isEmbed = item.type === 'video' && item.file_path.indexOf('http') === 0;
+      %>
+        <div class="gallery-item <%= item.type === 'video' && !isEmbed ? 'is-video' : '' %> <%= isEmbed ? 'is-embed' : '' %>">
           <% if (item.type === 'photo') { %>
             <img src="<%= item.file_path %>" alt="<%= item.title %>" loading="lazy">
+          <% } else if (isEmbed) { %>
+            <div class="gallery-embed-frame">
+              <iframe src="<%= item.file_path %>" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen frameborder="0"></iframe>
+            </div>
           <% } else { %>
             <video src="<%= item.file_path %>" muted loop playsinline preload="metadata"></video>
           <% } %>

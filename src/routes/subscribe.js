@@ -6,11 +6,16 @@ const router = express.Router();
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 router.post('/', (req, res) => {
-  const { email, redirectTo } = req.body;
+  const { email, redirectTo, dataConsent } = req.body;
   const target = typeof redirectTo === 'string' && redirectTo.startsWith('/') ? redirectTo : '/';
 
   if (!email || !EMAIL_RE.test(email)) {
     req.session.subscribeError = 'Введите корректный email.';
+    return res.redirect(target);
+  }
+
+  if (!dataConsent) {
+    req.session.subscribeError = 'Подтвердите согласие на обработку персональных данных.';
     return res.redirect(target);
   }
 

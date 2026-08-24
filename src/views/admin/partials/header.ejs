@@ -12,29 +12,48 @@
     <div class="container admin-header-inner">
       <a class="logo" href="/admin">Админка</a>
       <nav class="main-nav">
-        <a href="/admin/products">Товары</a>
-        <a href="/admin/collections">Дропы</a>
-        <a href="/admin/redheads">Рыжие</a>
-        <a href="/admin/redheads/submissions">Заявки рыжих</a>
-        <a href="/admin/contest">Конкурс</a>
-        <a href="/admin/contest/submissions">Заявки конкурса</a>
-        <a href="/admin/banners">Баннеры</a>
-        <a href="/admin/orders">Заказы</a>
-        <a href="/admin/gallery">Галерея</a>
-        <a href="/admin/about">Обо мне</a>
-        <a href="/admin/pages/music">Музыка</a>
-        <a href="/admin/tracks">Треки</a>
-        <a href="/admin/pages/gigs">Выступления</a>
-        <a href="/admin/pages/style">Стиль</a>
-        <a href="/admin/news">Новости</a>
-        <a href="/admin/brands">Брендам</a>
-        <a href="/admin/calendar">Календарь</a>
-        <a href="/admin/social-networks">Соцсети</a>
-        <a href="/admin/settings">Настройки</a>
-        <a href="/" target="_blank">Сайт ↗</a>
-        <form class="inline" action="/admin/logout" method="POST">
-          <button class="link-btn" type="submit">Выйти</button>
-        </form>
+        <div class="nav-group">
+          <span class="nav-group-label">Магазин</span>
+          <a href="/admin/products">Товары</a>
+          <a href="/admin/collections">Дропы</a>
+          <a href="/admin/orders">Заказы</a>
+        </div>
+        <div class="nav-group">
+          <span class="nav-group-label">Музыка</span>
+          <a href="/admin/pages/music">Музыка</a>
+          <a href="/admin/releases">Релизы</a>
+          <a href="/admin/tracks">Треки</a>
+        </div>
+        <div class="nav-group">
+          <span class="nav-group-label">Контент</span>
+          <a href="/admin/news">Новости</a>
+          <a href="/admin/about">Обо мне</a>
+          <a href="/admin/gallery">Галерея</a>
+          <a href="/admin/pages/style">Стиль</a>
+          <a href="/admin/pages/gigs">Выступления</a>
+        </div>
+        <div class="nav-group">
+          <span class="nav-group-label">Сообщество</span>
+          <a href="/admin/redheads">Рыжие</a>
+          <a href="/admin/redheads/submissions">Заявки рыжих</a>
+          <a href="/admin/contest">Конкурс</a>
+          <a href="/admin/contest/submissions">Заявки конкурса</a>
+        </div>
+        <div class="nav-group">
+          <span class="nav-group-label">Продвижение</span>
+          <a href="/admin/banners">Баннеры</a>
+          <a href="/admin/brands">Брендам</a>
+          <a href="/admin/social-networks">Соцсети</a>
+        </div>
+        <div class="nav-group">
+          <a href="/admin/settings">Настройки</a>
+        </div>
+        <div class="nav-group">
+          <a href="/" target="_blank">Сайт ↗</a>
+          <form class="inline" action="/admin/logout" method="POST">
+            <button class="link-btn" type="submit">Выйти</button>
+          </form>
+        </div>
       </nav>
     </div>
   </header>

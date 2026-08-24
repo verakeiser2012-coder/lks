@@ -1,6 +1,8 @@
 (function () {
   document.addEventListener('DOMContentLoaded', function () {
-    var items = Array.prototype.slice.call(document.querySelectorAll('.gallery-item'));
+    var items = Array.prototype.slice.call(document.querySelectorAll('.gallery-item')).filter(function (item) {
+      return !item.querySelector('iframe');
+    });
     if (items.length === 0) return;
 
     var overlay = document.createElement('div');

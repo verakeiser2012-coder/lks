@@ -9,9 +9,16 @@
 <form action="/admin/gallery" method="POST" enctype="multipart/form-data" class="gallery-upload-form">
   <label>
     Тип
-    <select name="type" required>
+    <select name="type" id="gallery-type-select" required onchange="
+      var isLink = this.value === 'video_link';
+      document.getElementById('gallery-file-field').style.display = isLink ? 'none' : '';
+      document.getElementById('gallery-file-field').querySelector('input').required = !isLink;
+      document.getElementById('gallery-link-field').style.display = isLink ? '' : 'none';
+      document.getElementById('gallery-link-field').querySelector('input').required = isLink;
+    ">
       <option value="photo">Фото</option>
-      <option value="video">Видео</option>
+      <option value="video">Видео (файл)</option>
+      <option value="video_link">Видео по ссылке (YouTube/Rutube/VK/Vimeo)</option>
     </select>
   </label>
   <label>
@@ -33,31 +40,59 @@
     </select>
   </label>
   <label>
-    Файл *
-    <input type="file" name="file" accept="image/*,video/*" required>
+    Или в галерее трека (перекрывает страницу выше)
+    <select name="trackId">
+      <option value="">— ни к какому треку —</option>
+      <% tracks.forEach(function(t) { %>
+        <option value="<%= t.id %>"><%= t.release_title ? t.release_title + ' — ' : '' %><%= t.title %></option>
+      <% }); %>
+    </select>
   </label>
+  <div id="gallery-file-field">
+    <label>
+      Файл *
+      <input type="file" name="file" accept="image/*,video/*" required>
+    </label>
+  </div>
+  <div id="gallery-link-field" style="display:none;">
+    <label>
+      Ссылка на видео *
+      <input type="url" name="videoUrl" placeholder="https://youtube.com/watch?v=... rutube.ru/video/... vk.com/video... или vimeo.com/...">
+    </label>
+  </div>
   <button class="btn" type="submit">Загрузить</button>
 </form>
 
-<p class="hint">Отдельных страниц «Видео» и «Галерея» больше нет — фото и видео отсюда вставляются на страницы через поле «Показывать на странице» ниже, у каждого файла отдельно.</p>
+<p class="hint">Отдельных страниц «Видео» и «Галерея» больше нет — фото и видео отсюда вставляются на страницы через поле «Показывать на странице» ниже, у каждого файла отдельно. «Видео по ссылке» не грузит файл на сервер — вставляется плеер YouTube/Rutube/VK Видео/Vimeo по ссылке.</p>
 
 <div class="admin-media-grid">
   <% items.forEach(function(item) { %>
     <div class="admin-media-item">
       <% if (item.type === 'photo') { %>
         <img src="<%= item.file_path %>" alt="<%= item.title %>">
+      <% } else if (item.file_path.indexOf('http') === 0) { %>
+        <iframe src="<%= item.file_path %>" loading="lazy" allowfullscreen frameborder="0"></iframe>
       <% } else { %>
         <video src="<%= item.file_path %>" controls></video>
       <% } %>
       <div class="admin-media-caption"><%= item.title || '(без подписи)' %></div>
       <form action="/admin/gallery/<%= item.id %>/page" method="POST">
-        <select name="pageKey" onchange="this.form.submit()">
+        <select name="pageKey" onchange="this.form.submit()" <%= item.track_id ? 'disabled' : '' %>>
           <option value="" <%= !item.page_key ? 'selected' : '' %>>— нигде —</option>
           <option value="home" <%= item.page_key === 'home' ? 'selected' : '' %>>Главная</option>
           <option value="music" <%= item.page_key === 'music' ? 'selected' : '' %>>Музыка</option>
           <option value="style" <%= item.page_key === 'style' ? 'selected' : '' %>>Стиль</option>
           <option value="gigs" <%= item.page_key === 'gigs' ? 'selected' : '' %>>Выступления</option>
         </select>
+      </form>
+      <form action="/admin/gallery/<%= item.id %>/track" method="POST">
+        <select name="trackId" onchange="this.form.submit()">
+          <option value="">— ни к какому треку —</option>
+          <% tracks.forEach(function(t) { %>
+            <option value="<%= t.id %>" <%= item.track_id === t.id ? 'selected' : '' %>><%= t.release_title ? t.release_title + ' — ' : '' %><%= t.title %></option>
+          <% }); %>
+        </select>
+        <% if (item.track_id) { %><span class="hint">Трек: <%= item.track_title %></span><% } %>
       </form>
       <form action="/admin/gallery/<%= item.id %>/delete" method="POST" onsubmit="return confirm('Удалить файл?');">
         <button class="link-btn" type="submit">Удалить</button>

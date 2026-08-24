@@ -21,13 +21,41 @@
         Email
         <input type="email" name="email">
       </label>
-      <label>
-        Адрес доставки
-        <input type="text" name="address">
-      </label>
+      <fieldset style="border:1px solid var(--color-border); border-radius:var(--radius); padding:12px 14px; margin:0 0 16px;">
+        <legend style="padding:0 6px;">Способ получения</legend>
+        <label style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+          <input type="radio" name="deliveryMethod" value="courier" checked style="width:auto;" onchange="document.getElementById('delivery-address-field').style.display='';document.getElementById('delivery-pickup-field').style.display='none';">
+          <span>Курьер / почта — на адрес</span>
+        </label>
+        <label style="display:flex; align-items:center; gap:8px;">
+          <input type="radio" name="deliveryMethod" value="pickup" style="width:auto;" onchange="document.getElementById('delivery-address-field').style.display='none';document.getElementById('delivery-pickup-field').style.display='';">
+          <span>Пункт выдачи (СДЭК, Boxberry, 5Post и т.п.)</span>
+        </label>
+      </fieldset>
+      <div id="delivery-address-field">
+        <label>
+          Адрес доставки
+          <input type="text" name="address">
+        </label>
+      </div>
+      <div id="delivery-pickup-field" style="display:none;">
+        <label>
+          Город и удобный пункт выдачи
+          <input type="text" name="pickupPoint" placeholder="Например: Москва, СДЭК на ул. Ленина, 10">
+        </label>
+        <p style="color:var(--color-muted); font-size:0.85rem; margin-top:-8px;">
+          Точный адрес пункта выдачи и стоимость доставки согласуем с вами после оформления заказа.
+        </p>
+      </div>
       <label>
         Комментарий к заказу
         <textarea name="comment" rows="3"></textarea>
+      </label>
+      <label style="display:flex; align-items:flex-start; gap:8px;">
+        <input type="checkbox" name="dataConsent" value="1" style="width:auto; margin-top:4px;" required>
+        <span>Принимаю условия <a href="/legal/oferta" target="_blank" rel="noopener">публичной оферты</a>
+        и даю согласие на обработку персональных данных в соответствии с
+        <a href="/legal/privacy" target="_blank" rel="noopener">политикой конфиденциальности</a> *</span>
       </label>
       <button class="btn" type="submit">Перейти к оплате</button>
     </form>
