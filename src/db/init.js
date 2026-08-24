@@ -1,4 +1,5 @@
 const db = require('./index');
+const { slugify } = require('../utils/slugify');
 
 function init() {
   db.exec(`
@@ -68,6 +69,20 @@ function init() {
       description TEXT DEFAULT '',
       url TEXT DEFAULT '',
       cover_image TEXT DEFAULT '',
+      sort_order INTEGER NOT NULL DEFAULT 0,
+      is_published INTEGER NOT NULL DEFAULT 1,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS releases (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      slug TEXT UNIQUE NOT NULL,
+      release_type TEXT NOT NULL DEFAULT 'EP',
+      year TEXT DEFAULT '',
+      description TEXT DEFAULT '',
+      cover_image TEXT DEFAULT '',
+      streaming_url TEXT DEFAULT '',
       sort_order INTEGER NOT NULL DEFAULT 0,
       is_published INTEGER NOT NULL DEFAULT 1,
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
@@ -243,6 +258,17 @@ function init() {
   if (!galleryItemCols.some((c) => c.name === 'page_key')) {
     db.exec("ALTER TABLE gallery_items ADD COLUMN page_key TEXT NOT NULL DEFAULT ''");
   }
+  if (!galleryItemCols.some((c) => c.name === 'track_id')) {
+    db.exec('ALTER TABLE gallery_items ADD COLUMN track_id INTEGER REFERENCES tracks(id) ON DELETE CASCADE');
+  }
+
+  const trackCols = db.prepare('PRAGMA table_info(tracks)').all();
+  if (!trackCols.some((c) => c.name === 'release_id')) {
+    db.exec('ALTER TABLE tracks ADD COLUMN release_id INTEGER REFERENCES releases(id) ON DELETE SET NULL');
+  }
+  if (!trackCols.some((c) => c.name === 'slug')) {
+    db.exec("ALTER TABLE tracks ADD COLUMN slug TEXT DEFAULT ''");
+  }
 
   const defaultNetworks = [
     { key: 'telegram', label: 'Telegram', connector: 'telegram' },
@@ -388,6 +414,78 @@ function init() {
       1,
       0
     );
+  }
+
+  const releasesCount = db.prepare('SELECT COUNT(*) AS c FROM releases').get().c;
+  if (releasesCount === 0) {
+    const insertRelease = db.prepare(`
+      INSERT INTO releases (title, slug, release_type, year, description, cover_image, streaming_url, sort_order)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+    const insertTrack = db.prepare(`
+      INSERT INTO tracks (title, slug, description, url, cover_image, release_id, sort_order, is_published)
+      VALUES (?, ?, ?, ?, ?, ?, ?, 1)
+    `);
+
+    const releases = [
+      {
+        title: 'Soundstates',
+        slug: 'soundstates',
+        year: '2026',
+        description: 'Третий альбом DJ Levka — vaporwave / synthwave / lofi house / jazzy lofi / retrowave.',
+        cover: '/uploads/release-soundstates.jpg',
+        url: 'https://band.link/soundstates',
+        sort: 0,
+        tracks: [
+          { title: 'soundstates', description: 'Заглавный трек альбома — фирменное звучание DJ Levka: ретро-синты и lo-fi атмосфера.' },
+          { title: 'd r e a m', description: 'Плывущий, полусонный трек — как обрывок сна, который пытаешься удержать.' },
+          { title: 'back to the future', description: 'Ретрофутуризм в звуке: synthwave-ностальгия по будущему, каким его видели из прошлого.' },
+          { title: '2AM', description: 'Час ночи, когда город затихает — трек для одиноких прогулок под неон.' },
+          { title: 'cloudflute', description: 'Воздушная, почти невесомая мелодия — звук, будто сыгранный на облаке.' },
+        ],
+      },
+      {
+        title: 'Flowers',
+        slug: 'flowers',
+        year: '2025',
+        description: 'Второй EP DJ Levka.',
+        cover: '/uploads/release-flowers.jpg',
+        url: 'http://band.link/qj5QQ',
+        sort: 1,
+        tracks: [
+          { title: 'flowers', description: 'Заглавный трек — хрупкое, цветущее начало альбома о чувствах.' },
+          { title: 'memory', description: 'Трек-воспоминание: тёплая грусть по тому, что уже не вернуть.' },
+          { title: 'u', description: 'Самый личный трек альбома — обращение к одному человеку.' },
+          { title: 'rif raf', description: 'Более дерзкий, шершавый по звучанию момент альбома.' },
+          { title: 'lullaby', description: 'Колыбельная в конце пути — мягкое закрытие альбома.' },
+        ],
+      },
+      {
+        title: 'Ikigai',
+        slug: 'ikigai',
+        year: '2024',
+        description: 'Дебютный EP DJ Levka — с японского «икигай» переводится как «причина жить».',
+        cover: '/uploads/release-ikigai.jpg',
+        url: 'https://band.link/ikigai',
+        sort: 2,
+        tracks: [
+          { title: 'Ikigai', description: 'Заглавный трек дебютного EP — про поиск своего смысла.' },
+          { title: 'The Sleepiest Beatmaker', description: 'Ироничная самопрезентация — сонный битмейкер за работой.' },
+          { title: 'Nisu', description: 'Один из самых атмосферных треков EP.' },
+          { title: 'Fog', description: 'Туманное, приглушённое звучание — как взгляд сквозь дымку.' },
+          { title: 'Bill Cipher', description: 'Название-отсылка к культовому персонажу — трек с лёгким налётом мистики.' },
+        ],
+      },
+    ];
+
+    for (const release of releases) {
+      const info = insertRelease.run(
+        release.title, release.slug, 'EP', release.year, release.description, release.cover, release.url, release.sort
+      );
+      release.tracks.forEach((track, i) => {
+        insertTrack.run(track.title, slugify(track.title), track.description, '', release.cover, info.lastInsertRowid, i);
+      });
+    }
   }
 }
 

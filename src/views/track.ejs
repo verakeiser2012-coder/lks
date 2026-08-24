@@ -1,0 +1,28 @@
+<%- include('partials/header') %>
+
+<section class="hero release-hero">
+  <% if (track.cover_image) { %><img class="release-hero-cover" src="<%= track.cover_image %>" alt="<%= track.title %>"><% } %>
+  <div>
+    <p class="drop-season"><a href="/music/<%= release.slug %>"><%= release.title %></a></p>
+    <h1><%= track.title %></h1>
+    <% if (track.url) { %><a class="btn" href="<%= track.url %>" target="_blank" rel="noopener">Слушать</a><% } %>
+  </div>
+</section>
+
+<% if (track.description) { %>
+  <div class="prose drop-description"><%- renderLinkedText(track.description) %></div>
+<% } %>
+
+<%- include('partials/gallery-section', { galleryItems: trackGalleryItems, galleryTitle: 'Со съёмок к этому треку' }) %>
+
+<nav class="track-pager">
+  <% if (prevTrack) { %>
+    <a class="track-pager-link" href="/music/<%= release.slug %>/<%= prevTrack.slug %>">← <%= prevTrack.title %></a>
+  <% } else { %><span></span><% } %>
+  <a class="track-pager-link track-pager-up" href="/music/<%= release.slug %>">Все треки <%= release.title %></a>
+  <% if (nextTrack) { %>
+    <a class="track-pager-link" href="/music/<%= release.slug %>/<%= nextTrack.slug %>"><%= nextTrack.title %> →</a>
+  <% } else { %><span></span><% } %>
+</nav>
+
+<%- include('partials/footer') %>

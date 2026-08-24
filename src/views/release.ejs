@@ -1,0 +1,29 @@
+<%- include('partials/header') %>
+
+<section class="hero release-hero">
+  <% if (release.cover_image) { %><img class="release-hero-cover" src="<%= release.cover_image %>" alt="<%= release.title %>"><% } %>
+  <div>
+    <p class="drop-season"><%= release.release_type %><% if (release.year) { %> · <%= release.year %><% } %></p>
+    <h1><%= release.title %></h1>
+    <% if (release.description) { %><p class="hero-tagline"><%- renderLinkedText(release.description) %></p><% } %>
+    <% if (release.streaming_url) { %><a class="btn" href="<%= release.streaming_url %>" target="_blank" rel="noopener">Слушать целиком</a><% } %>
+  </div>
+</section>
+
+<section class="link-section">
+  <h2>Треки</h2>
+  <div class="track-playlist">
+    <% tracks.forEach(function(track, i) { %>
+      <a class="track-row" href="/music/<%= release.slug %>/<%= track.slug %>">
+        <span class="track-row-index"><%= i + 1 %></span>
+        <% if (track.cover_image) { %><img class="track-row-cover" src="<%= track.cover_image %>" alt=""><% } %>
+        <span class="track-row-title"><%= track.title %></span>
+        <span class="track-row-arrow">→</span>
+      </a>
+    <% }); %>
+  </div>
+</section>
+
+<p class="drop-back"><a href="/music">← Все релизы</a></p>
+
+<%- include('partials/footer') %>

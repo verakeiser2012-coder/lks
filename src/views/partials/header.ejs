@@ -53,6 +53,24 @@
         <a href="/catalog" class="shop-link">Каталог</a>
         <a href="/drops" class="shop-link">Дропы</a>
         <a href="/brands" class="shop-link">Брендам</a>
+        <audio id="bg-audio" preload="none"></audio>
+        <div class="bg-audio-widget">
+          <a href="/music" class="bg-audio-link" aria-label="Перейти к музыке">
+            <svg class="bg-audio-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M9 6v12l-5-4H2V10h2l5-4Z" fill="currentColor" stroke="none"/>
+              <path d="M15.5 8.5a5 5 0 0 1 0 7"/>
+              <path d="M18 6a8.5 8.5 0 0 1 0 12"/>
+            </svg>
+          </a>
+          <button type="button" id="bg-audio-toggle" class="bg-audio-mute" aria-pressed="false" aria-label="Включить музыку">
+            <svg class="bg-audio-mute-icon bg-audio-mute-icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/>
+            </svg>
+            <svg class="bg-audio-mute-icon bg-audio-mute-icon-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M6 6l12 12M18 6 6 18"/>
+            </svg>
+          </button>
+        </div>
         <a href="/cart" class="cart-btn">
           <svg class="cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/>
@@ -74,7 +92,7 @@
         <a href="/news">Новости</a>
         <a href="/about">Обо мне</a>
         <span class="nav-divider" aria-hidden="true"></span>
-        <a href="/music">Музыка</a>
+        <a href="/music" class="nav-music-link">DJ Levka</a>
         <a href="/gigs">Выступления</a>
         <a href="/style">Стиль</a>
         <a href="/redheads">Рыжие</a>

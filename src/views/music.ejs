@@ -14,22 +14,66 @@
   </section>
 <% } %>
 
+<% if (releases.length > 0) { %>
+  <section class="link-section">
+    <h2>Альбомы</h2>
+    <div class="table-scroll">
+      <table class="music-table">
+        <thead>
+          <tr>
+            <th class="music-table-cover-col"></th>
+            <th>Название</th>
+            <th>Тип</th>
+            <th>Год</th>
+            <th>Треков</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% releases.forEach(function(release) { %>
+            <tr>
+              <td class="music-table-cover-col">
+                <a href="/music/<%= release.slug %>">
+                  <% if (release.cover_image) { %><img class="music-table-cover" src="<%= release.cover_image %>" alt="<%= release.title %>"><% } %>
+                </a>
+              </td>
+              <td><a class="music-table-title" href="/music/<%= release.slug %>"><%= release.title %></a></td>
+              <td><%= release.release_type %></td>
+              <td><%= release.year %></td>
+              <td><%= release.trackCount %></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+<% } %>
+
 <% if (tracks.length > 0) { %>
   <section class="link-section">
-    <h2>Треки и синглы</h2>
-    <div class="track-list">
-      <% tracks.forEach(function(track) { %>
-        <div class="track-card">
-          <% if (track.cover_image) { %>
-            <img class="track-cover" src="<%= track.cover_image %>" alt="<%= track.title %>">
-          <% } %>
-          <div class="track-body">
-            <h3 class="track-title"><%= track.title %></h3>
-            <% if (track.description) { %><p class="track-description"><%- renderLinkedText(track.description) %></p><% } %>
-            <% if (track.url) { %><a class="track-listen" href="<%= track.url %>" target="_blank" rel="noopener">Слушать →</a><% } %>
-          </div>
-        </div>
-      <% }); %>
+    <h2>Синглы</h2>
+    <div class="table-scroll">
+      <table class="music-table">
+        <thead>
+          <tr>
+            <th class="music-table-cover-col"></th>
+            <th>Название</th>
+            <th>Описание</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% tracks.forEach(function(track) { %>
+            <tr>
+              <td class="music-table-cover-col">
+                <% if (track.cover_image) { %><img class="music-table-cover" src="<%= track.cover_image %>" alt="<%= track.title %>"><% } %>
+              </td>
+              <td class="music-table-title"><%= track.title %></td>
+              <td class="music-table-desc"><% if (track.description) { %><%- renderLinkedText(track.description) %><% } %></td>
+              <td><% if (track.url) { %><a class="music-table-listen" href="<%= track.url %>" target="_blank" rel="noopener">Слушать →</a><% } %></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
     </div>
   </section>
 <% } %>

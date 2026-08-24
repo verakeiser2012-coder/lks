@@ -113,6 +113,8 @@ a:hover { color: var(--color-accent-hover); }
   transition: left 0.22s ease, right 0.22s ease;
 }
 .nav-inner a:hover::after { left: 0; right: 0; }
+.nav-inner a.nav-music-link { color: var(--color-accent); }
+.nav-inner a.nav-music-link::after { left: 0; right: 0; }
 .nav-divider {
   width: 1px;
   height: 16px;
@@ -645,31 +647,93 @@ form.inline { display: inline; }
 }
 .featured-listen { font-size: 1rem; padding: 12px 28px; }
 
-/* Список треков с описанием — история/смысл каждого трека */
-.track-list { display: flex; flex-direction: column; gap: 16px; }
-.track-card {
-  display: flex;
-  gap: 18px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  padding: 18px;
-  background: #fff;
+/* Альбомы и синглы на /music — табличная подача */
+.table-scroll { overflow-x: auto; }
+.music-table { width: 100%; border-collapse: collapse; min-width: 480px; }
+.music-table th {
+  text-align: left;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  color: var(--color-muted);
+  font-weight: 600;
+  padding: 0 12px 8px;
+  border-bottom: 1px solid var(--color-border);
 }
-.track-cover {
-  width: 96px;
-  height: 96px;
+.music-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+.music-table tbody tr:hover { background: #fdf6e0; }
+.music-table-cover-col { width: 56px; }
+.music-table-cover {
+  width: 48px;
+  height: 48px;
   object-fit: cover;
   border-radius: calc(var(--radius) - 2px);
+  display: block;
+}
+.music-table-title { font-weight: 700; color: var(--color-text); }
+a.music-table-title:hover { color: var(--color-accent); }
+.music-table-desc { color: var(--color-muted); font-size: 0.9rem; }
+.music-table-listen { font-weight: 600; white-space: nowrap; }
+@media (max-width: 560px) {
+  .music-table-desc { display: none; }
+}
+
+.release-hero {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  text-align: left;
+  flex-wrap: wrap;
+}
+.release-hero-cover {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: var(--radius);
   flex-shrink: 0;
 }
-.track-body { flex: 1; min-width: 0; }
-.track-title { margin: 0 0 6px; font-size: 1.15rem; }
-.track-description { margin: 0 0 10px; color: var(--color-muted); font-size: 0.95rem; line-height: 1.55; }
-.track-listen { font-weight: 600; }
-@media (max-width: 560px) {
-  .track-card { flex-direction: column; }
-  .track-cover { width: 100%; height: auto; aspect-ratio: 1 / 1; }
+.release-hero h1 {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  color: var(--color-text);
+  filter: none;
+  margin: 4px 0 10px;
 }
+
+/* Список треков релиза — как плейлист на YouTube: номер, обложка, название, стрелка */
+.track-playlist { display: flex; flex-direction: column; gap: 6px; }
+.track-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  color: var(--color-text);
+}
+.track-row:hover { background: #faf6ea; color: var(--color-text); }
+.track-row-index { width: 20px; color: var(--color-muted); font-variant-numeric: tabular-nums; }
+.track-row-cover { width: 44px; height: 44px; object-fit: cover; border-radius: 6px; flex-shrink: 0; }
+.track-row-title { flex: 1; font-weight: 600; }
+.track-row-arrow { color: var(--color-accent); }
+
+.drop-back { text-align: center; margin-top: 32px; }
+.drop-back a { font-weight: 600; }
+
+.track-pager {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-border);
+  flex-wrap: wrap;
+}
+.track-pager-link { font-weight: 600; }
+.track-pager-up { color: var(--color-muted); font-weight: 400; font-size: 0.9rem; }
 
 .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
 .genre-chip {
@@ -795,14 +859,13 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 
 /* Фоновая музыка */
 .bg-audio-widget {
-  position: fixed;
-  right: 18px;
-  bottom: 18px;
-  z-index: 500;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
 }
 .bg-audio-link {
-  width: 46px;
-  height: 46px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   background: var(--color-accent);
   color: #fff;
@@ -813,13 +876,13 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
   transition: transform 0.2s ease, background 0.2s ease;
 }
 .bg-audio-link:hover { transform: scale(1.06); background: var(--color-accent-hover); color: #fff; }
-.bg-audio-icon { width: 20px; height: 20px; }
+.bg-audio-icon { width: 15px; height: 15px; }
 .bg-audio-mute {
   position: absolute;
-  top: -4px;
-  right: -4px;
-  width: 22px;
-  height: 22px;
+  top: -3px;
+  right: -3px;
+  width: 17px;
+  height: 17px;
   border-radius: 50%;
   border: 2px solid var(--color-bg);
   background: var(--color-text);
@@ -829,14 +892,18 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
   justify-content: center;
   cursor: pointer;
   transition: background 0.2s ease;
+  z-index: 1;
+}
+/* Видимый значок — 17px, но реальная область нажатия расширена невидимым
+   слоем, иначе на сенсорном экране легко промахнуться на соседний кружок-ссылку. */
+.bg-audio-mute::before {
+  content: '';
+  position: absolute;
+  inset: -10px;
 }
 .bg-audio-mute:hover { background: var(--color-accent-hover); }
-.bg-audio-mute-icon { width: 11px; height: 11px; }
+.bg-audio-mute-icon { width: 8px; height: 8px; }
 .bg-audio-mute-icon-off { display: block; }
 .bg-audio-mute-icon-on { display: none; }
 .bg-audio-mute.is-playing .bg-audio-mute-icon-off { display: none; }
 .bg-audio-mute.is-playing .bg-audio-mute-icon-on { display: block; }
-@media (max-width: 480px) {
-  .bg-audio-widget { right: 14px; bottom: 14px; }
-  .bg-audio-link { width: 42px; height: 42px; }
-}
