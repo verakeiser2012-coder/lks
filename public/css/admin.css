@@ -54,6 +54,14 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
 }
+.login-remember {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 400;
+  margin-bottom: 18px;
+}
+.login-remember input { width: auto; }
 
 .stat-grid {
   display: grid;

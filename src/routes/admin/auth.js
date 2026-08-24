@@ -12,7 +12,7 @@ router.get('/login', (req, res) => {
 });
 
 router.post('/login', (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, remember } = req.body;
   const user = db.prepare('SELECT * FROM users WHERE username = ?').get(username);
 
   if (!user || !bcrypt.compareSync(password || '', user.password_hash)) {
@@ -20,6 +20,9 @@ router.post('/login', (req, res) => {
   }
 
   req.session.adminId = user.id;
+  if (remember) {
+    req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 90; // 90 дней вместо стандартных 7
+  }
   res.redirect('/admin');
 });
 
