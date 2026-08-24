@@ -26,6 +26,7 @@
             <th>Тип</th>
             <th>Год</th>
             <th>Треков</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -40,6 +41,18 @@
               <td><%= release.release_type %></td>
               <td><%= release.year %></td>
               <td><%= release.trackCount %></td>
+              <td>
+                <% if (release.streaming_url) { %>
+                  <a class="music-table-listen music-table-bandlink" href="<%= release.streaming_url %>" target="_blank" rel="noopener">
+                    <svg class="bandlink-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M15.5 8.5a5 5 0 0 1 0 7"/>
+                      <path d="M18 6a8.5 8.5 0 0 1 0 12"/>
+                      <path d="M9 6v12l-5-4H2V10h2l5-4Z" fill="currentColor" stroke="none"/>
+                    </svg>
+                    band.link
+                  </a>
+                <% } %>
+              </td>
             </tr>
           <% }); %>
         </tbody>

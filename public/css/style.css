@@ -677,6 +677,8 @@ form.inline { display: inline; }
 a.music-table-title:hover { color: var(--color-accent); }
 .music-table-desc { color: var(--color-muted); font-size: 0.9rem; }
 .music-table-listen { font-weight: 600; white-space: nowrap; }
+.music-table-bandlink { display: inline-flex; align-items: center; gap: 4px; }
+.bandlink-icon { width: 14px; height: 14px; flex-shrink: 0; }
 @media (max-width: 560px) {
   .music-table-desc { display: none; }
 }
