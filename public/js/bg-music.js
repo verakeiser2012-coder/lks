@@ -59,4 +59,17 @@
       pause();
     }
   });
+
+  var pausedByVisibility = false;
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+      if (!audio.paused) {
+        pausedByVisibility = true;
+        pause();
+      }
+    } else if (pausedByVisibility) {
+      pausedByVisibility = false;
+      play();
+    }
+  });
 })();

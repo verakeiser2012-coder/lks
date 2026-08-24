@@ -77,4 +77,27 @@ async function publishDuePosts() {
   }
 }
 
-module.exports = { publishPost, publishDuePosts };
+async function refreshStats(targetId) {
+  const target = db.prepare('SELECT * FROM social_post_targets WHERE id = ?').get(targetId);
+  if (!target || target.status !== 'published') return;
+
+  const network = getNetwork(target.network_key);
+  if (!network) return;
+
+  const connector = getConnector(network.connector);
+  if (!connector.getStats) return;
+
+  const credentials = parseCredentials(network);
+  try {
+    const stats = await connector.getStats(target, credentials);
+    if (stats) {
+      db.prepare(`
+        UPDATE social_post_targets SET stats = ?, stats_updated_at = datetime('now') WHERE id = ?
+      `).run(JSON.stringify(stats), targetId);
+    }
+  } catch {
+    // Обновление статистики не критично — молча пропускаем сбой (например, невалидный токен).
+  }
+}
+
+module.exports = { publishPost, publishDuePosts, refreshStats };

@@ -22,15 +22,27 @@
       <th>Сеть</th>
       <th>Статус</th>
       <th>Ссылка</th>
+      <th>Статистика</th>
       <th>Ошибка</th>
     </tr>
   </thead>
   <tbody>
     <% targets.forEach(function(t) { %>
+      <% let stats = null; try { stats = JSON.parse(t.stats || '{}'); } catch (e) {} %>
       <tr>
-        <td><%= t.network_key %></td>
+        <td><%= t.network_label || t.network_key %></td>
         <td><span class="badge badge-<%= t.status %>"><%= t.status %></span></td>
         <td><% if (t.published_url) { %><a href="<%= t.published_url %>" target="_blank"><%= t.published_url %></a><% } %></td>
+        <td>
+          <% if (stats && stats.likes !== undefined) { %>
+            👍 <%= stats.likes %> · 🔁 <%= stats.reposts %> · 💬 <%= stats.comments %> · 👁 <%= stats.views %>
+          <% } %>
+          <% if (t.status === 'published' && t.network_connector === 'vk') { %>
+            <form class="inline" action="/admin/calendar/<%= post.id %>/targets/<%= t.id %>/refresh-stats" method="POST">
+              <button class="link-btn" type="submit">Обновить</button>
+            </form>
+          <% } %>
+        </td>
         <td><%= t.error %></td>
       </tr>
     <% }); %>

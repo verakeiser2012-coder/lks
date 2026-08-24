@@ -35,6 +35,8 @@ function init() {
       phone TEXT NOT NULL,
       email TEXT DEFAULT '',
       address TEXT DEFAULT '',
+      delivery_method TEXT NOT NULL DEFAULT 'courier',
+      pickup_point TEXT DEFAULT '',
       comment TEXT DEFAULT '',
       status TEXT NOT NULL DEFAULT 'new',
       payment_status TEXT NOT NULL DEFAULT 'unpaid',
@@ -69,20 +71,6 @@ function init() {
       description TEXT DEFAULT '',
       url TEXT DEFAULT '',
       cover_image TEXT DEFAULT '',
-      sort_order INTEGER NOT NULL DEFAULT 0,
-      is_published INTEGER NOT NULL DEFAULT 1,
-      created_at TEXT NOT NULL DEFAULT (datetime('now'))
-    );
-
-    CREATE TABLE IF NOT EXISTS releases (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      title TEXT NOT NULL,
-      slug TEXT UNIQUE NOT NULL,
-      release_type TEXT NOT NULL DEFAULT 'EP',
-      year TEXT DEFAULT '',
-      description TEXT DEFAULT '',
-      cover_image TEXT DEFAULT '',
-      streaming_url TEXT DEFAULT '',
       sort_order INTEGER NOT NULL DEFAULT 0,
       is_published INTEGER NOT NULL DEFAULT 1,
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
@@ -237,16 +225,49 @@ function init() {
       sort_order INTEGER NOT NULL DEFAULT 0,
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
+
+    CREATE TABLE IF NOT EXISTS releases (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      slug TEXT UNIQUE NOT NULL,
+      release_type TEXT NOT NULL DEFAULT 'EP',
+      year TEXT DEFAULT '',
+      description TEXT DEFAULT '',
+      cover_image TEXT DEFAULT '',
+      streaming_url TEXT DEFAULT '',
+      sort_order INTEGER NOT NULL DEFAULT 0,
+      is_published INTEGER NOT NULL DEFAULT 1,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
   `);
+
+  const orderCols = db.prepare('PRAGMA table_info(orders)').all();
+  if (!orderCols.some((c) => c.name === 'delivery_method')) {
+    db.exec("ALTER TABLE orders ADD COLUMN delivery_method TEXT NOT NULL DEFAULT 'courier'");
+  }
+  if (!orderCols.some((c) => c.name === 'pickup_point')) {
+    db.exec("ALTER TABLE orders ADD COLUMN pickup_point TEXT DEFAULT ''");
+  }
 
   const productCols = db.prepare('PRAGMA table_info(products)').all();
   if (!productCols.some((c) => c.name === 'collection_id')) {
     db.exec('ALTER TABLE products ADD COLUMN collection_id INTEGER REFERENCES collections(id) ON DELETE SET NULL');
   }
+  if (!productCols.some((c) => c.name === 'release_id')) {
+    db.exec('ALTER TABLE products ADD COLUMN release_id INTEGER REFERENCES releases(id) ON DELETE SET NULL');
+  }
 
   const redheadSubmissionCols = db.prepare('PRAGMA table_info(redhead_submissions)').all();
   if (!redheadSubmissionCols.some((c) => c.name === 'age_consent')) {
     db.exec("ALTER TABLE redhead_submissions ADD COLUMN age_consent INTEGER NOT NULL DEFAULT 0");
+  }
+  if (!redheadSubmissionCols.some((c) => c.name === 'data_consent')) {
+    db.exec("ALTER TABLE redhead_submissions ADD COLUMN data_consent INTEGER NOT NULL DEFAULT 0");
+  }
+
+  const contestSubmissionCols = db.prepare('PRAGMA table_info(contest_submissions)').all();
+  if (!contestSubmissionCols.some((c) => c.name === 'data_consent')) {
+    db.exec("ALTER TABLE contest_submissions ADD COLUMN data_consent INTEGER NOT NULL DEFAULT 0");
   }
 
   const newsCols = db.prepare('PRAGMA table_info(news)').all();
@@ -270,6 +291,14 @@ function init() {
     db.exec("ALTER TABLE tracks ADD COLUMN slug TEXT DEFAULT ''");
   }
 
+  const socialTargetCols = db.prepare('PRAGMA table_info(social_post_targets)').all();
+  if (!socialTargetCols.some((c) => c.name === 'stats')) {
+    db.exec("ALTER TABLE social_post_targets ADD COLUMN stats TEXT DEFAULT '{}'");
+  }
+  if (!socialTargetCols.some((c) => c.name === 'stats_updated_at')) {
+    db.exec('ALTER TABLE social_post_targets ADD COLUMN stats_updated_at TEXT');
+  }
+
   const defaultNetworks = [
     { key: 'telegram', label: 'Telegram', connector: 'telegram' },
     { key: 'vk', label: 'VK', connector: 'vk' },
@@ -288,6 +317,14 @@ function init() {
     insertNetwork.run(network.key, network.label, network.connector);
   }
 
+  // Реальные коннекторы добавились позже, чем сеть 'manual' была изначально засеяна —
+  // подтягиваем уже существующие строки на новый коннектор, но только если их не настроили вручную на что-то другое.
+  const connectorUpgrades = { youtube: 'youtube', instagram: 'instagram', tiktok: 'tiktok', pinterest: 'pinterest' };
+  const upgradeConnector = db.prepare("UPDATE social_networks SET connector = ? WHERE key = ? AND connector = 'manual'");
+  for (const [key, connector] of Object.entries(connectorUpgrades)) {
+    upgradeConnector.run(connector, key);
+  }
+
   const defaultIntros = {
     music_intro: 'DJ Levka — треки, релизы и все площадки в одном месте',
     style_intro: 'Актёрство и моделинг — портфолио, кастинги и соцсети',
@@ -303,6 +340,15 @@ function init() {
     music_featured_title: 'Soundstates',
     music_featured_note: 'Новый EP — в день релиза попал в плейлист рядом с Moby, Moderat и Röyksopp',
     music_featured_url: 'https://band.link/soundstates',
+    legal_ip_name: '',
+    legal_inn: '',
+    legal_ogrnip: '',
+    legal_address: '',
+    legal_doc_date: '17.08.2026',
+    legal_bank_name: '',
+    legal_bank_account: '',
+    legal_bank_bik: '',
+    legal_bank_corr_account: '',
   };
   const insertSetting = db.prepare('INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)');
   for (const [key, value] of Object.entries(defaultIntros)) {
@@ -355,7 +401,7 @@ function init() {
   if (gigsLinksCount === 0) {
     db.prepare(`
       INSERT INTO page_links (section, group_name, label, url, sort_order) VALUES (?, ?, ?, ?, ?)
-    `).run('gigs', 'Контакты', 'Написать на почту', 'mailto:dj.levka.music@gmail.com', 0);
+    `).run('gigs', 'Контакты', 'Написать на почту', 'mailto:booking@levkeiser.com', 0);
   }
 
   const bannersCount = db.prepare('SELECT COUNT(*) AS c FROM promo_banners').get().c;

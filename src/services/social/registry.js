@@ -1,8 +1,12 @@
 const telegram = require('./connectors/telegram');
 const vk = require('./connectors/vk');
+const youtube = require('./connectors/youtube');
+const instagram = require('./connectors/instagram');
+const pinterest = require('./connectors/pinterest');
+const tiktok = require('./connectors/tiktok');
 const manual = require('./connectors/manual');
 
-const connectors = { telegram, vk, manual };
+const connectors = { telegram, vk, youtube, instagram, pinterest, tiktok, manual };
 
 function getConnector(key) {
   return connectors[key] || manual;

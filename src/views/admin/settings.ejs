@@ -87,6 +87,50 @@
     Ссылка Xiaohongshu
     <input type="url" name="xiaohongshu_url" value="<%= settingsMap.xiaohongshu_url || '' %>">
   </label>
+  <h2>Юридическая информация (для оферты, политики конфиденциальности и т.д.)</h2>
+  <p style="color:var(--color-muted); max-width:60ch;">
+    Используется в текстах на страницах <code>/legal/oferta</code>, <code>/legal/privacy</code>,
+    <code>/legal/delivery</code>, <code>/legal/returns</code>. Пока поля пустые, эти страницы
+    показывают «реквизиты уточняются» вместо конкретных данных — заполните перед тем, как принимать
+    настоящие платежи.
+  </p>
+  <label>
+    ФИО индивидуального предпринимателя полностью
+    <input type="text" name="legal_ip_name" value="<%= settingsMap.legal_ip_name || '' %>" placeholder="Иванов Иван Иванович">
+  </label>
+  <label>
+    ИНН
+    <input type="text" name="legal_inn" value="<%= settingsMap.legal_inn || '' %>">
+  </label>
+  <label>
+    ОГРНИП
+    <input type="text" name="legal_ogrnip" value="<%= settingsMap.legal_ogrnip || '' %>">
+  </label>
+  <label>
+    Адрес для корреспонденции/претензий (необязательно, если решили не публиковать — оставьте пустым)
+    <input type="text" name="legal_address" value="<%= settingsMap.legal_address || '' %>">
+  </label>
+  <label>
+    Дата редакции документов (показывается внизу каждой юридической страницы)
+    <input type="text" name="legal_doc_date" value="<%= settingsMap.legal_doc_date || '' %>" placeholder="17.08.2026">
+  </label>
+  <label>
+    Банк
+    <input type="text" name="legal_bank_name" value="<%= settingsMap.legal_bank_name || '' %>">
+  </label>
+  <label>
+    Расчётный счёт
+    <input type="text" name="legal_bank_account" value="<%= settingsMap.legal_bank_account || '' %>">
+  </label>
+  <label>
+    БИК
+    <input type="text" name="legal_bank_bik" value="<%= settingsMap.legal_bank_bik || '' %>">
+  </label>
+  <label>
+    Корреспондентский счёт
+    <input type="text" name="legal_bank_corr_account" value="<%= settingsMap.legal_bank_corr_account || '' %>">
+  </label>
+
   <button class="btn" type="submit">Сохранить</button>
 </form>
 

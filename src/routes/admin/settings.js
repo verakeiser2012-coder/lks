@@ -8,6 +8,8 @@ const EDITABLE_KEYS = [
   'vk_url', 'telegram_url', 'whatsapp_url', 'instagram_url',
   'youtube_url', 'tiktok_url', 'pinterest_url', 'rutube_url', 'ok_url', 'dzen_url',
   'douyin_url', 'weibo_url', 'wechat_url', 'xiaohongshu_url',
+  'legal_ip_name', 'legal_inn', 'legal_ogrnip', 'legal_address', 'legal_doc_date',
+  'legal_bank_name', 'legal_bank_account', 'legal_bank_bik', 'legal_bank_corr_account',
 ];
 
 router.get('/', (req, res) => {

@@ -19,16 +19,32 @@ router.post('/', async (req, res, next) => {
     return res.redirect('/cart');
   }
 
-  const { customerName, phone, email, address, comment } = req.body;
+  const { customerName, phone, email, address, deliveryMethod, pickupPoint, comment, dataConsent } = req.body;
   if (!customerName || !phone) {
     return res.render('checkout', { items, total, error: 'Заполните имя и телефон.' });
   }
+  if (!dataConsent) {
+    return res.render('checkout', { items, total, error: 'Подтвердите согласие с офертой и обработкой персональных данных.' });
+  }
+  const method = deliveryMethod === 'pickup' ? 'pickup' : 'courier';
+  if (method === 'pickup' && !pickupPoint) {
+    return res.render('checkout', { items, total, error: 'Укажите город и удобный пункт выдачи.' });
+  }
 
   const insertOrder = db.prepare(`
-    INSERT INTO orders (customer_name, phone, email, address, comment, total)
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO orders (customer_name, phone, email, address, delivery_method, pickup_point, comment, total)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `);
-  const orderInfo = insertOrder.run(customerName, phone, email || '', address || '', comment || '', total);
+  const orderInfo = insertOrder.run(
+    customerName,
+    phone,
+    email || '',
+    method === 'courier' ? (address || '') : '',
+    method,
+    method === 'pickup' ? pickupPoint : '',
+    comment || '',
+    total
+  );
   const orderId = orderInfo.lastInsertRowid;
 
   const insertItem = db.prepare(`

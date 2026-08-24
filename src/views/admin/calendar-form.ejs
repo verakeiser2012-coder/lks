@@ -13,7 +13,7 @@
 >
   <label>
     Текст поста
-    <textarea name="text" rows="5"><%= post ? post.text : '' %></textarea>
+    <textarea name="text" rows="5"><%= post ? post.text : (prefill ? prefill.text : '') %></textarea>
   </label>
   <label>
     Дата и время публикации
@@ -27,10 +27,15 @@
   <label>
     Тип медиа (если прикладываете файл)
     <select name="type">
-      <option value="photo" <%= post && post.media_type === 'photo' ? 'selected' : '' %>>Фото</option>
-      <option value="video" <%= post && post.media_type === 'video' ? 'selected' : '' %>>Видео</option>
+      <option value="photo" <%= (post && post.media_type === 'photo') || (prefill && prefill.mediaType === 'photo') ? 'selected' : '' %>>Фото</option>
+      <option value="video" <%= (post && post.media_type === 'video') || (prefill && prefill.mediaType === 'video') ? 'selected' : '' %>>Видео</option>
     </select>
   </label>
+  <% if (prefill && prefill.mediaPath) { %>
+    <p class="hint">Медиа скопировано из новости — можно оставить как есть или заменить файлом ниже.</p>
+    <input type="hidden" name="prefillMediaPath" value="<%= prefill.mediaPath %>">
+    <input type="hidden" name="prefillMediaType" value="<%= prefill.mediaType %>">
+  <% } %>
   <label>
     Файл <%= post && post.media_path ? '(оставьте пустым, чтобы не менять)' : '(необязательно)' %>
     <input type="file" name="file" accept="image/*,video/*">

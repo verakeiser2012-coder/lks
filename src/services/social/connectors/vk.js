@@ -77,4 +77,25 @@ async function publish(post, credentials) {
   return { url };
 }
 
-module.exports = { key: 'vk', label: 'VK', fields, publish };
+async function getStats(target, credentials) {
+  const { accessToken, groupId } = credentials;
+  if (!accessToken || !groupId || !target.published_url) return null;
+
+  const idMatch = target.published_url.match(/_(\d+)$/);
+  if (!idMatch) return null;
+  const ownerId = -Math.abs(Number(groupId));
+  const posts = `${ownerId}_${idMatch[1]}`;
+
+  const result = await vkCall('wall.getById', { posts, access_token: accessToken, v: API_VERSION });
+  const post = result && result[0];
+  if (!post) return null;
+
+  return {
+    likes: post.likes ? post.likes.count : 0,
+    reposts: post.reposts ? post.reposts.count : 0,
+    comments: post.comments ? post.comments.count : 0,
+    views: post.views ? post.views.count : 0,
+  };
+}
+
+module.exports = { key: 'vk', label: 'VK', fields, publish, getStats };

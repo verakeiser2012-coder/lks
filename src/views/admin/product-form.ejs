@@ -54,6 +54,17 @@
     </select>
   </label>
   <label>
+    Релиз (EP)
+    <select name="releaseId">
+      <option value="">— без привязки —</option>
+      <% releases.forEach(function(r) { %>
+        <option value="<%= r.id %>" <%= product && Number(product.release_id) === r.id ? 'selected' : '' %>>
+          <%= r.title %> (<%= r.year %>)
+        </option>
+      <% }); %>
+    </select>
+  </label>
+  <label>
     Фото товара
     <input type="file" name="image" accept="image/*">
   </label>

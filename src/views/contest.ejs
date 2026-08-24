@@ -43,7 +43,12 @@
     </label>
     <label style="display:flex; align-items:flex-start; gap:8px;">
       <input type="checkbox" name="ageConsent" value="1" style="width:auto; margin-top:4px;" <%= values.ageConsent ? 'checked' : '' %> required>
-      <span>Мне есть 18 лет, либо согласие законного представителя на участие и обработку данных получено *</span>
+      <span>Мне есть 18 лет, либо согласие законного представителя на участие получено *</span>
+    </label>
+    <label style="display:flex; align-items:flex-start; gap:8px;">
+      <input type="checkbox" name="dataConsent" value="1" style="width:auto; margin-top:4px;" <%= values.dataConsent ? 'checked' : '' %> required>
+      <span>Даю согласие на обработку персональных данных в соответствии с
+      <a href="/legal/privacy" target="_blank" rel="noopener">политикой конфиденциальности</a> *</span>
     </label>
     <button class="btn" type="submit">Отправить заявку</button>
   </form>

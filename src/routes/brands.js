@@ -91,13 +91,22 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const { companyName, contactName, phone, email, website, message } = req.body;
+  const { companyName, contactName, phone, email, website, message, dataConsent } = req.body;
 
   if (!companyName || !contactName || !phone) {
     return res.render('brands', {
       error: 'Заполните название бренда, контактное лицо и телефон.',
       success: false,
-      values: { companyName, contactName, phone, email, website, message },
+      values: { companyName, contactName, phone, email, website, message, dataConsent },
+      offers: getOffers(),
+    });
+  }
+
+  if (!dataConsent) {
+    return res.render('brands', {
+      error: 'Подтвердите согласие на обработку персональных данных.',
+      success: false,
+      values: { companyName, contactName, phone, email, website, message, dataConsent },
       offers: getOffers(),
     });
   }
@@ -109,7 +118,8 @@ router.post('/', (req, res) => {
 
   notify(
     `Новая заявка от бренда: ${companyName}`,
-    `Компания: ${companyName}\nКонтакт: ${contactName}\nТелефон: ${phone}\nEmail: ${email || '—'}\nСайт: ${website || '—'}\nСообщение: ${message || '—'}\n\nПосмотреть: /admin/brands`
+    `Компания: ${companyName}\nКонтакт: ${contactName}\nТелефон: ${phone}\nEmail: ${email || '—'}\nСайт: ${website || '—'}\nСообщение: ${message || '—'}\n\nПосмотреть: /admin/brands`,
+    'brand@levkeiser.com'
   );
 
   res.render('brands', { error: null, success: true, values: {}, offers: getOffers() });

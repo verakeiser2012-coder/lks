@@ -16,6 +16,15 @@
     <input type="text" name="title" value="<%= track ? track.title : '' %>" required>
   </label>
   <label>
+    Релиз (альбом/EP)
+    <select name="releaseId">
+      <option value="">— отдельный сингл, без релиза —</option>
+      <% releases.forEach(function(r) { %>
+        <option value="<%= r.id %>" <%= track && Number(track.release_id) === r.id ? 'selected' : '' %>><%= r.title %></option>
+      <% }); %>
+    </select>
+  </label>
+  <label>
     О чём трек — смысл, история написания
     <textarea name="description" rows="6"><%= track ? track.description : '' %></textarea>
   </label>
@@ -42,5 +51,12 @@
   </label>
   <button class="btn" type="submit">Сохранить</button>
 </form>
+
+<% if (track && track.id && track.release_id && track.slug) { %>
+  <p class="hint">
+    Страница трека: <a href="/music/<%= releases.find(function(r){return r.id === Number(track.release_id);}).slug %>/<%= track.slug %>" target="_blank">открыть ↗</a>.
+    Фото/видео для галереи этого трека загружаются в разделе «Галерея» — выберите этот трек в поле «Показывать на странице».
+  </p>
+<% } %>
 
 <%- include('partials/footer') %>

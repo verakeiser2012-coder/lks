@@ -3,7 +3,11 @@
 <h1>Заказ №<%= order.id %></h1>
 
 <p>Клиент: <%= order.customer_name %> · <%= order.phone %> <% if (order.email) { %>· <%= order.email %><% } %></p>
-<% if (order.address) { %><p>Адрес: <%= order.address %></p><% } %>
+<% if (order.delivery_method === 'pickup') { %>
+  <p>Получение: пункт выдачи — <%= order.pickup_point %></p>
+<% } else if (order.address) { %>
+  <p>Адрес: <%= order.address %></p>
+<% } %>
 <% if (order.comment) { %><p>Комментарий: <%= order.comment %></p><% } %>
 <p>Оплата: <%= order.payment_status %> (<%= order.payment_provider || '—' %>)</p>
 

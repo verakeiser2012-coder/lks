@@ -1,22 +1,4 @@
   </main>
-  <audio id="bg-audio" preload="none"></audio>
-  <div class="bg-audio-widget">
-    <a href="/music" class="bg-audio-link" aria-label="Перейти к музыке">
-      <svg class="bg-audio-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M9 6v12l-5-4H2V10h2l5-4Z" fill="currentColor" stroke="none"/>
-        <path d="M15.5 8.5a5 5 0 0 1 0 7"/>
-        <path d="M18 6a8.5 8.5 0 0 1 0 12"/>
-      </svg>
-    </a>
-    <button type="button" id="bg-audio-toggle" class="bg-audio-mute" aria-pressed="false" aria-label="Включить музыку">
-      <svg class="bg-audio-mute-icon bg-audio-mute-icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/>
-      </svg>
-      <svg class="bg-audio-mute-icon bg-audio-mute-icon-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M6 6l12 12M18 6 6 18"/>
-      </svg>
-    </button>
-  </div>
   <%
     const icons = {
       youtube: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5.5" width="19" height="13" rx="3.5"/><path d="M10.5 9.5l5 2.5-5 2.5Z" fill="currentColor" stroke="none"/></svg>',
@@ -72,6 +54,10 @@
           <input type="hidden" name="redirectTo" value="<%= typeof currentPath !== 'undefined' ? currentPath : '/' %>">
           <input type="email" name="email" placeholder="you@email.com" required>
           <button class="btn" type="submit">Подписаться</button>
+          <label style="display:flex; align-items:flex-start; gap:6px; width:100%; font-size:0.78rem; color:var(--color-muted);">
+            <input type="checkbox" name="dataConsent" value="1" style="width:auto; margin-top:3px;" required>
+            <span>Согласен на обработку email в соответствии с <a href="/legal/privacy">политикой конфиденциальности</a></span>
+          </label>
         </form>
       </div>
 
@@ -106,6 +92,13 @@
             </div>
           </div>
         <% } %>
+      </div>
+
+      <div class="footer-legal">
+        <a href="/legal/oferta">Публичная оферта</a>
+        <a href="/legal/privacy">Персональные данные</a>
+        <a href="/legal/delivery">Доставка</a>
+        <a href="/legal/returns">Возврат и обмен</a>
       </div>
     </div>
   </footer>
