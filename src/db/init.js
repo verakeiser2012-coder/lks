@@ -382,6 +382,7 @@ function init() {
     { key: 'weibo', label: 'Weibo', connector: 'manual', category: 'general' },
     { key: 'xiaohongshu', label: 'Xiaohongshu (RedNote)', connector: 'manual', category: 'general' },
     { key: 'vimeo', label: 'Vimeo', connector: 'manual', category: 'music' },
+    { key: 'soundcloud', label: 'SoundCloud', connector: 'manual', category: 'music' },
   ];
   const insertNetwork = db.prepare(
     'INSERT OR IGNORE INTO social_networks (key, label, connector, category) VALUES (?, ?, ?, ?)'
