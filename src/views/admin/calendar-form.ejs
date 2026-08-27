@@ -1,5 +1,12 @@
 <%- include('partials/header') %>
 
+<p>
+  <a href="<%= post ? `/admin/calendar?year=${post.scheduled_at.slice(0, 4)}&month=${parseInt(post.scheduled_at.slice(5, 7), 10)}` : '/admin/calendar' %>">← Назад к календарю</a>
+  <% if (post) { %>
+    &nbsp;·&nbsp; <a href="/admin/calendar/<%= post.id %>">К странице поста</a>
+  <% } %>
+</p>
+
 <h1><%= post ? 'Редактировать пост' : 'Запланировать пост' %></h1>
 
 <% if (error) { %>
