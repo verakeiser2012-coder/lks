@@ -69,7 +69,16 @@ router.get('/', (req, res) => {
 
 router.get('/new', (req, res) => {
   let prefill = null;
-  if (req.query.fromNews) {
+  if (req.query.fromPost) {
+    const source = getPost(req.query.fromPost);
+    if (source) {
+      prefill = {
+        text: source.text,
+        mediaPath: source.media_path || '',
+        mediaType: source.media_type || '',
+      };
+    }
+  } else if (req.query.fromNews) {
     const news = db.prepare('SELECT * FROM news WHERE id = ?').get(req.query.fromNews);
     if (news) {
       const media = db

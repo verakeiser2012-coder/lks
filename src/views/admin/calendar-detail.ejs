@@ -1,6 +1,10 @@
 <%- include('partials/header') %>
 
-<p><a href="/admin/calendar?year=<%= post.scheduled_at.slice(0, 4) %>&month=<%= parseInt(post.scheduled_at.slice(5, 7), 10) %>">← Назад к календарю</a></p>
+<p>
+  <a href="/admin/calendar?year=<%= post.scheduled_at.slice(0, 4) %>&month=<%= parseInt(post.scheduled_at.slice(5, 7), 10) %>">← Назад к календарю</a>
+  &nbsp;·&nbsp;
+  <a href="/admin/calendar/new?fromPost=<%= post.id %>">↪ Перепост в другие соцсети</a>
+</p>
 
 <div class="admin-toolbar">
   <h1>Пост от <%= post.scheduled_at %></h1>

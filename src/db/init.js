@@ -337,6 +337,9 @@ function init() {
     { month: 8, day: 21, title: 'Международный день моды', category: 'fashion' },
     { month: 9, day: 9, title: 'Международный день красоты', category: 'fashion' },
     { month: 11, day: 5, title: 'День любви к рыжим волосам', category: 'fashion' },
+    // Бажов — повод напоминать о фильме, где Лев сыграл Дёму Баклушкина.
+    { month: 1, day: 27, title: 'День рождения Павла Бажова — напомнить о фильме (Дёма Баклушкин)', category: 'cinema' },
+    { month: 12, day: 3, title: 'День памяти Павла Бажова — повод для поста о фильме', category: 'cinema' },
   ];
   const insertHoliday = db.prepare(
     'INSERT OR IGNORE INTO calendar_events (month, day, title, category) VALUES (?, ?, ?, ?)'
@@ -365,6 +368,7 @@ function init() {
     { key: 'douyin', label: 'Douyin (кит. TikTok)', connector: 'manual', category: 'shorts' },
     { key: 'weibo', label: 'Weibo', connector: 'manual', category: 'general' },
     { key: 'xiaohongshu', label: 'Xiaohongshu (RedNote)', connector: 'manual', category: 'general' },
+    { key: 'vimeo', label: 'Vimeo', connector: 'manual', category: 'music' },
   ];
   const insertNetwork = db.prepare(
     'INSERT OR IGNORE INTO social_networks (key, label, connector, category) VALUES (?, ?, ?, ?)'
