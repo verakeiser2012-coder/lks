@@ -340,6 +340,8 @@ function init() {
     // Бажов — повод напоминать о фильме, где Лев сыграл Дёму Баклушкина.
     { month: 1, day: 27, title: 'День рождения Павла Бажова — напомнить о фильме (Дёма Баклушкин)', category: 'cinema' },
     { month: 12, day: 3, title: 'День памяти Павла Бажова — повод для поста о фильме', category: 'cinema' },
+    // Личные даты
+    { month: 3, day: 21, title: 'День рождения Льва (2012)', category: 'personal' },
   ];
   const insertHoliday = db.prepare(
     'INSERT OR IGNORE INTO calendar_events (month, day, title, category) VALUES (?, ?, ?, ?)'

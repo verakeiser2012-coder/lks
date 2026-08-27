@@ -3,6 +3,7 @@ const db = require('../../../db');
 const { uploadGalleryFile } = require('../../../middleware/upload');
 const { isValidMediaUpload, mediaFilePath } = require('../../../services/media');
 const { publishPost, refreshStats } = require('../../../services/social/publish');
+const { suggestHashtags } = require('../../../utils/hashtags');
 const {
   listNetworks,
   listEventsForMonth,
@@ -123,10 +124,19 @@ router.post('/', uploadGalleryFile.single('file'), (req, res) => {
     mediaType = req.body.type;
   }
 
+  // Если в тексте нет ни одного хэштега — автоматически добавляем подобранные (потом можно отредактировать).
+  let finalText = text || '';
+  if (finalText && !finalText.includes('#')) {
+    const tags = suggestHashtags(finalText);
+    if (tags.length > 0) finalText += `
+
+${tags.join(' ')}`;
+  }
+
   const info = db.prepare(`
     INSERT INTO social_posts (text, media_path, media_type, scheduled_at, status)
     VALUES (?, ?, ?, ?, 'scheduled')
-  `).run(text || '', mediaPath, mediaType, normalizeScheduledAt(scheduledAt));
+  `).run(finalText, mediaPath, mediaType, normalizeScheduledAt(scheduledAt));
 
   const insertTarget = db.prepare('INSERT INTO social_post_targets (post_id, network_key) VALUES (?, ?)');
   for (const key of selectedNetworks) {
@@ -134,6 +144,10 @@ router.post('/', uploadGalleryFile.single('file'), (req, res) => {
   }
 
   res.redirect(`/admin/calendar/${info.lastInsertRowid}`);
+});
+
+router.post('/hashtags', (req, res) => {
+  res.json({ hashtags: suggestHashtags(String(req.body.text || '')) });
 });
 
 router.get('/instagram-grid', (req, res) => {

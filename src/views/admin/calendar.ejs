@@ -29,7 +29,7 @@
       <div class="calendar-cell-date"><%= day %></div>
       <% (eventsByDay[day] || []).forEach(function(ev) { %>
         <div class="calendar-event calendar-event-<%= ev.category %>" title="<%= ev.title %>">
-          <%= { music: '🎵', cinema: '🎬', fashion: '👗' }[ev.category] || '📅' %> <%= ev.title %>
+          <%= { music: '🎵', cinema: '🎬', fashion: '👗', personal: '🎂' }[ev.category] || '📅' %> <%= ev.title %>
         </div>
       <% }); %>
       <% (postsByDay[String(day).padStart(2, '0')] || []).forEach(function(post) { %>

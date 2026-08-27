@@ -20,8 +20,12 @@
 >
   <label>
     Текст поста
-    <textarea name="text" rows="5"><%= post ? post.text : (prefill ? prefill.text : '') %></textarea>
+    <textarea name="text" id="post-text" rows="5"><%= post ? post.text : (prefill ? prefill.text : '') %></textarea>
   </label>
+  <div id="hashtag-suggest" class="hint" style="display:none;">
+    Предложенные хэштеги: <span id="hashtag-list"></span>
+    <button type="button" class="link-btn" id="hashtag-apply">Добавить в текст</button>
+  </div>
   <label>
     Дата и время публикации
     <input
@@ -70,5 +74,47 @@
   <% } %>
   <button class="btn" type="submit"><%= post ? 'Сохранить' : 'Запланировать' %></button>
 </form>
+
+<script>
+  // Живой подбор хэштегов: правила лежат на сервере (src/utils/hashtags.js), тут только показ.
+  (function () {
+    const textarea = document.getElementById('post-text');
+    const box = document.getElementById('hashtag-suggest');
+    const list = document.getElementById('hashtag-list');
+    const applyBtn = document.getElementById('hashtag-apply');
+    if (!textarea) return;
+    let timer = null;
+    let current = [];
+
+    function refresh() {
+      const text = textarea.value.trim();
+      if (!text) { box.style.display = 'none'; return; }
+      fetch('/admin/calendar/hashtags', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: text }),
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          current = data.hashtags || [];
+          if (current.length === 0) { box.style.display = 'none'; return; }
+          list.textContent = current.join(' ');
+          box.style.display = 'block';
+        })
+        .catch(function () { box.style.display = 'none'; });
+    }
+
+    textarea.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(refresh, 500);
+    });
+    applyBtn.addEventListener('click', function () {
+      if (current.length === 0) return;
+      textarea.value = textarea.value.replace(/\s+$/, '') + '\n\n' + current.join(' ');
+      refresh();
+    });
+    refresh();
+  })();
+</script>
 
 <%- include('partials/footer') %>

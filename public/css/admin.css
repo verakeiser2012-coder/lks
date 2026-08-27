@@ -240,6 +240,7 @@
 .calendar-event-music { background: #ede9fe; color: #5b21b6; }
 .calendar-event-cinema { background: #fef3c7; color: #92400e; }
 .calendar-event-fashion { background: #fce7f3; color: #9d174d; }
+.calendar-event-personal { background: #dcfce7; color: #166534; }
 .network-group-title { margin: 18px 0 8px; font-size: 0.95rem; color: var(--color-muted); }
 .calendar-post-draggable { cursor: grab; }
 .calendar-post-dragging { opacity: 0.4; }
