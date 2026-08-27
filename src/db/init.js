@@ -349,7 +349,8 @@ function init() {
     { key: 'telegram', label: 'Telegram', connector: 'telegram', category: 'general' },
     { key: 'vk', label: 'VK', connector: 'vk', category: 'general' },
     { key: 'youtube', label: 'YouTube', connector: 'manual', category: 'music' },
-    { key: 'instagram', label: 'Instagram', connector: 'manual', category: 'general' },
+    { key: 'instagram', label: 'Instagram (@levkeiser, личный)', connector: 'manual', category: 'general' },
+    { key: 'instagram-djlevka', label: 'Instagram (@djlevka, музыка)', connector: 'manual', category: 'music' },
     { key: 'tiktok', label: 'TikTok', connector: 'manual', category: 'shorts' },
     { key: 'pinterest', label: 'Pinterest', connector: 'manual', category: 'general' },
     { key: 'rutube', label: 'Rutube', connector: 'manual', category: 'general' },
@@ -374,6 +375,11 @@ function init() {
 
   // Одноразовая раскладка категории «видеовертикалки» для уже существующих строк
   // (флаг в settings, чтобы не перетирать ручные изменения пользователя при каждом старте).
+  // Существующая строка Instagram получила уточнённую подпись (у Льва два аккаунта — личный и музыкальный).
+  db.prepare("UPDATE social_networks SET label = ? WHERE key = 'instagram' AND label = 'Instagram'").run(
+    'Instagram (@levkeiser, личный)'
+  );
+
   const shortsMigrated = db.prepare("SELECT value FROM settings WHERE key = 'migration_shorts_category'").get();
   if (!shortsMigrated) {
     db.exec("UPDATE social_networks SET category = 'shorts' WHERE key IN ('tiktok', 'yappy', 'likee', 'douyin')");
@@ -382,7 +388,7 @@ function init() {
 
   // Реальные коннекторы добавились позже, чем сеть 'manual' была изначально засеяна —
   // подтягиваем уже существующие строки на новый коннектор, но только если их не настроили вручную на что-то другое.
-  const connectorUpgrades = { youtube: 'youtube', instagram: 'instagram', tiktok: 'tiktok', pinterest: 'pinterest' };
+  const connectorUpgrades = { youtube: 'youtube', instagram: 'instagram', 'instagram-djlevka': 'instagram', tiktok: 'tiktok', pinterest: 'pinterest' };
   const upgradeConnector = db.prepare("UPDATE social_networks SET connector = ? WHERE key = ? AND connector = 'manual'");
   for (const [key, connector] of Object.entries(connectorUpgrades)) {
     upgradeConnector.run(connector, key);
