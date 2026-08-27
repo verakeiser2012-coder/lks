@@ -5,6 +5,7 @@ const { isValidMediaUpload, mediaFilePath } = require('../../../services/media')
 const { publishPost, refreshStats } = require('../../../services/social/publish');
 const {
   listNetworks,
+  listEventsForMonth,
   listPostsForMonth,
   getPost,
   getTargets,
@@ -29,6 +30,12 @@ router.get('/', (req, res) => {
     targetsByPost[post.id] = getTargets(post.id);
   }
 
+  const eventsByDay = {};
+  for (const ev of listEventsForMonth(month)) {
+    if (!eventsByDay[ev.day]) eventsByDay[ev.day] = [];
+    eventsByDay[ev.day].push(ev);
+  }
+
   const daysInMonth = new Date(year, month, 0).getDate();
   const firstWeekday = (new Date(year, month - 1, 1).getDay() + 6) % 7;
 
@@ -51,6 +58,7 @@ router.get('/', (req, res) => {
     daysInMonth,
     firstWeekday,
     postsByDay,
+    eventsByDay,
     targetsByPost,
     prevMonth,
     prevYear,

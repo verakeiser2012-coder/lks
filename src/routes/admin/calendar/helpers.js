@@ -1,7 +1,17 @@
 const db = require('../../../db');
 
 function listNetworks() {
-  return db.prepare('SELECT * FROM social_networks ORDER BY label').all();
+  // Музыкальные площадки — первыми, внутри групп по алфавиту.
+  return db
+    .prepare(`
+      SELECT * FROM social_networks
+      ORDER BY CASE WHEN category = 'music' THEN 0 ELSE 1 END, label
+    `)
+    .all();
+}
+
+function listEventsForMonth(month) {
+  return db.prepare('SELECT * FROM calendar_events WHERE month = ? ORDER BY day, title').all(month);
 }
 
 function listPostsForMonth(year, month) {
@@ -50,6 +60,7 @@ function normalizeScheduledAt(value) {
 
 module.exports = {
   listNetworks,
+  listEventsForMonth,
   listPostsForMonth,
   getPost,
   getTargets,

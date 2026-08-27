@@ -25,6 +25,11 @@
   <% for (let day = 1; day <= daysInMonth; day++) { %>
     <div class="calendar-cell">
       <div class="calendar-cell-date"><%= day %></div>
+      <% (eventsByDay[day] || []).forEach(function(ev) { %>
+        <div class="calendar-event calendar-event-<%= ev.category %>" title="<%= ev.title %>">
+          <%= { music: '🎵', cinema: '🎬', fashion: '👗' }[ev.category] || '📅' %> <%= ev.title %>
+        </div>
+      <% }); %>
       <% (postsByDay[String(day).padStart(2, '0')] || []).forEach(function(post) { %>
         <a class="calendar-post" href="/admin/calendar/<%= post.id %>">
           <span class="badge badge-<%= post.status %>"><%= post.scheduled_at.slice(11, 16) %></span>

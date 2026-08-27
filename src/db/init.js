@@ -299,6 +299,52 @@ function init() {
     db.exec('ALTER TABLE social_post_targets ADD COLUMN stats_updated_at TEXT');
   }
 
+  const socialNetworkCols = db.prepare('PRAGMA table_info(social_networks)').all();
+  if (!socialNetworkCols.some((c) => c.name === 'category')) {
+    db.exec("ALTER TABLE social_networks ADD COLUMN category TEXT NOT NULL DEFAULT 'general'");
+    // Стартовое разделение: музыкальные площадки DJ Levka — остальное «общие». Меняется в /admin/social-networks.
+    db.exec("UPDATE social_networks SET category = 'music' WHERE key IN ('youtube', 'tiktok')");
+  }
+
+  // Ежегодные праздники (месяц/день без года) — подсвечиваются в календаре публикаций как инфоповоды.
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS calendar_events (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      month INTEGER NOT NULL,
+      day INTEGER NOT NULL,
+      title TEXT NOT NULL,
+      category TEXT NOT NULL DEFAULT 'other',
+      UNIQUE (month, day, title)
+    );
+  `);
+
+  const holidays = [
+    // Музыка
+    { month: 3, day: 9, title: 'Всемирный день диджея', category: 'music' },
+    { month: 4, day: 13, title: 'Всемирный день рок-н-ролла', category: 'music' },
+    { month: 4, day: 30, title: 'Международный день джаза', category: 'music' },
+    { month: 5, day: 19, title: 'День уличной музыки', category: 'music' },
+    { month: 6, day: 21, title: 'Всемирный день музыки', category: 'music' },
+    { month: 8, day: 12, title: 'День виниловых пластинок', category: 'music' },
+    { month: 10, day: 1, title: 'Международный день музыки', category: 'music' },
+    // Кино
+    { month: 8, day: 27, title: 'День российского кино', category: 'cinema' },
+    { month: 10, day: 28, title: 'Международный день анимации', category: 'cinema' },
+    { month: 12, day: 28, title: 'Международный день кино', category: 'cinema' },
+    // Мода / модельное
+    { month: 5, day: 20, title: 'День рождения джинсов', category: 'fashion' },
+    { month: 8, day: 19, title: 'Всемирный день фотографии', category: 'fashion' },
+    { month: 8, day: 21, title: 'Международный день моды', category: 'fashion' },
+    { month: 9, day: 9, title: 'Международный день красоты', category: 'fashion' },
+    { month: 11, day: 5, title: 'День любви к рыжим волосам', category: 'fashion' },
+  ];
+  const insertHoliday = db.prepare(
+    'INSERT OR IGNORE INTO calendar_events (month, day, title, category) VALUES (?, ?, ?, ?)'
+  );
+  for (const h of holidays) {
+    insertHoliday.run(h.month, h.day, h.title, h.category);
+  }
+
   const defaultNetworks = [
     { key: 'telegram', label: 'Telegram', connector: 'telegram' },
     { key: 'vk', label: 'VK', connector: 'vk' },

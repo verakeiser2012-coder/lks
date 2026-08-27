@@ -6,7 +6,11 @@
   <div class="flash flash-error"><%= error %></div>
 <% } %>
 
-<% networks.forEach(function(n) { %>
+<% [['music', '🎵 Музыка'], ['general', 'Остальные']].forEach(function(group) { %>
+<% const groupNets = networks.filter(function(n) { return (n.category || 'general') === group[0]; }); %>
+<% if (groupNets.length > 0) { %>
+<h2 class="network-group-title"><%= group[1] %></h2>
+<% groupNets.forEach(function(n) { %>
   <div class="network-row">
     <div class="network-row-main">
       <strong><%= n.label %></strong>
@@ -18,6 +22,10 @@
     <div class="network-row-actions">
       <form class="inline" action="/admin/social-networks/<%= n.id %>/toggle" method="POST">
         <button class="link-btn" type="submit"><%= n.enabled ? 'Отключить' : 'Включить' %></button>
+      </form>
+      <form class="inline" action="/admin/social-networks/<%= n.id %>/category" method="POST">
+        <input type="hidden" name="category" value="<%= (n.category || 'general') === 'music' ? 'general' : 'music' %>">
+        <button class="link-btn" type="submit"><%= (n.category || 'general') === 'music' ? 'В «остальные»' : 'В «музыку»' %></button>
       </form>
       <form class="inline" action="/admin/social-networks/<%= n.id %>/delete" method="POST" onsubmit="return confirm('Удалить соцсеть?');">
         <button class="link-btn" type="submit">Удалить</button>
@@ -43,6 +51,8 @@
     </form>
   <% } %>
 <% }); %>
+<% } %>
+<% }); %>
 
 <h2>Добавить соцсеть</h2>
 <form action="/admin/social-networks" method="POST" class="gallery-upload-form">
@@ -60,6 +70,13 @@
       <% connectors.forEach(function(c) { %>
         <option value="<%= c.key %>"><%= c.label %></option>
       <% }); %>
+    </select>
+  </label>
+  <label>
+    Группа
+    <select name="category">
+      <option value="general">Остальные</option>
+      <option value="music">🎵 Музыка</option>
     </select>
   </label>
   <button class="btn" type="submit">Добавить</button>

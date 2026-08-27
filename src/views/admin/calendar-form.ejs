@@ -45,13 +45,19 @@
   <% } else { %>
     <label>
       Соцсети
-      <% networks.forEach(function(n) { %>
-        <div>
-          <input type="checkbox" name="networks" value="<%= n.key %>" id="net-<%= n.key %>" style="width:auto;display:inline-block;">
-          <label for="net-<%= n.key %>" style="display:inline;font-weight:normal;">
-            <%= n.label %><% if (!n.enabled) { %> <span class="badge badge-disabled">не подключено</span><% } %>
-          </label>
-        </div>
+      <% [['music', '🎵 Музыка'], ['general', 'Остальные']].forEach(function(group) { %>
+        <% const groupNets = networks.filter(function(n) { return (n.category || 'general') === group[0]; }); %>
+        <% if (groupNets.length > 0) { %>
+          <div class="network-group-title"><%= group[1] %></div>
+          <% groupNets.forEach(function(n) { %>
+            <div>
+              <input type="checkbox" name="networks" value="<%= n.key %>" id="net-<%= n.key %>" style="width:auto;display:inline-block;">
+              <label for="net-<%= n.key %>" style="display:inline;font-weight:normal;">
+                <%= n.label %><% if (!n.enabled) { %> <span class="badge badge-disabled">не подключено</span><% } %>
+              </label>
+            </div>
+          <% }); %>
+        <% } %>
       <% }); %>
     </label>
   <% } %>

@@ -17,7 +17,7 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const { label, key, connector } = req.body;
+  const { label, key, connector, category } = req.body;
   if (!label || !key || !connector) {
     return res.render('admin/social-networks', {
       networks: listNetworks(),
@@ -30,9 +30,9 @@ router.post('/', (req, res) => {
 
   try {
     db.prepare(`
-      INSERT INTO social_networks (key, label, connector, credentials, enabled)
-      VALUES (?, ?, ?, '{}', 0)
-    `).run(normalizedKey, label.trim(), connector);
+      INSERT INTO social_networks (key, label, connector, credentials, enabled, category)
+      VALUES (?, ?, ?, '{}', 0, ?)
+    `).run(normalizedKey, label.trim(), connector, category === 'music' ? 'music' : 'general');
   } catch (err) {
     return res.render('admin/social-networks', {
       networks: listNetworks(),
@@ -62,6 +62,16 @@ router.post('/:id/credentials', (req, res) => {
     JSON.stringify(credentials),
     network.id
   );
+  res.redirect('/admin/social-networks');
+});
+
+router.post('/:id/category', (req, res) => {
+  const network = db.prepare('SELECT * FROM social_networks WHERE id = ?').get(req.params.id);
+  if (!network) {
+    return res.status(404).render('404');
+  }
+  const category = req.body.category === 'music' ? 'music' : 'general';
+  db.prepare('UPDATE social_networks SET category = ? WHERE id = ?').run(category, network.id);
   res.redirect('/admin/social-networks');
 });
 
