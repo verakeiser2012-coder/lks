@@ -346,21 +346,38 @@ function init() {
   }
 
   const defaultNetworks = [
-    { key: 'telegram', label: 'Telegram', connector: 'telegram' },
-    { key: 'vk', label: 'VK', connector: 'vk' },
-    { key: 'youtube', label: 'YouTube', connector: 'manual' },
-    { key: 'instagram', label: 'Instagram', connector: 'manual' },
-    { key: 'tiktok', label: 'TikTok', connector: 'manual' },
-    { key: 'pinterest', label: 'Pinterest', connector: 'manual' },
-    { key: 'rutube', label: 'Rutube', connector: 'manual' },
-    { key: 'ok', label: 'Одноклассники', connector: 'manual' },
-    { key: 'dzen', label: 'Дзен', connector: 'manual' },
+    { key: 'telegram', label: 'Telegram', connector: 'telegram', category: 'general' },
+    { key: 'vk', label: 'VK', connector: 'vk', category: 'general' },
+    { key: 'youtube', label: 'YouTube', connector: 'manual', category: 'music' },
+    { key: 'instagram', label: 'Instagram', connector: 'manual', category: 'general' },
+    { key: 'tiktok', label: 'TikTok', connector: 'manual', category: 'shorts' },
+    { key: 'pinterest', label: 'Pinterest', connector: 'manual', category: 'general' },
+    { key: 'rutube', label: 'Rutube', connector: 'manual', category: 'general' },
+    { key: 'ok', label: 'Одноклассники', connector: 'manual', category: 'general' },
+    { key: 'dzen', label: 'Дзен', connector: 'manual', category: 'general' },
+    // Найдены на band.link/levkeiser и band.link/djlevka, но отсутствовали в списке.
+    { key: 'x', label: 'X (Twitter)', connector: 'manual', category: 'general' },
+    { key: 'facebook', label: 'Facebook', connector: 'manual', category: 'general' },
+    { key: 'yappy', label: 'Yappy', connector: 'manual', category: 'shorts' },
+    { key: 'likee', label: 'Likee', connector: 'manual', category: 'shorts' },
+    // Китайские площадки — ссылки на них уже есть в /admin/settings (douyin_url и т.д.).
+    { key: 'douyin', label: 'Douyin (кит. TikTok)', connector: 'manual', category: 'shorts' },
+    { key: 'weibo', label: 'Weibo', connector: 'manual', category: 'general' },
+    { key: 'xiaohongshu', label: 'Xiaohongshu (RedNote)', connector: 'manual', category: 'general' },
   ];
   const insertNetwork = db.prepare(
-    'INSERT OR IGNORE INTO social_networks (key, label, connector) VALUES (?, ?, ?)'
+    'INSERT OR IGNORE INTO social_networks (key, label, connector, category) VALUES (?, ?, ?, ?)'
   );
   for (const network of defaultNetworks) {
-    insertNetwork.run(network.key, network.label, network.connector);
+    insertNetwork.run(network.key, network.label, network.connector, network.category);
+  }
+
+  // Одноразовая раскладка категории «видеовертикалки» для уже существующих строк
+  // (флаг в settings, чтобы не перетирать ручные изменения пользователя при каждом старте).
+  const shortsMigrated = db.prepare("SELECT value FROM settings WHERE key = 'migration_shorts_category'").get();
+  if (!shortsMigrated) {
+    db.exec("UPDATE social_networks SET category = 'shorts' WHERE key IN ('tiktok', 'yappy', 'likee', 'douyin')");
+    db.prepare("INSERT OR IGNORE INTO settings (key, value) VALUES ('migration_shorts_category', 'done')").run();
   }
 
   // Реальные коннекторы добавились позже, чем сеть 'manual' была изначально засеяна —

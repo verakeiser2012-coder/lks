@@ -45,7 +45,7 @@
   <% } else { %>
     <label>
       Соцсети
-      <% [['music', '🎵 Музыка'], ['general', 'Остальные']].forEach(function(group) { %>
+      <% [['music', '🎵 Музыка'], ['shorts', '📱 Видеовертикалки'], ['general', 'Остальные']].forEach(function(group) { %>
         <% const groupNets = networks.filter(function(n) { return (n.category || 'general') === group[0]; }); %>
         <% if (groupNets.length > 0) { %>
           <div class="network-group-title"><%= group[1] %></div>

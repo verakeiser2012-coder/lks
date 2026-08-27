@@ -241,6 +241,9 @@
 .calendar-event-cinema { background: #fef3c7; color: #92400e; }
 .calendar-event-fashion { background: #fce7f3; color: #9d174d; }
 .network-group-title { margin: 18px 0 8px; font-size: 0.95rem; color: var(--color-muted); }
+.calendar-post-draggable { cursor: grab; }
+.calendar-post-dragging { opacity: 0.4; }
+.calendar-cell-dropover { outline: 2px dashed #6366f1; outline-offset: -2px; background: #eef2ff; }
 
 .ig-grid {
   display: grid;

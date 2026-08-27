@@ -191,6 +191,24 @@ router.post('/:id/edit', uploadGalleryFile.single('file'), (req, res) => {
   res.redirect(`/admin/calendar/${post.id}`);
 });
 
+router.post('/:id/move', (req, res) => {
+  const post = getPost(req.params.id);
+  if (!post) {
+    return res.status(404).json({ ok: false, error: 'Пост не найден.' });
+  }
+  if (post.status !== 'scheduled') {
+    return res.status(400).json({ ok: false, error: 'Перетаскивать можно только запланированные посты.' });
+  }
+  const date = String(req.body.date || '');
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    return res.status(400).json({ ok: false, error: 'Некорректная дата.' });
+  }
+  // Дата меняется, время публикации сохраняется прежним.
+  const time = post.scheduled_at.slice(11);
+  db.prepare('UPDATE social_posts SET scheduled_at = ? WHERE id = ?').run(`${date} ${time}`, post.id);
+  res.json({ ok: true });
+});
+
 router.post('/:id/publish', async (req, res) => {
   const post = getPost(req.params.id);
   if (!post) {

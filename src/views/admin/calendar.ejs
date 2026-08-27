@@ -11,7 +11,8 @@
 
 <div class="admin-toolbar">
   <a href="/admin/calendar?year=<%= prevYear %>&month=<%= prevMonth %>">← Пред. месяц</a>
-  <strong><%= year %>-<%= String(month).padStart(2, '0') %></strong>
+  <% const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']; %>
+  <strong><%= monthNames[month - 1] %> <%= year %></strong>
   <a href="/admin/calendar?year=<%= nextYear %>&month=<%= nextMonth %>">След. месяц →</a>
 </div>
 
@@ -23,7 +24,8 @@
     <div class="calendar-cell calendar-cell-empty"></div>
   <% } %>
   <% for (let day = 1; day <= daysInMonth; day++) { %>
-    <div class="calendar-cell">
+    <% const cellDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`; %>
+    <div class="calendar-cell calendar-cell-day" data-date="<%= cellDate %>">
       <div class="calendar-cell-date"><%= day %></div>
       <% (eventsByDay[day] || []).forEach(function(ev) { %>
         <div class="calendar-event calendar-event-<%= ev.category %>" title="<%= ev.title %>">
@@ -31,7 +33,12 @@
         </div>
       <% }); %>
       <% (postsByDay[String(day).padStart(2, '0')] || []).forEach(function(post) { %>
-        <a class="calendar-post" href="/admin/calendar/<%= post.id %>">
+        <a
+          class="calendar-post<%= post.status === 'scheduled' ? ' calendar-post-draggable' : '' %>"
+          href="/admin/calendar/<%= post.id %>"
+          data-post-id="<%= post.id %>"
+          <%= post.status === 'scheduled' ? 'draggable=true' : '' %>
+        >
           <span class="badge badge-<%= post.status %>"><%= post.scheduled_at.slice(11, 16) %></span>
           <%= (post.text || '(без текста)').slice(0, 24) %>
         </a>
@@ -39,5 +46,57 @@
     </div>
   <% } %>
 </div>
+
+<script>
+  // Перетаскивание запланированных постов между днями; клик по посту открывает его как обычная ссылка.
+  (function () {
+    let draggedId = null;
+
+    document.querySelectorAll('.calendar-post-draggable').forEach(function (el) {
+      el.addEventListener('dragstart', function (e) {
+        draggedId = el.dataset.postId;
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', draggedId);
+        el.classList.add('calendar-post-dragging');
+      });
+      el.addEventListener('dragend', function () {
+        el.classList.remove('calendar-post-dragging');
+        draggedId = null;
+      });
+    });
+
+    document.querySelectorAll('.calendar-cell-day').forEach(function (cell) {
+      cell.addEventListener('dragover', function (e) {
+        if (!draggedId) return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        cell.classList.add('calendar-cell-dropover');
+      });
+      cell.addEventListener('dragleave', function () {
+        cell.classList.remove('calendar-cell-dropover');
+      });
+      cell.addEventListener('drop', function (e) {
+        e.preventDefault();
+        cell.classList.remove('calendar-cell-dropover');
+        const postId = draggedId || e.dataTransfer.getData('text/plain');
+        if (!postId) return;
+        fetch('/admin/calendar/' + postId + '/move', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: 'date=' + encodeURIComponent(cell.dataset.date),
+        })
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            if (data.ok) {
+              window.location.reload();
+            } else {
+              alert(data.error || 'Не удалось перенести пост.');
+            }
+          })
+          .catch(function () { alert('Не удалось перенести пост.'); });
+      });
+    });
+  })();
+</script>
 
 <%- include('partials/footer') %>

@@ -5,7 +5,7 @@ function listNetworks() {
   return db
     .prepare(`
       SELECT * FROM social_networks
-      ORDER BY CASE WHEN category = 'music' THEN 0 ELSE 1 END, label
+      ORDER BY CASE category WHEN 'music' THEN 0 WHEN 'shorts' THEN 1 ELSE 2 END, label
     `)
     .all();
 }

@@ -6,7 +6,7 @@
   <div class="flash flash-error"><%= error %></div>
 <% } %>
 
-<% [['music', '🎵 Музыка'], ['general', 'Остальные']].forEach(function(group) { %>
+<% [['music', '🎵 Музыка'], ['shorts', '📱 Видеовертикалки'], ['general', 'Остальные']].forEach(function(group) { %>
 <% const groupNets = networks.filter(function(n) { return (n.category || 'general') === group[0]; }); %>
 <% if (groupNets.length > 0) { %>
 <h2 class="network-group-title"><%= group[1] %></h2>
@@ -24,8 +24,11 @@
         <button class="link-btn" type="submit"><%= n.enabled ? 'Отключить' : 'Включить' %></button>
       </form>
       <form class="inline" action="/admin/social-networks/<%= n.id %>/category" method="POST">
-        <input type="hidden" name="category" value="<%= (n.category || 'general') === 'music' ? 'general' : 'music' %>">
-        <button class="link-btn" type="submit"><%= (n.category || 'general') === 'music' ? 'В «остальные»' : 'В «музыку»' %></button>
+        <select name="category" onchange="this.form.submit()">
+          <option value="music" <%= (n.category || 'general') === 'music' ? 'selected' : '' %>>🎵 Музыка</option>
+          <option value="shorts" <%= (n.category || 'general') === 'shorts' ? 'selected' : '' %>>📱 Видеовертикалки</option>
+          <option value="general" <%= (n.category || 'general') === 'general' ? 'selected' : '' %>>Остальные</option>
+        </select>
       </form>
       <form class="inline" action="/admin/social-networks/<%= n.id %>/delete" method="POST" onsubmit="return confirm('Удалить соцсеть?');">
         <button class="link-btn" type="submit">Удалить</button>
@@ -77,6 +80,7 @@
     <select name="category">
       <option value="general">Остальные</option>
       <option value="music">🎵 Музыка</option>
+      <option value="shorts">📱 Видеовертикалки</option>
     </select>
   </label>
   <button class="btn" type="submit">Добавить</button>
