@@ -342,6 +342,7 @@ function init() {
     { month: 12, day: 3, title: 'День памяти Павла Бажова — повод для поста о фильме', category: 'cinema' },
     // Личные даты
     { month: 3, day: 21, title: 'День рождения Льва (2012)', category: 'personal' },
+    { month: 8, day: 14, title: 'День рождения бренда LEVKEYSER (регистрация ИП, 2026)', category: 'personal' },
   ];
   const insertHoliday = db.prepare(
     'INSERT OR IGNORE INTO calendar_events (month, day, title, category) VALUES (?, ?, ?, ?)'
