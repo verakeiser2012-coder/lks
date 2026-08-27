@@ -68,10 +68,19 @@ async function publishPost(postId) {
   );
 }
 
+// Даты в календаре вводятся и хранятся по местному времени администратора (Екатеринбург),
+// а datetime('now') в SQLite — это UTC, из-за чего посты уходили на 5 часов позже.
+// Сравниваем с текущим временем в нужном часовом поясе (можно переопределить через ADMIN_TZ).
+function nowInAdminTz() {
+  const tz = process.env.ADMIN_TZ || 'Asia/Yekaterinburg';
+  // Локаль sv-SE даёт формат 'YYYY-MM-DD HH:MM:SS' — совпадает с форматом scheduled_at.
+  return new Date().toLocaleString('sv-SE', { timeZone: tz });
+}
+
 async function publishDuePosts() {
   const duePosts = db
-    .prepare(`SELECT id FROM social_posts WHERE status = 'scheduled' AND scheduled_at <= datetime('now')`)
-    .all();
+    .prepare(`SELECT id FROM social_posts WHERE status = 'scheduled' AND scheduled_at <= ?`)
+    .all(nowInAdminTz());
   for (const row of duePosts) {
     await publishPost(row.id);
   }
