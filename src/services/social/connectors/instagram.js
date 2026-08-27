@@ -1,11 +1,13 @@
 const { absoluteMediaUrl } = require('../mediaUrl');
 
 const fields = [
-  { name: 'accessToken', label: 'Long-lived токен (instagram_content_publish)', type: 'password' },
-  { name: 'igUserId', label: 'Instagram Business Account ID', type: 'text' },
+  { name: 'accessToken', label: 'Долгоживущий токен Instagram Login (instagram_business_content_publish)', type: 'password' },
+  { name: 'igUserId', label: 'ID аккаунта Instagram (из настройки API)', type: 'text' },
 ];
 
-const GRAPH = 'https://graph.facebook.com/v19.0';
+// Путь «API с входом через Instagram» (без страницы Facebook) — хост graph.instagram.com.
+// Токен долгоживущий (60 дней), автоматически продлевается планировщиком (см. instagramTokenRefresh.js).
+const GRAPH = 'https://graph.instagram.com/v23.0';
 
 async function waitUntilReady(containerId, accessToken) {
   for (let i = 0; i < 20; i++) {
