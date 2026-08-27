@@ -17,18 +17,26 @@ function parseCredentials(network) {
 // «Музыкальные» сети — международная аудитория: берём английский текст (text_en),
 // а если его нет — русский текст без кириллических хэштегов. Инфоповод (news_hook)
 // добавляется первой строкой к русской подписи.
+function withLink(text, post) {
+  const link = (post.link_url || '').trim();
+  if (!link || (text || '').includes(link)) return text || '';
+  return `${(text || '').replace(/[\s]+$/, '')}
+
+${link}`;
+}
+
 function captionFor(post, network) {
   if (network && network.category === 'music') {
-    if (post.text_en && post.text_en.trim()) return post.text_en;
-    return (post.text || '')
+    if (post.text_en && post.text_en.trim()) return withLink(post.text_en, post);
+    return withLink((post.text || '')
       .split(/\s+/)
       .filter((word) => !(word.startsWith('#') && /[а-яё]/i.test(word)))
       .join(' ')
-      .trim();
+      .trim(), post);
   }
   const hook = (post.news_hook || '').trim();
-  if (hook) return hook + '\n\n' + (post.text || '');
-  return post.text || '';
+  if (hook) return withLink(hook + '\n\n' + (post.text || ''), post);
+  return withLink(post.text || '', post);
 }
 
 async function publishTarget(post, target) {
@@ -57,6 +65,19 @@ async function publishTarget(post, target) {
       UPDATE social_post_targets SET status = 'published', published_url = ?, error = '', updated_at = datetime('now')
       WHERE id = ?
     `).run(result && result.url ? result.url : '', target.id);
+
+    // Дополнительная публикация в историях — только там, где коннектор это умеет.
+    if (post.story && connector.publishStory && target.story_status !== 'published') {
+      try {
+        await connector.publishStory(post, credentials);
+        db.prepare(`UPDATE social_post_targets SET story_status = 'published', story_error = '' WHERE id = ?`).run(target.id);
+      } catch (storyErr) {
+        db.prepare(`UPDATE social_post_targets SET story_status = 'failed', story_error = ? WHERE id = ?`).run(
+          storyErr.message || 'Ошибка публикации истории',
+          target.id
+        );
+      }
+    }
   } catch (err) {
     db.prepare(`
       UPDATE social_post_targets SET status = 'failed', error = ?, updated_at = datetime('now') WHERE id = ?

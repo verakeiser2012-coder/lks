@@ -98,4 +98,52 @@ async function getStats(target, credentials) {
   };
 }
 
-module.exports = { key: 'vk', label: 'VK', fields, publish, getStats };
+// История сообщества (фото или видео) с кнопкой-ссылкой, если указана.
+async function publishStory(post, credentials) {
+  const { accessToken, groupId } = credentials;
+  if (!accessToken || !groupId) {
+    throw new Error('Не указан токен доступа или ID группы.');
+  }
+  if (!post.media_path) {
+    throw new Error('Для истории нужно фото или видео.');
+  }
+
+  const isVideo = post.media_type === 'video';
+  const serverParams = {
+    add_to_news: 1,
+    group_id: Math.abs(Number(groupId)),
+    access_token: accessToken,
+    v: API_VERSION,
+  };
+  const link = (post.link_url || '').trim();
+  if (link) {
+    serverParams.link_text = 'go_to';
+    serverParams.link_url = link;
+  }
+
+  const server = await vkCall(isVideo ? 'stories.getVideoUploadServer' : 'stories.getPhotoUploadServer', serverParams);
+
+  const filePath = path.join(uploadsDir, path.basename(post.media_path));
+  const fileBuffer = fs.readFileSync(filePath);
+  const form = new FormData();
+  form.append(isVideo ? 'video_file' : 'file', new Blob([fileBuffer]), path.basename(filePath));
+  const uploadResponse = await fetch(server.upload_url, { method: 'POST', body: form });
+  const uploadResult = await uploadResponse.json();
+
+  const uploadResultToken =
+    (uploadResult.response && uploadResult.response.upload_result) || uploadResult.upload_result;
+  if (!uploadResultToken) {
+    throw new Error(
+      (uploadResult.error && (uploadResult.error.error_msg || uploadResult.error)) ||
+        'VK не принял файл истории.'
+    );
+  }
+
+  await vkCall('stories.save', {
+    upload_results: uploadResultToken,
+    access_token: accessToken,
+    v: API_VERSION,
+  });
+}
+
+module.exports = { key: 'vk', label: 'VK', fields, publish, publishStory, getStats };

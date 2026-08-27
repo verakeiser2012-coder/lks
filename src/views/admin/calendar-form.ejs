@@ -35,6 +35,27 @@
     <textarea name="textEn" rows="3"><%= post ? (post.text_en || '') : '' %></textarea>
   </label>
   <label>
+    Ссылка (добавится в конец подписи; для VK-истории станет кнопкой)
+    <input type="url" name="linkUrl" id="link-url" value="<%= post ? (post.link_url || '') : '' %>" placeholder="https://…">
+  </label>
+  <% if (products.length > 0) { %>
+    <label>
+      …или выбери товар из магазина — ссылка подставится сама
+      <select id="product-link">
+        <option value="">— не выбран —</option>
+        <% products.forEach(function(pr) { %>
+          <option value="https://levkeiser.shop/catalog/<%= pr.slug %>"><%= pr.name %></option>
+        <% }); %>
+      </select>
+    </label>
+  <% } %>
+  <div>
+    <input type="checkbox" name="story" id="story-flag" style="width:auto;display:inline-block;" <%= post && post.story ? 'checked' : '' %>>
+    <label for="story-flag" style="display:inline;font-weight:normal;">
+      Также опубликовать в историях (VK — с кнопкой-ссылкой; Instagram — медиа без ссылки; остальные сети истории через API не умеют)
+    </label>
+  </div>
+  <label>
     Дата и время публикации
     <input
       type="datetime-local"
@@ -119,6 +140,14 @@
       refresh();
     });
     refresh();
+
+    const productSelect = document.getElementById('product-link');
+    const linkInput = document.getElementById('link-url');
+    if (productSelect && linkInput) {
+      productSelect.addEventListener('change', function () {
+        if (productSelect.value) linkInput.value = productSelect.value;
+      });
+    }
   })();
 </script>
 

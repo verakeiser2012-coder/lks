@@ -308,6 +308,22 @@ function init() {
     // Инфоповод (напр. «трек попал в плейлист…») — подставляется первой строкой подписи.
     db.exec("ALTER TABLE social_posts ADD COLUMN news_hook TEXT NOT NULL DEFAULT ''");
   }
+  if (!socialPostCols.some((c) => c.name === 'story')) {
+    // 1 = дополнительно опубликовать в историях (там, где сеть это умеет: VK, Instagram).
+    db.exec('ALTER TABLE social_posts ADD COLUMN story INTEGER NOT NULL DEFAULT 0');
+  }
+  if (!socialPostCols.some((c) => c.name === 'link_url')) {
+    // Ссылка поста (например, на товар) — добавляется в подпись и в кнопку VK-истории.
+    db.exec("ALTER TABLE social_posts ADD COLUMN link_url TEXT NOT NULL DEFAULT ''");
+  }
+
+  const socialTargetCols2 = db.prepare('PRAGMA table_info(social_post_targets)').all();
+  if (!socialTargetCols2.some((c) => c.name === 'story_status')) {
+    db.exec("ALTER TABLE social_post_targets ADD COLUMN story_status TEXT NOT NULL DEFAULT ''");
+  }
+  if (!socialTargetCols2.some((c) => c.name === 'story_error')) {
+    db.exec("ALTER TABLE social_post_targets ADD COLUMN story_error TEXT NOT NULL DEFAULT ''");
+  }
 
   const socialNetworkCols = db.prepare('PRAGMA table_info(social_networks)').all();
   if (!socialNetworkCols.some((c) => c.name === 'category')) {
