@@ -27,6 +27,14 @@
     <button type="button" class="link-btn" id="hashtag-apply">Добавить в текст</button>
   </div>
   <label>
+    Инфоповод (первая строка подписи — например, «Трек попал в плейлист…»; можно оставить пустым)
+    <input type="text" name="newsHook" value="<%= post ? (post.news_hook || '') : '' %>">
+  </label>
+  <label>
+    Текст на английском — для 🎵 музыкальных сетей (без него возьмётся русский текст без русских хэштегов)
+    <textarea name="textEn" rows="3"><%= post ? (post.text_en || '') : '' %></textarea>
+  </label>
+  <label>
     Дата и время публикации
     <input
       type="datetime-local"
@@ -51,27 +59,24 @@
     Файл <%= post && post.media_path ? '(оставьте пустым, чтобы не менять)' : '(необязательно)' %>
     <input type="file" name="file" accept="image/*,video/*">
   </label>
-  <% if (post) { %>
-    <p class="hint">Соцсети нельзя изменить после создания поста — удалите и создайте новый с другим набором.</p>
-  <% } else { %>
-    <label>
-      Соцсети
-      <% [['music', '🎵 Музыка'], ['shorts', '📱 Видеовертикалки'], ['general', 'Остальные']].forEach(function(group) { %>
-        <% const groupNets = networks.filter(function(n) { return (n.category || 'general') === group[0]; }); %>
-        <% if (groupNets.length > 0) { %>
-          <div class="network-group-title"><%= group[1] %></div>
-          <% groupNets.forEach(function(n) { %>
-            <div>
-              <input type="checkbox" name="networks" value="<%= n.key %>" id="net-<%= n.key %>" style="width:auto;display:inline-block;">
-              <label for="net-<%= n.key %>" style="display:inline;font-weight:normal;">
-                <%= n.label %><% if (!n.enabled) { %> <span class="badge badge-disabled">не подключено</span><% } %>
-              </label>
-            </div>
-          <% }); %>
-        <% } %>
-      <% }); %>
-    </label>
-  <% } %>
+  <label>
+    Соцсети
+    <% [['music', '🎵 Музыка'], ['shorts', '📱 Видеовертикалки'], ['general', 'Остальные']].forEach(function(group) { %>
+      <% const groupNets = networks.filter(function(n) { return (n.category || 'general') === group[0]; }); %>
+      <% if (groupNets.length > 0) { %>
+        <div class="network-group-title"><%= group[1] %></div>
+        <% groupNets.forEach(function(n) { %>
+          <div>
+            <input type="checkbox" name="networks" value="<%= n.key %>" id="net-<%= n.key %>" style="width:auto;display:inline-block;" <%= selectedKeys.includes(n.key) ? 'checked' : '' %>>
+            <label for="net-<%= n.key %>" style="display:inline;font-weight:normal;">
+              <%= n.label %><% if (!n.enabled) { %> <span class="badge badge-disabled">не подключено</span><% } %>
+            </label>
+          </div>
+        <% }); %>
+      <% } %>
+    <% }); %>
+    <% if (post) { %><span class="hint">Уже опубликованные цели снять нельзя — они сохранятся.</span><% } %>
+  </label>
   <button class="btn" type="submit"><%= post ? 'Сохранить' : 'Запланировать' %></button>
 </form>
 

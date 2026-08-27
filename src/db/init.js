@@ -299,6 +299,16 @@ function init() {
     db.exec('ALTER TABLE social_post_targets ADD COLUMN stats_updated_at TEXT');
   }
 
+  const socialPostCols = db.prepare('PRAGMA table_info(social_posts)').all();
+  if (!socialPostCols.some((c) => c.name === 'text_en')) {
+    // Английская версия подписи — используется для «музыкальных» сетей (международная аудитория).
+    db.exec("ALTER TABLE social_posts ADD COLUMN text_en TEXT NOT NULL DEFAULT ''");
+  }
+  if (!socialPostCols.some((c) => c.name === 'news_hook')) {
+    // Инфоповод (напр. «трек попал в плейлист…») — подставляется первой строкой подписи.
+    db.exec("ALTER TABLE social_posts ADD COLUMN news_hook TEXT NOT NULL DEFAULT ''");
+  }
+
   const socialNetworkCols = db.prepare('PRAGMA table_info(social_networks)').all();
   if (!socialNetworkCols.some((c) => c.name === 'category')) {
     db.exec("ALTER TABLE social_networks ADD COLUMN category TEXT NOT NULL DEFAULT 'general'");

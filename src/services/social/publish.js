@@ -13,6 +13,24 @@ function parseCredentials(network) {
   }
 }
 
+// Итоговая подпись для конкретной сети.
+// «Музыкальные» сети — международная аудитория: берём английский текст (text_en),
+// а если его нет — русский текст без кириллических хэштегов. Инфоповод (news_hook)
+// добавляется первой строкой к русской подписи.
+function captionFor(post, network) {
+  if (network && network.category === 'music') {
+    if (post.text_en && post.text_en.trim()) return post.text_en;
+    return (post.text || '')
+      .split(/\s+/)
+      .filter((word) => !(word.startsWith('#') && /[а-яё]/i.test(word)))
+      .join(' ')
+      .trim();
+  }
+  const hook = (post.news_hook || '').trim();
+  if (hook) return hook + '\n\n' + (post.text || '');
+  return post.text || '';
+}
+
 async function publishTarget(post, target) {
   const network = getNetwork(target.network_key);
 
@@ -34,7 +52,7 @@ async function publishTarget(post, target) {
   const credentials = parseCredentials(network);
 
   try {
-    const result = await connector.publish(post, credentials);
+    const result = await connector.publish({ ...post, text: captionFor(post, network) }, credentials);
     db.prepare(`
       UPDATE social_post_targets SET status = 'published', published_url = ?, error = '', updated_at = datetime('now')
       WHERE id = ?

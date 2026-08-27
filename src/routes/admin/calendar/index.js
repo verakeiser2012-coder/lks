@@ -92,11 +92,11 @@ router.get('/new', (req, res) => {
       };
     }
   }
-  res.render('admin/calendar-form', { post: null, prefill, networks: listNetworks(), error: null });
+  res.render('admin/calendar-form', { post: null, prefill, networks: listNetworks(), selectedKeys: [], error: null });
 });
 
 router.post('/', uploadGalleryFile.single('file'), (req, res) => {
-  const { text, scheduledAt, prefillMediaPath, prefillMediaType } = req.body;
+  const { text, textEn, newsHook, scheduledAt, prefillMediaPath, prefillMediaType } = req.body;
   const rawNetworks = req.body.networks;
   const selectedNetworks = Array.isArray(rawNetworks) ? rawNetworks : rawNetworks ? [rawNetworks] : [];
 
@@ -105,6 +105,7 @@ router.post('/', uploadGalleryFile.single('file'), (req, res) => {
       post: null,
       prefill: null,
       networks: listNetworks(),
+      selectedKeys: [],
       error: 'Укажите дату публикации и хотя бы одну соцсеть.',
     });
   }
@@ -117,6 +118,7 @@ router.post('/', uploadGalleryFile.single('file'), (req, res) => {
         post: null,
         prefill: null,
         networks: listNetworks(),
+        selectedKeys: [],
         error: 'Некорректный тип медиафайла.',
       });
     }
@@ -134,9 +136,9 @@ ${tags.join(' ')}`;
   }
 
   const info = db.prepare(`
-    INSERT INTO social_posts (text, media_path, media_type, scheduled_at, status)
-    VALUES (?, ?, ?, ?, 'scheduled')
-  `).run(finalText, mediaPath, mediaType, normalizeScheduledAt(scheduledAt));
+    INSERT INTO social_posts (text, text_en, news_hook, media_path, media_type, scheduled_at, status)
+    VALUES (?, ?, ?, ?, ?, ?, 'scheduled')
+  `).run(finalText, textEn || '', newsHook || '', mediaPath, mediaType, normalizeScheduledAt(scheduledAt));
 
   const insertTarget = db.prepare('INSERT INTO social_post_targets (post_id, network_key) VALUES (?, ?)');
   for (const key of selectedNetworks) {
@@ -170,7 +172,8 @@ router.get('/:id/edit', (req, res) => {
   if (post.status !== 'scheduled') {
     return res.redirect(`/admin/calendar/${post.id}`);
   }
-  res.render('admin/calendar-form', { post, prefill: null, networks: listNetworks(), error: null });
+  const selectedKeys = getTargets(post.id).map((t) => t.network_key);
+  res.render('admin/calendar-form', { post, prefill: null, networks: listNetworks(), selectedKeys, error: null });
 });
 
 router.post('/:id/edit', uploadGalleryFile.single('file'), (req, res) => {
@@ -182,13 +185,16 @@ router.post('/:id/edit', uploadGalleryFile.single('file'), (req, res) => {
     return res.redirect(`/admin/calendar/${post.id}`);
   }
 
-  const { text, scheduledAt } = req.body;
-  if (!scheduledAt) {
+  const { text, textEn, newsHook, scheduledAt } = req.body;
+  const rawNetworks = req.body.networks;
+  const selectedNetworks = Array.isArray(rawNetworks) ? rawNetworks : rawNetworks ? [rawNetworks] : [];
+  if (!scheduledAt || selectedNetworks.length === 0) {
     return res.render('admin/calendar-form', {
       post,
       prefill: null,
       networks: listNetworks(),
-      error: 'Укажите дату публикации.',
+      selectedKeys: getTargets(post.id).map((t) => t.network_key),
+      error: 'Укажите дату публикации и хотя бы одну соцсеть.',
     });
   }
 
@@ -200,6 +206,7 @@ router.post('/:id/edit', uploadGalleryFile.single('file'), (req, res) => {
         post,
         prefill: null,
         networks: listNetworks(),
+        selectedKeys: getTargets(post.id).map((t) => t.network_key),
         error: 'Некорректный тип медиафайла.',
       });
     }
@@ -208,8 +215,22 @@ router.post('/:id/edit', uploadGalleryFile.single('file'), (req, res) => {
   }
 
   db.prepare(`
-    UPDATE social_posts SET text = ?, media_path = ?, media_type = ?, scheduled_at = ? WHERE id = ?
-  `).run(text || '', mediaPath, mediaType, normalizeScheduledAt(scheduledAt), post.id);
+    UPDATE social_posts SET text = ?, text_en = ?, news_hook = ?, media_path = ?, media_type = ?, scheduled_at = ? WHERE id = ?
+  `).run(text || '', textEn || '', newsHook || '', mediaPath, mediaType, normalizeScheduledAt(scheduledAt), post.id);
+
+  // Синхронизация соцсетей: убираем невыбранные (кроме уже опубликованных), добавляем новые.
+  const existing = getTargets(post.id);
+  const removeTarget = db.prepare('DELETE FROM social_post_targets WHERE id = ?');
+  for (const target of existing) {
+    if (!selectedNetworks.includes(target.network_key) && target.status !== 'published') {
+      removeTarget.run(target.id);
+    }
+  }
+  const existingKeys = existing.map((t) => t.network_key);
+  const insertTarget = db.prepare('INSERT INTO social_post_targets (post_id, network_key) VALUES (?, ?)');
+  for (const key of selectedNetworks) {
+    if (!existingKeys.includes(key)) insertTarget.run(post.id, key);
+  }
 
   res.redirect(`/admin/calendar/${post.id}`);
 });
