@@ -30,20 +30,16 @@
   <div class="prose"><%- renderLinkedText(post.content) %></div>
 
   <% if (media.length > 0) { %>
-    <div class="filmstrip">
-      <div class="filmstrip-track">
-        <% media.forEach(function(item, idx) { %>
-          <div class="film-cell" data-code="LEVKEYSER · 35 MM" data-num="КАДР <%= String(idx + 1).padStart(2, '0') %>">
-          <div class="gallery-item <%= item.type === 'video' ? 'is-video' : '' %>">
-            <% if (item.type === 'photo') { %>
-              <img src="<%= item.file_path %>" alt="" loading="lazy">
-            <% } else { %>
-              <video src="<%= item.file_path %>" muted loop playsinline preload="metadata"></video>
-            <% } %>
-          </div>
-          </div>
-        <% }); %>
-      </div>
+    <div class="gallery-grid">
+      <% media.forEach(function(item) { %>
+        <div class="gallery-item <%= item.type === 'video' ? 'is-video' : '' %>">
+          <% if (item.type === 'photo') { %>
+            <img src="<%= item.file_path %>" alt="" loading="lazy">
+          <% } else { %>
+            <video src="<%= item.file_path %>" muted loop playsinline preload="metadata"></video>
+          <% } %>
+        </div>
+      <% }); %>
     </div>
   <% } %>
 </article>
