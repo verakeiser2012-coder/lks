@@ -113,14 +113,16 @@ a:hover { color: var(--color-accent-hover); }
   transition: left 0.22s ease, right 0.22s ease;
 }
 .nav-inner a:hover::after { left: 0; right: 0; }
-/* DJ Levka — акцент капителью фирменного слэб-серифа; подчёркивание только у активного раздела */
+/* DJ Levka — зелёный акцент (Акация из палитры «Дикий лев») */
 .nav-inner a.nav-music-link {
-  color: var(--color-accent);
+  color: #6FA83C;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-size: 0.92rem;
 }
+.nav-inner a.nav-music-link::after { background: linear-gradient(90deg, #6FA83C, #8FC65C); }
+.nav-inner a.nav-music-link.active { color: #6FA83C; }
 .nav-divider {
   width: 1px;
   height: 16px;
