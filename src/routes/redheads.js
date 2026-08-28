@@ -1,5 +1,6 @@
 const express = require('express');
 const db = require('../db');
+const { isBot, overLimit } = require('../middleware/antispam');
 const { notify } = require('../services/mail');
 
 const router = express.Router();
@@ -19,6 +20,9 @@ router.get('/', (req, res) => {
 });
 
 router.post('/submit', (req, res) => {
+  if (isBot(req) || overLimit('redheads', req, 3)) {
+    return res.redirect('/redheads?sent=1');
+  }
   const { name, role, note, linkUrl, contact, ageConsent, dataConsent } = req.body;
   const introRow = db.prepare("SELECT value FROM settings WHERE key = 'redheads_intro'").get();
   const people = db

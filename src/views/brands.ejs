@@ -43,6 +43,7 @@
 <div class="catalog-layout">
   <div class="catalog-main">
     <form action="/brands" method="POST">
+  <input type="text" name="website" value="" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;" aria-hidden="true">
       <label>
         Название бренда/компании *
         <input type="text" name="companyName" value="<%= values.companyName || '' %>" required>

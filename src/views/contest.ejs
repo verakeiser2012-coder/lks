@@ -25,6 +25,7 @@
     <div class="flash flash-error"><%= error %></div>
   <% } %>
   <form action="/contest/submit" method="POST" style="max-width:480px;">
+  <input type="text" name="website" value="" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;" aria-hidden="true">
     <label>
       Имя *
       <input type="text" name="name" value="<%= values.name || '' %>" required>

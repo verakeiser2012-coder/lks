@@ -1,11 +1,17 @@
 const express = require('express');
 const db = require('../db');
+const { isBot, overLimit } = require('../middleware/antispam');
 
 const router = express.Router();
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 router.post('/', (req, res) => {
+  if (isBot(req) || overLimit('subscribe', req)) {
+    req.session.subscribeSuccess = true; // боту отвечаем «успехом», ничего не сохраняя
+    const t = typeof req.body.redirectTo === 'string' && req.body.redirectTo.startsWith('/') ? req.body.redirectTo : '/';
+    return res.redirect(t);
+  }
   const { email, redirectTo, dataConsent } = req.body;
   const target = typeof redirectTo === 'string' && redirectTo.startsWith('/') ? redirectTo : '/';
 

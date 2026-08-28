@@ -1,5 +1,6 @@
 const express = require('express');
 const db = require('../db');
+const { isBot, overLimit } = require('../middleware/antispam');
 const { notify } = require('../services/mail');
 
 const router = express.Router();
@@ -91,6 +92,9 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
+  if (isBot(req) || overLimit('brands', req, 3)) {
+    return res.redirect('/brands?sent=1');
+  }
   const { companyName, contactName, phone, email, website, message, dataConsent } = req.body;
 
   if (!companyName || !contactName || !phone) {

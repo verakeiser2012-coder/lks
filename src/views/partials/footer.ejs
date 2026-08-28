@@ -51,6 +51,7 @@
         <% if (typeof subscribeSuccess !== 'undefined' && subscribeSuccess) { %><div class="flash flash-success">Готово, вы подписаны!</div><% } %>
         <% if (typeof subscribeError !== 'undefined' && subscribeError) { %><div class="flash flash-error"><%= subscribeError %></div><% } %>
         <form class="subscribe-form" action="/subscribe" method="POST">
+  <input type="text" name="website" value="" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;" aria-hidden="true">
           <input type="hidden" name="redirectTo" value="<%= typeof currentPath !== 'undefined' ? currentPath : '/' %>">
           <input type="email" name="email" placeholder="you@email.com" required>
           <button class="btn" type="submit">Подписаться</button>
