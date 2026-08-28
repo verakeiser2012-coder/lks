@@ -118,7 +118,7 @@ function nowInAdminTz() {
 
 async function publishDuePosts() {
   const duePosts = db
-    .prepare(`SELECT id FROM social_posts WHERE status = 'scheduled' AND scheduled_at <= ?`)
+    .prepare(`SELECT id FROM social_posts WHERE status = 'scheduled' AND approved = 1 AND scheduled_at <= ?`)
     .all(nowInAdminTz());
   for (const row of duePosts) {
     await publishPost(row.id);

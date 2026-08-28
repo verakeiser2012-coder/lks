@@ -270,6 +270,15 @@ router.post('/:id/move', (req, res) => {
   res.json({ ok: true });
 });
 
+router.post('/:id/approve', (req, res) => {
+  const post = getPost(req.params.id);
+  if (!post) {
+    return res.status(404).render('404');
+  }
+  db.prepare('UPDATE social_posts SET approved = ? WHERE id = ?').run(post.approved ? 0 : 1, post.id);
+  res.redirect(`/admin/calendar/${post.id}`);
+});
+
 router.post('/:id/publish', async (req, res) => {
   const post = getPost(req.params.id);
   if (!post) {

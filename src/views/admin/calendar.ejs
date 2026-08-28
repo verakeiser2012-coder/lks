@@ -64,7 +64,7 @@
           data-post-id="<%= post.id %>"
           <%= post.status === 'scheduled' ? 'draggable=true' : '' %>
         >
-          <span class="badge badge-<%= post.status %>"><%= post.scheduled_at.slice(11, 16) %></span>
+          <span class="badge badge-<%= post.status %>"><%= post.scheduled_at.slice(11, 16) %></span><%= post.status === 'scheduled' && !post.approved ? ' ⏳' : '' %>
           <%= (post.news_hook || post.text || '(без текста)').slice(0, 24) %>
           <span class="calendar-post-nets">
             <% (targetsByPost[post.id] || []).forEach(function(t) { %><span class="net-badge net-<%= t.status %>"><%= netShort(t.network_key) %></span><% }); %>

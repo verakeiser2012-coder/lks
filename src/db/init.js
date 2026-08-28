@@ -319,6 +319,10 @@ function init() {
     // 1 = дополнительно опубликовать в историях (там, где сеть это умеет: VK, Instagram).
     db.exec('ALTER TABLE social_posts ADD COLUMN story INTEGER NOT NULL DEFAULT 0');
   }
+  if (!socialPostCols.some((c) => c.name === 'approved')) {
+    // Пост публикуется планировщиком ТОЛЬКО после явного подтверждения (кнопка в календаре).
+    db.exec('ALTER TABLE social_posts ADD COLUMN approved INTEGER NOT NULL DEFAULT 0');
+  }
   if (!socialPostCols.some((c) => c.name === 'link_url')) {
     // Ссылка поста (например, на товар) — добавляется в подпись и в кнопку VK-истории.
     db.exec("ALTER TABLE social_posts ADD COLUMN link_url TEXT NOT NULL DEFAULT ''");

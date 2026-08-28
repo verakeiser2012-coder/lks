@@ -10,7 +10,24 @@
   <h1>Пост от <%= post.scheduled_at %></h1>
   <span class="badge badge-<%= post.status %>"><%= post.status %></span>
   <% if (post.story) { %><span class="badge">+ истории</span><% } %>
+  <% if (post.status === 'scheduled') { %>
+    <% if (post.approved) { %>
+      <span class="badge badge-published">✓ подтверждён</span>
+    <% } else { %>
+      <span class="badge badge-failed">⏳ ждёт подтверждения</span>
+    <% } %>
+  <% } %>
 </div>
+<% if (post.status === 'scheduled') { %>
+  <form class="inline" action="/admin/calendar/<%= post.id %>/approve" method="POST">
+    <% if (post.approved) { %>
+      <button class="link-btn" type="submit">Отозвать подтверждение</button>
+    <% } else { %>
+      <button class="btn" type="submit">✓ Подтвердить публикацию</button>
+    <% } %>
+  </form>
+  <p class="hint"><%= post.approved ? 'Пост выйдет автоматически в назначенное время.' : 'Без подтверждения планировщик пост НЕ опубликует, даже когда время наступит.' %></p>
+<% } %>
 <% if (post.link_url) { %>
   <p>Ссылка поста: <a href="<%= post.link_url %>" target="_blank"><%= post.link_url %></a></p>
 <% } %>
