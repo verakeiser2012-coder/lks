@@ -6,6 +6,7 @@ const { publishPost, refreshStats } = require('../../../services/social/publish'
 const { suggestHashtags } = require('../../../utils/hashtags');
 const {
   listNetworks,
+  listUpcoming,
   listEventsForMonth,
   listPostsForMonth,
   getPost,
@@ -33,6 +34,11 @@ router.get('/', (req, res) => {
     if (!postsByDay[day]) postsByDay[day] = [];
     postsByDay[day].push(post);
     targetsByPost[post.id] = getTargets(post.id);
+  }
+
+  const upcoming = listUpcoming(7);
+  for (const post of upcoming) {
+    if (!targetsByPost[post.id]) targetsByPost[post.id] = getTargets(post.id);
   }
 
   const eventsByDay = {};
@@ -64,6 +70,7 @@ router.get('/', (req, res) => {
     firstWeekday,
     postsByDay,
     eventsByDay,
+    upcoming,
     targetsByPost,
     prevMonth,
     prevYear,

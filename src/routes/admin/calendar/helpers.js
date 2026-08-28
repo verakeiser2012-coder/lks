@@ -10,6 +10,14 @@ function listNetworks() {
     .all();
 }
 
+function listUpcoming(days) {
+  const now = new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Yekaterinburg' });
+  const until = new Date(Date.now() + days * 24 * 3600 * 1000).toLocaleString('sv-SE', { timeZone: 'Asia/Yekaterinburg' });
+  return db
+    .prepare("SELECT * FROM social_posts WHERE status = 'scheduled' AND scheduled_at >= ? AND scheduled_at <= ? ORDER BY scheduled_at ASC")
+    .all(now, until);
+}
+
 function listEventsForMonth(month) {
   return db.prepare('SELECT * FROM calendar_events WHERE month = ? ORDER BY day, title').all(month);
 }
@@ -60,6 +68,7 @@ function normalizeScheduledAt(value) {
 
 module.exports = {
   listNetworks,
+  listUpcoming,
   listEventsForMonth,
   listPostsForMonth,
   getPost,

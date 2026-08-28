@@ -16,6 +16,31 @@
   <a href="/admin/calendar?year=<%= nextYear %>&month=<%= nextMonth %>">След. месяц →</a>
 </div>
 
+<%
+  const NET_SHORT = {
+    telegram: 'TG', vk: 'VK', youtube: 'YT', instagram: 'IG', 'instagram-djlevka': 'IGm',
+    tiktok: 'TT', news: 'Сайт', dzen: 'Дзен', rutube: 'RT', ok: 'ОК', pinterest: 'Pin',
+    soundcloud: 'SC', vimeo: 'Vim', x: 'X', facebook: 'FB', yappy: 'Яp', likee: 'Lk',
+  };
+  function netShort(key) { return NET_SHORT[key] || key.slice(0, 3).toUpperCase(); }
+%>
+
+<% if (upcoming.length > 0) { %>
+  <h2 class="upcoming-title">Ближайшие 7 дней</h2>
+  <div class="upcoming-list">
+    <% upcoming.forEach(function(post) { %>
+      <a class="upcoming-row" href="/admin/calendar/<%= post.id %>">
+        <span class="upcoming-when"><%= post.scheduled_at.slice(5, 16).replace('-', '.').replace(' ', ' · ') %></span>
+        <span class="upcoming-text"><%= (post.news_hook || post.text || '(без текста)').slice(0, 60) %></span>
+        <span class="upcoming-nets">
+          <% (targetsByPost[post.id] || []).forEach(function(t) { %><span class="net-badge net-<%= t.status %>"><%= netShort(t.network_key) %></span><% }); %>
+          <% if (post.story) { %><span class="net-badge net-story">🎞</span><% } %>
+        </span>
+      </a>
+    <% }); %>
+  </div>
+<% } %>
+
 <div class="calendar-grid">
   <% ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].forEach(function(d) { %>
     <div class="calendar-weekday"><%= d %></div>
@@ -40,7 +65,11 @@
           <%= post.status === 'scheduled' ? 'draggable=true' : '' %>
         >
           <span class="badge badge-<%= post.status %>"><%= post.scheduled_at.slice(11, 16) %></span>
-          <%= (post.text || '(без текста)').slice(0, 24) %>
+          <%= (post.news_hook || post.text || '(без текста)').slice(0, 24) %>
+          <span class="calendar-post-nets">
+            <% (targetsByPost[post.id] || []).forEach(function(t) { %><span class="net-badge net-<%= t.status %>"><%= netShort(t.network_key) %></span><% }); %>
+            <% if (post.story) { %><span class="net-badge net-story">🎞</span><% } %>
+          </span>
         </a>
       <% }); %>
     </div>
