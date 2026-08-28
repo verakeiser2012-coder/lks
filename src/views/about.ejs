@@ -7,7 +7,8 @@
 <% if (media.length > 0) { %>
   <div class="filmstrip"><div class="filmstrip-track">
     <% media.forEach(function(item, idx) { %>
-      <div class="film-cell" data-code="LEVKEYSER · 35 MM" data-num="КАДР <%= String(idx + 1).padStart(2, '0') %>">
+      <% var markA = item.created_at ? ' · ' + item.created_at.slice(8, 10) + '.' + item.created_at.slice(5, 7) + '.' + item.created_at.slice(2, 4) : ''; %>
+      <div class="film-cell" data-code="LEVKEYSER · 35 MM" data-num="КАДР <%= String(idx + 1).padStart(2, '0') %><%= markA %>">
       <div class="gallery-item <%= item.type === 'video' ? 'is-video' : '' %>">
         <% if (item.type === 'photo') { %>
           <img src="<%= item.file_path %>" alt="<%= item.title %>" loading="lazy">

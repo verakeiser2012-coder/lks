@@ -5,7 +5,8 @@
       <% galleryItems.forEach(function(item, idx) {
         var isEmbed = item.type === 'video' && item.file_path.indexOf('http') === 0;
       %>
-        <div class="film-cell" data-code="LEVKEYSER · 35 MM" data-num="КАДР <%= String(idx + 1).padStart(2, '0') %>">
+        <% var markG = item.created_at ? ' · ' + item.created_at.slice(8, 10) + '.' + item.created_at.slice(5, 7) + '.' + item.created_at.slice(2, 4) : ''; %>
+        <div class="film-cell" data-code="LEVKEYSER · 35 MM" data-num="КАДР <%= String(idx + 1).padStart(2, '0') %><%= markG %>">
         <div class="gallery-item <%= item.type === 'video' && !isEmbed ? 'is-video' : '' %> <%= isEmbed ? 'is-embed' : '' %>">
           <% if (item.type === 'photo') { %>
             <img src="<%= item.file_path %>" alt="<%= item.title %>" loading="lazy">
