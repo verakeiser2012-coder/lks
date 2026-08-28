@@ -36,7 +36,19 @@ function createNewsRouter(lang) {
     const media = db
       .prepare('SELECT * FROM news_media WHERE news_id = ? ORDER BY sort_order ASC, created_at ASC')
       .all(post.id);
-    res.render('news-detail', { post, media });
+    // Лента времени: все опубликованные новости для киноплёнки-навигации
+    const allPosts = db
+      .prepare('SELECT id, slug, title, created_at FROM news WHERE is_published = 1 AND lang = ? ORDER BY created_at ASC')
+      .all(lang);
+    const covers = db.prepare(`
+      SELECT news_id, file_path FROM news_media
+      WHERE type = 'photo' AND id IN (
+        SELECT MIN(id) FROM news_media WHERE type = 'photo' GROUP BY news_id
+      )
+    `).all();
+    const coverByNewsId = {};
+    covers.forEach((c) => { coverByNewsId[c.news_id] = c.file_path; });
+    res.render('news-detail', { post, media, allPosts, coverByNewsId });
   });
 
   return router;

@@ -5,7 +5,7 @@
 <div class="prose"><%- renderLinkedText(aboutText) %></div>
 
 <% if (media.length > 0) { %>
-  <div class="gallery-grid">
+  <div class="filmstrip"><div class="filmstrip-track">
     <% media.forEach(function(item) { %>
       <div class="gallery-item <%= item.type === 'video' ? 'is-video' : '' %>">
         <% if (item.type === 'photo') { %>
@@ -16,7 +16,7 @@
         <% if (item.title) { %><div class="gallery-caption"><%= item.title %></div><% } %>
       </div>
     <% }); %>
-  </div>
+  </div></div>
 <% } %>
 
 <%- include('partials/footer') %>

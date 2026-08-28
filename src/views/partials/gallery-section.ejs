@@ -1,7 +1,7 @@
 <% if (typeof galleryItems !== 'undefined' && galleryItems.length > 0) { %>
   <section class="link-section">
     <h2><%= typeof galleryTitle !== 'undefined' ? galleryTitle : 'Фото и видео' %></h2>
-    <div class="gallery-grid">
+    <div class="filmstrip"><div class="filmstrip-track">
       <% galleryItems.forEach(function(item) {
         var isEmbed = item.type === 'video' && item.file_path.indexOf('http') === 0;
       %>
@@ -18,6 +18,6 @@
           <% if (item.title) { %><div class="gallery-caption"><%= item.title %></div><% } %>
         </div>
       <% }); %>
-    </div>
+    </div></div>
   </section>
 <% } %>

@@ -3,22 +3,56 @@
 <article>
   <div class="news-date"><%= post.created_at %></div>
   <h1><%= post.title %></h1>
+
+  <% if (allPosts.length > 1) { %>
+    <div class="filmstrip filmstrip--timeline" id="news-timeline">
+      <div class="filmstrip-track">
+        <% allPosts.forEach(function(p) { %>
+          <a class="news-frame <%= p.id === post.id ? 'active' : '' %>" href="<%= post.lang === 'en' ? '/en/news/' : '/news/' %><%= p.slug %>" <%= p.id === post.id ? 'data-current="1"' : '' %>>
+            <% if (coverByNewsId[p.id]) { %>
+              <img src="<%= coverByNewsId[p.id] %>" alt="" loading="lazy">
+            <% } else { %>
+              <div class="no-image"><%= post.lang === 'en' ? 'No photo' : 'Нет фото' %></div>
+            <% } %>
+            <div class="news-frame-caption">
+              <div class="news-frame-date"><%= p.created_at.slice(0, 10) %></div>
+              <div class="news-frame-title"><%= p.title %></div>
+            </div>
+          </a>
+        <% }); %>
+      </div>
+    </div>
+  <% } %>
+
   <div class="prose"><%- renderLinkedText(post.content) %></div>
 
   <% if (media.length > 0) { %>
-    <div class="gallery-grid">
-      <% media.forEach(function(item) { %>
-        <div class="gallery-item <%= item.type === 'video' ? 'is-video' : '' %>">
-          <% if (item.type === 'photo') { %>
-            <img src="<%= item.file_path %>" alt="" loading="lazy">
-          <% } else { %>
-            <video src="<%= item.file_path %>" muted loop playsinline preload="metadata"></video>
-          <% } %>
-        </div>
-      <% }); %>
+    <div class="filmstrip">
+      <div class="filmstrip-track">
+        <% media.forEach(function(item) { %>
+          <div class="gallery-item <%= item.type === 'video' ? 'is-video' : '' %>">
+            <% if (item.type === 'photo') { %>
+              <img src="<%= item.file_path %>" alt="" loading="lazy">
+            <% } else { %>
+              <video src="<%= item.file_path %>" muted loop playsinline preload="metadata"></video>
+            <% } %>
+          </div>
+        <% }); %>
+      </div>
     </div>
   <% } %>
 </article>
+
+<script>
+  // автопрокрутка ленты времени к текущей новости
+  document.addEventListener('DOMContentLoaded', function () {
+    var current = document.querySelector('#news-timeline [data-current]');
+    if (current && current.scrollIntoView) {
+      current.scrollIntoView({ block: 'nearest', inline: 'center' });
+      window.scrollTo(0, 0);
+    }
+  });
+</script>
 
 <p>
   <% if (post.lang === 'en') { %>

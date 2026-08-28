@@ -323,6 +323,79 @@ main.container { padding-top: 32px; padding-bottom: 60px; min-height: 60vh; }
 .product-detail-info { flex: 1; min-width: 280px; }
 .out-of-stock { color: #b91c1c; font-weight: 600; }
 
+/* Киноплёнка: горизонтальная лента с перфорацией, фирменная Смола #211A12 */
+.filmstrip {
+  background: #211A12;
+  border-radius: 12px;
+  overflow-x: auto;
+  margin: 18px 0;
+  scrollbar-width: thin;
+  scrollbar-color: #B4601C #211A12;
+}
+.filmstrip-track {
+  display: inline-flex;
+  gap: 14px;
+  padding: 26px 16px;
+  min-width: 100%;
+  background-image:
+    repeating-linear-gradient(90deg, transparent 0 10px, #F7F3EA 10px 22px, transparent 22px 34px),
+    repeating-linear-gradient(90deg, transparent 0 10px, #F7F3EA 10px 22px, transparent 22px 34px);
+  background-size: 34px 10px, 34px 10px;
+  background-position: left 6px top 8px, left 6px bottom 8px;
+  background-repeat: repeat-x, repeat-x;
+}
+.filmstrip .gallery-item {
+  margin: 0;
+  flex: 0 0 auto;
+  height: 160px;
+  border-radius: 6px;
+  break-inside: auto;
+}
+.filmstrip .gallery-item img,
+.filmstrip .gallery-item video {
+  height: 100%;
+  width: auto;
+  max-width: 300px;
+  object-fit: cover;
+  display: block;
+}
+.filmstrip .gallery-item .gallery-embed-frame,
+.filmstrip .gallery-item.is-embed { width: 280px; height: 160px; }
+.filmstrip .gallery-item .gallery-embed-frame iframe { width: 100%; height: 100%; }
+.filmstrip .gallery-caption {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 4px 8px; font-size: 0.75rem;
+  background: rgba(33, 26, 18, 0.75); color: #F7F3EA;
+}
+
+/* Лента времени новостей на странице новости */
+.filmstrip--timeline .news-frame {
+  flex: 0 0 auto;
+  width: 150px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #2c241a;
+  color: #F7F3EA;
+  display: block;
+}
+.filmstrip--timeline .news-frame img,
+.filmstrip--timeline .news-frame .no-image {
+  width: 100%; height: 92px; object-fit: cover; display: block;
+  background: #3a2f22; color: #8a7a63; font-size: 0.75rem;
+  text-align: center; line-height: 92px;
+}
+.filmstrip--timeline .news-frame-caption { padding: 6px 8px; }
+.filmstrip--timeline .news-frame-date { font-size: 0.7rem; color: #C9A06A; }
+.filmstrip--timeline .news-frame-title {
+  font-size: 0.78rem; line-height: 1.25; margin-top: 2px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.filmstrip--timeline .news-frame.active {
+  outline: 2px solid #D99A2B;
+  outline-offset: 2px;
+}
+.filmstrip--timeline .news-frame:hover { background: #3a2f22; color: #fff; }
+
 /* Masonry-галерея: разная высота карточек, лайтбокс по клику — public/js/lightbox.js */
 .gallery-grid {
   column-count: 3;
