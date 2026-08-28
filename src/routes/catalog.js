@@ -39,7 +39,7 @@ router.get('/:slug', (req, res) => {
     ? db.prepare('SELECT * FROM releases WHERE id = ?').get(product.release_id)
     : null;
 
-  res.render('product', { product, release });
+  res.render('product', { title: product.name, product, release });
 });
 
 module.exports = router;

@@ -48,7 +48,7 @@ function createNewsRouter(lang) {
     `).all();
     const coverByNewsId = {};
     covers.forEach((c) => { coverByNewsId[c.news_id] = c.file_path; });
-    res.render('news-detail', { post, media, allPosts, coverByNewsId });
+    res.render('news-detail', { post, media, allPosts, coverByNewsId, title: post.title });
   });
 
   return router;

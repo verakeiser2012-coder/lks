@@ -106,6 +106,21 @@
   <script src="/js/lightbox.js" defer></script>
   <script src="/js/nav.js" defer></script>
   <script src="/js/protect.js" defer></script>
+  <button type="button" class="to-top" id="to-top" aria-label="Наверх">↑</button>
+  <script>
+    (function () {
+      var btn = document.getElementById('to-top');
+      if (!btn) return;
+      function onScroll() {
+        btn.classList.toggle('visible', window.scrollY > 600);
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      btn.addEventListener('click', function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+      onScroll();
+    })();
+  </script>
   <script src="/js/bg-music.js" defer></script>
 </body>
 </html>

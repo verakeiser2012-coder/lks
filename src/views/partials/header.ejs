@@ -3,7 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= typeof title !== 'undefined' ? title : [settings.site_name, settings.site_alt_name, settings.site_tagline].filter(Boolean).join(' — ') %></title>
+  <%
+    const SECTION_TITLES = {
+      news: 'Новости', about: 'Обо мне', music: 'Музыка DJ Levka', gigs: 'Выступления',
+      style: 'Стиль', redheads: 'Рыжие, которые вдохновляют', contest: 'Конкурс',
+      catalog: 'Каталог', drops: 'Дропы', brands: 'Брендам', cart: 'Корзина', checkout: 'Оформление заказа',
+    };
+    const siteBase = [settings.site_name, settings.site_alt_name].filter(Boolean).join(' — ') || 'Лев Кейсер';
+    let docTitle;
+    if (typeof title !== 'undefined' && title) {
+      docTitle = title + ' — ' + siteBase;
+    } else {
+      const seg = (typeof currentPath === 'string' ? currentPath : '/').split('?')[0].replace(/^\/en(\/|$)/, '/').split('/')[1] || '';
+      docTitle = SECTION_TITLES[seg]
+        ? SECTION_TITLES[seg] + ' — ' + siteBase
+        : [siteBase, settings.site_tagline].filter(Boolean).join(' — ');
+    }
+  %>
+  <title><%= docTitle %></title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@500;600;700;800&family=Marck+Script&display=swap" rel="stylesheet">

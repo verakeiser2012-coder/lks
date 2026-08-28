@@ -53,7 +53,7 @@ router.get('/:releaseSlug', (req, res, next) => {
     .prepare('SELECT * FROM tracks WHERE release_id = ? AND is_published = 1 ORDER BY sort_order ASC, id ASC')
     .all(release.id);
 
-  res.render('release', { release, tracks });
+  res.render('release', { title: release.title, release, tracks });
 });
 
 router.get('/:releaseSlug/:trackSlug', (req, res, next) => {
@@ -78,7 +78,7 @@ router.get('/:releaseSlug/:trackSlug', (req, res, next) => {
     .prepare('SELECT * FROM gallery_items WHERE track_id = ? ORDER BY sort_order ASC, created_at DESC')
     .all(track.id);
 
-  res.render('track', { release, track, prevTrack, nextTrack, trackGalleryItems });
+  res.render('track', { title: track.title, release, track, prevTrack, nextTrack, trackGalleryItems });
 });
 
 module.exports = router;
