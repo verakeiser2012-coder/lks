@@ -1,0 +1,39 @@
+<%- include('partials/header') %>
+
+<div class="admin-toolbar">
+  <h1>Подписчики на новости</h1>
+  <div>
+    <span class="badge">всего: <%= subscribers.length %></span>
+    &nbsp;&nbsp;
+    <a class="btn" href="/admin/subscribers/export.csv">Скачать CSV</a>
+  </div>
+</div>
+
+<% if (subscribers.length === 0) { %>
+  <p>Пока никто не подписался. Форма подписки работает на публичных страницах сайта.</p>
+<% } else { %>
+  <table>
+    <thead>
+      <tr>
+        <th>Email</th>
+        <th>Дата подписки</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% subscribers.forEach(function(s) { %>
+        <tr>
+          <td><%= s.email %></td>
+          <td><%= s.created_at %></td>
+          <td>
+            <form class="inline" action="/admin/subscribers/<%= s.id %>/delete" method="POST" onsubmit="return confirm('Удалить подписчика?');">
+              <button class="link-btn" type="submit">Удалить</button>
+            </form>
+          </td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+<% } %>
+
+<%- include('partials/footer') %>
