@@ -40,4 +40,21 @@ async function notify(subject, text, to) {
   }
 }
 
-module.exports = { notify, isConfigured };
+/**
+ * Отправка HTML-письма. В отличие от notify() НЕ глотает ошибки —
+ * рассылке важно знать, что доставка не удалась.
+ */
+async function sendHtml({ to, subject, html, text }) {
+  if (!isConfigured) {
+    throw new Error('SMTP не настроен (SMTP_USER/SMTP_PASSWORD в .env).');
+  }
+  return transporter.sendMail({
+    from: `"Лев Кейсер" <${SMTP_USER}>`,
+    to,
+    subject,
+    html,
+    text,
+  });
+}
+
+module.exports = { notify, sendHtml, isConfigured };

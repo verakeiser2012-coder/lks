@@ -2,13 +2,29 @@ const express = require('express');
 const db = require('../../../db');
 const { slugify } = require('../../../utils/slugify');
 const { getPost, getMedia } = require('./helpers');
+const { sendNewsletter } = require('../../../services/newsletter');
 const mediaRoutes = require('./media');
 
 const router = express.Router();
 
 router.get('/', (req, res) => {
   const posts = db.prepare('SELECT * FROM news ORDER BY created_at DESC').all();
-  res.render('admin/news', { posts });
+  const subscribersCount = db.prepare('SELECT COUNT(*) AS c FROM subscribers').get().c;
+  res.render('admin/news', { posts, subscribersCount, msg: req.query.msg || '' });
+});
+
+router.post('/:id/newsletter', async (req, res) => {
+  const testEmail = (req.body.testEmail || '').trim();
+  const result = await sendNewsletter(req.params.id, testEmail || null);
+  let msg;
+  if (result.error) {
+    msg = result.error;
+  } else if (testEmail) {
+    msg = result.sent === 1 ? `Тестовое письмо отправлено на ${testEmail}.` : `Не удалось отправить тест: ${result.failed[0] ? result.failed[0].error : 'неизвестная ошибка'}`;
+  } else {
+    msg = `Отправлено: ${result.sent}` + (result.failed.length ? `, ошибок: ${result.failed.length} (${result.failed[0].error})` : '');
+  }
+  res.redirect('/admin/news?msg=' + encodeURIComponent(msg));
 });
 
 router.get('/new', (req, res) => {

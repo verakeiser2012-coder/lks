@@ -2,8 +2,16 @@
 
 <div class="admin-toolbar">
   <h1>Новости</h1>
-  <a class="btn" href="/admin/news/new">+ Добавить новость</a>
+  <div>
+    <span class="badge">подписчиков: <%= subscribersCount %></span>
+    &nbsp;&nbsp;
+    <a class="btn" href="/admin/news/new">+ Добавить новость</a>
+  </div>
 </div>
+
+<% if (msg) { %>
+  <div class="flash"><%= msg %></div>
+<% } %>
 
 <table>
   <thead>
@@ -12,6 +20,7 @@
       <th>Язык</th>
       <th>Опубликовано</th>
       <th>Дата</th>
+      <th>Рассылка</th>
       <th></th>
     </tr>
   </thead>
@@ -22,6 +31,19 @@
         <td><%= post.lang === 'en' ? 'EN' : 'RU' %></td>
         <td><%= post.is_published ? 'Да' : 'Нет' %></td>
         <td><%= post.created_at %></td>
+        <td>
+          <% if (post.newsletter_sent_at) { %>
+            <span class="badge badge-published">отправлена <%= post.newsletter_sent_at.slice(0, 16) %></span>
+          <% } else { %>
+            <form class="inline" action="/admin/news/<%= post.id %>/newsletter" method="POST" onsubmit="return confirm('Разослать эту новость всем подписчикам (<%= subscribersCount %>)?');">
+              <button class="link-btn" type="submit" <%= subscribersCount === 0 ? 'disabled' : '' %>>Разослать</button>
+            </form>
+          <% } %>
+          <form class="inline" action="/admin/news/<%= post.id %>/newsletter" method="POST">
+            <input type="email" name="testEmail" placeholder="тест на email" style="width:140px;font-size:0.8rem;">
+            <button class="link-btn" type="submit">Тест</button>
+          </form>
+        </td>
         <td>
           <a href="/admin/news/<%= post.id %>/edit">Изменить</a>
           <form class="inline" action="/admin/news/<%= post.id %>/delete" method="POST" onsubmit="return confirm('Удалить новость?');">

@@ -103,6 +103,7 @@ app.use('/drops', collectionsRoutes);
 app.use('/redheads', redheadsRoutes);
 app.use('/contest', contestRoutes);
 app.use('/subscribe', subscribeRoutes);
+app.use('/unsubscribe', require('./routes/unsubscribe'));
 app.use('/legal', legalRoutes);
 app.use('/admin', adminRoutes);
 

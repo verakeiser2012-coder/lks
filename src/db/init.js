@@ -274,6 +274,9 @@ function init() {
   if (!newsCols.some((c) => c.name === 'lang')) {
     db.exec("ALTER TABLE news ADD COLUMN lang TEXT NOT NULL DEFAULT 'ru'");
   }
+  if (!newsCols.some((c) => c.name === 'newsletter_sent_at')) {
+    db.exec('ALTER TABLE news ADD COLUMN newsletter_sent_at TEXT');
+  }
 
   const galleryItemCols = db.prepare('PRAGMA table_info(gallery_items)').all();
   if (!galleryItemCols.some((c) => c.name === 'shot_date')) {
