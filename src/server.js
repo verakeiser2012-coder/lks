@@ -4,6 +4,7 @@ require('./db/init');
 const path = require('path');
 const express = require('express');
 const session = require('express-session');
+const { formatDate, formatDateShort } = require('./utils/dates');
 const SqliteSessionStore = require('./services/sqliteSessionStore');
 const morgan = require('morgan');
 
@@ -81,6 +82,8 @@ app.use((req, res, next) => {
   const cart = getCart(req);
   res.locals.cartCount = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
   res.locals.currentPath = req.originalUrl;
+  res.locals.formatDate = formatDate;
+  res.locals.formatDateShort = formatDateShort;
   res.locals.subscribeSuccess = Boolean(req.session.subscribeSuccess);
   res.locals.subscribeError = req.session.subscribeError || null;
   delete req.session.subscribeSuccess;

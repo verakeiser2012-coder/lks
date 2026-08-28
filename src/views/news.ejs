@@ -31,7 +31,7 @@
           <% } %>
         </div>
         <div>
-          <div class="news-date"><%= post.created_at %></div>
+          <div class="news-date"><%= formatDate(post.created_at, lang) %></div>
           <div class="news-title"><%= post.title %></div>
         </div>
       </a>

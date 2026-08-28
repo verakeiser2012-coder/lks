@@ -1,7 +1,7 @@
 <%- include('partials/header') %>
 
 <article>
-  <div class="news-date"><%= post.created_at %></div>
+  <div class="news-date"><%= formatDate(post.created_at, post.lang) %></div>
   <h1><%= post.title %></h1>
 
   <div class="prose"><%- renderLinkedText(post.content) %></div>
@@ -32,7 +32,7 @@
               <div class="no-image"><%= post.lang === 'en' ? 'No photo' : 'Нет фото' %></div>
             <% } %>
             <div class="news-frame-caption">
-              <div class="news-frame-date"><%= p.created_at.slice(0, 10) %></div>
+              <div class="news-frame-date"><%= formatDateShort(p.created_at, post.lang) %></div>
               <div class="news-frame-title"><%= p.title %></div>
             </div>
           </a>
