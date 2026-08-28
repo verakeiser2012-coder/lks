@@ -113,8 +113,14 @@ a:hover { color: var(--color-accent-hover); }
   transition: left 0.22s ease, right 0.22s ease;
 }
 .nav-inner a:hover::after { left: 0; right: 0; }
-.nav-inner a.nav-music-link { color: var(--color-accent); }
-.nav-inner a.nav-music-link::after { left: 0; right: 0; }
+/* DJ Levka — фирменный рукописный акцент; подчёркивание теперь только у активного раздела */
+.nav-inner a.nav-music-link {
+  color: var(--color-accent);
+  font-family: var(--font-script);
+  font-weight: 400;
+  font-size: 1.2rem;
+  padding-bottom: 2px;
+}
 .nav-divider {
   width: 1px;
   height: 16px;
@@ -324,12 +330,9 @@ main.container { padding-top: 32px; padding-bottom: 60px; min-height: 60vh; }
 .out-of-stock { color: #b91c1c; font-weight: 600; }
 
 /* Подсветка текущего раздела в навигации */
-.nav-inner a.active {
-  color: var(--color-accent, #B4601C);
-  font-weight: 700;
-  border-bottom: 2px solid var(--color-accent, #B4601C);
-  padding-bottom: 2px;
-}
+.nav-inner a.active { color: var(--color-accent, #B4601C); font-weight: 700; }
+.nav-inner a.active::after { left: 0; right: 0; }
+.nav-inner a.nav-music-link.active { font-weight: 400; }
 .shop-link.active {
   color: var(--color-accent, #B4601C);
   font-weight: 700;
