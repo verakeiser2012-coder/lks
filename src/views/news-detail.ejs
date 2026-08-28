@@ -4,6 +4,21 @@
   <div class="news-date"><%= post.created_at %></div>
   <h1><%= post.title %></h1>
 
+  <div class="prose"><%- renderLinkedText(post.content) %></div>
+
+  <% if (media.length > 0) { %>
+    <div class="gallery-grid">
+      <% media.forEach(function(item) { %>
+        <div class="gallery-item <%= item.type === 'video' ? 'is-video' : '' %>">
+          <% if (item.type === 'photo') { %>
+            <img src="<%= item.file_path %>" alt="" loading="lazy">
+          <% } else { %>
+            <video src="<%= item.file_path %>" muted loop playsinline preload="metadata"></video>
+          <% } %>
+        </div>
+      <% }); %>
+    </div>
+  <% } %>
   <% if (allPosts.length > 1) { %>
     <div class="filmstrip filmstrip--timeline" id="news-timeline">
       <div class="filmstrip-track">
@@ -24,22 +39,6 @@
           </div>
         <% }); %>
       </div>
-    </div>
-  <% } %>
-
-  <div class="prose"><%- renderLinkedText(post.content) %></div>
-
-  <% if (media.length > 0) { %>
-    <div class="gallery-grid">
-      <% media.forEach(function(item) { %>
-        <div class="gallery-item <%= item.type === 'video' ? 'is-video' : '' %>">
-          <% if (item.type === 'photo') { %>
-            <img src="<%= item.file_path %>" alt="" loading="lazy">
-          <% } else { %>
-            <video src="<%= item.file_path %>" muted loop playsinline preload="metadata"></video>
-          <% } %>
-        </div>
-      <% }); %>
     </div>
   <% } %>
 </article>
