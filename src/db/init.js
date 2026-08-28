@@ -276,6 +276,10 @@ function init() {
   }
 
   const galleryItemCols = db.prepare('PRAGMA table_info(gallery_items)').all();
+  if (!galleryItemCols.some((c) => c.name === 'shot_date')) {
+    // Дата съёмки (YYYY-MM-DD) — для маркировки кадров в киноплёнке; created_at остаётся датой загрузки.
+    db.exec("ALTER TABLE gallery_items ADD COLUMN shot_date TEXT NOT NULL DEFAULT ''");
+  }
   if (!galleryItemCols.some((c) => c.name === 'page_key')) {
     db.exec("ALTER TABLE gallery_items ADD COLUMN page_key TEXT NOT NULL DEFAULT ''");
   }

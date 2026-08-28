@@ -30,6 +30,10 @@
     <input type="number" name="sortOrder" value="0">
   </label>
   <label>
+    Дата съёмки (для маркировки кадра в киноплёнке; необязательно)
+    <input type="date" name="shotDate">
+  </label>
+  <label>
     Показывать на странице
     <select name="pageKey">
       <option value="">— нигде (только в админке) —</option>
@@ -93,6 +97,9 @@
           <% }); %>
         </select>
         <% if (item.track_id) { %><span class="hint">Трек: <%= item.track_title %></span><% } %>
+      </form>
+      <form action="/admin/gallery/<%= item.id %>/shot-date" method="POST" class="inline">
+        <input type="date" name="shotDate" value="<%= item.shot_date || '' %>" onchange="this.form.submit()" title="Дата съёмки">
       </form>
       <form action="/admin/gallery/<%= item.id %>/delete" method="POST" onsubmit="return confirm('Удалить файл?');">
         <button class="link-btn" type="submit">Удалить</button>

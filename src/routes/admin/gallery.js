@@ -36,6 +36,7 @@ router.get('/', (req, res) => {
 
 router.post('/', uploadGalleryFile.single('file'), (req, res) => {
   const { type, title, sortOrder, pageKey, trackId, videoUrl } = req.body;
+  const shotDate = /^\d{4}-\d{2}-\d{2}$/.test(req.body.shotDate || '') ? req.body.shotDate : '';
   const track_id = validTrackId(trackId);
   const page_key = track_id ? '' : (PAGE_KEYS.includes(pageKey) ? pageKey : '');
 
@@ -49,9 +50,9 @@ router.post('/', uploadGalleryFile.single('file'), (req, res) => {
       });
     }
     db.prepare(`
-      INSERT INTO gallery_items (type, title, file_path, page_key, track_id, sort_order)
-      VALUES ('video', ?, ?, ?, ?, ?)
-    `).run(title || '', parsed.embedUrl, page_key, track_id, Number(sortOrder) || 0);
+      INSERT INTO gallery_items (type, title, file_path, page_key, track_id, sort_order, shot_date)
+      VALUES ('video', ?, ?, ?, ?, ?, ?)
+    `).run(title || '', parsed.embedUrl, page_key, track_id, Number(sortOrder) || 0, shotDate);
     return res.redirect('/admin/gallery');
   }
 
@@ -60,9 +61,9 @@ router.post('/', uploadGalleryFile.single('file'), (req, res) => {
   }
 
   db.prepare(`
-    INSERT INTO gallery_items (type, title, file_path, page_key, track_id, sort_order)
-    VALUES (?, ?, ?, ?, ?, ?)
-  `).run(type, title || '', mediaFilePath(req), page_key, track_id, Number(sortOrder) || 0);
+    INSERT INTO gallery_items (type, title, file_path, page_key, track_id, sort_order, shot_date)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `).run(type, title || '', mediaFilePath(req), page_key, track_id, Number(sortOrder) || 0, shotDate);
 
   res.redirect('/admin/gallery');
 });
@@ -76,6 +77,12 @@ router.post('/:id/page', (req, res) => {
 router.post('/:id/track', (req, res) => {
   const track_id = validTrackId(req.body.trackId);
   db.prepare('UPDATE gallery_items SET track_id = ?, page_key = ? WHERE id = ?').run(track_id, '', req.params.id);
+  res.redirect('/admin/gallery');
+});
+
+router.post('/:id/shot-date', (req, res) => {
+  const shotDate = /^\d{4}-\d{2}-\d{2}$/.test(req.body.shotDate || '') ? req.body.shotDate : '';
+  db.prepare('UPDATE gallery_items SET shot_date = ? WHERE id = ?').run(shotDate, req.params.id);
   res.redirect('/admin/gallery');
 });
 
