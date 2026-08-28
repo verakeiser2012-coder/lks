@@ -16,7 +16,11 @@
 <% if (posts.length === 0) { %>
   <p>Пока новостей нет.</p>
 <% } else { %>
-  <div class="news-list">
+  <div class="news-view-toggle">
+    <button type="button" id="view-grid" class="active"><%= lang === 'en' ? 'Grid' : 'Плитка' %></button>
+    <button type="button" id="view-rows"><%= lang === 'en' ? 'List' : 'Список' %></button>
+  </div>
+  <div class="news-list" id="news-list">
     <% posts.forEach(function(post) { %>
       <a class="news-card" href="<%= lang === 'en' ? '/en/news/' : '/news/' %><%= post.slug %>">
         <div class="news-card-image">
@@ -34,5 +38,25 @@
     <% }); %>
   </div>
 <% } %>
+
+<script>
+  (function () {
+    var list = document.getElementById('news-list');
+    var btnGrid = document.getElementById('view-grid');
+    var btnRows = document.getElementById('view-rows');
+    if (!list) return;
+    function apply(view) {
+      list.classList.toggle('news-list--rows', view === 'rows');
+      btnGrid.classList.toggle('active', view !== 'rows');
+      btnRows.classList.toggle('active', view === 'rows');
+      try { localStorage.setItem('newsView', view); } catch (e) {}
+    }
+    btnGrid.addEventListener('click', function () { apply('grid'); });
+    btnRows.addEventListener('click', function () { apply('rows'); });
+    var saved = null;
+    try { saved = localStorage.getItem('newsView'); } catch (e) {}
+    if (saved === 'rows') apply('rows');
+  })();
+</script>
 
 <%- include('partials/footer') %>

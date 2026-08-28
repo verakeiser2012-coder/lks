@@ -399,6 +399,7 @@ function init() {
     { key: 'xiaohongshu', label: 'Xiaohongshu (RedNote)', connector: 'manual', category: 'general' },
     { key: 'vimeo', label: 'Vimeo', connector: 'manual', category: 'music' },
     { key: 'soundcloud', label: 'SoundCloud', connector: 'manual', category: 'music' },
+    { key: 'news', label: 'Новости сайта', connector: 'news', category: 'general' },
   ];
   const insertNetwork = db.prepare(
     'INSERT OR IGNORE INTO social_networks (key, label, connector, category) VALUES (?, ?, ?, ?)'
@@ -413,6 +414,13 @@ function init() {
   db.prepare("UPDATE social_networks SET label = ? WHERE key = 'instagram' AND label = 'Instagram'").run(
     'Instagram (@levkeiser, личный)'
   );
+
+  // «Новости сайта» не требуют учётных данных — включаем один раз при появлении.
+  const newsNetMigrated = db.prepare("SELECT value FROM settings WHERE key = 'migration_news_network_enabled'").get();
+  if (!newsNetMigrated) {
+    db.prepare("UPDATE social_networks SET enabled = 1 WHERE key = 'news'").run();
+    db.prepare("INSERT OR REPLACE INTO settings (key, value) VALUES ('migration_news_network_enabled', '1')").run();
+  }
 
   const shortsMigrated = db.prepare("SELECT value FROM settings WHERE key = 'migration_shorts_category'").get();
   if (!shortsMigrated) {
