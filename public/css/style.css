@@ -323,6 +323,20 @@ main.container { padding-top: 32px; padding-bottom: 60px; min-height: 60vh; }
 .product-detail-info { flex: 1; min-width: 280px; }
 .out-of-stock { color: #b91c1c; font-weight: 600; }
 
+/* Подсветка текущего раздела в навигации */
+.nav-inner a.active {
+  color: var(--color-accent, #B4601C);
+  font-weight: 700;
+  border-bottom: 2px solid var(--color-accent, #B4601C);
+  padding-bottom: 2px;
+}
+.shop-link.active {
+  color: var(--color-accent, #B4601C);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
 /* Киноплёнка: горизонтальная лента, перфорация, маркировка кадров, лёгкое «старение» */
 .filmstrip {
   background: #211A12;

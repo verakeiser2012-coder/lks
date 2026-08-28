@@ -64,9 +64,13 @@
         <% if (settings.site_tagline) { %><span class="logo-tagline"><%= settings.site_tagline %></span><% } %>
       </div>
       <div class="shop-nav">
-        <a href="/catalog" class="shop-link">Каталог</a>
-        <a href="/drops" class="shop-link">Дропы</a>
-        <a href="/brands" class="shop-link">Брендам</a>
+        <%
+          const shopPath = (typeof currentPath === 'string' ? currentPath : '/').split('?')[0];
+          function shopActive(href) { return shopPath === href || shopPath.startsWith(href + '/') ? ' active' : ''; }
+        %>
+        <a href="/catalog" class="shop-link<%= shopActive('/catalog') %>">Каталог</a>
+        <a href="/drops" class="shop-link<%= shopActive('/drops') %>">Дропы</a>
+        <a href="/brands" class="shop-link<%= shopActive('/brands') %>">Брендам</a>
         <audio id="bg-audio" preload="none"></audio>
         <div class="bg-audio-widget">
           <a href="/music" class="bg-audio-link" aria-label="Перейти к музыке">
@@ -100,17 +104,24 @@
         </button>
       </div>
     </div>
+    <%
+      const navPath = (typeof currentPath === 'string' ? currentPath : '/').split('?')[0].replace(/^\/en(\/|$)/, '/');
+      function navActive(href) {
+        if (href === '/') return navPath === '/' ? 'active' : '';
+        return navPath === href || navPath.startsWith(href + '/') ? 'active' : '';
+      }
+    %>
     <nav class="site-nav">
       <div class="container nav-inner" id="site-nav-inner">
-        <a href="/">Главная</a>
-        <a href="/news">Новости</a>
-        <a href="/about">Обо мне</a>
+        <a href="/" class="<%= navActive('/') %>">Главная</a>
+        <a href="/news" class="<%= navActive('/news') %>">Новости</a>
+        <a href="/about" class="<%= navActive('/about') %>">Обо мне</a>
         <span class="nav-divider" aria-hidden="true"></span>
-        <a href="/music" class="nav-music-link">DJ Levka</a>
-        <a href="/gigs">Выступления</a>
-        <a href="/style">Стиль</a>
-        <a href="/redheads">Рыжие</a>
-        <a href="/contest">Конкурс</a>
+        <a href="/music" class="nav-music-link <%= navActive('/music') %>">DJ Levka</a>
+        <a href="/gigs" class="<%= navActive('/gigs') %>">Выступления</a>
+        <a href="/style" class="<%= navActive('/style') %>">Стиль</a>
+        <a href="/redheads" class="<%= navActive('/redheads') %>">Рыжие</a>
+        <a href="/contest" class="<%= navActive('/contest') %>">Конкурс</a>
       </div>
     </nav>
   </header>
