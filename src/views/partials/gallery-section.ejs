@@ -2,9 +2,10 @@
   <section class="link-section">
     <h2><%= typeof galleryTitle !== 'undefined' ? galleryTitle : 'Фото и видео' %></h2>
     <div class="filmstrip"><div class="filmstrip-track">
-      <% galleryItems.forEach(function(item) {
+      <% galleryItems.forEach(function(item, idx) {
         var isEmbed = item.type === 'video' && item.file_path.indexOf('http') === 0;
       %>
+        <div class="film-cell" data-code="LEVKEYSER · 35 MM" data-num="КАДР <%= String(idx + 1).padStart(2, '0') %>">
         <div class="gallery-item <%= item.type === 'video' && !isEmbed ? 'is-video' : '' %> <%= isEmbed ? 'is-embed' : '' %>">
           <% if (item.type === 'photo') { %>
             <img src="<%= item.file_path %>" alt="<%= item.title %>" loading="lazy">
@@ -16,6 +17,7 @@
             <video src="<%= item.file_path %>" muted loop playsinline preload="metadata"></video>
           <% } %>
           <% if (item.title) { %><div class="gallery-caption"><%= item.title %></div><% } %>
+        </div>
         </div>
       <% }); %>
     </div></div>

@@ -7,8 +7,10 @@
   <% if (allPosts.length > 1) { %>
     <div class="filmstrip filmstrip--timeline" id="news-timeline">
       <div class="filmstrip-track">
-        <% allPosts.forEach(function(p) { %>
-          <a class="news-frame <%= p.id === post.id ? 'active' : '' %>" href="<%= post.lang === 'en' ? '/en/news/' : '/news/' %><%= p.slug %>" <%= p.id === post.id ? 'data-current="1"' : '' %>>
+        <% allPosts.forEach(function(p, idx) { %>
+          <% const d = p.created_at; const mark = d.slice(8, 10) + '.' + d.slice(5, 7) + '.' + d.slice(2, 4); %>
+          <div class="film-cell <%= p.id === post.id ? 'current' : '' %>" data-code="LEVKEYSER · 35 MM" data-num="КАДР <%= String(idx + 1).padStart(2, '0') %> · <%= mark %>">
+          <a class="news-frame" href="<%= post.lang === 'en' ? '/en/news/' : '/news/' %><%= p.slug %>" <%= p.id === post.id ? 'data-current="1"' : '' %>>
             <% if (coverByNewsId[p.id]) { %>
               <img src="<%= coverByNewsId[p.id] %>" alt="" loading="lazy">
             <% } else { %>
@@ -19,6 +21,7 @@
               <div class="news-frame-title"><%= p.title %></div>
             </div>
           </a>
+          </div>
         <% }); %>
       </div>
     </div>
@@ -29,13 +32,15 @@
   <% if (media.length > 0) { %>
     <div class="filmstrip">
       <div class="filmstrip-track">
-        <% media.forEach(function(item) { %>
+        <% media.forEach(function(item, idx) { %>
+          <div class="film-cell" data-code="LEVKEYSER · 35 MM" data-num="КАДР <%= String(idx + 1).padStart(2, '0') %>">
           <div class="gallery-item <%= item.type === 'video' ? 'is-video' : '' %>">
             <% if (item.type === 'photo') { %>
               <img src="<%= item.file_path %>" alt="" loading="lazy">
             <% } else { %>
               <video src="<%= item.file_path %>" muted loop playsinline preload="metadata"></video>
             <% } %>
+          </div>
           </div>
         <% }); %>
       </div>

@@ -6,7 +6,8 @@
 
 <% if (media.length > 0) { %>
   <div class="filmstrip"><div class="filmstrip-track">
-    <% media.forEach(function(item) { %>
+    <% media.forEach(function(item, idx) { %>
+      <div class="film-cell" data-code="LEVKEYSER · 35 MM" data-num="КАДР <%= String(idx + 1).padStart(2, '0') %>">
       <div class="gallery-item <%= item.type === 'video' ? 'is-video' : '' %>">
         <% if (item.type === 'photo') { %>
           <img src="<%= item.file_path %>" alt="<%= item.title %>" loading="lazy">
@@ -14,6 +15,7 @@
           <video src="<%= item.file_path %>" muted loop playsinline preload="metadata"></video>
         <% } %>
         <% if (item.title) { %><div class="gallery-caption"><%= item.title %></div><% } %>
+      </div>
       </div>
     <% }); %>
   </div></div>
