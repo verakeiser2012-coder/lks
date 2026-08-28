@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 230" role="img" aria-label="Лев Темп">
+  <!-- хвост -->
+  <path d="M143 175 q26 -4 24 -30" fill="none" stroke="#D4A373" stroke-width="9" stroke-linecap="round"/>
+  <circle cx="167" cy="143" r="8" fill="#A04000"/>
+  <!-- задние лапы: устойчивая широкая стойка -->
+  <rect x="66" y="196" width="26" height="26" rx="11" fill="#EAD7BC"/>
+  <rect x="108" y="196" width="26" height="26" rx="11" fill="#EAD7BC"/>
+  <!-- тело: мягкий овал -->
+  <ellipse cx="100" cy="172" rx="44" ry="40" fill="#F5E6D3"/>
+  <!-- передние лапы, спокойно сложены -->
+  <ellipse cx="84" cy="196" rx="13" ry="9" fill="#F5E6D3" stroke="#D4A373" stroke-width="2"/>
+  <ellipse cx="116" cy="196" rx="13" ry="9" fill="#F5E6D3" stroke="#D4A373" stroke-width="2"/>
+  <!-- грива -->
+  <circle cx="100" cy="82" r="52" fill="#D4A373"/>
+  <circle cx="100" cy="82" r="52" fill="none" stroke="#C08E5B" stroke-width="3" stroke-dasharray="2 9" stroke-linecap="round"/>
+  <!-- уши -->
+  <circle cx="62" cy="46" r="12" fill="#D4A373"/>
+  <circle cx="138" cy="46" r="12" fill="#D4A373"/>
+  <circle cx="62" cy="46" r="6" fill="#A04000" opacity="0.55"/>
+  <circle cx="138" cy="46" r="6" fill="#A04000" opacity="0.55"/>
+  <!-- морда -->
+  <ellipse cx="100" cy="86" rx="36" ry="33" fill="#F5E6D3"/>
+  <ellipse cx="100" cy="100" rx="20" ry="14" fill="#FFF4E5"/>
+  <!-- глаза: спокойный прищур, янтарные -->
+  <path d="M77 80 a9 9 0 0 1 18 0 z" fill="#D99A2B"/>
+  <path d="M105 80 a9 9 0 0 1 18 0 z" fill="#D99A2B"/>
+  <path d="M82 80 a5 5 0 0 1 8 0 z" fill="#333333"/>
+  <path d="M110 80 a5 5 0 0 1 8 0 z" fill="#333333"/>
+  <line x1="76" y1="80" x2="96" y2="80" stroke="#333333" stroke-width="2.4" stroke-linecap="round"/>
+  <line x1="104" y1="80" x2="124" y2="80" stroke="#333333" stroke-width="2.4" stroke-linecap="round"/>
+  <!-- нос и улыбка -->
+  <path d="M95 93 h10 l-5 7 z" fill="#A04000"/>
+  <path d="M100 100 v5 M100 105 q-6 6 -12 2 M100 105 q6 6 12 2" fill="none" stroke="#333333" stroke-width="2.2" stroke-linecap="round"/>
+  <!-- один наушник: дужка и чашка на правом ухе -->
+  <path d="M52 66 Q66 18 118 25" fill="none" stroke="#333333" stroke-width="6" stroke-linecap="round"/>
+  <rect x="42" y="60" width="18" height="26" rx="8" fill="#333333"/>
+  <rect x="47" y="65" width="8" height="16" rx="4" fill="#A04000"/>
+</svg>

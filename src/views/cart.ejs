@@ -3,7 +3,10 @@
 <h1>Корзина</h1>
 
 <% if (items.length === 0) { %>
-  <p>Корзина пуста. <a href="/catalog">Перейти в каталог</a></p>
+  <div class="not-found">
+    <%- include('partials/mascots', { mascotLine: '<b>Василий:</b> «Я уже всё выбрал!» — <b>Темп:</b> «Сначала посмотрим. Потом решим».' }) %>
+    <p>Корзина пуста. <a href="/catalog">Перейти в каталог</a></p>
+  </div>
 <% } else { %>
   <table class="cart-table">
     <thead>

@@ -1,0 +1,10 @@
+<%
+  /* Дуэт маскотов: Лев Темп («медленная сила») и кот Василий («живая спешка»).
+     Ожидает локальную переменную mascotLine — реплику под картинкой (может быть пустой). */
+  var line = typeof mascotLine === 'undefined' ? '' : mascotLine;
+%>
+<div class="mascot-duo">
+  <img class="mascot-temp" src="/img/mascot-temp.svg" alt="Лев Темп" width="116" height="133">
+  <img class="mascot-vasiliy" src="/img/mascot-vasiliy.svg" alt="Кот Василий" width="88" height="98">
+</div>
+<% if (line) { %><p class="mascot-line"><%- line %></p><% } %>
