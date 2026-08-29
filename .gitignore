@@ -7,6 +7,7 @@ data/*.db-wal
 public/uploads/*
 !public/uploads/.gitkeep
 npm-debug.log*
+deploy/keys/
 .claude/
 tools/
 PLAN.md
