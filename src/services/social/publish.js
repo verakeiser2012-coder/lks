@@ -60,7 +60,7 @@ async function publishTarget(post, target) {
   const credentials = parseCredentials(network);
 
   try {
-    const result = await connector.publish({ ...post, text: captionFor(post, network) }, credentials);
+    const result = await connector.publish({ ...post, text: captionFor(post, network) }, credentials, network);
     db.prepare(`
       UPDATE social_post_targets SET status = 'published', published_url = ?, error = '', updated_at = datetime('now')
       WHERE id = ?
@@ -69,7 +69,7 @@ async function publishTarget(post, target) {
     // Дополнительная публикация в историях — только там, где коннектор это умеет.
     if (post.story && connector.publishStory && target.story_status !== 'published') {
       try {
-        await connector.publishStory(post, credentials);
+        await connector.publishStory(post, credentials, network);
         db.prepare(`UPDATE social_post_targets SET story_status = 'published', story_error = '' WHERE id = ?`).run(target.id);
       } catch (storyErr) {
         db.prepare(`UPDATE social_post_targets SET story_status = 'failed', story_error = ? WHERE id = ?`).run(
