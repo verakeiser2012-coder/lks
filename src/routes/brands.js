@@ -91,6 +91,17 @@ router.get('/', (req, res) => {
   res.render('brands', { error: null, success: false, values: {}, offers: getOffers() });
 });
 
+// Медиа-кит: то же содержание, что и /brands, но в формате презентации для отправки бренду.
+router.get('/media-kit', (req, res) => {
+  const settings = {};
+  for (const row of db.prepare('SELECT key, value FROM settings').all()) settings[row.key] = row.value;
+  const releases = db
+    .prepare('SELECT title, slug, year, cover_image FROM releases WHERE is_published = 1 ORDER BY sort_order ASC')
+    .all();
+  const trackCount = db.prepare('SELECT COUNT(*) AS c FROM tracks').get().c;
+  res.render('media-kit', { offers: getOffers(), mediaSettings: settings, releases, trackCount });
+});
+
 router.post('/', (req, res) => {
   if (isBot(req) || overLimit('brands', req, 3)) {
     return res.redirect('/brands?sent=1');

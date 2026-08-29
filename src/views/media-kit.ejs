@@ -1,0 +1,90 @@
+<%- include('partials/header') %>
+
+<article class="media-kit">
+  <header class="mk-cover">
+    <div class="mk-cover-name"><%= mediaSettings.site_name || 'Лев Кейсер' %></div>
+    <div class="mk-cover-alt">DJ Levka</div>
+    <p class="mk-cover-tagline"><%= mediaSettings.site_tagline || 'Вдохновительный парень' %></p>
+    <p class="mk-cover-sub">Медиа-кит для брендов и партнёров · <%= new Date().getFullYear() %></p>
+  </header>
+
+  <section class="mk-section">
+    <h2>Коротко</h2>
+    <div class="mk-facts">
+      <div class="mk-fact"><strong>14 лет</strong><span>музыкант, модель, актёр</span></div>
+      <div class="mk-fact"><strong><%= releases.length %> релиза</strong><span><%= trackCount %> треков на всех стримингах</span></div>
+      <div class="mk-fact"><strong>Екатеринбург</strong><span>съёмки и мероприятия</span></div>
+      <div class="mk-fact"><strong>ИП</strong><span>работаем по договору, с документами</span></div>
+    </div>
+    <p class="mk-lead">
+      Пишу электронную музыку под псевдонимом DJ Levka, снимаюсь как модель с четырёх лет, играю в кино
+      и рекламе. Веду каналы, где рассказываю о том, что вдохновляет — музыке, фильмах, стиле.
+      Аудитория растёт вокруг честного личного тона, а не рекламных форматов.
+    </p>
+  </section>
+
+  <section class="mk-section">
+    <h2>Релизы</h2>
+    <div class="mk-releases">
+      <% releases.forEach(function(r) { %>
+        <div class="mk-release">
+          <% if (r.cover_image) { %><img src="<%= r.cover_image %>" alt="<%= r.title %>" loading="lazy"><% } %>
+          <div class="mk-release-title"><%= r.title %></div>
+          <div class="mk-release-year"><%= r.year %></div>
+        </div>
+      <% }); %>
+    </div>
+    <p class="hint">Трек «Soundstates» в первый день релиза попал в редакционный плейлист Spotify рядом с Moby, Moderat и Röyksopp. Трек «d r e a m» звучит в плейлистах «Nostalgic Synthwave» и «Lo-fi Planet».</p>
+  </section>
+
+  <section class="mk-section">
+    <h2>Форматы сотрудничества</h2>
+    <div class="mk-offers">
+      <% offers.forEach(function(offer) { %>
+        <div class="mk-offer">
+          <h3><%= offer.title %></h3>
+          <p><%= offer.description %></p>
+        </div>
+      <% }); %>
+    </div>
+    <p class="hint">Стоимость — по запросу: зависит от формата, объёма прав и сроков. Возможны пакеты и бартер.</p>
+  </section>
+
+  <section class="mk-section">
+    <h2>Площадки</h2>
+    <ul class="mk-links">
+      <% [
+        ['Telegram', mediaSettings.telegram_url],
+        ['VK', mediaSettings.vk_url],
+        ['Instagram', mediaSettings.instagram_url],
+        ['YouTube', mediaSettings.youtube_url],
+        ['TikTok', mediaSettings.tiktok_url],
+        ['Rutube', mediaSettings.rutube_url],
+        ['Дзен', mediaSettings.dzen_url],
+        ['Музыка на всех сервисах', 'https://band.link/djlevka'],
+      ].forEach(function(item) { %>
+        <% if (item[1]) { %>
+          <li><span><%= item[0] %></span> <a href="<%= item[1] %>" target="_blank" rel="noopener"><%= item[1].replace(/^https?:\/\//, '') %></a></li>
+        <% } %>
+      <% }); %>
+    </ul>
+  </section>
+
+  <section class="mk-section mk-contact">
+    <h2>Контакты</h2>
+    <p>
+      Сотрудничество и реклама: <a href="mailto:brand@levkeiser.com">brand@levkeiser.com</a><br>
+      Выступления: <a href="mailto:booking@levkeiser.com">booking@levkeiser.com</a><br>
+      Общие вопросы: <a href="mailto:info@levkeiser.com">info@levkeiser.com</a>
+    </p>
+    <p class="hint">
+      <%= mediaSettings.legal_ip_name || 'ИП Кейсер Лев Максимович' %><% if (mediaSettings.legal_ogrnip) { %> · ОГРНИП <%= mediaSettings.legal_ogrnip %><% } %><% if (mediaSettings.legal_inn) { %> · ИНН <%= mediaSettings.legal_inn %><% } %>
+    </p>
+    <p class="mk-actions no-print">
+      <a class="btn" href="/brands">Оставить заявку</a>
+      <button class="btn btn-secondary" type="button" onclick="window.print()">Сохранить в PDF</button>
+    </p>
+  </section>
+</article>
+
+<%- include('partials/footer') %>

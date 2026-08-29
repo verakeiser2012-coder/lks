@@ -723,12 +723,12 @@ form.inline { display: inline; }
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  gap: 18px;
-  min-height: 150px;
+  gap: 12px;
+  min-height: 110px;
 }
 .mascot-duo img { display: block; }
-.mascot-temp { width: 116px; }
-.mascot-vasiliy { width: 88px; transform-origin: center bottom; }
+.mascot-temp { width: 84px; }
+.mascot-vasiliy { width: 64px; transform-origin: center bottom; }
 .mascot-duo .mascot-vasiliy { animation: vasiliy-fidget 2.6s ease-in-out infinite; }
 @keyframes vasiliy-fidget {
   0%, 100% { transform: translateY(0) rotate(-3deg); }
@@ -742,12 +742,30 @@ form.inline { display: inline; }
 }
 .mascot-line b { color: var(--color-text); font-weight: 700; }
 
+/* Маскоты в центре шапки: Темп стоит, Василий подпрыгивает при наведении.
+   Постоянной анимации нет намеренно — шапка липкая, движение в ней отвлекает. */
+.header-mascots {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  padding: 0 10px;
+  flex: 0 0 auto;
+}
+.header-mascots img { display: block; }
+.header-mascots .hm-temp { height: 53px; width: auto; }
+.header-mascots .hm-vasiliy {
+  height: 42px;
+  width: auto;
+  transform-origin: center bottom;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.header-mascots:hover .hm-vasiliy { transform: translateY(-7px) rotate(4deg); }
+@media (max-width: 900px) {
+  .header-mascots { display: none; }
+}
+
 /* Полоса философии на главной */
 .slow-strip {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  gap: 26px;
   margin: 8px 0 36px;
   padding: 24px 26px;
   border: 1px solid var(--color-border);
@@ -755,9 +773,6 @@ form.inline { display: inline; }
   border-radius: var(--radius);
   background: #fffaf0;
 }
-.slow-strip .mascot-duo { min-height: 0; gap: 10px; }
-.slow-strip .mascot-temp { width: 88px; }
-.slow-strip .mascot-vasiliy { width: 64px; }
 .slow-strip-motto {
   font-family: var(--font-display);
   font-size: 1.5rem;
@@ -773,11 +788,6 @@ form.inline { display: inline; }
   margin: 0 0 10px;
 }
 .slow-strip p.slow-strip-text { margin: 0; color: var(--color-muted); max-width: 60ch; }
-@media (max-width: 700px) {
-  .slow-strip { grid-template-columns: 1fr; gap: 16px; text-align: center; }
-  .slow-strip .mascot-duo { justify-content: center; }
-  .slow-strip p.slow-strip-text { margin: 0 auto; }
-}
 
 @media (prefers-reduced-motion: reduce) {
   .mascot-duo .mascot-vasiliy { animation: none; }
@@ -1197,3 +1207,57 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 .bg-audio-mute-icon-on { display: none; }
 .bg-audio-mute.is-playing .bg-audio-mute-icon-off { display: none; }
 .bg-audio-mute.is-playing .bg-audio-mute-icon-on { display: block; }
+
+/* Медиа-кит для брендов: экран + печать в PDF */
+.media-kit { max-width: 820px; margin: 0 auto; }
+.mk-cover {
+  background: #211A12;
+  color: #F7F3EA;
+  border-radius: 14px;
+  padding: 48px 32px;
+  text-align: center;
+  margin-bottom: 32px;
+}
+.mk-cover-name { font-family: var(--font-display, inherit); font-size: 2.4rem; font-weight: 800; letter-spacing: 0.02em; }
+.mk-cover-alt { color: #D99A2B; font-size: 1.1rem; letter-spacing: 0.28em; text-transform: uppercase; margin-top: 6px; }
+.mk-cover-tagline { margin: 18px 0 4px; font-size: 1.05rem; opacity: 0.92; }
+.mk-cover-sub { margin: 0; font-size: 0.85rem; color: #C9A06A; }
+
+.mk-section { margin-bottom: 38px; }
+.mk-section h2 {
+  font-size: 1.15rem; text-transform: uppercase; letter-spacing: 0.16em;
+  color: var(--color-muted); border-bottom: 1px solid var(--color-border);
+  padding-bottom: 8px; margin-bottom: 18px;
+}
+.mk-lead { line-height: 1.7; }
+.mk-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-bottom: 20px; }
+.mk-fact {
+  border: 1px solid var(--color-border); border-radius: 10px; padding: 14px; text-align: center;
+}
+.mk-fact strong { display: block; font-size: 1.15rem; }
+.mk-fact span { font-size: 0.82rem; color: var(--color-muted); }
+
+.mk-releases { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; }
+.mk-release img { width: 100%; border-radius: 8px; display: block; }
+.mk-release-title { font-weight: 600; margin-top: 8px; }
+.mk-release-year { font-size: 0.82rem; color: var(--color-muted); }
+
+.mk-offers { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.mk-offer { border: 1px solid var(--color-border); border-radius: 10px; padding: 16px; }
+.mk-offer h3 { margin: 0 0 8px; font-size: 1rem; }
+.mk-offer p { margin: 0; font-size: 0.9rem; line-height: 1.55; color: var(--color-muted); }
+
+.mk-links { list-style: none; padding: 0; margin: 0; }
+.mk-links li { display: flex; gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--color-border); font-size: 0.92rem; }
+.mk-links li span { min-width: 190px; color: var(--color-muted); }
+.mk-contact p { line-height: 1.8; }
+.mk-actions { margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap; }
+
+@media print {
+  .site-header, .site-footer, .no-print, .banner, .nav-toggle { display: none !important; }
+  body { background: #fff; }
+  .media-kit { max-width: none; }
+  .mk-cover { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .mk-section { break-inside: avoid; page-break-inside: avoid; }
+  .mk-offer, .mk-release, .mk-fact { break-inside: avoid; }
+}
