@@ -5,7 +5,17 @@ const { notify } = require('../services/mail');
 
 const router = express.Router();
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function teaserModeOn() {
+  const row = db.prepare("SELECT value FROM settings WHERE key = 'redheads_teaser_mode'").get();
+  return !row || row.value === '1';
+}
+
 router.get('/', (req, res) => {
+  if (teaserModeOn()) {
+    return res.render('redheads-teaser', { subscribeSuccess: false, subscribeError: null });
+  }
   const introRow = db.prepare("SELECT value FROM settings WHERE key = 'redheads_intro'").get();
   const people = db
     .prepare('SELECT * FROM redhead_spotlights WHERE is_published = 1 ORDER BY sort_order ASC, created_at ASC')
@@ -17,6 +27,30 @@ router.get('/', (req, res) => {
     error: null,
     values: {},
   });
+});
+
+// Отдельный путь подписки для teaser-режима — nginx открывает /redheads без
+// пароля сайта, пока остальной сайт закрыт; форма должна жить под тем же префиксом.
+router.post('/subscribe', (req, res) => {
+  if (isBot(req) || overLimit('subscribe', req)) {
+    return res.render('redheads-teaser', { subscribeSuccess: true, subscribeError: null });
+  }
+  const { email, dataConsent } = req.body;
+
+  if (!email || !EMAIL_RE.test(email)) {
+    return res.render('redheads-teaser', { subscribeSuccess: false, subscribeError: 'Введите корректный email.' });
+  }
+  if (!dataConsent) {
+    return res.render('redheads-teaser', { subscribeSuccess: false, subscribeError: 'Подтвердите согласие на обработку персональных данных.' });
+  }
+
+  try {
+    db.prepare('INSERT INTO subscribers (email) VALUES (?)').run(email.trim().toLowerCase());
+  } catch (err) {
+    if (!String(err.message).includes('UNIQUE')) throw err;
+  }
+
+  res.render('redheads-teaser', { subscribeSuccess: true, subscribeError: null });
 });
 
 router.post('/submit', (req, res) => {

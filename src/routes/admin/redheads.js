@@ -13,8 +13,13 @@ function loadIntro() {
   return row ? row.value : '';
 }
 
+function teaserModeOn() {
+  const row = db.prepare("SELECT value FROM settings WHERE key = 'redheads_teaser_mode'").get();
+  return !row || row.value === '1';
+}
+
 router.get('/', (req, res) => {
-  res.render('admin/redheads', { people: loadPeople(), intro: loadIntro(), saved: false });
+  res.render('admin/redheads', { people: loadPeople(), intro: loadIntro(), saved: false, teaserMode: teaserModeOn() });
 });
 
 router.post('/intro', (req, res) => {
@@ -22,7 +27,17 @@ router.post('/intro', (req, res) => {
     INSERT INTO settings (key, value) VALUES ('redheads_intro', ?)
     ON CONFLICT(key) DO UPDATE SET value = excluded.value
   `).run(req.body.intro || '');
-  res.render('admin/redheads', { people: loadPeople(), intro: req.body.intro || '', saved: true });
+  res.render('admin/redheads', { people: loadPeople(), intro: req.body.intro || '', saved: true, teaserMode: teaserModeOn() });
+});
+
+router.post('/teaser-toggle', (req, res) => {
+  const row = db.prepare("SELECT value FROM settings WHERE key = 'redheads_teaser_mode'").get();
+  const next = row && row.value === '1' ? '0' : '1';
+  db.prepare(`
+    INSERT INTO settings (key, value) VALUES ('redheads_teaser_mode', ?)
+    ON CONFLICT(key) DO UPDATE SET value = excluded.value
+  `).run(next);
+  res.redirect('/admin/redheads');
 });
 
 router.get('/new', (req, res) => {

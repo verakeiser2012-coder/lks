@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Рыжие, которые вдохновляют — Лев Кейсер</title>
+<style>
+  :root {
+    --color-bg: #ffffff;
+    --color-text: #1a1a1a;
+    --color-muted: #6b6b6b;
+    --color-border: #e5e5e5;
+    --color-accent: #b8860b;
+    --color-accent-hover: #96690a;
+    --radius: 8px;
+    --font-display: 'Roboto Slab', Rockwell, 'Arial Black', Georgia, serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 24px 16px 64px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    color: var(--color-text);
+    background: var(--color-bg);
+    line-height: 1.55;
+  }
+  .wrap { max-width: 480px; margin: 0 auto; }
+  h1 {
+    font-family: var(--font-display);
+    font-size: 1.9rem;
+    margin: 24px 0 8px;
+  }
+  p.lead { color: var(--color-muted); font-size: 1.05rem; }
+  .badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #fdf3de;
+    color: var(--color-accent-hover);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  form { margin-top: 28px; }
+  label { display: block; font-size: 0.85rem; color: var(--color-muted); margin-bottom: 6px; }
+  input[type="email"] {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    margin-bottom: 14px;
+  }
+  input[type="email"]:focus { outline: 2px solid var(--color-accent); outline-offset: 1px; }
+  .consent { display: flex; align-items: flex-start; gap: 8px; font-size: 0.8rem; color: var(--color-muted); margin-bottom: 18px; }
+  .consent input { width: auto; margin-top: 3px; }
+  button {
+    width: 100%;
+    padding: 13px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    background: var(--color-accent);
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+  }
+  button:hover { background: var(--color-accent-hover); }
+  .flash { padding: 12px 14px; border-radius: var(--radius); margin-bottom: 16px; font-size: 0.95rem; }
+  .flash-success { background: #eaf7ec; color: #1e6b2e; }
+  .flash-error { background: #fdeceb; color: #a3271b; }
+  .foot { margin-top: 40px; font-size: 0.8rem; color: var(--color-muted); text-align: center; }
+  .foot a { color: var(--color-muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="badge">Скоро</span>
+  <h1>Рыжие, которые вдохновляют</h1>
+  <p class="lead">
+    Курируемая подборка рыжих людей, которые вдохновляют — моделей, музыкантов, актёров. Раздел уже готовится,
+    страница открывается вместе с остальным сайтом. Оставьте почту — пришлём письмо, как только всё заработает.
+  </p>
+
+  <% if (subscribeSuccess) { %>
+    <div class="flash flash-success">Готово, вы подписаны! Напишем, как только раздел откроется.</div>
+  <% } else { %>
+    <% if (subscribeError) { %><div class="flash flash-error"><%= subscribeError %></div><% } %>
+    <form action="/redheads/subscribe" method="POST">
+      <input type="text" name="website" value="" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;" aria-hidden="true">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" placeholder="you@email.com" required>
+      <label class="consent">
+        <input type="checkbox" name="dataConsent" value="1" required>
+        <span>Согласен(на) на обработку email для получения новостей сайта. Отписаться можно в любой момент.</span>
+      </label>
+      <button type="submit">Уведомить меня</button>
+    </form>
+  <% } %>
+
+  <p class="foot">levkeiser.com</p>
+</div>
+</body>
+</html>

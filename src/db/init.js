@@ -471,6 +471,7 @@ function init() {
     legal_bank_account: '',
     legal_bank_bik: '',
     legal_bank_corr_account: '',
+    redheads_teaser_mode: '1',
   };
   const insertSetting = db.prepare('INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)');
   for (const [key, value] of Object.entries(defaultIntros)) {

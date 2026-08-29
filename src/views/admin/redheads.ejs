@@ -15,6 +15,19 @@
   <button class="btn" type="submit">Сохранить текст</button>
 </form>
 
+<div class="admin-toolbar" style="align-items:center;">
+  <p style="margin:0;">
+    Публичная страница /redheads сейчас показывает:
+    <strong><%= teaserMode ? 'форму подписки (тизер)' : 'полную подборку' %></strong>
+  </p>
+  <form action="/admin/redheads/teaser-toggle" method="POST">
+    <button class="btn" type="submit">
+      <%= teaserMode ? 'Показать полную подборку' : 'Вернуть тизер с подпиской' %>
+    </button>
+  </form>
+</div>
+<p class="hint">Тизер полезен, пока остальной сайт ещё за паролем — /redheads можно открыть отдельно, не открывая весь сайт.</p>
+
 <div class="admin-toolbar">
   <h2>Подборка</h2>
   <a class="btn" href="/admin/redheads/new">+ Добавить человека</a>
