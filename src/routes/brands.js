@@ -99,7 +99,9 @@ router.get('/media-kit', (req, res) => {
     .prepare('SELECT title, slug, year, cover_image FROM releases WHERE is_published = 1 ORDER BY sort_order ASC')
     .all();
   const trackCount = db.prepare('SELECT COUNT(*) AS c FROM tracks').get().c;
-  res.render('media-kit', { offers: getOffers(), mediaSettings: settings, releases, trackCount });
+  const epCount = releases.filter((r) => r.release_type !== 'Single').length;
+  const singleCount = releases.length - epCount;
+  res.render('media-kit', { offers: getOffers(), mediaSettings: settings, releases, trackCount, epCount, singleCount });
 });
 
 router.post('/', (req, res) => {

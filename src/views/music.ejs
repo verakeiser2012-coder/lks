@@ -14,9 +14,14 @@
   </section>
 <% } %>
 
-<% if (releases.length > 0) { %>
+<% [
+  ['Альбомы и EP', releases.filter(function(r) { return r.release_type !== 'Single'; })],
+  ['Синглы', releases.filter(function(r) { return r.release_type === 'Single'; })]
+].forEach(function(pair) { %>
+  <% var group = { title: pair[0], items: pair[1] }; %>
+  <% if (group.items.length > 0) { %>
   <section class="link-section">
-    <h2>Альбомы</h2>
+    <h2><%= group.title %></h2>
     <div class="table-scroll">
       <table class="music-table">
         <thead>
@@ -30,7 +35,7 @@
           </tr>
         </thead>
         <tbody>
-          <% releases.forEach(function(release) { %>
+          <% group.items.forEach(function(release) { %>
             <tr>
               <td class="music-table-cover-col">
                 <a href="/music/<%= release.slug %>">
@@ -58,12 +63,14 @@
         </tbody>
       </table>
     </div>
+  
   </section>
-<% } %>
+  <% } %>
+<% }); %>
 
 <% if (tracks.length > 0) { %>
   <section class="link-section">
-    <h2>Синглы</h2>
+    <h2>Отдельные треки</h2>
     <div class="table-scroll">
       <table class="music-table">
         <thead>
