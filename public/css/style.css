@@ -1333,3 +1333,54 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
   .mk-section { break-inside: avoid; page-break-inside: avoid; }
   .mk-offer, .mk-release, .mk-fact { break-inside: avoid; }
 }
+
+/* Поиск в шапке */
+.header-search { display: flex; align-items: center; gap: 4px; }
+.header-search input[type="search"] {
+  width: 120px; padding: 6px 10px; margin: 0;
+  border: 1px solid var(--color-border); border-radius: 999px;
+  background: #fff; font-size: 0.85rem;
+  transition: width 0.25s ease;
+}
+.header-search input[type="search"]:focus { width: 180px; outline: none; border-color: var(--color-accent); }
+.header-search button {
+  display: flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; padding: 0;
+  background: transparent; border: none; cursor: pointer; color: var(--color-muted);
+}
+.header-search button:hover { color: var(--color-accent); }
+.header-search svg { width: 17px; height: 17px; }
+@media (max-width: 720px) {
+  .header-search input[type="search"] { width: 88px; }
+  .header-search input[type="search"]:focus { width: 130px; }
+}
+
+/* Переключатель языка */
+.lang-switch { display: flex; gap: 2px; font-size: 0.78rem; letter-spacing: 0.05em; }
+.lang-switch a {
+  padding: 4px 7px; border-radius: 6px;
+  color: var(--color-muted); border: 1px solid transparent;
+}
+.lang-switch a.active { color: var(--color-text); border-color: var(--color-border); font-weight: 600; }
+.lang-switch a:hover { color: var(--color-accent); }
+
+/* Почта в подвале — сворачиваемый блок */
+.footer-mail { margin-top: 6px; }
+.footer-mail summary {
+  cursor: pointer; font-size: 0.9rem; font-weight: 600;
+  color: var(--color-text); list-style: none; display: inline-flex; align-items: center; gap: 6px;
+}
+.footer-mail summary::-webkit-details-marker { display: none; }
+.footer-mail summary::after { content: '▾'; font-size: 0.75rem; color: var(--color-muted); transition: transform 0.2s ease; }
+.footer-mail[open] summary::after { transform: rotate(180deg); }
+.footer-mail .footer-contacts { margin-top: 6px; font-size: 0.85rem; }
+
+/* Страница поиска */
+.search-page-form { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+.search-page-form input[type="search"] { flex: 1; min-width: 200px; }
+.search-results { list-style: none; padding: 0; margin: 0; }
+.search-results li {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px;
+  padding: 9px 0; border-bottom: 1px solid var(--color-border);
+}
+.search-note { font-size: 0.82rem; color: var(--color-muted); }

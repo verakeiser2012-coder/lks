@@ -1,0 +1,32 @@
+<%- include('partials/header') %>
+
+<h1>Поиск</h1>
+
+<form class="search-page-form" action="/search" method="GET">
+  <input type="search" name="q" value="<%= query %>" placeholder="Что ищем?" autofocus>
+  <button class="btn" type="submit">Найти</button>
+</form>
+
+<% if (query && query.length < 2) { %>
+  <p class="hint">Введите хотя бы два символа.</p>
+<% } else if (query) { %>
+  <p class="hint">По запросу «<%= query %>» — <%= total %> <%= total % 10 === 1 && total % 100 !== 11 ? 'результат' : (total % 10 >= 2 && total % 10 <= 4 && (total % 100 < 10 || total % 100 >= 20) ? 'результата' : 'результатов') %>.</p>
+  <% groups.forEach(function(group) { %>
+    <section class="link-section">
+      <h2><%= group.title %></h2>
+      <ul class="search-results">
+        <% group.items.forEach(function(item) { %>
+          <li>
+            <a href="<%= item.url %>"><%= item.title %></a>
+            <% if (item.note) { %><span class="search-note"><%= item.note %></span><% } %>
+          </li>
+        <% }); %>
+      </ul>
+    </section>
+  <% }); %>
+  <% if (total === 0) { %>
+    <p>Ничего не нашлось. Попробуйте другое слово — или загляните в <a href="/news">новости</a> и <a href="/music">музыку</a>.</p>
+  <% } %>
+<% } %>
+
+<%- include('partials/footer') %>

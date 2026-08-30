@@ -43,12 +43,17 @@
         <strong><%= settings.site_name %></strong>
         <% if (settings.site_alt_name || true) { %><span class="footer-alt">DJ Levka</span><% } %>
         <% if (settings.address) { %><p><%= settings.address %></p><% } %>
-        <p class="footer-contacts">
-          <% if (settings.phone) { %><a href="tel:<%= settings.phone.replace(/[^+\d]/g, '') %>"><%= settings.phone %></a><br><% } %>
-          <a href="mailto:info@levkeiser.com">info@levkeiser.com</a> — общие вопросы<br>
-          <a href="mailto:brand@levkeiser.com">brand@levkeiser.com</a> — сотрудничество<br>
-          <a href="mailto:booking@levkeiser.com">booking@levkeiser.com</a> — выступления
-        </p>
+        <% if (settings.phone) { %>
+          <p class="footer-contacts"><a href="tel:<%= settings.phone.replace(/[^+\d]/g, '') %>"><%= settings.phone %></a></p>
+        <% } %>
+        <details class="footer-mail">
+          <summary>Почта</summary>
+          <p class="footer-contacts">
+            <a href="mailto:info@levkeiser.com">info@levkeiser.com</a> — общие вопросы<br>
+            <a href="mailto:brand@levkeiser.com">brand@levkeiser.com</a> — сотрудничество<br>
+            <a href="mailto:booking@levkeiser.com">booking@levkeiser.com</a> — выступления
+          </p>
+        </details>
         <a class="footer-mediakit" href="/brands/media-kit">Медиа-кит для брендов →</a>
       </div>
 
