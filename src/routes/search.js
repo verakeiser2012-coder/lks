@@ -11,8 +11,17 @@ function like(query) {
   return '%' + query.replace(/[%_\\]/g, function (m) { return '\\' + m; }) + '%';
 }
 
+// У Льва есть трек «d r e a m» — с пробелами между буквами. Чтобы он находился
+// по обычному «dream», для коротких однословных запросов дополнительно ищем
+// вариант с любыми символами между буквами.
+function spacedLike(query) {
+  if (/[^a-zа-яё0-9]/i.test(query) || query.length < 3 || query.length > 20) return null;
+  return '%' + query.split('').join('%') + '%';
+}
+
 function search(query) {
   const q = like(query);
+  const qs = spacedLike(query);
   const groups = [];
 
   const news = db.prepare(
@@ -42,8 +51,9 @@ function search(query) {
   const tracks = db.prepare(
     "SELECT tracks.title, tracks.slug AS track_slug, releases.slug AS release_slug, releases.title AS release_title " +
     "FROM tracks LEFT JOIN releases ON releases.id = tracks.release_id WHERE tracks.is_published = 1 " +
-    "AND (tracks.title LIKE ? " + ESC + " OR tracks.description LIKE ? " + ESC + ") ORDER BY tracks.sort_order LIMIT 20"
-  ).all(q, q);
+    "AND (tracks.title LIKE ? " + ESC + " OR tracks.description LIKE ? " + ESC + " OR (? IS NOT NULL AND tracks.title LIKE ?)) " +
+    "ORDER BY tracks.sort_order LIMIT 20"
+  ).all(q, q, qs, qs);
   const trackItems = tracks
     .filter((t) => t.release_slug && t.track_slug)
     .map((t) => ({ title: t.title, url: '/music/' + t.release_slug + '/' + t.track_slug, note: t.release_title }));
