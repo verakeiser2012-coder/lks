@@ -33,7 +33,7 @@
             <% } %>
             <div class="news-frame-caption">
               <div class="news-frame-date"><%= formatDateShort(p.created_at, post.lang) %></div>
-              <div class="news-frame-title"><%= p.title %></div>
+              <div class="news-frame-title"><% if (p.is_pinned) { %>📌 <% } %><%= p.title %></div>
             </div>
           </a>
           </div>

@@ -38,7 +38,7 @@ function createNewsRouter(lang) {
       .all(post.id);
     // Лента времени: все опубликованные новости для киноплёнки-навигации
     const allPosts = db
-      .prepare('SELECT id, slug, title, created_at FROM news WHERE is_published = 1 AND lang = ? ORDER BY created_at ASC')
+      .prepare('SELECT id, slug, title, created_at, is_pinned FROM news WHERE is_published = 1 AND lang = ? ORDER BY is_pinned DESC, created_at ASC')
       .all(lang);
     const covers = db.prepare(`
       SELECT news_id, file_path FROM news_media
