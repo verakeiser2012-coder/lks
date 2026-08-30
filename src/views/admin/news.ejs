@@ -27,7 +27,7 @@
   <tbody>
     <% posts.forEach(function(post) { %>
       <tr>
-        <td><%= post.title %></td>
+        <td><% if (post.is_pinned) { %>📌 <% } %><%= post.title %></td>
         <td><%= post.lang === 'en' ? 'EN' : 'RU' %></td>
         <td><%= post.is_published ? 'Да' : 'Нет' %></td>
         <td><%= post.created_at %></td>
@@ -45,6 +45,9 @@
           </form>
         </td>
         <td>
+          <form class="inline" action="/admin/news/<%= post.id %>/pin" method="POST">
+            <button class="link-btn" type="submit"><%= post.is_pinned ? 'Открепить' : 'Закрепить' %></button>
+          </form>
           <a href="/admin/news/<%= post.id %>/edit">Изменить</a>
           <form class="inline" action="/admin/news/<%= post.id %>/delete" method="POST" onsubmit="return confirm('Удалить новость?');">
             <button class="link-btn" type="submit">Удалить</button>

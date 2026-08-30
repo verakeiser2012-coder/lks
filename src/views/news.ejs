@@ -32,7 +32,7 @@
         </div>
         <div>
           <div class="news-date"><%= formatDate(post.created_at, lang) %></div>
-          <div class="news-title"><%= post.title %></div>
+          <div class="news-title"><% if (post.is_pinned) { %><span class="news-pin">📌</span> <% } %><%= post.title %></div>
         </div>
       </a>
     <% }); %>

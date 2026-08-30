@@ -108,6 +108,18 @@ function init() {
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
 
+    CREATE TABLE IF NOT EXISTS diary_posts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      slug TEXT UNIQUE NOT NULL,
+      excerpt TEXT DEFAULT '',
+      content TEXT DEFAULT '',
+      cover_image TEXT DEFAULT '',
+      dzen_url TEXT DEFAULT '',
+      is_published INTEGER NOT NULL DEFAULT 1,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
     CREATE TABLE IF NOT EXISTS social_networks (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       key TEXT UNIQUE NOT NULL,
@@ -276,6 +288,10 @@ function init() {
   }
   if (!newsCols.some((c) => c.name === 'newsletter_sent_at')) {
     db.exec('ALTER TABLE news ADD COLUMN newsletter_sent_at TEXT');
+  }
+  if (!newsCols.some((c) => c.name === 'is_pinned')) {
+    // Закреплённая новость показывается первой в списке независимо от даты.
+    db.exec('ALTER TABLE news ADD COLUMN is_pinned INTEGER NOT NULL DEFAULT 0');
   }
 
   const galleryItemCols = db.prepare('PRAGMA table_info(gallery_items)').all();

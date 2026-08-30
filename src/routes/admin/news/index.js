@@ -8,9 +8,22 @@ const mediaRoutes = require('./media');
 const router = express.Router();
 
 router.get('/', (req, res) => {
-  const posts = db.prepare('SELECT * FROM news ORDER BY created_at DESC').all();
+  const posts = db.prepare('SELECT * FROM news ORDER BY is_pinned DESC, created_at DESC').all();
   const subscribersCount = db.prepare('SELECT COUNT(*) AS c FROM subscribers').get().c;
   res.render('admin/news', { posts, subscribersCount, msg: req.query.msg || '' });
+});
+
+router.post('/:id/pin', (req, res) => {
+  const post = db.prepare('SELECT id, is_pinned FROM news WHERE id = ?').get(req.params.id);
+  if (!post) return res.status(404).render('404');
+  if (post.is_pinned) {
+    db.prepare('UPDATE news SET is_pinned = 0 WHERE id = ?').run(post.id);
+  } else {
+    // Закреплённая новость всегда одна — снимаем прежнюю.
+    db.prepare('UPDATE news SET is_pinned = 0').run();
+    db.prepare('UPDATE news SET is_pinned = 1 WHERE id = ?').run(post.id);
+  }
+  res.redirect('/admin/news');
 });
 
 router.post('/:id/newsletter', async (req, res) => {

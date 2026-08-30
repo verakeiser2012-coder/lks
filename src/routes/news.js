@@ -7,7 +7,7 @@ function createNewsRouter(lang) {
 
   router.get('/', (req, res) => {
     const posts = db
-      .prepare('SELECT * FROM news WHERE is_published = 1 AND lang = ? ORDER BY created_at DESC')
+      .prepare('SELECT * FROM news WHERE is_published = 1 AND lang = ? ORDER BY is_pinned DESC, created_at DESC')
       .all(lang);
     const covers = db.prepare(`
       SELECT news_id, file_path FROM news_media
