@@ -113,16 +113,46 @@ a:hover { color: var(--color-accent-hover); }
   transition: left 0.22s ease, right 0.22s ease;
 }
 .nav-inner a:hover::after { left: 0; right: 0; }
-/* DJ Levka — зелёный акцент (Акация из палитры «Дикий лев») */
+/* DJ Levka — неоновая вывеска: зелёная трубка (Акация) на тёмной табличке */
 .nav-inner a.nav-music-link {
-  color: #6FA83C;
+  position: relative;
+  color: #CFF7A8;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: 0.92rem;
+  letter-spacing: 0.1em;
+  font-size: 0.86rem;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: #17130D;
+  border: 1px solid rgba(143, 198, 92, 0.5);
+  text-shadow:
+    0 0 4px rgba(143, 198, 92, 0.9),
+    0 0 10px rgba(111, 168, 60, 0.75),
+    0 0 20px rgba(111, 168, 60, 0.45);
+  box-shadow:
+    0 0 8px rgba(111, 168, 60, 0.28),
+    inset 0 0 10px rgba(111, 168, 60, 0.22);
+  transition: color 0.25s ease, text-shadow 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
-.nav-inner a.nav-music-link::after { background: linear-gradient(90deg, #6FA83C, #8FC65C); }
-.nav-inner a.nav-music-link.active { color: #6FA83C; }
+/* при наведении и на своей странице неон «разгорается» */
+.nav-inner a.nav-music-link:hover,
+.nav-inner a.nav-music-link.active {
+  color: #F2FFE4;
+  border-color: rgba(159, 214, 108, 0.85);
+  text-shadow:
+    0 0 5px #CFF7A8,
+    0 0 12px rgba(143, 198, 92, 0.95),
+    0 0 26px rgba(111, 168, 60, 0.7),
+    0 0 44px rgba(111, 168, 60, 0.4);
+  box-shadow:
+    0 0 16px rgba(111, 168, 60, 0.45),
+    inset 0 0 14px rgba(111, 168, 60, 0.3);
+}
+/* общая подчёркивающая полоска ссылок этой не нужна — свечение само по себе акцент */
+.nav-inner a.nav-music-link::after { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .nav-inner a.nav-music-link { transition: none; }
+}
 .nav-divider {
   width: 1px;
   height: 16px;
@@ -648,6 +678,18 @@ main.container { padding-top: 32px; padding-bottom: 60px; min-height: 60vh; }
 .news-list--rows .news-card-image img,
 .news-list--rows .news-card-image .no-image { aspect-ratio: 16 / 10; }
 .news-list--rows .news-date { margin-top: 0; }
+
+.diary-excerpt { color: var(--color-muted); font-size: 0.88rem; margin-top: 4px; font-weight: 400; }
+.diary-dzen-note {
+  margin-top: 28px;
+  padding: 14px 16px;
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-accent);
+  border-radius: var(--radius);
+  background: #fffaf0;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
 
 table { width: 100%; border-collapse: collapse; }
 th, td { text-align: left; padding: 10px; border-bottom: 1px solid var(--color-border); }
