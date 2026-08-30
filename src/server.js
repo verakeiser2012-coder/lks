@@ -19,6 +19,7 @@ const cartRoutes = require('./routes/cart');
 const checkoutRoutes = require('./routes/checkout');
 const aboutRoutes = require('./routes/about');
 const { createNewsRouter } = require('./routes/news');
+const diaryRoutes = require('./routes/diary');
 const musicRoutes = require('./routes/music');
 const styleRoutes = require('./routes/style');
 const brandsRoutes = require('./routes/brands');
@@ -82,6 +83,9 @@ app.use((req, res, next) => {
   const cart = getCart(req);
   res.locals.cartCount = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
   res.locals.currentPath = req.originalUrl;
+  // Канонический адрес: все 20 доменов отдают один сайт — поисковикам и соцсетям
+  // показываем единственный основной, иначе получаются дубли и разнобой в превью.
+  res.locals.canonicalBase = 'https://' + require('./config/domains').CANONICAL_MAIN;
   res.locals.formatDate = formatDate;
   res.locals.formatDateShort = formatDateShort;
   res.locals.subscribeSuccess = Boolean(req.session.subscribeSuccess);
@@ -98,6 +102,7 @@ app.use('/checkout', checkoutRoutes);
 app.use('/about', aboutRoutes);
 app.use('/news', createNewsRouter('ru'));
 app.use('/en/news', createNewsRouter('en'));
+app.use('/diary', diaryRoutes);
 app.use('/music', musicRoutes);
 app.use('/style', styleRoutes);
 app.use('/brands', brandsRoutes);

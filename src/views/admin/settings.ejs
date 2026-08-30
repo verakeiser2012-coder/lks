@@ -20,6 +20,14 @@
     <input type="text" name="site_tagline" value="<%= settingsMap.site_tagline || '' %>">
   </label>
   <label>
+    Описание сайта для поиска и превью ссылок (150-200 символов)
+    <textarea name="meta_description" rows="2"><%= settingsMap.meta_description || '' %></textarea>
+  </label>
+  <label>
+    Картинка для превью ссылок (путь вида /uploads/og.jpg; пусто — возьмётся обложка последнего релиза)
+    <input type="text" name="og_image" value="<%= settingsMap.og_image || '' %>">
+  </label>
+  <label>
     Номер счётчика Яндекс.Метрики (только цифры; пусто — счётчик не подключён)
     <input type="text" name="metrika_id" value="<%= settingsMap.metrika_id || '' %>">
   </label>

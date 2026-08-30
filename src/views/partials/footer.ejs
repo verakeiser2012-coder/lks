@@ -41,9 +41,28 @@
     <div class="container footer-inner">
       <div class="footer-brand">
         <strong><%= settings.site_name %></strong>
-        <p><%= settings.address %></p>
-        <p><%= settings.phone %> · <%= settings.email %></p>
+        <% if (settings.site_alt_name || true) { %><span class="footer-alt">DJ Levka</span><% } %>
+        <% if (settings.address) { %><p><%= settings.address %></p><% } %>
+        <p class="footer-contacts">
+          <% if (settings.phone) { %><a href="tel:<%= settings.phone.replace(/[^+\d]/g, '') %>"><%= settings.phone %></a><br><% } %>
+          <a href="mailto:info@levkeiser.com">info@levkeiser.com</a> — общие вопросы<br>
+          <a href="mailto:brand@levkeiser.com">brand@levkeiser.com</a> — сотрудничество<br>
+          <a href="mailto:booking@levkeiser.com">booking@levkeiser.com</a> — выступления
+        </p>
+        <a class="footer-mediakit" href="/brands/media-kit">Медиа-кит для брендов →</a>
       </div>
+
+      <nav class="footer-nav" aria-label="Разделы сайта">
+        <h4>Разделы</h4>
+        <a href="/news">Новости</a>
+        <a href="/music">Музыка DJ Levka</a>
+        <a href="/about">Обо мне</a>
+        <a href="/style">Стиль</a>
+        <a href="/gigs">Выступления</a>
+        <a href="/redheads">Рыжие</a>
+        <a href="/catalog">Каталог</a>
+        <a href="/drops">Дропы</a>
+      </nav>
 
       <div class="footer-subscribe">
         <h4>Будьте в курсе</h4>
@@ -100,6 +119,14 @@
         <a href="/legal/privacy">Персональные данные</a>
         <a href="/legal/delivery">Доставка</a>
         <a href="/legal/returns">Возврат и обмен</a>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© <%= new Date().getFullYear() %> <%= settings.site_name %></span>
+        <% if (settings.legal_ip_name) { %>
+          <span><%= settings.legal_ip_name %><% if (settings.legal_ogrnip) { %>, ОГРНИП <%= settings.legal_ogrnip %><% } %></span>
+        <% } %>
+        <span>Музыка и материалы сайта защищены авторским правом</span>
       </div>
     </div>
   </footer>

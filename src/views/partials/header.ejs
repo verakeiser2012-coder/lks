@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <%
     const SECTION_TITLES = {
-      news: 'Новости', about: 'Обо мне', music: 'Музыка DJ Levka', gigs: 'Выступления',
+      news: 'Новости', diary: 'Дневник', about: 'Обо мне', music: 'Музыка DJ Levka', gigs: 'Выступления',
       style: 'Стиль', redheads: 'Рыжие, которые вдохновляют', contest: 'Конкурс',
       catalog: 'Каталог', drops: 'Дропы', brands: 'Брендам', cart: 'Корзина', checkout: 'Оформление заказа',
     };
@@ -19,8 +19,35 @@
         ? SECTION_TITLES[seg] + ' — ' + siteBase
         : [siteBase, settings.site_tagline].filter(Boolean).join(' — ');
     }
+    const cleanPath = (typeof currentPath === 'string' ? currentPath : '/').split('?')[0];
+    const canonicalUrl = (typeof canonicalBase === 'string' ? canonicalBase : '') + (cleanPath === '/' ? '' : cleanPath);
+    const metaDesc = (typeof pageDescription !== 'undefined' && pageDescription)
+      ? pageDescription
+      : (settings.meta_description
+        || [settings.site_tagline, 'Музыка DJ Levka, съёмки, выступления и мерч.'].filter(Boolean).join('. '));
+    const ogImagePath = (typeof pageImage !== 'undefined' && pageImage) ? pageImage : (settings.og_image || '');
+    const ogImageUrl = ogImagePath
+      ? (ogImagePath.startsWith('http') ? ogImagePath : (typeof canonicalBase === 'string' ? canonicalBase : '') + ogImagePath)
+      : '';
   %>
   <title><%= docTitle %></title>
+  <meta name="description" content="<%= metaDesc %>">
+  <link rel="canonical" href="<%= canonicalUrl %>">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="<%= siteBase %>">
+  <meta property="og:title" content="<%= docTitle %>">
+  <meta property="og:description" content="<%= metaDesc %>">
+  <meta property="og:url" content="<%= canonicalUrl %>">
+  <meta property="og:locale" content="ru_RU">
+  <% if (ogImageUrl) { %>
+    <meta property="og:image" content="<%= ogImageUrl %>">
+    <meta name="twitter:card" content="summary_large_image">
+  <% } else { %>
+    <meta name="twitter:card" content="summary">
+  <% } %>
+  <meta name="twitter:title" content="<%= docTitle %>">
+  <meta name="twitter:description" content="<%= metaDesc %>">
+  <meta name="theme-color" content="#211A12">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@500;600;700;800&family=Marck+Script&display=swap" rel="stylesheet">
@@ -57,6 +84,7 @@
       </filter>
     </defs>
   </svg>
+  <a class="skip-link" href="#main">К содержанию</a>
   <header class="site-header">
     <div class="container header-top">
       <div class="logo">
@@ -80,6 +108,10 @@
         </span>
         <% if (settings.site_tagline) { %><span class="logo-tagline"><%= settings.site_tagline %></span><% } %>
       </div>
+      <a class="header-mascots" href="/about" title="Двигаюсь медленно в быстром мире" aria-label="Двигаюсь медленно в быстром мире">
+        <img class="hm-temp" src="/img/mascot-temp.svg" alt="" width="44" height="53" aria-hidden="true">
+        <img class="hm-vasiliy" src="/img/mascot-vasiliy.svg" alt="" width="34" height="42" aria-hidden="true">
+      </a>
       <div class="shop-nav">
         <%
           const shopPath = (typeof currentPath === 'string' ? currentPath : '/').split('?')[0];
@@ -132,6 +164,7 @@
       <div class="container nav-inner" id="site-nav-inner">
         <a href="/" class="<%= navActive('/') %>">Главная</a>
         <a href="/news" class="<%= navActive('/news') %>">Новости</a>
+        <a href="/diary" class="<%= navActive('/diary') %>">Дневник</a>
         <a href="/about" class="<%= navActive('/about') %>">Обо мне</a>
         <span class="nav-divider" aria-hidden="true"></span>
         <a href="/music" class="nav-music-link <%= navActive('/music') %>">DJ Levka</a>
@@ -142,4 +175,4 @@
       </div>
     </nav>
   </header>
-  <main class="container">
+  <main class="container" id="main">

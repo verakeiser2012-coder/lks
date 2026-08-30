@@ -5,7 +5,7 @@ const router = express.Router();
 
 const EDITABLE_KEYS = [
   'site_name', 'site_alt_name', 'site_tagline', 'phone', 'email', 'address',
-  'metrika_id',
+  'metrika_id', 'meta_description', 'og_image',
   'vk_url', 'telegram_url', 'whatsapp_url', 'instagram_url',
   'youtube_url', 'tiktok_url', 'pinterest_url', 'rutube_url', 'ok_url', 'dzen_url',
   'douyin_url', 'weibo_url', 'wechat_url', 'xiaohongshu_url',
