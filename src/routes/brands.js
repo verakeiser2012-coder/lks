@@ -2,6 +2,7 @@ const express = require('express');
 const db = require('../db');
 const { isBot, overLimit } = require('../middleware/antispam');
 const { notify } = require('../services/mail');
+const { plural } = require('../utils/text');
 
 const router = express.Router();
 
@@ -79,10 +80,51 @@ function getOffers() {
       example: { type: 'link', url: '/redheads', label: 'Смотреть подборку' },
     },
     {
-      title: 'Судейство в конкурсах',
+      title: 'Спонсорство конкурса',
       description:
-        'Приглашаем представителя бренда в жюри наших конкурсов — сейчас идёт «Пройдись как Лев» (конкурс модельной проходки под мою музыку, участники присылают ссылку на видео, участие возможно с согласия законного представителя для несовершеннолетних). Это медийность и ассоциация с ярким событием для бренда, а логотип и упоминание — во всех анонсах конкурса.',
+        'Спонсорский слот на сезон конкурса «Твой выход под трек» (участники 18+ снимают вертикальные видео под мою музыку): ваши вещи на участниках, ваш приз, представитель бренда в жюри, логотип во всех анонсах. Каждая заявка — это видео с вашим продуктом, снятое участником, а не нами. Если у бренда подростковая аудитория, сезон можно провести на площадке бренда и по его правилам — тогда возрастной ценз и модерацию берёт на себя он.',
       example: { type: 'link', url: '/contest', label: 'Смотреть конкурс' },
+    },
+  ];
+}
+
+// Пакеты для медиа-кита: те же форматы, собранные в три ступени сотрудничества.
+// Цены сознательно не указываем — они зависят от объёма прав и сроков, обсуждаются по запросу.
+function getPackages() {
+  return [
+    {
+      title: 'Знакомство',
+      subtitle: 'разовая интеграция',
+      includes: [
+        'Пост и серия сторис с отметкой бренда',
+        'Или видео-обзор либо распаковка продукта',
+        'Съёмка и монтаж на нашей стороне',
+        'Материал согласуем до публикации',
+      ],
+      note: 'От бренда нужен продукт и короткий бриф. Подходит, чтобы попробовать формат без длинных обязательств.',
+    },
+    {
+      title: 'Кампания',
+      subtitle: 'комплект материалов под запуск',
+      includes: [
+        'Фотосессия с продуктом — кадры для карточек товара и рекламы',
+        'Видео-обзор для YouTube, TikTok и Rutube',
+        'Серия постов и сторис на всех площадках',
+        'По желанию — совместный розыгрыш с продуктом бренда',
+      ],
+      note: 'Права на использование кадров в рекламе бренда обсуждаем отдельно — от этого зависит стоимость.',
+    },
+    {
+      title: 'Амбассадорство',
+      subtitle: 'сезон и дольше',
+      includes: [
+        'Всё из «Кампании», но регулярно в течение сезона',
+        'Джингл бренда — оригинальный трек под слоган или название',
+        'Участие как модель в съёмках бренда',
+        'DJ-сет на открытии точки, презентации или вечеринке',
+        'Капсульный мерч и логотип в анонсах наших конкурсов',
+      ],
+      note: 'Долгая история работает лучше разовой: аудитория успевает связать бренд с человеком, а не с рекламной вставкой.',
     },
   ];
 }
@@ -96,12 +138,12 @@ router.get('/media-kit', (req, res) => {
   const settings = {};
   for (const row of db.prepare('SELECT key, value FROM settings').all()) settings[row.key] = row.value;
   const releases = db
-    .prepare('SELECT title, slug, year, cover_image FROM releases WHERE is_published = 1 ORDER BY sort_order ASC')
+    .prepare('SELECT title, slug, year, cover_image, release_type FROM releases WHERE is_published = 1 ORDER BY sort_order ASC')
     .all();
   const trackCount = db.prepare('SELECT COUNT(*) AS c FROM tracks').get().c;
   const epCount = releases.filter((r) => r.release_type !== 'Single').length;
   const singleCount = releases.length - epCount;
-  res.render('media-kit', { offers: getOffers(), mediaSettings: settings, releases, trackCount, epCount, singleCount });
+  res.render('media-kit', { offers: getOffers(), packages: getPackages(), mediaSettings: settings, releases, trackCount, epCount, singleCount, plural });
 });
 
 router.post('/', (req, res) => {

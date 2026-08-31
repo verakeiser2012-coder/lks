@@ -12,7 +12,7 @@
     <h2>Коротко</h2>
     <div class="mk-facts">
       <div class="mk-fact"><strong>14 лет</strong><span>музыкант, модель, актёр</span></div>
-      <div class="mk-fact"><strong><%= releases.length %> релизов</strong><span><%= epCount %> EP · <%= singleCount %> синглов · <%= trackCount %> треков на всех стримингах</span></div>
+      <div class="mk-fact"><strong><%= releases.length %> <%= plural(releases.length, ['релиз', 'релиза', 'релизов']) %></strong><span><% if (epCount) { %><%= epCount %> EP · <% } %><% if (singleCount) { %><%= singleCount %> <%= plural(singleCount, ['сингл', 'сингла', 'синглов']) %> · <% } %><%= trackCount %> <%= plural(trackCount, ['трек', 'трека', 'треков']) %> на всех стримингах</span></div>
       <div class="mk-fact"><strong>Екатеринбург</strong><span>съёмки и мероприятия</span></div>
       <div class="mk-fact"><strong>ИП</strong><span>работаем по договору, с документами</span></div>
     </div>
@@ -38,7 +38,27 @@
   </section>
 
   <section class="mk-section">
-    <h2>Форматы сотрудничества</h2>
+    <h2>Пакеты</h2>
+    <div class="mk-packages">
+      <% packages.forEach(function(pack) { %>
+        <div class="mk-package">
+          <h3><%= pack.title %></h3>
+          <p class="mk-package-sub"><%= pack.subtitle %></p>
+          <ul>
+            <% pack.includes.forEach(function(item) { %><li><%= item %></li><% }); %>
+          </ul>
+          <p class="mk-package-note"><%= pack.note %></p>
+        </div>
+      <% }); %>
+    </div>
+    <p class="hint">
+      Стоимость — по запросу: зависит от формата, объёма прав (где и как долго бренд использует материалы)
+      и сроков. Возможны бартер и сборка пакета под задачу.
+    </p>
+  </section>
+
+  <section class="mk-section">
+    <h2>Отдельные форматы</h2>
     <div class="mk-offers">
       <% offers.forEach(function(offer) { %>
         <div class="mk-offer">
@@ -47,7 +67,6 @@
         </div>
       <% }); %>
     </div>
-    <p class="hint">Стоимость — по запросу: зависит от формата, объёма прав и сроков. Возможны пакеты и бартер.</p>
   </section>
 
   <section class="mk-section">
