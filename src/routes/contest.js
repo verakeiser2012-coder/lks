@@ -15,10 +15,17 @@ function loadPrize() {
   return row ? row.value : '';
 }
 
+// Ссылка на шаблон для монтажа (CapCut и подобные) — блок скрыт, пока она не заполнена.
+function loadTemplateUrl() {
+  const row = db.prepare("SELECT value FROM settings WHERE key = 'contest_template_url'").get();
+  return row ? row.value : '';
+}
+
 router.get('/', (req, res) => {
   res.render('contest', {
     intro: loadIntro(),
     prize: loadPrize(),
+    templateUrl: loadTemplateUrl(),
     submitted: false,
     error: null,
     values: {},
@@ -35,6 +42,7 @@ router.post('/submit', (req, res) => {
     return res.render('contest', {
       intro: loadIntro(),
       prize: loadPrize(),
+      templateUrl: loadTemplateUrl(),
       submitted: false,
       error: 'Укажите имя, контакт и ссылку на видео.',
       values: req.body,
@@ -45,8 +53,9 @@ router.post('/submit', (req, res) => {
     return res.render('contest', {
       intro: loadIntro(),
       prize: loadPrize(),
+      templateUrl: loadTemplateUrl(),
       submitted: false,
-      error: 'Подтвердите, что вам есть 18 лет, либо согласие законного представителя получено.',
+      error: 'Участвовать можно с 18 лет — подтвердите возраст.',
       values: req.body,
     });
   }
@@ -55,6 +64,7 @@ router.post('/submit', (req, res) => {
     return res.render('contest', {
       intro: loadIntro(),
       prize: loadPrize(),
+      templateUrl: loadTemplateUrl(),
       submitted: false,
       error: 'Подтвердите согласие на обработку персональных данных.',
       values: req.body,
@@ -73,6 +83,7 @@ router.post('/submit', (req, res) => {
   res.render('contest', {
     intro: loadIntro(),
     prize: loadPrize(),
+    templateUrl: loadTemplateUrl(),
     submitted: true,
     error: null,
     values: {},

@@ -1,6 +1,6 @@
 <%- include('partials/header') %>
 
-<h1>Конкурс «Пройдись как Лев»</h1>
+<h1>Конкурс «Твой выход под трек»</h1>
 
 <% if (saved) { %>
   <div class="flash flash-success">Сохранено.</div>
@@ -15,6 +15,11 @@
     Текст про приз
     <textarea name="prize" rows="3"><%= prize %></textarea>
   </label>
+  <label>
+    Ссылка на шаблон для монтажа (CapCut и подобные)
+    <input type="url" name="templateUrl" value="<%= templateUrl %>" placeholder="https://...">
+  </label>
+  <p class="hint">Пока ссылка пустая, блок «Шаблон» на странице конкурса не показывается.</p>
   <p class="hint">Чтобы вставить ссылку в текст: <code>[текст ссылки](https://example.com)</code></p>
   <button class="btn" type="submit">Сохранить</button>
 </form>

@@ -13,8 +13,18 @@ function loadPrize() {
   return row ? row.value : '';
 }
 
+function loadTemplateUrl() {
+  const row = db.prepare("SELECT value FROM settings WHERE key = 'contest_template_url'").get();
+  return row ? row.value : '';
+}
+
 router.get('/', (req, res) => {
-  res.render('admin/contest', { intro: loadIntro(), prize: loadPrize(), saved: false });
+  res.render('admin/contest', {
+    intro: loadIntro(),
+    prize: loadPrize(),
+    templateUrl: loadTemplateUrl(),
+    saved: false,
+  });
 });
 
 router.post('/', (req, res) => {
@@ -24,7 +34,13 @@ router.post('/', (req, res) => {
   `);
   upsert.run('contest_intro', req.body.intro || '');
   upsert.run('contest_prize', req.body.prize || '');
-  res.render('admin/contest', { intro: req.body.intro || '', prize: req.body.prize || '', saved: true });
+  upsert.run('contest_template_url', req.body.templateUrl || '');
+  res.render('admin/contest', {
+    intro: req.body.intro || '',
+    prize: req.body.prize || '',
+    templateUrl: req.body.templateUrl || '',
+    saved: true,
+  });
 });
 
 router.get('/submissions', (req, res) => {

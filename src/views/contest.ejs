@@ -1,13 +1,77 @@
 <%- include('partials/header') %>
 
 <section class="hero">
-  <h1>Пройдись как Лев</h1>
+  <h1>Твой выход под трек</h1>
   <% if (intro) { %><p class="hero-tagline"><%- renderLinkedText(intro) %></p><% } %>
+</section>
+
+<section class="link-section">
+  <h2>Как участвовать</h2>
+  <ol class="contest-steps">
+    <li>Выбери любой мой трек — <a href="https://band.link/djlevka" target="_blank" rel="noopener">band.link/djlevka</a>.</li>
+    <li>Сними вертикальное видео на 15–30 секунд: твой выход под эту музыку — <b>в замедлении</b>.</li>
+    <li>Выложи у себя и пришли ссылку в форме ниже.</li>
+  </ol>
+</section>
+
+<section class="link-section">
+  <h2>Где взять звук</h2>
+  <div class="sound-links">
+    <a class="btn" href="https://band.link/djlevka" target="_blank" rel="noopener">Все сервисы сразу</a>
+    <a class="btn btn-secondary" href="https://vk.com/artist/djlevka" target="_blank" rel="noopener">VK Музыка</a>
+    <a class="btn btn-secondary" href="https://music.yandex.ru/artist/16939806" target="_blank" rel="noopener">Яндекс Музыка</a>
+    <a class="btn btn-secondary" href="https://open.spotify.com/artist/2Yk65GNoUclS0VKtyvCebY" target="_blank" rel="noopener">Spotify</a>
+    <a class="btn btn-secondary" href="https://www.youtube.com/@DJLEVKA" target="_blank" rel="noopener">YouTube</a>
+  </div>
+  <p class="hint">
+    В TikTok и Reels звук появится в библиотеке отдельно — тогда добавим сюда кнопку, которая открывает
+    камеру сразу с треком. Пока трек можно наложить вручную из любого сервиса выше.
+  </p>
+</section>
+
+<% if (templateUrl) { %>
+<section class="link-section">
+  <h2>Шаблон</h2>
+  <p style="color:var(--color-muted); max-width:60ch;">
+    Если не хочешь возиться с монтажом — открой готовый шаблон, вставь свои кадры и получишь ролик
+    с нужным замедлением и звуком.
+  </p>
+  <p><a class="btn" href="<%= templateUrl %>" target="_blank" rel="noopener">Открыть шаблон</a></p>
+  <p class="hint">
+    Slow-mo снимается и без шаблона: на iPhone — режим «Замедленно» в камере, на Android — «Замедленная
+    съёмка» или «Slow motion» в списке режимов. Можно снять обычно и замедлить в редакторе.
+  </p>
+</section>
+
+<% } %><section class="link-section">
+  <h2>Условия</h2>
+  <ul class="contest-rules">
+    <li><b>Замедление обязательно.</b> Снимай в режиме slow-mo или замедли на монтаже. Это не украшение, а условие: обычных видео на скорости в лентах и так слишком много, а «медленно в быстром мире» — то, из чего вырос этот трек.</li>
+    <li><b>Только моя музыка.</b> Трек берём с <a href="https://band.link/djlevka" target="_blank" rel="noopener">band.link/djlevka</a> — с чужой музыкой видео снимут площадки за авторские права, и заявка пропадёт вместе с ним.</li>
+    <li><b>Интересная локация.</b> Двор, лестница, набережная, парковка, цех — подойдёт что угодно, если кадр читается. Локация — половина впечатления, снятое на фоне ковра проигрывает заранее.</li>
+    <li><b>Безопасно и по закону.</b> Никаких съёмок на путях, проезжей части, крышах, стройках и чужой территории. Видео с нарушением законов РФ снимаем с конкурса без разбора.</li>
+    <li><b>Без алкоголя, сигарет и вейпов в кадре.</b> Такие ролики нельзя показать бренду-партнёру, а значит нельзя и наградить.</li>
+    <li><b>Другие люди в кадре — только с их согласия.</b> Если в кадр попали посторонние, лучше переснять.</li>
+    <li><b>Видео открыто по ссылке</b> без регистрации и не удаляется до конца сезона.</li>
+  </ul>
+</section>
+
+<section class="link-section">
+  <h2>Как судим</h2>
+  <ul class="contest-criteria">
+    <li><b>Образ</b> — как собран лук и читается ли за ним характер.</li>
+    <li><b>Музыка</b> — попадание в ритм и настроение трека, а не просто движение под фон.</li>
+    <li><b>Кадр</b> — свет, вертикаль, чистый звук. Снятое на телефон подходит.</li>
+  </ul>
+  <p class="hint">
+    Мы не оцениваем рост, параметры и модельный опыт — это не кастинг.
+    В жюри вместе со мной сидят взрослые из индустрии и представитель бренда-партнёра сезона.
+  </p>
 </section>
 
 <% if (prize) { %>
   <section class="link-section">
-    <h2>Приз</h2>
+    <h2>Призы</h2>
     <p style="color:var(--color-muted); max-width:60ch;"><%- renderLinkedText(prize) %></p>
   </section>
 <% } %>
@@ -15,8 +79,8 @@
 <section class="link-section redhead-apply">
   <h2>Участвовать</h2>
   <p style="color:var(--color-muted); max-width:60ch;">
-    Снимите видео модельной проходки под мою музыку и пришлите ссылку — на YouTube, TikTok, VK или Instagram,
-    главное чтобы видео было доступно по ссылке. Отбираем и судим сами, лучших объявим отдельно.
+    Ссылка подойдёт любая — YouTube, TikTok, VK, Rutube или Instagram, главное чтобы видео открывалось
+    без регистрации. Челлендж для участников от 18 лет.
   </p>
   <% if (submitted) { %>
     <div class="flash flash-success">Спасибо! Заявка отправлена, мы её рассмотрим.</div>
@@ -44,7 +108,7 @@
     </label>
     <label style="display:flex; align-items:flex-start; gap:8px;">
       <input type="checkbox" name="ageConsent" value="1" style="width:auto; margin-top:4px;" <%= values.ageConsent ? 'checked' : '' %> required>
-      <span>Мне есть 18 лет, либо согласие законного представителя на участие получено *</span>
+      <span>Мне есть 18 лет *</span>
     </label>
     <label style="display:flex; align-items:flex-start; gap:8px;">
       <input type="checkbox" name="dataConsent" value="1" style="width:auto; margin-top:4px;" <%= values.dataConsent ? 'checked' : '' %> required>
@@ -53,6 +117,15 @@
     </label>
     <button class="btn" type="submit">Отправить заявку</button>
   </form>
+</section>
+
+<section class="link-section contest-sponsor">
+  <h2>Бренду</h2>
+  <p>
+    У конкурса есть спонсорский слот на сезон: ваши вещи на участниках, ваш приз, представитель в жюри
+    и логотип во всех анонсах. Каждая заявка — это видео с вашим продуктом, снятое участником, а не нами.
+  </p>
+  <p><a class="btn" href="/brands">Стать партнёром сезона</a></p>
 </section>
 
 <%- include('partials/footer') %>

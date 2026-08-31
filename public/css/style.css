@@ -1376,6 +1376,19 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 .mk-release-title { font-weight: 600; margin-top: 8px; }
 .mk-release-year { font-size: 0.82rem; color: var(--color-muted); }
 
+.mk-packages { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 16px; }
+.mk-package {
+  border: 1px solid var(--color-border); border-radius: 10px; padding: 18px;
+  display: flex; flex-direction: column;
+}
+.mk-package h3 { margin: 0 0 2px; font-size: 1.05rem; }
+.mk-package-sub { margin: 0 0 12px; font-size: 0.8rem; color: var(--color-muted); text-transform: lowercase; }
+.mk-package ul { margin: 0 0 12px; padding-left: 18px; }
+.mk-package li { font-size: 0.9rem; line-height: 1.5; margin-bottom: 6px; }
+.mk-package-note {
+  margin: auto 0 0; padding-top: 12px; border-top: 1px solid var(--color-border);
+  font-size: 0.82rem; line-height: 1.5; color: var(--color-muted);
+}
 .mk-offers { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
 .mk-offer { border: 1px solid var(--color-border); border-radius: 10px; padding: 16px; }
 .mk-offer h3 { margin: 0 0 8px; font-size: 1rem; }
@@ -1393,7 +1406,7 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
   .media-kit { max-width: none; }
   .mk-cover { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .mk-section { break-inside: avoid; page-break-inside: avoid; }
-  .mk-offer, .mk-release, .mk-fact { break-inside: avoid; }
+  .mk-offer, .mk-release, .mk-fact, .mk-package { break-inside: avoid; }
 }
 
 /* Поиск в шапке */
@@ -1446,3 +1459,23 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
   padding: 9px 0; border-bottom: 1px solid var(--color-border);
 }
 .search-note { font-size: 0.82rem; color: var(--color-muted); }
+
+/* Конкурс «Твой выход под трек» */
+.contest-steps, .contest-criteria, .contest-rules { max-width: 60ch; margin: 0; padding-left: 20px; color: var(--color-muted); }
+.contest-steps li, .contest-criteria li, .contest-rules li { margin-bottom: 8px; line-height: 1.55; }
+.contest-criteria b, .contest-rules b { color: var(--color-text); }
+.contest-sponsor { border-top: 1px solid var(--color-border); padding-top: 28px; }
+.contest-sponsor p { max-width: 60ch; color: var(--color-muted); }
+
+.sound-links { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+.btn-secondary {
+  background: transparent;
+  color: var(--color-text);
+  border-color: var(--color-border);
+  box-shadow: none;
+}
+.btn-secondary:hover {
+  color: var(--color-text);
+  border-color: var(--color-accent);
+  box-shadow: none;
+}
