@@ -1,0 +1,472 @@
+<title>Медиаплан: три бренда</title>
+<style>
+  :root {
+    --paper: #f8f4ec;
+    --paper-alt: #efe7d4;
+    --ink: #241f1a;
+    --ink-soft: #6f6455;
+    --ink-faint: #a89a83;
+    --accent: #a8672b;
+    --accent-deep: #7c4a1d;
+    --accent-soft: #eddcc0;
+    --rule: #d8cdb4;
+    --rule-strong: #c2b190;
+    --shadow: rgba(60, 45, 20, 0.08);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #17130f;
+      --paper-alt: #201a13;
+      --ink: #f1e8d7;
+      --ink-soft: #b6a88c;
+      --ink-faint: #7d715c;
+      --accent: #dd9c4f;
+      --accent-deep: #f0b268;
+      --accent-soft: #3a2b16;
+      --rule: #3a3123;
+      --rule-strong: #4d4230;
+      --shadow: rgba(0, 0, 0, 0.35);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper: #17130f;
+    --paper-alt: #201a13;
+    --ink: #f1e8d7;
+    --ink-soft: #b6a88c;
+    --ink-faint: #7d715c;
+    --accent: #dd9c4f;
+    --accent-deep: #f0b268;
+    --accent-soft: #3a2b16;
+    --rule: #3a3123;
+    --rule-strong: #4d4230;
+    --shadow: rgba(0, 0, 0, 0.35);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    padding: 56px 20px 80px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .sheet {
+    width: 100%;
+    max-width: 760px;
+  }
+
+  .masthead {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    padding-bottom: 22px;
+    border-bottom: 2px solid var(--ink);
+    margin-bottom: 30px;
+  }
+
+  .brand {
+    font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-deep);
+    font-weight: 600;
+    margin: 0 0 6px;
+  }
+
+  h1 {
+    font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .meta {
+    text-align: right;
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+
+  .meta strong {
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    margin-bottom: 40px;
+  }
+
+  .stat {
+    background: var(--paper);
+    padding: 16px 18px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 8px;
+  }
+
+  .stat-value {
+    font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+    font-size: 24px;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+  }
+
+  .stat-value small {
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--ink-soft);
+    font-weight: 400;
+  }
+
+  section + section { margin-top: 40px; }
+
+  h2 {
+    font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+    font-size: 19px;
+    font-weight: 700;
+    margin: 0 0 4px;
+  }
+
+  .section-note {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    margin: 0 0 18px;
+    max-width: 62ch;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--rule-strong);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    min-width: 620px;
+  }
+
+  thead th {
+    text-align: left;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 600;
+    padding: 10px 14px;
+    background: var(--paper-alt);
+    border-bottom: 1px solid var(--rule-strong);
+    white-space: nowrap;
+  }
+
+  tbody td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+
+  tbody tr.priority-boundary td { border-top: 1px solid var(--rule-strong); }
+
+  .prio {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    color: var(--accent-deep);
+    font-family: Georgia, serif;
+    font-weight: 700;
+    font-size: 12px;
+  }
+
+  .goal {
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .goal-sub {
+    display: block;
+    font-weight: 400;
+    color: var(--ink-soft);
+    font-size: 12.5px;
+    margin-top: 2px;
+  }
+
+  .channel { color: var(--ink); }
+
+  .amount {
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .rationale {
+    color: var(--ink-soft);
+    font-size: 13px;
+    line-height: 1.5;
+    max-width: 30ch;
+  }
+
+  tfoot td {
+    padding: 13px 14px;
+    font-weight: 700;
+    background: var(--paper-alt);
+    border-top: 2px solid var(--ink);
+  }
+
+  tfoot .amount { color: var(--accent-deep); font-size: 15px; }
+
+  .excluded {
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: var(--paper-alt);
+    border-left: 3px solid var(--rule-strong);
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+
+  .excluded strong { color: var(--ink); }
+
+  .comment-hint {
+    margin-top: 44px;
+    padding-top: 18px;
+    border-top: 1px dashed var(--rule-strong);
+    font-size: 12.5px;
+    color: var(--ink-faint);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .comment-hint svg { flex: none; opacity: 0.7; }
+
+  .brand-header {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+
+  .brand-tag {
+    display: inline-flex;
+    align-items: center;
+    font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.03em;
+    color: var(--accent-deep);
+    background: var(--accent-soft);
+    border-radius: 3px;
+    padding: 2px 8px;
+  }
+
+  .empty-row td {
+    padding: 22px 14px;
+    color: var(--ink-faint);
+    font-size: 13.5px;
+    font-style: italic;
+    text-align: center;
+  }
+
+  @media (max-width: 600px) {
+    .stats { grid-template-columns: 1fr; }
+    h1 { font-size: 27px; }
+    .masthead { flex-direction: column; align-items: flex-start; }
+    .meta { text-align: left; }
+  }
+</style>
+
+<div class="sheet">
+  <div class="masthead">
+    <div class="brand">
+      <p class="eyebrow">Медиаплан · три бренда</p>
+      <h1>Куда идёт рекламный бюджет</h1>
+    </div>
+    <div class="meta">
+      составлено <strong>21.08.2026</strong><br>
+      период: <strong>ежемесячно</strong>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <p class="stat-label">Бюджет</p>
+      <p class="stat-value">10 000 <small>₽/мес</small></p>
+    </div>
+    <div class="stat">
+      <p class="stat-label">Каналов</p>
+      <p class="stat-value">2 <small>VK Реклама · Яндекс Директ</small></p>
+    </div>
+    <div class="stat">
+      <p class="stat-label">Целей</p>
+      <p class="stat-value">3 <small>по приоритету</small></p>
+    </div>
+  </div>
+
+  <section>
+    <div class="brand-header"><span class="brand-tag">Левкейсер</span></div>
+    <h2>Распределение по приоритету</h2>
+    <p class="section-note">Порядок целей выбран по значимости для бизнеса: магазин приносит выручку напрямую, конкурс растит базу подписчиков, поиск рыжих — нишевая узкая задача с наименьшим бюджетом.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Цель</th>
+            <th>Канал</th>
+            <th style="text-align:right">Бюджет</th>
+            <th>Почему</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="prio">1</span></td>
+            <td class="goal">Интернет-магазин<span class="goal-sub">выручка напрямую</span></td>
+            <td class="channel">Яндекс Директ<br><span class="goal-sub">Поиск + РСЯ</span></td>
+            <td class="amount">3 500 ₽</td>
+            <td class="rationale">горячий спрос + ретаргетинг брошенных корзин</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td class="goal">Интернет-магазин</td>
+            <td class="channel">VK Реклама<br><span class="goal-sub">ретаргетинг / look-alike</span></td>
+            <td class="amount">1 500 ₽</td>
+            <td class="rationale">дешёвый CPM, докрутка охвата с сайта</td>
+          </tr>
+          <tr class="priority-boundary">
+            <td><span class="prio">2</span></td>
+            <td class="goal">Конкурс<span class="goal-sub">«Пройдись как Лев»</span></td>
+            <td class="channel">VK Реклама<br><span class="goal-sub">по городу / фан-сообществам</span></td>
+            <td class="amount">2 500 ₽</td>
+            <td class="rationale">сбор email-базы, вирусный потенциал</td>
+          </tr>
+          <tr class="priority-boundary">
+            <td><span class="prio">3</span></td>
+            <td class="goal">Поиск рыжих<span class="goal-sub">нишевая задача</span></td>
+            <td class="channel">VK Реклама<br><span class="goal-sub">интересы / сообщества</span></td>
+            <td class="amount">1 500 ₽</td>
+            <td class="rationale">таргетинг через тематические сообщества</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td class="goal">Поиск рыжих</td>
+            <td class="channel">Нативные посты<br><span class="goal-sub">тематические паблики</span></td>
+            <td class="amount">1 000 ₽</td>
+            <td class="rationale">точечный охват вместо дорогого Telegram Ads</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3">Итого план</td>
+            <td class="amount">10 000 ₽</td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <div class="excluded">
+      <strong>Не включены:</strong> Instagram/Meta — заблокированы и признаны экстремистской организацией в РФ, платная реклама на российскую аудиторию невозможна. Официальный Telegram Ads Platform — минимальные бюджеты в валюте слишком высоки для этого бюджета; заменён точечными нативными постами.
+    </div>
+  </section>
+
+  <section>
+    <div class="brand-header"><span class="brand-tag">Груша</span></div>
+    <h2>Рекламный бюджет</h2>
+    <p class="section-note">Подкаст «Груша» — кампаний пока нет, бюджет не выделен. Таблица готова для заполнения, когда появится план по продвижению.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Цель</th>
+            <th>Канал</th>
+            <th style="text-align:right">Бюджет</th>
+            <th>Почему</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="empty-row">
+            <td colspan="5">пока нет данных — жду вводных по целям и бюджету</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3">Итого план</td>
+            <td class="amount">— ₽</td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="brand-header"><span class="brand-tag">Флёр</span></div>
+    <h2>Рекламный бюджет</h2>
+    <p class="section-note">Абажуры/декор «Флёр» — кампаний пока нет, бюджет не выделен. Таблица готова для заполнения, когда появится план по продвижению.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Цель</th>
+            <th>Канал</th>
+            <th style="text-align:right">Бюджет</th>
+            <th>Почему</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="empty-row">
+            <td colspan="5">пока нет данных — жду вводных по целям и бюджету</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3">Итого план</td>
+            <td class="amount">— ₽</td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </section>
+
+  <div class="comment-hint">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    Оставляй комментарии прямо на странице — через панель комментариев артефакта.
+  </div>
+</div>

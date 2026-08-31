@@ -1,0 +1,947 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body>
+<title>Пульт Льва</title>
+<style>
+  :root {
+    /* dark-first palette — "control room" */
+    --bg: #121316;
+    --surface: #1b1d23;
+    --surface-2: #23262d;
+    --border: #2e323b;
+    --text: #ECEAE3;
+    --text-muted: #9a9da8;
+    --text-faint: #666a75;
+    --accent: #ff8a3d;
+    --accent-dim: #ff8a3d33;
+    --status-todo-bg: #2a2d34;
+    --status-todo-fg: #9a9da8;
+    --status-wait-bg: #3d3418;
+    --status-wait-fg: #e8b339;
+    --status-done-bg: #1c3324;
+    --status-done-fg: #5fc987;
+    --status-skip-bg: #24262b;
+    --status-skip-fg: #6c707a;
+    --shadow: 0 1px 0 rgba(0,0,0,0.4);
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #f0f1f4;
+      --surface: #ffffff;
+      --surface-2: #f5f6f8;
+      --border: #dde0e6;
+      --text: #1a1c22;
+      --text-muted: #5b5f6a;
+      --text-faint: #8a8e98;
+      --accent: #e2691e;
+      --accent-dim: #e2691e22;
+      --status-todo-bg: #e8e9ed;
+      --status-todo-fg: #5b5f6a;
+      --status-wait-bg: #fdf1d8;
+      --status-wait-fg: #a8760a;
+      --status-done-bg: #e0f2e6;
+      --status-done-fg: #268049;
+      --status-skip-bg: #ececef;
+      --status-skip-fg: #8a8e98;
+      --shadow: 0 1px 0 rgba(0,0,0,0.05);
+    }
+  }
+
+  :root[data-theme="light"] {
+    --bg: #f0f1f4;
+    --surface: #ffffff;
+    --surface-2: #f5f6f8;
+    --border: #dde0e6;
+    --text: #1a1c22;
+    --text-muted: #5b5f6a;
+    --text-faint: #8a8e98;
+    --accent: #e2691e;
+    --accent-dim: #e2691e22;
+    --status-todo-bg: #e8e9ed;
+    --status-todo-fg: #5b5f6a;
+    --status-wait-bg: #fdf1d8;
+    --status-wait-fg: #a8760a;
+    --status-done-bg: #e0f2e6;
+    --status-done-fg: #268049;
+    --status-skip-bg: #ececef;
+    --status-skip-fg: #8a8e98;
+    --shadow: 0 1px 0 rgba(0,0,0,0.05);
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #121316;
+    --surface: #1b1d23;
+    --surface-2: #23262d;
+    --border: #2e323b;
+    --text: #ECEAE3;
+    --text-muted: #9a9da8;
+    --text-faint: #666a75;
+    --accent: #ff8a3d;
+    --accent-dim: #ff8a3d33;
+    --status-todo-bg: #2a2d34;
+    --status-todo-fg: #9a9da8;
+    --status-wait-bg: #3d3418;
+    --status-wait-fg: #e8b339;
+    --status-done-bg: #1c3324;
+    --status-done-fg: #5fc987;
+    --status-skip-bg: #24262b;
+    --status-skip-fg: #6c707a;
+    --shadow: 0 1px 0 rgba(0,0,0,0.4);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  .mono {
+    font-family: ui-monospace, "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  header.masthead {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 20px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .masthead .id {
+    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 6px;
+  }
+
+  h1 {
+    font-family: ui-monospace, "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+    font-weight: 600;
+    font-size: 28px;
+    letter-spacing: -0.01em;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .masthead .date {
+    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+    color: var(--text-muted);
+    font-size: 13px;
+    text-align: right;
+  }
+
+  .stale-note {
+    margin: 0 0 28px;
+    padding: 10px 14px;
+    border: 1px solid var(--status-wait-fg);
+    border-radius: 4px;
+    background: var(--status-wait-bg);
+    color: var(--status-wait-fg);
+    font-size: 12.5px;
+    line-height: 1.5;
+  }
+
+  section.priority {
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    margin-bottom: 32px;
+    box-shadow: 0 0 0 1px var(--accent-dim);
+    overflow: hidden;
+  }
+  .priority .channel-head { background: var(--accent-dim); border-bottom-color: var(--accent); }
+  .priority .channel-head h2 { color: var(--text); }
+  .priority-note {
+    padding: 10px 18px;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+  }
+  td.rank {
+    width: 1%;
+    font-family: ui-monospace, Consolas, monospace;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--accent);
+    text-align: center;
+  }
+  td.ref {
+    width: 1%;
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 11px;
+    color: var(--text-faint);
+    white-space: nowrap;
+  }
+
+  /* meter */
+  .meter-block {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+  .meter-label {
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    white-space: nowrap;
+  }
+  .meter-track {
+    flex: 1;
+    height: 8px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    display: flex;
+  }
+  .meter-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--status-wait-fg));
+  }
+  .meter-count {
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 13px;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+  .meter-count b { color: var(--text); }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 40px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+
+  section.channel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .channel-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface-2);
+  }
+  .channel-tag {
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    border: 1px solid var(--accent-dim);
+    padding: 2px 6px;
+    border-radius: 3px;
+    flex: none;
+  }
+  .channel-head h2 {
+    font-size: 15px;
+    margin: 0;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .channel-note {
+    padding: 10px 18px;
+    font-size: 13px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .brief {
+    margin: 0;
+    padding: 16px 18px;
+    background: var(--surface-2);
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .brief .brief-label {
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 8px;
+  }
+  .brief dl { margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; }
+  .brief dt { color: var(--text-faint); white-space: nowrap; }
+  .brief dd { margin: 0; color: var(--text); }
+  .brief .brief-blank { color: var(--accent); }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .table-wrap { overflow-x: auto; }
+
+  th {
+    text-align: left;
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    font-weight: 500;
+    padding: 10px 18px 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+
+  td.task { width: 22%; font-weight: 600; white-space: nowrap; }
+  td.note { color: var(--text-muted); font-size: 13.5px; }
+  td.deadline {
+    width: 19%;
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+  td.status { width: 1%; white-space: nowrap; }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 11px;
+    letter-spacing: 0.03em;
+    padding: 4px 9px 4px 7px;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+  .chip .dot { box-shadow: 0 0 6px 0 currentColor; }
+  .chip.todo { background: var(--status-todo-bg); color: var(--status-todo-fg); }
+  .chip.wait { background: var(--status-wait-bg); color: var(--status-wait-fg); }
+  .chip.done { background: var(--status-done-bg); color: var(--status-done-fg); }
+  .chip.skip { background: var(--status-skip-bg); color: var(--status-skip-fg); text-decoration: line-through; }
+
+  tr.skip td.task, tr.skip td.note { color: var(--text-faint); }
+
+  .deadline.urgent { color: var(--accent); font-weight: 600; }
+
+  footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    font-size: 12.5px;
+    color: var(--text-faint);
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 640px) {
+    td.note { display: none; }
+    th:nth-child(3) { display: none; }
+    .masthead { flex-direction: column; align-items: flex-start; }
+    .masthead .date { text-align: left; }
+  }
+</style>
+
+<header class="masthead">
+  <div>
+    <p class="id">ЛЕВ КЕЙСЕР // DJ LEVKA — ОПЕРАТИВНЫЙ ПУЛЬТ</p>
+    <h1>Пульт Льва</h1>
+  </div>
+  <div class="date mono">25.08.2026<br>рабочий план</div>
+</header>
+
+<p class="stale-note">Актуализировано 24.08 — перепроверила напрямую (DNS/SSL, база social_networks/social_posts, реквизиты в settings). SSL всё ещё не покрыл 4 домена, VK/Telegram-токены не заведены, анонс фестиваля рыжих так и не вышел — а до фестиваля 4 дня. Заодно нашла: кто-то отдельно добавил в схему банковские реквизиты (legal_bank_*) и они уже заполнены — не было в этом плане, но уже готово.</p>
+
+<div class="meter-block">
+  <span class="meter-label">Готово</span>
+  <div class="meter-track"><div class="meter-fill" style="width:0%"></div></div>
+  <span class="meter-count"><b>0</b> / 49 задач</span>
+</div>
+
+<div class="legend">
+  <span><span class="dot" style="background:var(--status-todo-fg)"></span>не начато</span>
+  <span><span class="dot" style="background:var(--status-wait-fg)"></span>ждём ответ извне</span>
+  <span><span class="dot" style="background:var(--status-done-fg)"></span>готово</span>
+  <span><span class="dot" style="background:var(--status-skip-fg)"></span>пропущено осознанно</span>
+</div>
+
+<section class="priority">
+  <div class="channel-head">
+    <span class="channel-tag">★</span>
+    <h2>Приоритет — кратчайший путь к запуску магазина и системным новостям</h2>
+  </div>
+  <div class="priority-note">Ничего ниже ещё не начато — это порядок, в котором есть смысл делать, не факт готовности. Логика: сначала то, что физически блокирует остальное, затем быстрые 5-минутные задачи, затем то, что реально запускает первую системную публикацию.</div>
+  <div class="table-wrap">
+  <table>
+    <tr><th>#</th><th>Задача</th><th>Зачем именно тут</th><th>Подробнее</th></tr>
+    <tr>
+      <td class="rank">1</td>
+      <td class="task">Alfa-Bank — данные эквайринга</td>
+      <td class="note">Кнопка «Подключить» в блоке «Подключение по API» (не виджет, не CMS, не SDK). Банк присылает логин/пароль + URL шлюза на почту; Callback-токен — в личном кабинете. Официальный мануал (partner.alfabank.ru) не открылся у меня — самоподписанный сертификат их сайта. Нужно переслать ключевые страницы вручную.</td>
+      <td class="ref">CH.1</td>
+    </tr>
+    <tr>
+      <td class="rank">2</td>
+      <td class="task">VK/Telegram — токены в /admin/social-networks</td>
+      <td class="note">Корневая причина, почему автопостинг вообще не работает — без этого ни один системный пост не выйдет.</td>
+      <td class="ref">CH.6</td>
+    </tr>
+    <tr>
+      <td class="rank">3</td>
+      <td class="task">Yandex 360 — пароль приложения</td>
+      <td class="note">5 минут — без этого не уходят даже подтверждения заказов.</td>
+      <td class="ref">CH.1</td>
+    </tr>
+    <tr>
+      <td class="rank">4</td>
+      <td class="task">⚠️ Анонс фестиваля рыжих вручную (VK/Telegram)</td>
+      <td class="note">Перепроверено 24.08 — всё ещё не сделано, а фестиваль через 4 дня (28.08). Дальше тянуть некуда.</td>
+      <td class="ref">CH.6</td>
+    </tr>
+    <tr>
+      <td class="rank">5</td>
+      <td class="task">Printful — аккаунт + токен + карта</td>
+      <td class="note">Нужно для запуска магазина (производство/доставка мерча).</td>
+      <td class="ref">CH.1</td>
+    </tr>
+    <tr>
+      <td class="rank">6</td>
+      <td class="task">Починить битые соцсети (TikTok/VK/Instagram)</td>
+      <td class="note">Аккаунты, куда пойдёт системный постинг, должны сами выглядеть живыми и опрятными.</td>
+      <td class="ref">CH.8</td>
+    </tr>
+    <tr>
+      <td class="rank">7</td>
+      <td class="task">Статья Дзен про Redhead Days</td>
+      <td class="note">Дедлайн 28.08 — уже через 4 дня, текст готов.</td>
+      <td class="ref">CH.6</td>
+    </tr>
+    <tr>
+      <td class="rank">8</td>
+      <td class="task">Контент-план статей (Пираты → Tyler → Joji → Tame Impala)</td>
+      <td class="note">Это и есть содержание системных новостей, как только труба для постинга заработала.</td>
+      <td class="ref">CH.7</td>
+    </tr>
+    <tr>
+      <td class="rank">9</td>
+      <td class="task">Рекламный бюджет VK/Telegram/Директ</td>
+      <td class="note">Усиливает то, что уже реально публикуется — не раньше.</td>
+      <td class="ref">CH.6</td>
+    </tr>
+    <tr>
+      <td class="rank">10</td>
+      <td class="task">DNS/SSL оставшихся 4 доменов</td>
+      <td class="note">DNS уже разрешился (проверено 21.08), остался только SSL на сервере — не блокирует ни магазин, ни новости.</td>
+      <td class="ref">CH.5</td>
+    </tr>
+    <tr>
+      <td class="rank">—</td>
+      <td class="task">Всё остальное</td>
+      <td class="note">MusicBrainz/Wikidata/Apple&amp;Amazon Music for Artists, синхро-лицензирование, самостоятельная заливка на прочие сервисы, медиа-кит, Флёр×Лев лампы, Груша-подкаст — фоном, без изменений.</td>
+      <td class="ref">CH.1-10</td>
+    </tr>
+  </table>
+  </div>
+</section>
+
+<section class="priority">
+  <div class="channel-head">
+    <span class="channel-tag">⚠</span>
+    <h2>Перед публичным запуском — новые направления (добавлено 25.08)</h2>
+  </div>
+  <div class="priority-note">Не доработка существующих задач, а целые рабочие потоки, которых в плане не было вообще — выявлено при разборе «что упускаю до запуска магазина».</div>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Статус</th><th>Задача</th><th>Детали</th><th>Дедлайн</th></tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">Онлайн-касса / 54-ФЗ</td>
+      <td class="note">Эквайринг Alfa-Bank решает приём платежа, но не обязанность выдавать фискальный чек при розничной продаже физлицу — банковский эквайринг сам по себе кассу обычно не включает. Уточнить у Alfa-Bank/бухгалтера: либо касса встроена, либо нужен отдельный сервис (АТОЛ Онлайн, или агрегатор типа ЮKassa/CloudPayments с кассой внутри). Без этого приём реальных платежей формально не соответствует закону.</td>
+      <td class="deadline urgent">до первого реального платежа</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">Доставка не-POD товаров</td>
+      <td class="note">Винил, лампы Флёр×Лев, благовония — Printful их не касается (это только для мерча по подписке). Нужно выбрать службу (Почта России/СДЭК/Boxberry), калькулятор стоимости на сайте (сейчас /legal/delivery — просто текстовый шаблон), процесс упаковки/отправки.</td>
+      <td class="deadline">до запуска магазина</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">Аналитика на сайте</td>
+      <td class="note">Ни Яндекс.Метрики, ни трекинга конверсий нет, а рекламный бюджет 30-40к₽/мес на VK/Telegram/Директ уже запланирован — без аналитики не видно, что вообще работает.</td>
+      <td class="deadline">до старта рекламных кампаний</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">Финальные розничные цены</td>
+      <td class="note">Известна себестоимость (винил ~8-15к₽, благовония ~79₽/г материалов), но итоговая цена с маржой для покупателя нигде не зафиксирована — ни винил, ни благовония, ни мерч.</td>
+      <td class="deadline">до запуска магазина</td>
+    </tr>
+  </table>
+  </div>
+</section>
+
+<section class="channel">
+  <div class="channel-head">
+    <span class="channel-tag">CH.1</span>
+    <h2>Регистрации / аккаунты</h2>
+  </div>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Статус</th><th>Задача</th><th>Детали</th><th>Дедлайн</th></tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">MusicBrainz</td>
+      <td class="note">Аккаунт → артист DJ Levka + все 10 релизов → обложки через Cover Art Archive. Авторство уточнено: openedruf — только на Game Over.</td>
+      <td class="deadline urgent">был на 19.08</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">Wikidata</td>
+      <td class="note">Item на Льва — после MusicBrainz, порог модерации ниже, чем у Википедии.</td>
+      <td class="deadline">до 26.08</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">Alfa-Bank</td>
+      <td class="note">Личный кабинет ИП → данные для интернет-эквайринга (merchant ID / API-ключи) — блокирует интеграцию оплаты.</td>
+      <td class="deadline urgent">блокирует оплату</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">Printful</td>
+      <td class="note">Бесплатный аккаунт + API-токен + рублёвая виртуальная карта с иностранным BIN (для оплаты производства).</td>
+      <td class="deadline">до запуска магазина (~окт.)</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">Yandex 360</td>
+      <td class="note">Пароль приложения для info@levkeiser.com → вставить в .env (SMTP_PASSWORD). Сейчас письма только логируются.</td>
+      <td class="deadline urgent">5 минут — до сих пор не сделано</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">Apple Music for Artists</td>
+      <td class="note">Claim профиля (музыка уже доставляется через Sundesire) — аналитика + фид в Knowledge Panel.</td>
+      <td class="deadline">до 26.08</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">Amazon Music for Artists</td>
+      <td class="note">Claim профиля, каталог уже доставляется через дистрибьютора.</td>
+      <td class="deadline">до 26.08</td>
+    </tr>
+  </table>
+  </div>
+</section>
+
+<section class="channel">
+  <div class="channel-head">
+    <span class="channel-tag">CH.2</span>
+    <h2>Заливать самостоятельно (не через дистрибьютора)</h2>
+  </div>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Статус</th><th>Сервис</th><th>Детали</th><th>Дедлайн</th></tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">SoundCloud</td>
+      <td class="note">Обязателен для DJ-тусовки. Не покупать репосты/прослушивания — бан сносит весь каталог.</td>
+      <td class="deadline">без срока</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">Bandcamp</td>
+      <td class="note">~80-85% дохода артисту (до ~95% в Bandcamp Fridays) — ложится на винил/мерч-стратегию.</td>
+      <td class="deadline urgent">до 04.09 (Bandcamp Friday)</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">Mixcloud</td>
+      <td class="note">Для DJ-сетов (не отдельных треков), заливка напрямую.</td>
+      <td class="deadline">без срока</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">Vimeo</td>
+      <td class="note">Отдельный артист-канал для сетов/промо-видео (лучше картинка, чем YouTube) — не путать с embed-поддержкой в галерее сайта.</td>
+      <td class="deadline">без срока</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">Winamp for Creators</td>
+      <td class="note">Бесплатно, низкий риск; сайт-билдер/fanzone/мерч. Модерация ~10 раб. дней.</td>
+      <td class="deadline">без срока</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">PromoDJ</td>
+      <td class="note">RU-аналог SoundCloud, активное комьюнити, без возрастного барьера. Плюс конкурс «Denis A — Get it!».</td>
+      <td class="deadline urgent">конкурс до 27.09</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">Bridger</td>
+      <td class="note">Сбор роялти (не хостинг) — 90% артисту, права можно заявить ретроактивно за 2 года.</td>
+      <td class="deadline">без срока</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">LabelRadar</td>
+      <td class="note">Заливка демо для питчинга лейблам/конкурсам (не дистрибуция).</td>
+      <td class="deadline">без срока</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">DJ.ru</td>
+      <td class="note">Профиль/директория + радио-раздел. Конкурсы ремиксов недоступны Льву (нужны 18+ и гражданство РФ).</td>
+      <td class="deadline">без срока</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">NTS Radio / Rinse FM</td>
+      <td class="note">Заявка на сет/шоу напрямую — репутационная цель, не про отдельные треки.</td>
+      <td class="deadline">без срока</td>
+    </tr>
+    <tr class="skip">
+      <td class="status"><span class="chip skip"><span class="dot"></span>пропущено</span></td>
+      <td class="task">Beatstars</td>
+      <td class="note">Маркетплейс продажи битов другим артистам — не формат Льва.</td>
+      <td class="deadline">—</td>
+    </tr>
+  </table>
+  </div>
+</section>
+
+<section class="channel">
+  <div class="channel-head">
+    <span class="channel-tag">CH.3</span>
+    <h2>Синхро-лицензирование <span style="font-weight:400;color:var(--text-muted);font-size:13px;">— реклама/кино/ТВ/игры, отдельный канал от стриминг-дистрибуции</span></h2>
+  </div>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Статус</th><th>Сервис</th><th>Детали</th><th>Дедлайн</th></tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">⚠️ Проверить конфликт с договором РАО</td>
+      <td class="note">Реальный договор с РАО (подписан 05.11.2025, скан в Договор РАО.html на рабочем столе) — п.1ж) передаёт РАО право на «воспроизведение музыкальных произведений в составе аудиовизуальных произведений для использования всеми способами», п.2 отдаёт это по всему миру, п.7а) обязывает не передавать эти же права третьим лицам. Близко к тому, что делает синхро-лицензирование — возможен прямой конфликт с планом Songtradr. Уточнить у РАО/юриста до подачи куда-либо ниже.</td>
+      <td class="deadline urgent">сделать до Songtradr</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">Songtradr</td>
+      <td class="note">Маркетплейс синхро, self-serve, неэксклюзив (права остаются у Льва), 60%/80% (free/Pro) артисту — грузить каталог можно уже сейчас. Сначала уточнить способ выплат для РФ (прямой запрос в поддержку, как с Our Angels) — PayPal/SWIFT обычно не работают для резидентов РФ. См. также предупреждение выше про договор РАО.</td>
+      <td class="deadline">после проверки конфликта с РАО</td>
+    </tr>
+    <tr class="skip">
+      <td class="status"><span class="chip skip"><span class="dot"></span>пропущено</span></td>
+      <td class="task">Epidemic Sound / Artlist</td>
+      <td class="note">Байаут-модель ($2000-8000 разово, доля прав уходит) — не для сильных синглов, конфликтует с чарт-стратегией Beatport/Traxsource. Держать в уме только для проходных/фоновых треков.</td>
+      <td class="deadline">—</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">Musicbed / Marmoset</td>
+      <td class="note">Кураторские платформы (Musicbed принимает &lt;1% заявок, окна дважды в год) — цель на будущее, когда каталог из 10 релизов вырастет. Рано подавать сейчас.</td>
+      <td class="deadline">без срока</td>
+    </tr>
+  </table>
+  </div>
+</section>
+
+<section class="channel">
+  <div class="channel-head">
+    <span class="channel-tag">CH.4</span>
+    <h2>Проверить / дождаться ответа</h2>
+  </div>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Статус</th><th>Задача</th><th>Детали</th><th>Дедлайн</th></tr>
+    <tr>
+      <td class="status"><span class="chip wait"><span class="dot"></span>ждём ответ</span></td>
+      <td class="task">Антэкс Лазер</td>
+      <td class="note">Пробная партия 5 шт куба KP05-аналога (лампы Флёр × Лев). Письмо отправлено 18.08 — прошло уже 6 дней.</td>
+      <td class="deadline urgent">окно 21-25.08 почти закрылось — написать повторно</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip wait"><span class="dot"></span>в процессе</span></td>
+      <td class="task">Винил — выбрать, где прессовать</td>
+      <td class="note">Ответ от Vinylium получен 21.08: печать конвертов не делают, только прессовку. Макет и печать (в т.ч. конверты благовоний) — отдельно, в Картбурге. Сравнение прессовки под комбинированный 12" (37:09, ~18:30/сторону): <b>Vinylium</b> ~9800₽ чёрный / ~8200₽ прозрачный (настоящая прессовка, обложка/лейблы включены) — <b>рекомендация</b>; instaholst ~14600₽ (тоже прессовка, дороже); Vinyl-Record.ru ~5000-6500₽, но прямая резка — риск щелчков/шума, не для флагманской вещи. ТЗ для отправки — ниже.</td>
+      <td class="deadline">выбрать и заказать</td>
+    </tr>
+  </table>
+  </div>
+  <div class="brief">
+    <p class="brief-label">ТЗ — копировать и отправлять Vinylium (info@vinylium.ru / +7 911 166-24-37)</p>
+    <dl>
+      <dt>Тема</dt><dd>Заказ прессовки виниловой пластинки — DJ Levka</dd>
+      <dt>Артист</dt><dd>DJ Levka</dd>
+      <dt>Формат</dt><dd>12", 33⅓ об/мин, винил (рекомендуем чёрный — у них в одну цену с цветным)</dd>
+      <dt>Тираж</dt><dd><span class="brief-blank">___ шт</span> — решить: разовая коллекционная вещь или партия под продажу в магазине</dd>
+      <dt>Аудио</dt><dd>Сборник 3 EP — Ikigai (2024, 10:17), Flowers (2025, 13:55), Soundstates (2026, 12:57), суммарно 37:09. WAV-файлы и порядок треков — отдельным письмом.</dd>
+      <dt>Стороны</dt><dd>Сумма превышает стандарт 14 мин/сторону — просить посчитать доплату и подсказать оптимальную разбивку (по альбомам целиком — неровно, ~14 vs ~23 мин, либо по трекам для баланса).</dd>
+      <dt>Упаковка</dt><dd>НЕ нужна — печатается отдельно у другого подрядчика. Нужна только пластинка (стандартный бесплатный пакет ок).</dd>
+      <dt>Сроки/оплата</dt><dd>Подтвердить срок (у них 10-14 раб. дней) и порядок предоплаты.</dd>
+      <dt>Контакт</dt><dd><span class="brief-blank">(вписать)</span></dd>
+    </dl>
+  </div>
+</section>
+
+<section class="channel">
+  <div class="channel-head">
+    <span class="channel-tag">CH.5</span>
+    <h2>Юридическое / бизнес</h2>
+  </div>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Статус</th><th>Задача</th><th>Детали</th><th>Дедлайн</th></tr>
+    <tr>
+      <td class="status"><span class="chip wait"><span class="dot"></span>частично</span></td>
+      <td class="task">DNS/SSL</td>
+      <td class="note">DNS разрешён с 21.08, HTTP-редиректы работают. Перепроверено ещё раз 24.08 — SSL по-прежнему не покрывает эти 4 домена, за 3 дня ничего не изменилось. Нужен `certbot --expand` на сервере (у меня в этой сессии нет SSH-ключа).</td>
+      <td class="deadline">SSL-шаг — при доступе к серверу</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip done"><span class="dot"></span>готово</span></td>
+      <td class="task">SSL (14 доменов)</td>
+      <td class="note">Выпущен, автопродление настроено.</td>
+      <td class="deadline">истекает 10.11.26</td>
+    </tr>
+  </table>
+  </div>
+</section>
+
+<section class="channel">
+  <div class="channel-head">
+    <span class="channel-tag">CH.6</span>
+    <h2>Соцсети</h2>
+  </div>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Статус</th><th>Задача</th><th>Детали</th><th>Дедлайн</th></tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">Instagram — био/хайлайты</td>
+      <td class="note">Под аудиторию 21-25 (сейчас реальная аудитория — родители юных моделей/тинейджеры). Рекомендации готовы, не применены.</td>
+      <td class="deadline">без срока</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">Telegram — контент</td>
+      <td class="note">Сильнее Instagram для RU 21-25 (не нужен VPN). Рекомендации готовы, не применены.</td>
+      <td class="deadline">без срока</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">VK — контент</td>
+      <td class="note">То же самое; VK также канал №1 в рекламном бюджете (см. ниже).</td>
+      <td class="deadline">без срока</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">Rutube — контент</td>
+      <td class="note">Лонгформ под ту же аудиторию — рекомендации готовы, не применены.</td>
+      <td class="deadline">без срока</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">Дзен — статья Redhead Days</td>
+      <td class="note">Текст готов, не опубликован — нет API, постить вручную. Стоит в /admin/calendar на старт фестиваля.</td>
+      <td class="deadline urgent">28.08 — уже через 4 дня</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">⚠️ VK/Telegram — анонс фестиваля</td>
+      <td class="note">Перепроверено 24.08 напрямую в базе — по-прежнему НЕ вышел, статус так и остался failed. Токены VK/Telegram так и не заведены. Фестиваль через 4 дня — если не опубликовать вручную в ближайший день-два, анонс потеряет смысл. Текст готов, просто скопировать и запостить руками.</td>
+      <td class="deadline urgent">сделать сейчас, не откладывая</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">Рекламный бюджет VK/TG/Директ</td>
+      <td class="note">30-40к₽/мес: VK Реклама 45% · Telegram Ads 35% · Яндекс Директ 20%. Meta/TikTok Ads недоступны для RU.</td>
+      <td class="deadline">до старта конкурса</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">TikTok — воркэраунд загрузки</td>
+      <td class="note">Прямая загрузка из РФ заблокирована — воркэраунд только намечен, нужны конкретные шаги.</td>
+      <td class="deadline">без срока</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">Медиа-кит / рейт-карта</td>
+      <td class="note">Не создана — нужна для системного питча брендам (сейчас только страница /brands).</td>
+      <td class="deadline">без срока</td>
+    </tr>
+  </table>
+  </div>
+</section>
+
+<section class="channel">
+  <div class="channel-head">
+    <span class="channel-tag">CH.7</span>
+    <h2>Контент-план: «Что меня вдохновляет»</h2>
+  </div>
+  <div class="channel-note">Формат — личное эссе как в статье про Redhead Days: не рецензия, а связка «вот что вдохновляет — вот как это видно в моей музыке/стиле». Очередь как задал пользователь.</div>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Статус</th><th>Тема</th><th>Детали</th><th>Дедлайн</th></tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">Пираты Карибского моря</td>
+      <td class="note">Фильм, первая в очереди. Связать с образом/стилем — эстетика, характер Джека Воробья, приключенческий дух — и с имиджем Льва.</td>
+      <td class="deadline">по очереди, без даты</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">Tyler the Creator</td>
+      <td class="note">Готовый материал есть — в телеграм-посте («топчик за март 2026») Лев сам написал, что это его №1 влияние. Влияние на звук/визуал, смелость в жанровых сочетаниях.</td>
+      <td class="deadline">по очереди, без даты</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">Joji</td>
+      <td class="note">Готовый материал есть — Лев назвал его №2 после Tyler, с био и прямой связью с альбомом Soundstates (см. CH.8) — почти готовый черновик, не с нуля.</td>
+      <td class="deadline">по очереди, без даты</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">Tame Impala</td>
+      <td class="note">Уже референс для /music "Сейчас"-блока — тут разворачивается в полноценную статью: психоделия, продюсерский стиль Кевина Паркера.</td>
+      <td class="deadline">по очереди, без даты</td>
+    </tr>
+  </table>
+  </div>
+</section>
+
+<section class="channel">
+  <div class="channel-head">
+    <span class="channel-tag">CH.8</span>
+    <h2>Соцсети — аудит (реально просмотрено)</h2>
+  </div>
+  <div class="channel-note">Проверено 18.08 на Instagram/VK/Telegram/Rutube/TikTok — публично, без логина. Дзен требует вход через Яндекс, не проверен.</div>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Статус</th><th>Находка</th><th>Что делать</th><th>Дедлайн</th></tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">TikTok-ссылка битая</td>
+      <td class="note">Настройка tiktok_url указывает на @djlevka — «Аккаунт не найден». Реальный живой аккаунт @levkeiser (био «DJ Levka — Music creator, model, actor»), но почти пустой: 29 подписчиков, 53 лайка всего. Поправить ссылку в /admin/settings; заодно решить, стоит ли вкладываться в TikTok при такой базе.</td>
+      <td class="deadline">сделать вместе с settings</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">VK — контакт устарел</td>
+      <td class="note">Публичная карточка сообщества всё ещё показывает djlevka2012@gmail.com — старый адрес, заменённый 17.08 на info@levkeiser.com. Поменять в настройках сообщества VK.</td>
+      <td class="deadline">на этой неделе</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">Instagram-био как комп-карт</td>
+      <td class="note">Био буквально: «Лев Кейсер (160 см, 14 лет)» — формат модельного агентства, не образ артиста. Прямо противоречит цели 21-25 (см. CH.6) — убрать явные рост/возраст, оставить «Вдохновительный парень» + музыку на первом плане.</td>
+      <td class="deadline">самое заметное несоответствие</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">Rutube — детский контент вперемешку</td>
+      <td class="note">823 подписчика, 76 видео: клип в 8 лет, хэллоуин-ролики, «каким я буду, когда вырасту» — рядом с релизами Soundstates. Не удалять (сентимент. ценность) — вынести в отдельный плейлист-архив.</td>
+      <td class="deadline">без срока</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">Прецедент формата на Дзен</td>
+      <td class="note">В том же посте — своя статья на dzen.ru/djlevka про фильм «1+1» как личное вдохновение. Формат уже опробован самим Львом. Канал требует вход через Яндекс, не смог открыть — свериться со стилем самостоятельно.</td>
+      <td class="deadline">проверить самостоятельно</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip skip"><span class="dot"></span>инфо</span></td>
+      <td class="task">Сквозной бренд-мотив</td>
+      <td class="note">«Вдохновительный парень» / «вдохновение» / #вдохновило — во всех био и постах, органичный личный тэглайн. Новую серию статей стоит озаглавить в этом же духе, а не изобретать новое позиционирование.</td>
+      <td class="deadline">учитывать при написании</td>
+    </tr>
+  </table>
+  </div>
+</section>
+
+<section class="channel">
+  <div class="channel-head">
+    <span class="channel-tag">CH.9</span>
+    <h2>Фоном</h2>
+  </div>
+  <div class="table-wrap">
+  <table>
+    <tr><th>Статус</th><th>Задача</th><th>Детали</th><th>Дедлайн</th></tr>
+    <tr>
+      <td class="status"><span class="chip wait"><span class="dot"></span>ждём</span></td>
+      <td class="task">Груша — финальное аудио</td>
+      <td class="note">v4 монтажа готов, ждём аудио-дорожку от пользователя для замены плейсхолдера.</td>
+      <td class="deadline">без даты</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">Груша — промо-нарезки</td>
+      <td class="note">4 вертикальных клипа (цена бахура · дуэт со slow-motion · статуя/обложка · Ч/Б процесс), каждый ведёт к кадру с товаром.</td>
+      <td class="deadline">сразу после аудио</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip wait"><span class="dot"></span>ждём</span></td>
+      <td class="task">Флёр × Лев лампы</td>
+      <td class="note">Ни одного реального SKU в дропе — ждём поставщиков (см. CH.4).</td>
+      <td class="deadline">зависит от поставщиков</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip wait"><span class="dot"></span>ждём</span></td>
+      <td class="task">Our Angels</td>
+      <td class="note">Новый сингл ещё не готов — дистрибуция начнётся после этого.</td>
+      <td class="deadline">зависит от сингла</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip todo"><span class="dot"></span>не начато</span></td>
+      <td class="task">РАО — дозарегистрировать треки в Реестре</td>
+      <td class="note">Договор (п.1) покрывает весь каталог а приори — прошлые и будущие треки, без переподписания. Но п.7д) отдельно обязывает регистрировать каждое произведение в Реестре РАО, иначе РАО не обязано собирать за него вознаграждение (и задним числом не пересчитывает). Проверить/дозарегистрировать в личном кабинете rao.ru все 10 релизов — сейчас там явно не все.</td>
+      <td class="deadline urgent">до следующей выплаты</td>
+    </tr>
+    <tr>
+      <td class="status"><span class="chip wait"><span class="dot"></span>ждём</span></td>
+      <td class="task">РАО — международный разрыв роялти</td>
+      <td class="note">Договор прочитан целиком 24.08 (скан в Договор РАО.html на рабочем столе). П.2 передаёт РАО права и по РФ, и по всему миру — не только домашний сбор. Подтверждены CISAC IPI-номера — <b>IP Base Number: I-007496433-1</b>, <b>IP Name Number: 01327314376</b>. Но реальный сбор из-за рубежа всё равно упирается в разрыв PRS/ASCAP/BMI с РАО (март 2022) — ограничение на уровне партнёров РАО, не самого договора. Договор действует до 31.12.2026, автопродление если не уведомить за 30 дней.</td>
+      <td class="deadline">ревизит при плейсменте или перед продлением (~ноябрь 2026)</td>
+    </tr>
+  </table>
+  </div>
+</section>
+
+<footer>
+  <span>Источник: <span class="mono">site/PLAN.md</span> — обновляется по запросу в чате.</span>
+  <span class="mono">v15 · 25.08.2026</span>
+</footer>
+
+</body></html>

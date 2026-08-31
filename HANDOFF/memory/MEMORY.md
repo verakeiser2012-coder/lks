@@ -1,0 +1,17 @@
+- [Груша podcast edit status](project_podcast_grusha_edit.md) — sources, tools set up, editorial decisions, pending cut-list approval
+- [Lev Keiser / DJ Levka site build](project_site_lev_keiser.md) — social/audience analysis, product strategy, drops/gigs/redheads/banners features, paused 2026-08-13
+- [Dev server no autoreload gotcha](gotcha_dev_server_no_autoreload.md) — restart preview after backend edits in the site project, don't assume hot-reload
+- [Site project status](project_site_status.md) — /brands page, offer cards, gold-text removal, concurrent-session caveats, preview setup
+- [Флёр абажуры sourcing](project_fleur_abazhury.md) — decor techniques, ~40pc floor-lamp base sourcing in Yekaterinburg, Лев merch rights confirmed
+- [Site domains owned](project_site_domains.md) — 18 domains, deployed live on VPS 5.42.118.236 w/ SSL, currently password-protected (not public yet)
+- [DJ Levka music distribution](project_music_distribution_djlevka.md) — Sundesire lacks TikTok CML/Meta Sound Collection; Our Angels confirmed as fix, Amuse fallback
+- [Shop international payments](project_shop_international_payments.md) — DECIDED: Alfa-Bank acquiring (foreign cards confirmed 2026-08-17), replaces Interkassa; Printful for POD; UAE/Payeer/Cryptomus/Scrile ruled out
+- [Wikipedia/Wikidata/Knowledge Panel](project_wikipedia_notability_lev.md) — DJ Levka has 10 releases (not 3); full MusicBrainz data packet given to user; "openedruf" credit unresolved
+- [Admin settings test-wipe gotcha](gotcha_admin_settings_test_wipe.md) — never verify /admin/settings POST via FormData on a DOMParser-detached document, it silently blanks fields
+- [Shop legal pages (RU)](project_shop_legal_pages.md) — ИП status, oferta/privacy/delivery/returns added, real ИНН/ОГРНИП/ФИО still needed in /admin/settings
+- [Shop video providers](project_shop_video_providers.md) — gallery "video by link" supports YouTube/Rutube/VK/Vimeo, parser in src/utils/videoEmbed.js
+- [DJ Levka sync licensing](project_sync_licensing_djlevka.md) — Songtradr recommended entry, avoid Epidemic/Artlist buyouts, RAO/CISAC PRO gap for RU broadcast royalties
+- [Project expenses ledger](project_expenses_ledger.md) — running smeta for DJ Levka/site project, logs costs as mentioned in chats, started 2026-08-21
+- [Music release pages & content series](project_music_release_pages_and_content_series.md) — /music release/track pages built, "States of Mind" video-series artifact (hook voice = "вселенная не объясняет почему"), /admin/calendar password fix, new SSH key, pending autoMode permission, CapCut template scaffold
+- [LEVKEYSER brand identity](project_levkeyser_brand_identity.md) — wordmark/«Дикий лев» palette/mark/slab-serif font (also on live site), local Ekb brand scouting
+- [TikTok upload access plan](project_tiktok_upload_access.md) — VPN + relative's French number to bypass RU view-only lock; also saved to site/notes/
