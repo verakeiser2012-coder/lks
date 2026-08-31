@@ -6,6 +6,10 @@
   <div class="flash flash-error"><%= error %></div>
 <% } %>
 
+<% if (typeof notice !== 'undefined' && notice) { %>
+  <div class="flash flash-success"><%= notice %></div>
+<% } %>
+
 <% [['music', '🎵 Музыка'], ['shorts', '📱 Видеовертикалки'], ['general', 'Остальные']].forEach(function(group) { %>
 <% const groupNets = networks.filter(function(n) { return (n.category || 'general') === group[0]; }); %>
 <% if (groupNets.length > 0) { %>
@@ -39,6 +43,9 @@
   <% const connectorDef = connectors.find(function(c) { return c.key === n.connector; }); %>
   <% if (connectorDef && connectorDef.fields.length > 0) { %>
     <% let savedCredentials = {}; try { savedCredentials = JSON.parse(n.credentials || '{}'); } catch (e) {} %>
+    <% if (n.tokenStatus) { %>
+      <p class="network-token-status"><%= n.tokenStatus %></p>
+    <% } %>
     <form class="credentials-form" action="/admin/social-networks/<%= n.id %>/credentials" method="POST">
       <% connectorDef.fields.forEach(function(field) { %>
         <label>

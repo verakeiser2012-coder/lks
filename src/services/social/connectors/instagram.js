@@ -1,44 +1,32 @@
-const db = require('../../../db');
+const { ensureFreshToken, exchangeForLongLivedToken, saveCredentials } = require('../instagramToken');
 const { absoluteMediaUrl } = require('../mediaUrl');
 
 // Instagram API with Instagram Login (graph.instagram.com) — без Facebook-страницы.
 // Токен: долгоживущий (60 дней), продлевается автоматически при публикациях.
 const fields = [
-  { name: 'accessToken', label: 'Долгоживущий токен (Instagram Login, instagram_business_content_publish)', type: 'password' },
+  { name: 'accessToken', label: 'Токен доступа (Instagram Login, instagram_business_content_publish)', type: 'password' },
+  { name: 'appSecret', label: 'Секрет приложения Meta (нужен, чтобы обменять часовой токен на 60-дневный)', type: 'password' },
   { name: 'igUserId', label: 'ID аккаунта (можно оставить пустым — определится сам)', type: 'text' },
 ];
 
 const GRAPH = 'https://graph.instagram.com/v23.0';
 
-function saveCredentials(networkKey, credentials) {
-  if (!networkKey) return;
-  db.prepare('UPDATE social_networks SET credentials = ? WHERE key = ?').run(
-    JSON.stringify(credentials),
-    networkKey
-  );
-}
+// Вызывается админкой сразу после сохранения данных: свежий токен из Instagram Login
+// живёт всего час, поэтому меняем его на долгоживущий, пока он ещё действителен.
+async function onCredentialsSaved(credentials, network, previous) {
+  const tokenChanged = !previous || previous.accessToken !== credentials.accessToken;
+  if (!tokenChanged) return null;
 
-// Продлеваем токен не чаще раза в неделю; Instagram требует, чтобы токену было >24ч.
-async function ensureFreshToken(credentials, networkKey) {
-  const last = Number(credentials.tokenRefreshedAt || 0);
-  const WEEK = 7 * 24 * 3600 * 1000;
-  if (Date.now() - last < WEEK) return credentials.accessToken;
+  const networkKey = network && network.key;
+  // Отметки продления относились к прежнему токену — обнуляем, иначе новый не будут продлевать.
+  credentials.tokenRefreshedAt = '';
+  credentials.tokenExpiresAt = '';
+  credentials.tokenRefreshFailedAt = '';
+  saveCredentials(networkKey, credentials);
 
-  try {
-    const res = await fetch(
-      'https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=' +
-        encodeURIComponent(credentials.accessToken)
-    );
-    const data = await res.json();
-    if (data.access_token) {
-      credentials.accessToken = data.access_token;
-      credentials.tokenRefreshedAt = Date.now();
-      saveCredentials(networkKey, credentials);
-    }
-  } catch (err) {
-    // Продление не удалось — пробуем публиковать текущим токеном.
-  }
-  return credentials.accessToken;
+  if (!credentials.accessToken || !credentials.appSecret) return null;
+  await exchangeForLongLivedToken(credentials, networkKey);
+  return 'Токен обменян на долгоживущий — действует 60 дней, дальше продлевается сам.';
 }
 
 async function resolveUserId(credentials, token, networkKey) {
@@ -130,4 +118,4 @@ async function publishStory(post, credentials, network) {
   await createAndPublish(igUserId, token, params);
 }
 
-module.exports = { key: 'instagram', label: 'Instagram', fields, publish, publishStory };
+module.exports = { key: 'instagram', label: 'Instagram', fields, publish, publishStory, onCredentialsSaved };
