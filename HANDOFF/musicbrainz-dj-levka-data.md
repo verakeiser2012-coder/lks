@@ -32,36 +32,36 @@ Artists в текущем бэклоге) и `HANDOFF/memory/project_wikipedia_n
 ### Ikigai
 - Тип: **EP**
 - Дата релиза: **2024** (точный день не найден, точность "Год")
-- 5 треков, всего 10:17
-  1. The Sleepiest Beatmaker
-  2. Ikigai
-  3. Cozy Place
-  4. Bill Cipher
-  5. Fog
+- 5 треков, всего 10:15 (длительности сверены со Spotify 31.08.2026)
+  1. The Sleepiest Beatmaker — 1:36
+  2. Ikigai — 2:00
+  3. Cozy Place — 2:25
+  4. Bill Cipher — 2:03
+  5. Fog — 2:11
 - Label/copyright: DJ Levka
 - Spotify: https://open.spotify.com/album/1yEc3pvRLXDHQAq7GrkCp5
 
 ### Flowers
 - Тип: **EP**
 - Дата релиза: **2025-07-04**
-- 5 треков, всего 13:55
-  1. Flowers
-  2. Memory
-  3. U
-  4. Riff Raff
-  5. Lullaby
+- 5 треков, всего 13:53 (длительности сверены со Spotify 31.08.2026)
+  1. Flowers — 2:34
+  2. Memory — 3:43
+  3. U — 2:39
+  4. Riff Raff — 2:34
+  5. Lullaby — 2:23
 - Label/copyright: DJ Levka
 - Spotify: https://open.spotify.com/album/4vYXkOOUjrFFqvzNnS2vsw
 
 ### Soundstates
 - Тип: **EP**
 - Дата релиза: **2026-07-28**
-- 5 треков, всего 12:57
-  1. Soundstates
-  2. d r e a m
-  3. 2AM
-  4. Cloudflute
-  5. Back to the Future
+- 5 треков, всего 12:55 (длительности сверены со Spotify 31.08.2026)
+  1. Soundstates — 1:44
+  2. d r e a m — 3:14
+  3. 2AM — 2:27
+  4. Cloudflute — 2:45
+  5. Back to the Future — 2:45
 - Label/copyright: DJ Levka
 - Spotify: https://open.spotify.com/album/2GRGRxsd6N4NtT9YFEAP1Z
 
@@ -149,3 +149,18 @@ Artists в текущем бэклоге) и `HANDOFF/memory/project_wikipedia_n
 
 Рекомендуемый порядок ввода: сначала 3 главных EP (Ikigai, Flowers, Soundstates), потом BERSERK,
 затем 6 синглов — так плотность треклистов даёт MusicBrainz больше сигнала на старте.
+
+---
+
+## Расхождения с базой сайта (найдено 31.08.2026)
+
+Сверял пакет с таблицей `tracks` на сайте — совпадает не всё. Для MusicBrainz канон — Spotify
+(это то, что реально доставил дистрибьютор), но на сайте стоит поправить:
+
+| Релиз | На сайте | На Spotify | Что делать |
+|---|---|---|---|
+| Ikigai | трек «Nisu» | трека «Nisu» нет, вместо него **Cozy Place** | Переименовать на сайте или выяснить, откуда взялся Nisu |
+| Ikigai | порядок: Ikigai, Sleepiest, Nisu, Fog, Bill Cipher | Sleepiest, Ikigai, Cozy Place, Bill Cipher, Fog | Выровнять порядок по Spotify |
+| Flowers | «rif raf» | **Riff Raff** | Исправить написание |
+
+Ни одно из расхождений не блокирует MusicBrainz — вносим по Spotify.
