@@ -477,7 +477,7 @@ function init() {
       + 'сезона. Победителей объявляем в канале и на этой странице.',
     site_alt_name: 'DJ Levka',
     music_featured_title: 'Soundstates',
-    music_featured_note: 'Новый EP — в день релиза попал в плейлист рядом с Moby, Moderat и Röyksopp',
+    music_featured_note: 'Новый EP — попал в кураторский плейлист на следующий день после релиза',
     music_featured_url: 'https://band.link/soundstates',
     legal_ip_name: '',
     legal_inn: '',
