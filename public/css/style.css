@@ -113,7 +113,69 @@ a:hover { color: var(--color-accent-hover); }
   transition: left 0.22s ease, right 0.22s ease;
 }
 .nav-inner a:hover::after { left: 0; right: 0; }
-/* DJ Levka — неоновая вывеска: зелёная трубка (Акация) на тёмной табличке */
+/* ─── Неон-пилюля (фирменный компонент LEVKEYSER) ───
+   Трубка — только Акация, табличка — только Смола.
+   Один «включённый» элемент на поверхность: не ставить два неона рядом. */
+.neon-pill {
+  display: inline-block;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #CFF7A8;
+  background: #17130D;
+  border: 1px solid rgba(143, 198, 92, 0.5);
+  border-radius: 999px;
+  padding: 8px 20px;
+  text-shadow:
+    0 0 4px rgba(143, 198, 92, 0.9),
+    0 0 10px rgba(111, 168, 60, 0.75),
+    0 0 20px rgba(111, 168, 60, 0.45);
+  box-shadow:
+    0 0 8px rgba(111, 168, 60, 0.28),
+    inset 0 0 10px rgba(111, 168, 60, 0.22);
+  transition: color 0.25s ease, text-shadow 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.neon-pill:hover,
+.neon-pill.active {
+  color: #F2FFE4;
+  border-color: rgba(159, 214, 108, 0.85);
+  text-shadow:
+    0 0 5px #CFF7A8,
+    0 0 12px rgba(143, 198, 92, 0.95),
+    0 0 26px rgba(111, 168, 60, 0.7),
+    0 0 44px rgba(111, 168, 60, 0.4);
+  box-shadow:
+    0 0 16px rgba(111, 168, 60, 0.45),
+    inset 0 0 14px rgba(111, 168, 60, 0.3);
+}
+/* золотая вывеска — вторичный вариант, по особому случаю (Закат) */
+.neon-pill--gold {
+  color: #FFEFC6;
+  border-color: rgba(217, 154, 43, 0.55);
+  text-shadow:
+    0 0 4px rgba(217, 154, 43, 0.9),
+    0 0 10px rgba(180, 96, 28, 0.7),
+    0 0 20px rgba(180, 96, 28, 0.4);
+  box-shadow:
+    0 0 8px rgba(217, 154, 43, 0.28),
+    inset 0 0 10px rgba(217, 154, 43, 0.2);
+}
+.neon-pill--gold:hover {
+  color: #FFF8E7;
+  border-color: rgba(240, 196, 25, 0.9);
+  text-shadow:
+    0 0 5px #FFEFC6,
+    0 0 12px rgba(217, 154, 43, 0.95),
+    0 0 26px rgba(180, 96, 28, 0.65);
+  box-shadow:
+    0 0 16px rgba(217, 154, 43, 0.45),
+    inset 0 0 14px rgba(217, 154, 43, 0.28);
+}
+@media (prefers-reduced-motion: reduce) {
+  .neon-pill { transition: none; }
+}
+
+/* DJ Levka — неоновая вывеска в навигации (частный случай .neon-pill) */
 .nav-inner a.nav-music-link {
   position: relative;
   color: #CFF7A8;

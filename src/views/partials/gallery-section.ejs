@@ -5,7 +5,7 @@
       <% galleryItems.forEach(function(item, idx) {
         var isEmbed = item.type === 'video' && item.file_path.indexOf('http') === 0;
       %>
-        <% var dG = item.shot_date || item.created_at || ''; var markG = dG ? ' · ' + dG.slice(8, 10) + '.' + dG.slice(5, 7) + '.' + dG.slice(2, 4) : ''; %>
+        <% var dG = item.shot_date || item.created_at || ''; var markG = dG ? ' · ' + formatDateShort(dG, 'ru').toUpperCase() : ''; %>
         <div class="film-cell" data-code="LEVKEYSER · 35 MM" data-num="КАДР <%= String(idx + 1).padStart(2, '0') %><%= markG %>">
         <div class="gallery-item <%= item.type === 'video' && !isEmbed ? 'is-video' : '' %> <%= isEmbed ? 'is-embed' : '' %>">
           <% if (item.type === 'photo') { %>

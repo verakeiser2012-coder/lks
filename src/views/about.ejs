@@ -7,7 +7,7 @@
 <% if (media.length > 0) { %>
   <div class="filmstrip"><div class="filmstrip-track">
     <% media.forEach(function(item, idx) { %>
-      <% var dA = item.shot_date || item.created_at || ''; var markA = dA ? ' · ' + dA.slice(8, 10) + '.' + dA.slice(5, 7) + '.' + dA.slice(2, 4) : ''; %>
+      <% var dA = item.shot_date || item.created_at || ''; var markA = dA ? ' · ' + formatDateShort(dA, 'ru').toUpperCase() : ''; %>
       <div class="film-cell" data-code="LEVKEYSER · 35 MM" data-num="КАДР <%= String(idx + 1).padStart(2, '0') %><%= markA %>">
       <div class="gallery-item <%= item.type === 'video' ? 'is-video' : '' %>">
         <% if (item.type === 'photo') { %>

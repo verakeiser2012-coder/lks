@@ -6,7 +6,7 @@
     <p class="drop-season"><%= release.release_type %><% if (release.year) { %> · <%= release.year %><% } %></p>
     <h1><%= release.title %></h1>
     <% if (release.description) { %><p class="hero-tagline"><%- renderLinkedText(release.description) %></p><% } %>
-    <% if (release.streaming_url) { %><a class="btn" href="<%= release.streaming_url %>" target="_blank" rel="noopener">Слушать целиком</a><% } %>
+    <% if (release.streaming_url) { %><a class="neon-pill" href="<%= release.streaming_url %>" target="_blank" rel="noopener">Слушать целиком</a><% } %>
   </div>
 </section>
 
