@@ -5,7 +5,7 @@ const uploadsDir = path.join(__dirname, '..', '..', '..', '..', 'public', 'uploa
 const API_VERSION = '5.199';
 
 const fields = [
-  { name: 'accessToken', label: 'Токен доступа (права wall, photos)', type: 'password' },
+  { name: 'accessToken', label: 'Токен доступа (права wall, photos, video)', type: 'password' },
   { name: 'groupId', label: 'ID группы (число, без минуса)', type: 'text' },
 ];
 
@@ -48,19 +48,50 @@ async function uploadPhoto(groupId, accessToken, filePath) {
   return `photo${photo.owner_id}_${photo.id}`;
 }
 
+// Видео в сообществе: video.save отдаёт адрес для загрузки файла, вложение готово сразу после неё.
+// Вертикальный ролик VK сам показывает в Клипах.
+async function uploadVideo(groupId, accessToken, filePath, name, description) {
+  const saved = await vkCall('video.save', {
+    group_id: Math.abs(Number(groupId)),
+    access_token: accessToken,
+    v: API_VERSION,
+    name: (name || 'Видео').slice(0, 128),
+    description: description || '',
+    wallpost: 0,
+  });
+
+  const fileBuffer = fs.readFileSync(filePath);
+  const form = new FormData();
+  form.append('video_file', new Blob([fileBuffer]), path.basename(filePath));
+  const uploadResponse = await fetch(saved.upload_url, { method: 'POST', body: form });
+  const uploadResult = await uploadResponse.json();
+  if (uploadResult.error) {
+    throw new Error(uploadResult.error_descr || uploadResult.error || 'VK не принял видеофайл.');
+  }
+
+  const ownerId = saved.owner_id !== undefined ? saved.owner_id : -Math.abs(Number(groupId));
+  const videoId = saved.video_id !== undefined ? saved.video_id : uploadResult.video_id;
+  if (videoId === undefined) {
+    throw new Error('VK не вернул идентификатор загруженного видео.');
+  }
+  return `video${ownerId}_${videoId}`;
+}
+
 async function publish(post, credentials) {
   const { accessToken, groupId } = credentials;
   if (!accessToken || !groupId) {
     throw new Error('Не указан токен доступа или ID группы.');
   }
-  if (post.media_type === 'video') {
-    throw new Error('Публикация видео в VK пока не поддерживается — используйте текст или фото.');
-  }
-
   let attachments = '';
   if (post.media_path) {
     const filePath = path.join(uploadsDir, path.basename(post.media_path));
-    attachments = await uploadPhoto(groupId, accessToken, filePath);
+    if (post.media_type === 'video') {
+      // Заголовок ролика — первая строка подписи: в списке видео сообщества он виден вместо имени файла.
+      const title = (post.text || '').split(/\r?\n/)[0].trim();
+      attachments = await uploadVideo(groupId, accessToken, filePath, title, post.text || '');
+    } else {
+      attachments = await uploadPhoto(groupId, accessToken, filePath);
+    }
   }
 
   const params = {
