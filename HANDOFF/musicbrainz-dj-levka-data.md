@@ -164,3 +164,43 @@ Artists в текущем бэклоге) и `HANDOFF/memory/project_wikipedia_n
 | Flowers | «rif raf» | **Riff Raff** | Исправить написание |
 
 Ни одно из расхождений не блокирует MusicBrainz — вносим по Spotify.
+
+---
+
+## ✅ ВНЕСЕНО 31.08.2026 — идентификаторы MusicBrainz
+
+Артист и все 10 релизов созданы. Данные брались со Spotify, в примечаниях к каждой правке указан источник.
+Приватность соблюдена: только псевдоним, без имени, возраста, пола и страны.
+
+**Артисты:**
+- DJ Levka — `626bf313-9749-4f24-9637-e20b53bb04d7`
+- openedruf — `48cf2c9b-3104-460e-8426-a529f553c193` (создан, чтобы корректно указать совместный кредит на Game Over)
+
+**Релизы:**
+
+| Релиз | Тип | Год | MBID |
+|---|---|---|---|
+| Ikigai | EP | 2024 | `248803ad-605e-43d0-9b51-b080e76c5b9c` |
+| BERSERK | EP | 2024 | `3f60bb37-611a-44e7-9081-6caa859fab23` |
+| Flowers | EP | 2025-07-04 | `9882a955-2995-4cf8-b459-434cfd4d48f2` |
+| Soundstates | EP | 2026-07-28 | `8aa3c90b-cd8c-4b0b-a681-56791bf95709` |
+| Welcome | Single | 2024 | `820f6c28-593c-402f-8d4b-a146830f2f70` |
+| Game Over | Single | 2024 | `f012afcc-764b-4021-8416-3eef426fb407` |
+| Deep Sleep | Single | 2024 | `dafbff0c-b836-4330-bbf9-d14235064fb5` |
+| At the Jazz Club | Single | 2024 | `d9cc7184-380f-437e-ac9f-b37b02905eff` |
+| Bubblegum | Single | 2025 | `c043c859-be9b-4d3a-9b9f-31a400ebdfae` |
+| Glitch | Single | 2026 | `1cf02089-e788-4eb0-ab1d-548e85368fa9` |
+
+**Ссылки на артисте:** Spotify, YouTube, SoundCloud, Deezer, Apple Music.
+Сайт levkeiser.com не добавлен намеренно — он ещё под паролем и отдал бы 401.
+
+**Как вносилось (пригодится в следующий раз):** обычная форма редактора сопротивляется скриптам,
+но у MusicBrainz есть штатное предзаполнение релиза — POST-форма на `/release/add` с полями вида
+`name`, `artist_credit.names.0.mbid`, `mediums.0.track.N.name`, `mediums.0.track.N.length` (в миллисекундах).
+Через GET оно не работает, только POST.
+
+## Что дальше по цепочке к Knowledge Panel
+
+1. **Обложки** — Cover Art Archive, вкладка «Cover Art» у каждого релиза. Картинки есть в `/uploads`.
+2. **Wikidata** — теперь можно: идентификатор MusicBrainz засчитывается как «серьёзная публичная ссылка».
+3. **Apple Music for Artists** — третий кирпич, claim профиля.
