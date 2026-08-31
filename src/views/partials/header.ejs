@@ -108,10 +108,7 @@
         </span>
         <% if (settings.site_tagline) { %><span class="logo-tagline"><%= settings.site_tagline %></span><% } %>
       </div>
-      <a class="header-mascots" href="/about" title="Двигаюсь медленно в быстром мире" aria-label="Двигаюсь медленно в быстром мире">
-        <img class="hm-temp" src="/img/mascot-temp.svg" alt="" width="44" height="53" aria-hidden="true">
-        <img class="hm-vasiliy" src="/img/mascot-vasiliy.svg" alt="" width="34" height="42" aria-hidden="true">
-      </a>
+      <%# Маскоты Темп и Василий временно скрыты — вернуть, когда будут доделаны. %>
       <div class="shop-nav">
         <%
           const shopPath = (typeof currentPath === 'string' ? currentPath : '/').split('?')[0];
