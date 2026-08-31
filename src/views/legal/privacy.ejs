@@ -65,7 +65,7 @@
 <h2>8. Как отозвать согласие или задать вопрос</h2>
 <p>
   Для отзыва согласия, уточнения или удаления данных, а также по любым вопросам обработки персональных
-  данных обращайтесь: <%= settings.telegram_url ? ('Telegram — ' + settings.telegram_url) : 'через форму на сайте' %>.
+  данных обращайтесь: <%= settings.email ? ('email — ' + settings.email) : '' %><%= settings.email && settings.telegram_url ? ', ' : '' %><%= settings.telegram_url ? ('Telegram — ' + settings.telegram_url) : '' %><%= !settings.email && !settings.telegram_url ? 'через форму на сайте' : '' %>.
 </p>
 
 <h2>9. Меры защиты</h2>

@@ -1,0 +1,46 @@
+<%- include('partials/header') %>
+
+<h1><%= post && post.id ? 'Редактировать запись' : 'Новая запись в дневнике' %></h1>
+
+<% if (error) { %>
+  <div class="flash flash-error"><%= error %></div>
+<% } %>
+
+<form
+  action="<%= post && post.id ? `/admin/diary/${post.id}` : '/admin/diary' %>"
+  method="POST"
+  enctype="multipart/form-data"
+>
+  <label>
+    Заголовок *
+    <input type="text" name="title" value="<%= post ? post.title : '' %>" required>
+  </label>
+  <label>
+    Краткое описание (превью в списке)
+    <textarea name="excerpt" rows="2"><%= post ? post.excerpt : '' %></textarea>
+  </label>
+  <label>
+    Текст записи
+    <textarea name="content" rows="14"><%= post ? post.content : '' %></textarea>
+  </label>
+  <p class="hint">Чтобы вставить ссылку в текст: <code>[текст ссылки](https://example.com)</code></p>
+  <label>
+    Обложка
+    <input type="file" name="cover" accept="image/*">
+  </label>
+  <% if (post && post.cover_image) { %>
+    <img src="<%= post.cover_image %>" alt="" style="width:160px;border-radius:8px;margin-bottom:14px;">
+  <% } %>
+  <label>
+    Ссылка на дубль в Дзене
+    <input type="url" name="dzenUrl" value="<%= post ? post.dzen_url : '' %>" placeholder="https://dzen.ru/a/...">
+  </label>
+  <label>
+    <input type="checkbox" name="isPublished" value="1" style="width:auto;display:inline-block;"
+      <%= !post || post.is_published ? 'checked' : '' %>>
+    Опубликована
+  </label>
+  <button class="btn" type="submit">Сохранить</button>
+</form>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,59 @@
+<%- include('partials/header') %>
+
+<article>
+  <div class="news-date"><%= formatDate(post.created_at) %></div>
+  <h1><%= post.title %></h1>
+
+  <% if (post.cover_image) { %>
+    <img src="<%= post.cover_image %>" alt="<%= post.title %>" style="width:100%;border-radius:var(--radius);margin-bottom:20px;">
+  <% } %>
+
+  <div class="prose"><%- renderLinkedText(post.content) %></div>
+
+  <% if (media.length > 0) { %>
+    <div class="gallery-grid">
+      <% media.forEach(function(item) { %>
+        <div class="gallery-item <%= item.type === 'video' ? 'is-video' : '' %>">
+          <% if (item.type === 'photo') { %>
+            <img src="<%= item.file_path %>" alt="" loading="lazy">
+          <% } else { %>
+            <video src="<%= item.file_path %>" muted loop playsinline preload="metadata"></video>
+          <% } %>
+        </div>
+      <% }); %>
+    </div>
+  <% } %>
+
+  <% if (post.dzen_url) { %>
+    <p class="diary-dzen-note">
+      Эта запись также опубликована в Дзене: <a href="<%= post.dzen_url %>" target="_blank" rel="noopener">читать там →</a>
+    </p>
+  <% } %>
+</article>
+
+<% if (otherPosts.length > 0) { %>
+  <section style="margin-top:40px;">
+    <h2>Ещё в дневнике</h2>
+    <div class="news-list">
+      <% otherPosts.forEach(function(p) { %>
+        <a class="news-card" href="/diary/<%= p.slug %>">
+          <div class="news-card-image">
+            <% if (p.cover_image) { %>
+              <img src="<%= p.cover_image %>" alt="<%= p.title %>">
+            <% } else { %>
+              <div class="no-image">Нет фото</div>
+            <% } %>
+          </div>
+          <div>
+            <div class="news-date"><%= formatDate(p.created_at) %></div>
+            <div class="news-title"><%= p.title %></div>
+          </div>
+        </a>
+      <% }); %>
+    </div>
+  </section>
+<% } %>
+
+<p style="margin-top:24px;"><a href="/diary">← Ко всем записям</a></p>
+
+<%- include('partials/footer') %>

@@ -92,7 +92,7 @@
     <% if (settings.legal_bank_bik) { %>БИК: <%= settings.legal_bank_bik %><br><% } %>
     <% if (settings.legal_bank_corr_account) { %>Корр. счёт: <%= settings.legal_bank_corr_account %><br><% } %>
   <% } %>
-  Связь с продавцом: <%= settings.telegram_url ? ('Telegram — ' + settings.telegram_url) : 'через форму на сайте' %>
+  Связь с продавцом: <%= settings.email ? ('email — ' + settings.email) : '' %><%= settings.email && settings.telegram_url ? ', ' : '' %><%= settings.telegram_url ? ('Telegram — ' + settings.telegram_url) : '' %><%= !settings.email && !settings.telegram_url ? 'через форму на сайте' : '' %>
 </p>
 </div>
 
