@@ -93,6 +93,38 @@
       <% }); %>
     </select>
   </label>
+  <fieldset style="border:1px solid var(--color-border); border-radius:var(--radius); padding:12px 14px; margin:0 0 16px;">
+    <legend style="padding:0 6px;">Параметры для карточки</legend>
+    <p style="color:var(--color-muted); font-size:0.85rem; margin-top:0;">
+      Покупатель должен видеть, что именно получит, до оформления заказа.
+      Пустые поля в карточке не показываются.
+    </p>
+    <label>
+      Срок изготовления
+      <input type="text" name="leadTime" value="<%= product && product.lead_time ? product.lead_time : '' %>"
+             placeholder="например: 7–10 дней — гипсу нужно высохнуть">
+    </label>
+    <label>
+      Что входит
+      <textarea name="includes" rows="2" placeholder="каждый пункт с новой строки"><%= product && product.includes ? product.includes : '' %></textarea>
+    </label>
+    <label>
+      Размер
+      <input type="text" name="dimensions" value="<%= product && product.dimensions ? product.dimensions : '' %>" placeholder="например: 12 × 8 × 8 см">
+    </label>
+    <label>
+      Вес
+      <input type="text" name="weight" value="<%= product && product.weight ? product.weight : '' %>" placeholder="например: 150 г">
+    </label>
+    <label>
+      Материал
+      <input type="text" name="material" value="<%= product && product.material ? product.material : '' %>" placeholder="например: гипс">
+    </label>
+    <label>
+      Уход и хранение
+      <input type="text" name="care" value="<%= product && product.care ? product.care : '' %>" placeholder="например: беречь от влаги, протирать сухой тканью">
+    </label>
+  </fieldset>
   <label>
     Фото товара
     <input type="file" name="image" accept="image/*">

@@ -15,6 +15,35 @@
     <% if (release) { %>
       <p class="product-release-link">Из релиза: <a href="/music"><%= release.title %> (<%= release.year %>)</a></p>
     <% } %>
+
+    <%# Параметры показываем только заполненные — пустых строк в карточке быть не должно %>
+    <% if (product.includes) { %>
+      <div class="product-includes">
+        <h2>Что входит</h2>
+        <ul>
+          <% product.includes.split(/\r?\n/).filter(function (l) { return l.trim(); }).forEach(function (line) { %>
+            <li><%= line.trim() %></li>
+          <% }); %>
+        </ul>
+      </div>
+    <% } %>
+
+    <%
+      const specs = [
+        ['Срок изготовления', product.lead_time],
+        ['Размер', product.dimensions],
+        ['Вес', product.weight],
+        ['Материал', product.material],
+        ['Уход', product.care],
+      ].filter(function (row) { return row[1]; });
+    %>
+    <% if (specs.length) { %>
+      <table class="product-specs">
+        <% specs.forEach(function (row) { %>
+          <tr><th><%= row[0] %></th><td><%= row[1] %></td></tr>
+        <% }); %>
+      </table>
+    <% } %>
     <% if (product.is_digital) { %>
       <p class="product-digital-note">
         Цифровой товар. После оплаты придёт ссылка на скачивание — на почту и сразу на экран.

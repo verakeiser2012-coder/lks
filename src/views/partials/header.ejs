@@ -193,5 +193,27 @@
         <a href="/contest" class="<%= navActive('/contest') %>">Конкурс</a>
       </div>
     </nav>
+    <%# Бегущая строка с музыкой Льва. Темп нарочно медленный — под «двигаюсь
+        медленно в быстром мире». Наведение останавливает, чтобы можно было попасть. %>
+    <% if (typeof bgPlaylist !== 'undefined' && bgPlaylist.length) { %>
+      <div class="music-ticker" id="music-ticker" aria-label="Музыка Льва">
+        <div class="music-ticker__label" aria-hidden="true">DJ Levka</div>
+        <div class="music-ticker__viewport">
+          <div class="music-ticker__track" id="music-ticker-track">
+            <% for (let pass = 0; pass < 2; pass += 1) { %>
+              <%# вторая копия нужна, чтобы лента шла без разрыва %>
+              <% bgPlaylist.forEach(function (t, i) { %>
+                <button type="button" class="music-ticker__item"
+                        data-src="<%= t.src %>" data-index="<%= i %>"
+                        <%= pass ? 'tabindex="-1" aria-hidden="true"' : '' %>>
+                  <%= t.title %>
+                </button>
+                <span class="music-ticker__dot" aria-hidden="true">•</span>
+              <% }); %>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    <% } %>
   </header>
   <main class="container" id="main">

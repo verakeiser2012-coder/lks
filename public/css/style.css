@@ -1555,3 +1555,85 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
   border-radius: var(--radius); padding: 18px 20px; margin-bottom: 24px;
 }
 .bust-warning p { margin: 0 0 10px; }
+
+/* Бегущая строка с музыкой. Темп намеренно медленный — это про «двигаюсь
+   медленно в быстром мире», а не про то, чтобы привлечь внимание. */
+.music-ticker {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-top: 1px solid var(--color-border);
+  background: #17130D;
+  padding: 0 20px;
+  overflow: hidden;
+}
+.music-ticker__label {
+  flex-shrink: 0;
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #8FC65C;
+  padding: 7px 0;
+}
+.music-ticker__viewport { overflow: hidden; flex: 1; }
+.music-ticker__track {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: max-content;
+  animation: music-ticker-scroll 90s linear infinite;
+}
+.music-ticker:hover .music-ticker__track,
+.music-ticker:focus-within .music-ticker__track { animation-play-state: paused; }
+
+@keyframes music-ticker-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.music-ticker__item {
+  background: none;
+  border: 0;
+  padding: 7px 2px;
+  cursor: pointer;
+  white-space: nowrap;
+  font: inherit;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  color: #CFF7A8;
+  opacity: 0.75;
+  transition: opacity 0.2s ease, text-shadow 0.2s ease;
+}
+.music-ticker__item:hover,
+.music-ticker__item:focus-visible { opacity: 1; text-shadow: 0 0 8px rgba(143, 198, 92, 0.8); }
+.music-ticker__item.is-current {
+  opacity: 1;
+  font-weight: 700;
+  text-shadow: 0 0 6px rgba(143, 198, 92, 0.9), 0 0 14px rgba(111, 168, 60, 0.6);
+}
+.music-ticker__item.is-current::before { content: '▸ '; }
+.music-ticker__dot { color: rgba(143, 198, 92, 0.35); font-size: 0.7rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .music-ticker__track { animation: none; }
+  .music-ticker__viewport { overflow-x: auto; }
+}
+@media (max-width: 640px) {
+  .music-ticker__label { display: none; }
+  .music-ticker { padding: 0 12px; }
+}
+
+/* Параметры товара в карточке */
+.product-includes { margin: 20px 0 16px; }
+.product-includes h2 { font-size: 1.05rem; margin: 0 0 8px; }
+.product-includes ul { margin: 0; padding-left: 20px; }
+.product-includes li { margin-bottom: 4px; }
+
+.product-specs { width: 100%; border-collapse: collapse; margin: 16px 0 20px; }
+.product-specs th, .product-specs td {
+  text-align: left; padding: 9px 0; font-weight: 400;
+  border-bottom: 1px solid var(--color-border); vertical-align: top;
+}
+.product-specs th { width: 45%; color: var(--color-muted); }

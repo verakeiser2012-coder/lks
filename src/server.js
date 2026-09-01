@@ -86,6 +86,7 @@ app.use((req, res, next) => {
   // Канонический адрес: все 20 доменов отдают один сайт — поисковикам и соцсетям
   // показываем единственный основной, иначе получаются дубли и разнобой в превью.
   res.locals.canonicalBase = 'https://' + require('./config/domains').CANONICAL_MAIN;
+  res.locals.bgPlaylist = require('./utils/bgPlaylist').getBgPlaylist();
   res.locals.formatDate = formatDate;
   res.locals.formatDateShort = formatDateShort;
   res.locals.subscribeSuccess = Boolean(req.session.subscribeSuccess);

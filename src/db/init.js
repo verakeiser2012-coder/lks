@@ -320,6 +320,26 @@ function init() {
   if (!productCols.some((c) => c.name === 'digital_size')) {
     db.exec('ALTER TABLE products ADD COLUMN digital_size INTEGER NOT NULL DEFAULT 0');
   }
+  // Параметры для карточки: покупатель должен видеть, что именно получит,
+  // до оформления заказа, а не писать нам с вопросами
+  if (!productCols.some((c) => c.name === 'lead_time')) {
+    db.exec("ALTER TABLE products ADD COLUMN lead_time TEXT NOT NULL DEFAULT ''");
+  }
+  if (!productCols.some((c) => c.name === 'includes')) {
+    db.exec("ALTER TABLE products ADD COLUMN includes TEXT NOT NULL DEFAULT ''");
+  }
+  if (!productCols.some((c) => c.name === 'dimensions')) {
+    db.exec("ALTER TABLE products ADD COLUMN dimensions TEXT NOT NULL DEFAULT ''");
+  }
+  if (!productCols.some((c) => c.name === 'weight')) {
+    db.exec("ALTER TABLE products ADD COLUMN weight TEXT NOT NULL DEFAULT ''");
+  }
+  if (!productCols.some((c) => c.name === 'material')) {
+    db.exec("ALTER TABLE products ADD COLUMN material TEXT NOT NULL DEFAULT ''");
+  }
+  if (!productCols.some((c) => c.name === 'care')) {
+    db.exec("ALTER TABLE products ADD COLUMN care TEXT NOT NULL DEFAULT ''");
+  }
 
   const redheadSubmissionCols = db.prepare('PRAGMA table_info(redhead_submissions)').all();
   if (!redheadSubmissionCols.some((c) => c.name === 'age_consent')) {
