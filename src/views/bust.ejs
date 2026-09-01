@@ -11,19 +11,38 @@
 
 <div class="bust-page">
 
-  <div class="bust-badge">
-    <span class="bust-badge__check">✓</span>
-    <span>Подлинный экземпляр</span>
-  </div>
+  <% if (verified) { %>
+    <div class="bust-badge">
+      <span class="bust-badge__check">✓</span>
+      <span>Подлинный экземпляр</span>
+    </div>
+  <% } else { %>
+    <div class="bust-badge bust-badge--unverified">
+      <span class="bust-badge__check">?</span>
+      <span>Номер существует, но подлинность не проверена</span>
+    </div>
+  <% } %>
 
   <h1 class="bust-number">№<%= num %></h1>
 
-  <% if (bust.phrase) { %>
+  <% if (verified && bust.phrase) { %>
     <blockquote class="bust-phrase"><%= bust.phrase %></blockquote>
     <p class="bust-phrase-note">
       Эта фраза досталась только вашему экземпляру. На самой вещи её нет —
-      она открывается по номеру.
+      она открывается по коду.
     </p>
+  <% } else if (!verified) { %>
+    <div class="bust-warning">
+      <p>
+        <strong>Вы открыли страницу по номеру, а номера идут подряд.</strong>
+        Значит любой может набрать любой номер — и это ничего не доказывает.
+      </p>
+      <p>
+        Чтобы убедиться, что вещь настоящая, приложите телефон к метке на её дне
+        или введите код с карточки из коробки. Тогда откроется и фраза вашего экземпляра.
+      </p>
+      <a class="btn" href="/b">Ввести код с карточки</a>
+    </div>
   <% } %>
 
   <% if (error) { %>
@@ -59,7 +78,7 @@
     Сейчас отлито экземпляров: <%= total %>.
   </p>
 
-  <% if (!bust.registered_at) { %>
+  <% if (verified && !bust.registered_at) { %>
     <div class="bust-register">
       <h2>Закрепить за собой</h2>
       <p>
@@ -86,7 +105,7 @@
   <% } %>
 
   <div class="bust-links">
-    <% if (bust.registered_at && bonusUrl) { %>
+    <% if (verified && bust.registered_at && bonusUrl) { %>
       <a class="btn" href="<%= bonusUrl %>">Забрать бонус владельца</a>
     <% } %>
     <% if (storyUrl) { %>

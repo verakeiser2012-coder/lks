@@ -1548,3 +1548,10 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 .bust-links { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; }
 .bust-foot { color: var(--color-muted); font-size: 0.9rem; }
 .bust-lookup-form { max-width: 380px; }
+
+.bust-badge--unverified { background: #fef3c7; color: #92400e; }
+.bust-warning {
+  border: 1px solid #fcd34d; background: #fffbeb;
+  border-radius: var(--radius); padding: 18px 20px; margin-bottom: 24px;
+}
+.bust-warning p { margin: 0 0 10px; }

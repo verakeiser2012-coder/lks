@@ -83,8 +83,15 @@ function createBatch({ count, series, kind, material, castDate, note }) {
 }
 
 /**
- * Найти экземпляр по чему угодно, что человек может ввести или чем может быть
- * записана метка: полный код, только хвост кода, номер, UID метки.
+ * Найти экземпляр и сказать, ЧЕМ его нашли. Это принципиально.
+ *
+ * Номера идут по порядку, поэтому голый номер угадывает кто угодно — по нему
+ * нельзя ни подтверждать подлинность, ни разрешать закрепление, иначе сайт
+ * будет заверять подделку с номером на дне и позволит закрепить чужую вещь.
+ * Подтверждает подлинность только то, что нельзя угадать: код с карточки
+ * (случайный хвост) или UID метки.
+ *
+ * Возвращает { bust, matchedBy: 'code' | 'nfc' | 'number' }.
  */
 function findByKey(rawKey) {
   const key = String(rawKey || '').trim();
@@ -93,18 +100,20 @@ function findByKey(rawKey) {
   const upper = key.toUpperCase();
 
   const byCode = db.prepare('SELECT * FROM busts WHERE UPPER(code) = ?').get(upper);
-  if (byCode) return byCode;
+  if (byCode) return { bust: byCode, matchedBy: 'code' };
 
-  const byUid = db.prepare('SELECT * FROM busts WHERE nfc_uid <> \'\' AND UPPER(nfc_uid) = ?').get(upper);
-  if (byUid) return byUid;
+  const byUid = db.prepare("SELECT * FROM busts WHERE nfc_uid <> '' AND UPPER(nfc_uid) = ?").get(upper);
+  if (byUid) return { bust: byUid, matchedBy: 'nfc' };
 
-  // Хвост кода — то, что люди чаще всего и переписывают
-  const byTail = db.prepare("SELECT * FROM busts WHERE UPPER(code) LIKE ?").all(`%-${upper}`);
-  if (byTail.length === 1) return byTail[0];
+  // Хвост кода — то, что люди чаще всего и переписывают с карточки
+  if (/^[A-Z0-9]{4}$/.test(upper)) {
+    const byTail = db.prepare('SELECT * FROM busts WHERE UPPER(code) LIKE ?').all(`%-${upper}`);
+    if (byTail.length === 1) return { bust: byTail[0], matchedBy: 'code' };
+  }
 
   if (/^\d{1,6}$/.test(key)) {
     const byNumber = db.prepare('SELECT * FROM busts WHERE number = ?').get(Number(key));
-    if (byNumber) return byNumber;
+    if (byNumber) return { bust: byNumber, matchedBy: 'number' };
   }
 
   return null;
