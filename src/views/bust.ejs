@@ -1,0 +1,105 @@
+<%- include('partials/header') %>
+
+<%
+  const num = String(bust.number).padStart(3, '0');
+  function ruDate(value) {
+    if (!value) return '';
+    const d = String(value).slice(0, 10).split('-');
+    return d.length === 3 ? `${d[2]}.${d[1]}.${d[0]}` : String(value);
+  }
+%>
+
+<div class="bust-page">
+
+  <div class="bust-badge">
+    <span class="bust-badge__check">✓</span>
+    <span>Подлинный экземпляр</span>
+  </div>
+
+  <h1 class="bust-number">№<%= num %></h1>
+
+  <% if (bust.phrase) { %>
+    <blockquote class="bust-phrase"><%= bust.phrase %></blockquote>
+    <p class="bust-phrase-note">
+      Эта фраза досталась только вашему экземпляру. На самой вещи её нет —
+      она открывается по номеру.
+    </p>
+  <% } %>
+
+  <% if (error) { %>
+    <div class="flash flash-error"><%= error %></div>
+  <% } %>
+
+  <% if (justRegistered) { %>
+    <div class="flash flash-success">
+      Готово, экземпляр закреплён за вами. Спасибо — теперь мы знаем, у кого он живёт.
+    </div>
+  <% } %>
+
+  <table class="bust-facts">
+    <tr><th>Серия</th><td><%= bust.series %></td></tr>
+    <% if (bust.kind) { %><tr><th>Что это</th><td><%= bust.kind %></td></tr><% } %>
+    <% if (bust.material) { %><tr><th>Материал</th><td><%= bust.material %></td></tr><% } %>
+    <% if (bust.cast_date) { %><tr><th>Дата отливки</th><td><%= ruDate(bust.cast_date) %></td></tr><% } %>
+    <tr><th>Код</th><td><code><%= bust.code %></code></td></tr>
+    <tr>
+      <th>Статус</th>
+      <td>
+        <% if (bust.registered_at) { %>
+          Закреплён за владельцем <%= ruDate(bust.registered_at) %>
+        <% } else { %>
+          Ещё не закреплён
+        <% } %>
+      </td>
+    </tr>
+  </table>
+
+  <p class="bust-total">
+    Тираж открытый: номера идут подряд, конечного числа нет.
+    Сейчас отлито экземпляров: <%= total %>.
+  </p>
+
+  <% if (!bust.registered_at) { %>
+    <div class="bust-register">
+      <h2>Закрепить за собой</h2>
+      <p>
+        Так мы будем знать, у кого экземпляр, и сможем написать, если по нему что-то
+        появится. Закрепить можно один раз.
+      </p>
+      <form action="/b/<%= encodeURIComponent(bust.code) %>/register" method="POST">
+        <label>
+          Как вас зовут *
+          <input type="text" name="ownerName" required>
+        </label>
+        <label>
+          Почта *
+          <input type="email" name="ownerEmail" required>
+        </label>
+        <label style="display:flex; align-items:flex-start; gap:8px;">
+          <input type="checkbox" name="dataConsent" value="1" style="width:auto; margin-top:4px;" required>
+          <span>Согласен на обработку персональных данных в соответствии с
+          <a href="/legal/privacy" target="_blank" rel="noopener">политикой конфиденциальности</a> *</span>
+        </label>
+        <button class="btn" type="submit">Закрепить</button>
+      </form>
+    </div>
+  <% } %>
+
+  <div class="bust-links">
+    <% if (bust.registered_at && bonusUrl) { %>
+      <a class="btn" href="<%= bonusUrl %>">Забрать бонус владельца</a>
+    <% } %>
+    <% if (storyUrl) { %>
+      <a class="btn" href="<%= storyUrl %>">Как эта вещь появилась</a>
+    <% } %>
+    <a class="btn" href="/music">Послушать музыку</a>
+  </div>
+
+  <p class="bust-foot">
+    Что-то не сходится — <a href="/b">проверьте другой номер</a> или напишите нам,
+    контакты внизу страницы.
+  </p>
+
+</div>
+
+<%- include('partials/footer') %>

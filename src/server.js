@@ -114,6 +114,7 @@ app.use('/subscribe', subscribeRoutes);
 app.use('/unsubscribe', require('./routes/unsubscribe'));
 app.use('/search', require('./routes/search'));
 app.use('/legal', legalRoutes);
+app.use('/b', require('./routes/busts'));
 app.use('/downloads', require('./routes/downloads'));
 app.use('/admin', adminRoutes);
 

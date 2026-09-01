@@ -55,6 +55,26 @@ function init() {
       qty INTEGER NOT NULL
     );
 
+    -- Нумерованные бюсты. Тираж открытый: номера идут сквозняком, потолка нет.
+    -- У каждого экземпляра своя фраза — на самой вещи её нет, она открывается
+    -- только по номеру на сайте.
+    CREATE TABLE IF NOT EXISTS busts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      number INTEGER NOT NULL UNIQUE,
+      code TEXT NOT NULL UNIQUE,
+      nfc_uid TEXT NOT NULL DEFAULT '',
+      series TEXT NOT NULL DEFAULT 'soundstates',
+      kind TEXT NOT NULL DEFAULT '',
+      material TEXT NOT NULL DEFAULT '',
+      phrase TEXT NOT NULL DEFAULT '',
+      cast_date TEXT NOT NULL DEFAULT '',
+      note TEXT NOT NULL DEFAULT '',
+      owner_name TEXT NOT NULL DEFAULT '',
+      owner_email TEXT NOT NULL DEFAULT '',
+      registered_at TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
     -- Выдача цифровых товаров: одна строка на каждый купленный цифровой товар.
     -- Ссылка на скачивание работает по токену, ограничена сроком и числом попыток,
     -- чтобы её нельзя было просто переслать дальше.

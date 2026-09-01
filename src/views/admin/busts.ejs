@@ -1,0 +1,115 @@
+<%- include('partials/header') %>
+
+<h1>Бюсты — учёт экземпляров</h1>
+
+<% if (error) { %><div class="flash flash-error"><%= error %></div><% } %>
+<% if (saved) { %><div class="flash flash-success">Сохранено.</div><% } %>
+
+<% if (created && created.length) { %>
+  <div class="flash flash-success">
+    Заведено экземпляров: <%= created.length %>. Ниже коды — их нужно напечатать на карточках.
+  </div>
+  <table class="admin-table">
+    <thead><tr><th>№</th><th>Код</th><th>Фраза</th></tr></thead>
+    <tbody>
+      <% created.forEach(function(b) { %>
+        <tr>
+          <td><strong><%= String(b.number).padStart(3, '0') %></strong></td>
+          <td><code><%= b.code %></code></td>
+          <td><%= b.phrase %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+<% } %>
+
+<h2>Завести партию</h2>
+<p style="color:var(--color-muted); font-size:0.9rem;">
+  Номера идут сквозняком, следующий будет <strong><%= nextNumber %></strong>.
+  Фраза каждому экземпляру подставляется автоматически по его номеру.
+</p>
+
+<form action="/admin/busts/batch" method="POST">
+  <label>
+    Сколько экземпляров *
+    <input type="number" name="count" min="1" max="500" value="10" required>
+  </label>
+  <label>
+    Серия
+    <input type="text" name="series" value="soundstates">
+  </label>
+  <label>
+    Что это
+    <select name="kind">
+      <option value="">— не указано —</option>
+      <option value="Аромакамень">Аромакамень</option>
+      <option value="Держатель для наушников">Держатель для наушников</option>
+      <option value="Держатель для украшений">Держатель для украшений</option>
+      <option value="Бюст">Бюст без функции</option>
+    </select>
+  </label>
+  <label>
+    Материал
+    <select name="material">
+      <option value="">— не указано —</option>
+      <option value="Гипс">Гипс</option>
+      <option value="Белый цемент">Белый цемент</option>
+    </select>
+  </label>
+  <label>
+    Дата отливки
+    <input type="date" name="castDate">
+  </label>
+  <label>
+    Заметка для себя (покупателю не видна)
+    <input type="text" name="note">
+  </label>
+  <button class="btn" type="submit">Завести</button>
+</form>
+
+<h2>Все экземпляры (<%= busts.length %>)</h2>
+
+<% if (!busts.length) { %>
+  <p>Пока ничего не заведено.</p>
+<% } else { %>
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>№</th><th>Код</th><th>Метка NFC</th><th>Что / материал</th>
+        <th>Отлит</th><th>Владелец</th><th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% busts.forEach(function(b) { %>
+        <tr>
+          <form action="/admin/busts/<%= b.id %>" method="POST">
+            <td><strong><%= String(b.number).padStart(3, '0') %></strong></td>
+            <td><code style="font-size:0.8rem;"><%= b.code %></code></td>
+            <td><input type="text" name="nfcUid" value="<%= b.nfc_uid %>" placeholder="UID метки" style="width:150px;"></td>
+            <td>
+              <input type="text" name="kind" value="<%= b.kind %>" style="width:150px;">
+              <input type="text" name="material" value="<%= b.material %>" style="width:110px;">
+            </td>
+            <td><input type="date" name="castDate" value="<%= b.cast_date %>" style="width:140px;"></td>
+            <td>
+              <% if (b.registered_at) { %>
+                <%= b.owner_name %><br>
+                <span style="color:var(--color-muted); font-size:0.8rem;"><%= b.owner_email %></span>
+              <% } else { %>
+                <span style="color:var(--color-muted);">—</span>
+              <% } %>
+            </td>
+            <td>
+              <input type="hidden" name="phrase" value="<%= b.phrase %>">
+              <input type="hidden" name="note" value="<%= b.note %>">
+              <button class="btn" type="submit">Сохранить</button>
+              <a class="btn" href="/b/<%= encodeURIComponent(b.code) %>" target="_blank" rel="noopener">Открыть</a>
+            </td>
+          </form>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+<% } %>
+
+<%- include('partials/footer') %>

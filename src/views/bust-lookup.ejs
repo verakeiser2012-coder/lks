@@ -1,0 +1,28 @@
+<%- include('partials/header') %>
+
+<div class="bust-page">
+  <h1>Проверка подлинности</h1>
+
+  <p>
+    Введите номер экземпляра или код с карточки, которая лежала в коробке.
+    Можно набрать только последние четыре знака кода.
+  </p>
+
+  <% if (error) { %>
+    <div class="flash flash-error"><%= error %></div>
+  <% } %>
+
+  <form action="/b" method="POST" class="bust-lookup-form">
+    <label>
+      Номер или код
+      <input type="text" name="key" value="<%= query %>" placeholder="например 7 или SS-007-4K2M" required autofocus>
+    </label>
+    <button class="btn" type="submit">Проверить</button>
+  </form>
+
+  <p class="bust-foot">
+    Если у вещи есть метка, достаточно приложить к ней телефон — страница откроется сама.
+  </p>
+</div>
+
+<%- include('partials/footer') %>
