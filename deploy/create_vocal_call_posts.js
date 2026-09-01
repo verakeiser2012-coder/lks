@@ -17,7 +17,7 @@ const text = `Ищу вокал. Присылайте.
 
 Специально бегать и искать не буду, но всё, что пришлют, послушаю. Что понравится — доведём до релиза.
 
-Присылайте в личные сообщения.`;
+Присылайте на booking@levkeiser.com или в личные сообщения.`;
 
 const textEn = `Looking for vocals. Send them over.
 
@@ -33,7 +33,7 @@ The second is fairer if the part really makes the track.
 
 I'm not actively hunting, but I listen to everything that comes in. What I like, we finish and release.
 
-Send me a DM.`;
+Send it to booking@levkeiser.com or DM me.`;
 
 const newsHook = 'Открытый призыв: ищу вокалиста на следующие треки';
 
@@ -51,4 +51,4 @@ const row = db.prepare('SELECT id, scheduled_at, approved, status, news_hook FRO
 console.log('СОЗДАН ПОСТ:', JSON.stringify(row));
 console.log('Цели:', JSON.stringify(db.prepare('SELECT network_key FROM social_post_targets WHERE post_id = ?').all(postId)));
 console.log('\nПост неподтверждённый — публикация только после кнопки «Подтвердить» в /admin/calendar.');
-console.log('Перед публикацией решить, куда присылать: личные сообщения или отдельная почта.');
+console.log('Адрес приёма: booking@levkeiser.com — проверен, работает с 01.09.');
