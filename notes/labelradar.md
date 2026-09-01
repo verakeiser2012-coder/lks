@@ -214,11 +214,16 @@ Instrumental electronic producer, born 2012. Synthwave and downtempo - melodic, 
 - **Аватар** — загружен пользователем, 800×800, настоящее фото (проверено: не заливка)
 - **Instagram** — исправлен на `djlevka`
 
+Вторым заходом сохранено ещё:
+
+- **Facebook** — исправлен на `djlevka`
+- **Featured Release** — `band.link/soundstates` вместо старого альбома, теперь профиль
+  показывает тот же трек, на который идёт кампания на SubmitHub
+
 Осталось:
 
-- **Facebook** всё ещё `djlevka.music`, хотя страница открывается по `facebook.com/djlevka`
-- **Featured Release** — старый альбом на Spotify, стоит заменить на Soundstates
 - **Сайт** — пусто, ждём снятия пароля с levkeiser.com
+- **DAW** — пусто, ждём ответа чем заменить Ableton
 - **Страна** — France, поле обязательное
 
 Поставлена еженедельная проверка канала по понедельникам: новые конкурсы, сообщения
