@@ -1,6 +1,11 @@
 (function () {
   var STORAGE_KEY = 'levkaBgMusicOff';
+  // Что играло и на какой секунде. Сайт многостраничный: при переходе элемент
+  // audio уничтожается вместе со страницей, и без этого музыка каждый раз
+  // начиналась бы заново с первого трека.
+  var POS_KEY = 'levkaBgMusicPos';
   var VOLUME = 0.22;
+  var SAVE_EVERY_MS = 2000;
 
   var audio = document.getElementById('bg-audio');
   var toggle = document.getElementById('bg-audio-toggle');
@@ -26,8 +31,50 @@
   }
 
   audio.volume = VOLUME;
-  var trackIndex = 0;
+
+  function loadPosition() {
+    try {
+      var raw = localStorage.getItem(POS_KEY);
+      if (!raw) return null;
+      var saved = JSON.parse(raw);
+      var idx = playlist.indexOf(saved.src);
+      if (idx === -1) return null;
+      return { index: idx, time: Number(saved.time) || 0 };
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function savePosition() {
+    try {
+      localStorage.setItem(POS_KEY, JSON.stringify({
+        src: playlist[trackIndex],
+        time: audio.currentTime || 0,
+      }));
+    } catch (e) { /* приватный режим — просто не запоминаем */ }
+  }
+
+  var restored = loadPosition();
+  var trackIndex = restored ? restored.index : 0;
   audio.src = playlist[trackIndex];
+  if (restored && restored.time > 0) {
+    // Перемотать можно только когда браузер узнал длительность
+    audio.addEventListener('loadedmetadata', function seek() {
+      audio.removeEventListener('loadedmetadata', seek);
+      if (restored.time < audio.duration - 1) audio.currentTime = restored.time;
+    });
+  }
+
+  var lastSave = 0;
+  audio.addEventListener('timeupdate', function () {
+    var now = Date.now();
+    if (now - lastSave > SAVE_EVERY_MS) {
+      lastSave = now;
+      savePosition();
+    }
+  });
+  // Уход со страницы — записать точку, иначе потеряем до двух секунд
+  window.addEventListener('pagehide', savePosition);
 
   function markCurrent() {
     var src = playlist[trackIndex];
@@ -39,6 +86,7 @@
   audio.addEventListener('ended', function () {
     trackIndex = (trackIndex + 1) % playlist.length;
     audio.src = playlist[trackIndex];
+    savePosition();
     play();
   });
 
@@ -79,6 +127,7 @@
       trackIndex = idx;
       audio.src = src;
       localStorage.removeItem(STORAGE_KEY);
+      savePosition();
       play();
     });
   });
