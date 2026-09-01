@@ -1637,3 +1637,50 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
   border-bottom: 1px solid var(--color-border); vertical-align: top;
 }
 .product-specs th { width: 45%; color: var(--color-muted); }
+
+/* ─── Несимметричные границы ───
+   Ровный прямоугольник читается как сток, неровный край — как вещь.
+   Правило: сильный приём (rough/torn) — один на страницу. Мягкую асимметрию
+   можно ставить везде, её глаз замечает не сразу, а ощущает. */
+
+/* Мягкая — разные скругления по углам. Базовый вариант для карточек и фото. */
+.edge-soft,
+.edge-soft img {
+  border-radius: 22px 6px 20px 8px;
+}
+.edge-soft:nth-child(even),
+.edge-soft:nth-child(even) img {
+  border-radius: 7px 24px 6px 18px;
+}
+
+/* Заметная — скошенные углы по диагонали. Для блоков на главной. */
+.edge-cut {
+  clip-path: polygon(0 14px, 14px 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%);
+}
+
+/* Сильная — рваный край, будто оторвано от листа. Только для крупных блоков
+   и не больше одного на экран, иначе выглядит как сломанная вёрстка. */
+.edge-torn {
+  clip-path: polygon(
+    0% 2%, 12% 0.6%, 27% 2.4%, 41% 0.8%, 58% 2.6%, 73% 0.9%, 88% 2.3%, 100% 1%,
+    99% 16%, 100% 33%, 98.6% 51%, 100% 68%, 99% 84%, 100% 98%,
+    87% 99.4%, 71% 97.6%, 55% 99.2%, 38% 97.4%, 22% 99.3%, 9% 97.8%, 0% 99%,
+    1.2% 82%, 0% 66%, 1.4% 49%, 0% 32%, 1% 17%
+  );
+}
+
+/* Фон блока с неровным низом — для подложек и hero */
+.edge-wave-bottom {
+  clip-path: polygon(0 0, 100% 0, 100% 96%, 82% 99%, 61% 95.5%, 39% 99.2%, 18% 96%, 0 99%);
+  padding-bottom: 40px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .edge-soft { transition: border-radius 0.4s ease; }
+  .edge-soft:hover { border-radius: 8px 20px 10px 22px; }
+}
+
+/* На узком экране рваные края съедают содержимое — оставляем мягкую форму */
+@media (max-width: 640px) {
+  .edge-torn, .edge-cut { clip-path: none; border-radius: 16px 5px 14px 6px; }
+}
