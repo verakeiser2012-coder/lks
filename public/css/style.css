@@ -423,6 +423,31 @@ main.container { padding-top: 32px; padding-bottom: 60px; min-height: 60vh; }
 .product-detail-info { flex: 1; min-width: 280px; }
 .out-of-stock { color: #b91c1c; font-weight: 600; }
 
+/* Цифровые товары: DJ-версии, стемы, пресеты */
+.product-digital-note {
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  border-left: 3px solid var(--color-accent);
+  padding-left: 12px;
+  margin-bottom: 16px;
+}
+
+.download-list { margin: 20px 0; }
+.download-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 14px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+}
+.download-item--current { border-color: var(--color-accent); }
+.download-item__name { font-weight: 600; }
+.download-note { color: var(--color-muted); font-size: 0.9rem; }
+
 /* Кнопка «наверх» */
 .to-top {
   position: fixed;

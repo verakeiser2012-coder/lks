@@ -6,6 +6,20 @@
     <p>Номер заказа: №<%= order.id %></p>
     <p>Статус оплаты: <%= order.payment_status === 'paid' ? 'оплачен' : 'ожидает оплаты' %></p>
   <% } %>
+
+  <% if (typeof downloads !== 'undefined' && downloads.length > 0) { %>
+    <h2>Ваши файлы</h2>
+    <p>Ссылки продублированы письмом на <%= order.email %>. Сохраните файлы на устройство.</p>
+    <div class="download-list">
+      <% downloads.forEach(function(item) { %>
+        <div class="download-item">
+          <div class="download-item__name"><%= item.product_name %></div>
+          <a class="btn" href="/downloads/<%= item.token %>">Скачать</a>
+        </div>
+      <% }); %>
+    </div>
+  <% } %>
+
   <a class="btn" href="/catalog">Вернуться в каталог</a>
 </div>
 

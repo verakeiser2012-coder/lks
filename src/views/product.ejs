@@ -15,7 +15,15 @@
     <% if (release) { %>
       <p class="product-release-link">Из релиза: <a href="/music"><%= release.title %> (<%= release.year %>)</a></p>
     <% } %>
-    <% if (product.stock > 0) { %>
+    <% if (product.is_digital) { %>
+      <p class="product-digital-note">
+        Цифровой товар. После оплаты придёт ссылка на скачивание — на почту и сразу на экран.
+      </p>
+      <form action="/cart/add" method="POST">
+        <input type="hidden" name="productId" value="<%= product.id %>">
+        <button class="btn" type="submit">Купить и скачать</button>
+      </form>
+    <% } else if (product.stock > 0) { %>
       <p>В наличии: <%= product.stock %> шт.</p>
       <form action="/cart/add" method="POST">
         <input type="hidden" name="productId" value="<%= product.id %>">

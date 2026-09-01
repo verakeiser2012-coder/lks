@@ -55,6 +55,24 @@ function init() {
       qty INTEGER NOT NULL
     );
 
+    -- Выдача цифровых товаров: одна строка на каждый купленный цифровой товар.
+    -- Ссылка на скачивание работает по токену, ограничена сроком и числом попыток,
+    -- чтобы её нельзя было просто переслать дальше.
+    CREATE TABLE IF NOT EXISTS downloads (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      order_id INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+      product_id INTEGER REFERENCES products(id) ON DELETE SET NULL,
+      product_name TEXT NOT NULL,
+      token TEXT UNIQUE NOT NULL,
+      file_path TEXT NOT NULL,
+      file_name TEXT NOT NULL,
+      max_downloads INTEGER NOT NULL DEFAULT 5,
+      downloads_count INTEGER NOT NULL DEFAULT 0,
+      expires_at TEXT NOT NULL,
+      last_download_at TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
     CREATE TABLE IF NOT EXISTS gallery_items (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       type TEXT NOT NULL CHECK (type IN ('photo', 'video')),
@@ -267,6 +285,20 @@ function init() {
   }
   if (!productCols.some((c) => c.name === 'release_id')) {
     db.exec('ALTER TABLE products ADD COLUMN release_id INTEGER REFERENCES releases(id) ON DELETE SET NULL');
+  }
+  // Цифровые товары: DJ-версии, стемы, пресеты. Файл лежит вне public/,
+  // отдаётся только после оплаты и только по токену.
+  if (!productCols.some((c) => c.name === 'is_digital')) {
+    db.exec('ALTER TABLE products ADD COLUMN is_digital INTEGER NOT NULL DEFAULT 0');
+  }
+  if (!productCols.some((c) => c.name === 'digital_file')) {
+    db.exec("ALTER TABLE products ADD COLUMN digital_file TEXT NOT NULL DEFAULT ''");
+  }
+  if (!productCols.some((c) => c.name === 'digital_filename')) {
+    db.exec("ALTER TABLE products ADD COLUMN digital_filename TEXT NOT NULL DEFAULT ''");
+  }
+  if (!productCols.some((c) => c.name === 'digital_size')) {
+    db.exec('ALTER TABLE products ADD COLUMN digital_size INTEGER NOT NULL DEFAULT 0');
   }
 
   const redheadSubmissionCols = db.prepare('PRAGMA table_info(redhead_submissions)').all();

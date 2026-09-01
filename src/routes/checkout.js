@@ -2,6 +2,7 @@ const express = require('express');
 const db = require('../db');
 const { getCartDetails, getCart } = require('../utils/cart');
 const { createPayment } = require('../services/payments/yookassa');
+const { cartIsDigitalOnly, deliverDigital } = require('../services/digital');
 
 const router = express.Router();
 
@@ -10,7 +11,7 @@ router.get('/', (req, res) => {
   if (items.length === 0) {
     return res.redirect('/cart');
   }
-  res.render('checkout', { items, total, error: null });
+  res.render('checkout', { items, total, error: null, digitalOnly: cartIsDigitalOnly(items) });
 });
 
 router.post('/', async (req, res, next) => {
@@ -19,16 +20,26 @@ router.post('/', async (req, res, next) => {
     return res.redirect('/cart');
   }
 
+  const digitalOnly = cartIsDigitalOnly(items);
+  const fail = (error) => res.render('checkout', { items, total, error, digitalOnly });
+
   const { customerName, phone, email, address, deliveryMethod, pickupPoint, comment, dataConsent } = req.body;
   if (!customerName || !phone) {
-    return res.render('checkout', { items, total, error: 'Заполните имя и телефон.' });
+    return fail('Заполните имя и телефон.');
   }
   if (!dataConsent) {
-    return res.render('checkout', { items, total, error: 'Подтвердите согласие с офертой и обработкой персональных данных.' });
+    return fail('Подтвердите согласие с офертой и обработкой персональных данных.');
   }
-  const method = deliveryMethod === 'pickup' ? 'pickup' : 'courier';
+
+  // Цифровой заказ доставляется письмом, поэтому почта обязательна,
+  // а адрес и пункт выдачи не нужны вовсе.
+  if (digitalOnly && !email) {
+    return fail('Укажите почту — на неё придут ссылки на файлы.');
+  }
+
+  const method = digitalOnly ? 'digital' : (deliveryMethod === 'pickup' ? 'pickup' : 'courier');
   if (method === 'pickup' && !pickupPoint) {
-    return res.render('checkout', { items, total, error: 'Укажите город и удобный пункт выдачи.' });
+    return fail('Укажите город и удобный пункт выдачи.');
   }
 
   const insertOrder = db.prepare(`
@@ -82,29 +93,37 @@ router.get('/pay/:orderId', (req, res) => {
   res.render('payment-mock', { order });
 });
 
-router.post('/pay/:orderId/confirm', (req, res) => {
+router.post('/pay/:orderId/confirm', async (req, res) => {
   const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(req.params.orderId);
   if (!order) {
     return res.status(404).render('404');
   }
   db.prepare("UPDATE orders SET payment_status = 'paid', status = 'processing' WHERE id = ?").run(order.id);
+  await deliverDigital(order.id);
   res.redirect(`/checkout/success?orderId=${order.id}`);
 });
 
 router.get('/success', (req, res) => {
   const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(req.query.orderId);
-  res.render('checkout-success', { order: order || null });
+  // Ссылки показываем прямо на странице: письмо может дойти не сразу
+  // или уехать в спам, а человек уже заплатил.
+  const downloads = order
+    ? db.prepare('SELECT * FROM downloads WHERE order_id = ? ORDER BY id').all(order.id)
+    : [];
+  res.render('checkout-success', { order: order || null, downloads });
 });
 
 // Вебхук для реальных уведомлений от ЮKassa об изменении статуса платежа.
 // Используется только когда в .env заданы YOOKASSA_SHOP_ID/YOOKASSA_SECRET_KEY.
-router.post('/webhook/yookassa', (req, res) => {
+router.post('/webhook/yookassa', async (req, res) => {
   const event = req.body;
   const payment = event && event.object;
   if (payment && payment.id) {
     const order = db.prepare('SELECT * FROM orders WHERE payment_id = ?').get(payment.id);
     if (order && payment.status === 'succeeded') {
       db.prepare("UPDATE orders SET payment_status = 'paid', status = 'processing' WHERE id = ?").run(order.id);
+      // Повторный вебхук не выдаст вторых ссылок — issueDownloads это учитывает
+      await deliverDigital(order.id);
     }
   }
   res.sendStatus(200);

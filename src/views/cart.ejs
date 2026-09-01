@@ -27,10 +27,14 @@
           </td>
           <td><%= item.product.price %> ₽</td>
           <td>
-            <form class="inline" action="/cart/update" method="POST">
-              <input type="hidden" name="productId" value="<%= item.product.id %>">
-              <input type="number" name="qty" value="<%= item.qty %>" min="1" max="<%= item.product.stock %>" style="width:70px" onchange="this.form.submit()">
-            </form>
+            <% if (item.product.is_digital) { %>
+              1 <span style="color:var(--color-muted); font-size:0.85rem;">файл</span>
+            <% } else { %>
+              <form class="inline" action="/cart/update" method="POST">
+                <input type="hidden" name="productId" value="<%= item.product.id %>">
+                <input type="number" name="qty" value="<%= item.qty %>" min="1" max="<%= item.product.stock %>" style="width:70px" onchange="this.form.submit()">
+              </form>
+            <% } %>
           </td>
           <td><%= item.subtotal %> ₽</td>
           <td>

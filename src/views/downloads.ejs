@@ -1,0 +1,42 @@
+<%- include('partials/header') %>
+
+<h1>Скачивание</h1>
+
+<% if (problem === 'expired') { %>
+  <div class="flash flash-error">
+    Срок действия ссылки истёк. Напишите нам на почту с номером заказа
+    <% if (order) { %>№<%= order.id %><% } %> — вышлем новую.
+  </div>
+<% } else if (problem === 'limit') { %>
+  <div class="flash flash-error">
+    Достигнут лимит скачиваний по этой ссылке. Напишите нам с номером заказа
+    <% if (order) { %>№<%= order.id %><% } %> — откроем ещё раз.
+  </div>
+<% } else { %>
+  <p>
+    Файл готов. Ссылка действует до <%= download.expires_at.slice(0, 10).split('-').reverse().join('.') %>,
+    скачиваний использовано <%= download.downloads_count %> из <%= download.max_downloads %>.
+  </p>
+<% } %>
+
+<div class="download-list">
+  <% siblings.forEach(function(item) { %>
+    <div class="download-item<%= item.token === download.token ? ' download-item--current' : '' %>">
+      <div class="download-item__name"><%= item.product_name %></div>
+      <% if (item.token === download.token && !problem) { %>
+        <a class="btn" href="/downloads/<%= item.token %>/file">Скачать</a>
+      <% } else if (item.token !== download.token) { %>
+        <a class="btn" href="/downloads/<%= item.token %>">Открыть</a>
+      <% } %>
+    </div>
+  <% }); %>
+</div>
+
+<p class="download-note">
+  Сохраните файл на устройство — ссылка не вечная. Если что-то не открывается,
+  ответьте на письмо с заказом, разберёмся.
+</p>
+
+<a class="btn" href="/catalog">Вернуться в каталог</a>
+
+<%- include('partials/footer') %>

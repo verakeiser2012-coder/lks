@@ -18,9 +18,14 @@
         <input type="tel" name="phone" required>
       </label>
       <label>
-        Email
-        <input type="email" name="email">
+        Email <%= digitalOnly ? '*' : '' %>
+        <input type="email" name="email" <%= digitalOnly ? 'required' : '' %>>
       </label>
+      <% if (digitalOnly) { %>
+      <p style="color:var(--color-muted); font-size:0.85rem; margin:-8px 0 16px;">
+        На эту почту придут ссылки на файлы. Доставка не нужна — заказ цифровой.
+      </p>
+      <% } else { %>
       <fieldset style="border:1px solid var(--color-border); border-radius:var(--radius); padding:12px 14px; margin:0 0 16px;">
         <legend style="padding:0 6px;">Способ получения</legend>
         <label style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
@@ -47,6 +52,7 @@
           Точный адрес пункта выдачи и стоимость доставки согласуем с вами после оформления заказа.
         </p>
       </div>
+      <% } %>
       <label>
         Комментарий к заказу
         <textarea name="comment" rows="3"></textarea>

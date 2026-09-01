@@ -14,14 +14,23 @@ router.post('/add', (req, res) => {
   const qty = Math.max(1, Number(req.body.qty) || 1);
 
   const product = db.prepare('SELECT * FROM products WHERE id = ? AND is_active = 1').get(productId);
-  if (!product || product.stock <= 0) {
+  if (!product) {
+    return res.redirect('/catalog');
+  }
+  // У цифрового товара нет остатка и нет смысла в количестве:
+  // файл покупают один раз, копия всегда одна.
+  const isDigital = Number(product.is_digital) === 1;
+  if (!isDigital && product.stock <= 0) {
     return res.redirect('/catalog');
   }
 
   const cart = getCart(req);
-  const current = cart[productId] || 0;
-  const next = Math.min(current + qty, product.stock);
-  cart[productId] = next;
+  if (isDigital) {
+    cart[productId] = 1;
+  } else {
+    const current = cart[productId] || 0;
+    cart[productId] = Math.min(current + qty, product.stock);
+  }
 
   res.redirect('/cart');
 });
@@ -34,8 +43,14 @@ router.post('/update', (req, res) => {
   if (!qty || qty <= 0) {
     delete cart[productId];
   } else {
-    const product = db.prepare('SELECT stock FROM products WHERE id = ?').get(productId);
-    cart[productId] = product ? Math.min(qty, product.stock) : qty;
+    const product = db.prepare('SELECT stock, is_digital FROM products WHERE id = ?').get(productId);
+    if (!product) {
+      cart[productId] = qty;
+    } else if (Number(product.is_digital) === 1) {
+      cart[productId] = 1;
+    } else {
+      cart[productId] = Math.min(qty, product.stock);
+    }
   }
 
   res.redirect('/cart');

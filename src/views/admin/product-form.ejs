@@ -27,6 +27,35 @@
     Остаток на складе
     <input type="number" name="stock" value="<%= product ? product.stock : 0 %>">
   </label>
+
+  <fieldset style="border:1px solid #ddd; border-radius:8px; padding:12px 14px; margin:0 0 16px;">
+    <legend style="padding:0 6px;">Цифровой товар</legend>
+    <label>
+      <input type="checkbox" name="isDigital" value="1" id="is-digital" style="width:auto;display:inline-block;"
+        <%= product && product.is_digital ? 'checked' : '' %>>
+      Это файл, а не физический товар
+    </label>
+    <p style="color:#666; font-size:0.85rem; margin:4px 0 12px;">
+      DJ-версии, стемы, пресеты. Остаток и доставка не спрашиваются, количество всегда одно.
+      После оплаты покупателю уходит ссылка на скачивание — она живёт 30 дней и работает 5 раз.
+    </p>
+    <label>
+      Файл товара
+      <input type="file" name="digitalFile" accept=".mp3,.wav,.flac,.aiff,.aif,.zip">
+    </label>
+    <p style="color:#666; font-size:0.85rem; margin:-8px 0 8px;">
+      mp3, wav, flac, aiff или zip, до 500 МБ. Файл лежит в закрытой папке и по прямой ссылке недоступен.
+    </p>
+    <% if (product && product.digital_filename) { %>
+      <p style="font-size:0.9rem;">
+        Загружен: <strong><%= product.digital_filename %></strong>
+        <% if (product.digital_size) { %>
+          (<%= (product.digital_size / (1024 * 1024)).toFixed(1) %> МБ)
+        <% } %>
+        — новый файл заменит текущий.
+      </p>
+    <% } %>
+  </fieldset>
   <label>
     Категория
     <select name="categoryId">
