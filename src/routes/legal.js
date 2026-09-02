@@ -10,6 +10,10 @@ router.get('/privacy', (req, res) => {
   res.render('legal/privacy');
 });
 
+router.get('/payment', (req, res) => {
+  res.render('legal/payment');
+});
+
 router.get('/delivery', (req, res) => {
   res.render('legal/delivery');
 });
