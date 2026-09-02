@@ -53,11 +53,16 @@
     <% } %>
     <% if (product.is_digital) { %>
       <p class="product-digital-note">
-        Цифровой товар. После оплаты придёт ссылка на скачивание — на почту и сразу на экран.
+        <% if (Number(product.price) === 0) { %>
+          Цифровой товар, бесплатно. Ссылка на скачивание придёт на почту
+          и откроется сразу на экране — оплата не требуется.
+        <% } else { %>
+          Цифровой товар. После оплаты придёт ссылка на скачивание — на почту и сразу на экран.
+        <% } %>
       </p>
       <form action="/cart/add" method="POST">
         <input type="hidden" name="productId" value="<%= product.id %>">
-        <button class="btn" type="submit">Купить и скачать</button>
+        <button class="btn" type="submit"><%= Number(product.price) === 0 ? 'Забрать бесплатно' : 'Купить и скачать' %></button>
       </form>
     <% } else if (product.stock > 0) { %>
       <p>В наличии: <%= product.stock %> шт.</p>

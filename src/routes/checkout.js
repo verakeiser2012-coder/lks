@@ -74,7 +74,9 @@ router.post('/', async (req, res, next) => {
   // Бесплатный заказ платить нечем: платёжные системы нулевую сумму не принимают.
   // Отмечаем оплаченным сразу и выдаём файлы — это единственный путь для цены 0.
   if (total === 0) {
-    db.prepare("UPDATE orders SET payment_status = 'paid', status = 'processing' WHERE id = ?").run(orderId);
+    // помечаем провайдером 'free': в отчётах бесплатная выдача не должна
+    // выглядеть как успешный платёж через эквайринг
+    db.prepare("UPDATE orders SET payment_status = 'paid', status = 'processing', payment_provider = 'free' WHERE id = ?").run(orderId);
     await deliverDigital(orderId);
     req.session.cart = {};
     return res.redirect(`/checkout/success?orderId=${orderId}`);
