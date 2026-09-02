@@ -71,6 +71,15 @@ router.post('/', async (req, res, next) => {
     insertItem.run(orderId, item.product.id, item.product.name, item.product.price, item.qty);
   }
 
+  // Бесплатный заказ платить нечем: платёжные системы нулевую сумму не принимают.
+  // Отмечаем оплаченным сразу и выдаём файлы — это единственный путь для цены 0.
+  if (total === 0) {
+    db.prepare("UPDATE orders SET payment_status = 'paid', status = 'processing' WHERE id = ?").run(orderId);
+    await deliverDigital(orderId);
+    req.session.cart = {};
+    return res.redirect(`/checkout/success?orderId=${orderId}`);
+  }
+
   try {
     const baseUrl = `${req.protocol}://${req.get('host')}`;
     const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(orderId);
