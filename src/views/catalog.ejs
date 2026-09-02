@@ -2,6 +2,15 @@
 
 <h1>Каталог</h1>
 
+<%# Предзапуск: честно говорим, что заказы ещё не принимаются.
+    Выключается очисткой настройки shop_prelaunch_notice в /admin/settings. %>
+<% if (settings.shop_prelaunch_notice) { %>
+  <div class="prelaunch-notice">
+    <strong>Магазин готовится к запуску.</strong>
+    <%= settings.shop_prelaunch_notice %>
+  </div>
+<% } %>
+
 <div class="catalog-layout">
   <aside class="category-filter">
     <h3>Категории</h3>

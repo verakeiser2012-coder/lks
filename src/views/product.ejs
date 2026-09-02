@@ -1,5 +1,12 @@
 <%- include('partials/header') %>
 
+<% if (settings.shop_prelaunch_notice) { %>
+  <div class="prelaunch-notice">
+    <strong>Магазин готовится к запуску.</strong>
+    <%= settings.shop_prelaunch_notice %>
+  </div>
+<% } %>
+
 <div class="product-detail">
   <div class="product-detail-image edge-soft">
     <% if (product.image) { %>

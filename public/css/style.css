@@ -1729,3 +1729,16 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
   .cookie-bar__actions { width: 100%; }
   .cookie-bar__btn { flex: 1; }
 }
+
+/* Предзапуск магазина: заказы ещё не принимаются */
+.prelaunch-notice {
+  background: #fdf6e0;
+  border: 1px solid #e6cf8a;
+  border-left: 4px solid var(--color-accent);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+.prelaunch-notice strong { display: block; margin-bottom: 2px; }
