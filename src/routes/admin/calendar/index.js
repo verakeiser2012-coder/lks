@@ -252,6 +252,30 @@ router.post('/:id/edit', uploadGalleryFile.single('file'), (req, res) => {
   res.redirect(`/admin/calendar/${post.id}`);
 });
 
+// Ссылки: откуда взят материал и куда он вышел. Работает для ЛЮБОГО статуса,
+// в том числе опубликованного — текст переписывать поздно, а ссылки нужны
+// именно после публикации, иначе потом их приходится искать заново.
+router.post('/:id/links', (req, res) => {
+  const post = getPost(req.params.id);
+  if (!post) {
+    return res.status(404).render('404');
+  }
+
+  db.prepare('UPDATE social_posts SET sources = ? WHERE id = ?').run(req.body.sources || '', post.id);
+
+  // Адреса публикаций правим поштучно: у ручных сетей вроде Дзена
+  // их некому проставить автоматически
+  for (const target of getTargets(post.id)) {
+    const field = `url_${target.id}`;
+    if (Object.prototype.hasOwnProperty.call(req.body, field)) {
+      db.prepare("UPDATE social_post_targets SET published_url = ?, updated_at = datetime('now') WHERE id = ?")
+        .run((req.body[field] || '').trim(), target.id);
+    }
+  }
+
+  res.redirect(`/admin/calendar/${post.id}`);
+});
+
 router.post('/:id/move', (req, res) => {
   const post = getPost(req.params.id);
   if (!post) {

@@ -82,8 +82,39 @@
   </tbody>
 </table>
 
+<h2>Ссылки</h2>
+<p style="color:var(--color-muted); font-size:0.9rem; margin-top:-6px;">
+  Откуда взят материал и куда он вышел. Заполняется в любой момент, в том числе
+  после публикации — чтобы потом не искать заново.
+</p>
+
+<form action="/admin/calendar/<%= post.id %>/links" method="POST">
+  <label>
+    Источники
+    <textarea name="sources" rows="3" placeholder="по одной ссылке в строке: статья, исследование, первоисточник"><%= post.sources || '' %></textarea>
+  </label>
+
+  <% if (targets.length) { %>
+    <p style="margin-bottom:6px;"><strong>Где опубликовано</strong></p>
+    <% targets.forEach(function(t) { %>
+      <label>
+        <%= t.network_label || t.network_key %>
+        <input type="url" name="url_<%= t.id %>" value="<%= t.published_url || '' %>"
+               placeholder="https://…">
+      </label>
+    <% }); %>
+  <% } %>
+
+  <button class="btn" type="submit">Сохранить ссылки</button>
+</form>
+
 <% if (post.status === 'scheduled') { %>
   <a class="btn" href="/admin/calendar/<%= post.id %>/edit">Редактировать</a>
+<% } else { %>
+  <p style="color:var(--color-muted); font-size:0.9rem;">
+    Пост уже опубликован, поэтому текст и дата не редактируются — в сетях они
+    от этого не изменятся. Правятся только ссылки выше.
+  </p>
 <% } %>
 <form class="inline" action="/admin/calendar/<%= post.id %>/publish" method="POST">
   <button class="btn" type="submit">Опубликовать сейчас</button>

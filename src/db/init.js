@@ -415,6 +415,12 @@ function init() {
     // Ссылка поста (например, на товар) — добавляется в подпись и в кнопку VK-истории.
     db.exec("ALTER TABLE social_posts ADD COLUMN link_url TEXT NOT NULL DEFAULT ''");
   }
+  // Откуда взят материал. Заполняется в том числе ПОСЛЕ публикации: текст
+  // переписывать поздно, а ссылки на источники хранить негде — и потом их
+  // приходится искать заново.
+  if (!socialPostCols.some((c) => c.name === 'sources')) {
+    db.exec("ALTER TABLE social_posts ADD COLUMN sources TEXT NOT NULL DEFAULT ''");
+  }
 
   const socialTargetCols2 = db.prepare('PRAGMA table_info(social_post_targets)').all();
   if (!socialTargetCols2.some((c) => c.name === 'story_status')) {
