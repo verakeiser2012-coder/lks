@@ -25,6 +25,47 @@
   function netShort(key) { return NET_SHORT[key] || key.slice(0, 3).toUpperCase(); }
 %>
 
+<%# Пока подтверждение существует, открывать посты по одному — главный затор.
+    Когда календарю начнём доверять полностью, этот блок просто убрать. %>
+<% if (pending && pending.length > 0) { %>
+  <form action="/admin/calendar/approve-batch" method="POST" class="pending-approval">
+    <div class="pending-head">
+      <h2>Ждут подтверждения — <%= pending.length %></h2>
+      <div class="pending-actions">
+        <label class="pending-all">
+          <input type="checkbox" id="pending-select-all"> выбрать все
+        </label>
+        <button class="btn" type="submit">✓ Подтвердить выбранные</button>
+      </div>
+    </div>
+    <p class="hint">Без подтверждения планировщик пост не опубликует, даже когда время наступит.</p>
+    <div class="pending-list">
+      <% pending.forEach(function(post) { %>
+        <label class="pending-row">
+          <input type="checkbox" name="ids" value="<%= post.id %>">
+          <span class="pending-when"><%= post.scheduled_at.slice(5, 16).replace('-', '.').replace(' ', ' · ') %></span>
+          <span class="pending-text"><%= (post.news_hook || post.text || '(без текста)').slice(0, 70) %></span>
+          <span class="pending-nets">
+            <% (targetsByPost[post.id] || []).forEach(function(t) { %><span class="net-badge net-<%= t.status %>"><%= netShort(t.network_key) %></span><% }); %>
+          </span>
+          <a class="pending-open" href="/admin/calendar/<%= post.id %>" title="Открыть пост">→</a>
+        </label>
+      <% }); %>
+    </div>
+  </form>
+  <script>
+    (function () {
+      var all = document.getElementById('pending-select-all');
+      if (!all) return;
+      all.addEventListener('change', function () {
+        document.querySelectorAll('.pending-row input[name="ids"]').forEach(function (c) {
+          c.checked = all.checked;
+        });
+      });
+    })();
+  </script>
+<% } %>
+
 <% if (upcoming.length > 0) { %>
   <h2 class="upcoming-title">Ближайшие 7 дней</h2>
   <div class="upcoming-list">

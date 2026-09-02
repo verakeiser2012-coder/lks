@@ -7,6 +7,7 @@ const { suggestHashtags } = require('../../../utils/hashtags');
 const {
   listNetworks,
   listUpcoming,
+  listPendingApproval,
   listEventsForMonth,
   listPostsForMonth,
   getPost,
@@ -37,6 +38,7 @@ router.get('/', (req, res) => {
   }
 
   const upcoming = listUpcoming(7);
+  const pending = listPendingApproval();
   for (const post of upcoming) {
     if (!targetsByPost[post.id]) targetsByPost[post.id] = getTargets(post.id);
   }
@@ -64,6 +66,7 @@ router.get('/', (req, res) => {
   }
 
   res.render('admin/calendar', {
+    pending,
     year,
     month,
     daysInMonth,
@@ -77,6 +80,28 @@ router.get('/', (req, res) => {
     nextMonth,
     nextYear,
   });
+});
+
+// Подтверждение пачкой. Пока подтверждение вообще существует, открывать
+// полсотни страниц по одной — главный затор в работе с календарём.
+router.post('/approve-batch', (req, res) => {
+  const raw = req.body.ids;
+  const ids = (Array.isArray(raw) ? raw : [raw])
+    .map((x) => parseInt(x, 10))
+    .filter((x) => Number.isInteger(x));
+
+  if (ids.length) {
+    const stmt = db.prepare("UPDATE social_posts SET approved = 1 WHERE id = ? AND status = 'scheduled'");
+    db.exec('BEGIN');
+    try {
+      for (const id of ids) stmt.run(id);
+      db.exec('COMMIT');
+    } catch (err) {
+      db.exec('ROLLBACK');
+      throw err;
+    }
+  }
+  res.redirect('/admin/calendar');
 });
 
 router.get('/new', (req, res) => {

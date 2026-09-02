@@ -18,6 +18,16 @@ function listUpcoming(days) {
     .all(now, until);
 }
 
+/**
+ * Всё, что ждёт подтверждения. Не ограничиваем неделей: затор обычно
+ * копится дальше, и подтверждать удобнее сразу пачкой.
+ */
+function listPendingApproval() {
+  return db
+    .prepare("SELECT * FROM social_posts WHERE status = 'scheduled' AND approved = 0 ORDER BY scheduled_at ASC")
+    .all();
+}
+
 function listEventsForMonth(month) {
   return db.prepare('SELECT * FROM calendar_events WHERE month = ? ORDER BY day, title').all(month);
 }
@@ -67,6 +77,7 @@ function normalizeScheduledAt(value) {
 }
 
 module.exports = {
+  listPendingApproval,
   listNetworks,
   listUpcoming,
   listEventsForMonth,
