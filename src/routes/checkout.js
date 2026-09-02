@@ -23,7 +23,7 @@ router.post('/', async (req, res, next) => {
   const digitalOnly = cartIsDigitalOnly(items);
   const fail = (error) => res.render('checkout', { items, total, error, digitalOnly });
 
-  const { customerName, phone, email, address, deliveryMethod, pickupPoint, comment, dataConsent } = req.body;
+  const { customerName, phone, email, address, deliveryMethod, pickupPoint, comment, dataConsent, digitalConsent } = req.body;
   if (!customerName || !phone) {
     return fail('Заполните имя и телефон.');
   }
@@ -35,6 +35,11 @@ router.post('/', async (req, res, next) => {
   // а адрес и пункт выдачи не нужны вовсе.
   if (digitalOnly && !email) {
     return fail('Укажите почту — на неё придут ссылки на файлы.');
+  }
+  // Без явного согласия на немедленный доступ оговорка в оферте не работает:
+  // покупатель сохраняет право отказаться уже после скачивания файла
+  if (digitalOnly && !digitalConsent) {
+    return fail('Подтвердите согласие на получение файлов сразу после оплаты.');
   }
 
   const method = digitalOnly ? 'digital' : (deliveryMethod === 'pickup' ? 'pickup' : 'courier');

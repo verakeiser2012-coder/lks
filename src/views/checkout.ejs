@@ -57,6 +57,13 @@
         Комментарий к заказу
         <textarea name="comment" rows="3"></textarea>
       </label>
+      <% if (digitalOnly) { %>
+      <label style="display:flex; align-items:flex-start; gap:8px;">
+        <input type="checkbox" name="digitalConsent" value="1" style="width:auto; margin-top:4px;" required>
+        <span>Согласен получить доступ к файлам сразу после оплаты и понимаю, что после
+        открытия доступа отказ от цифрового товара надлежащего качества не производится *</span>
+      </label>
+      <% } %>
       <label style="display:flex; align-items:flex-start; gap:8px;">
         <input type="checkbox" name="dataConsent" value="1" style="width:auto; margin-top:4px;" required>
         <span>Принимаю условия <a href="/legal/oferta" target="_blank" rel="noopener">публичной оферты</a>
