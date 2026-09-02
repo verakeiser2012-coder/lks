@@ -1684,3 +1684,48 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 @media (max-width: 640px) {
   .edge-torn, .edge-cut { clip-path: none; border-radius: 16px 5px 14px 6px; }
 }
+
+/* Полоса согласия на cookie. Появляется снизу, не перекрывает содержимое
+   насовсем и предлагает настоящий выбор, а не одну кнопку «ок». */
+.cookie-bar {
+  position: fixed;
+  left: 16px; right: 16px; bottom: 16px;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 16px 20px;
+  background: #17130D;
+  color: #EDE4D3;
+  border: 1px solid rgba(184, 134, 11, 0.45);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  font-size: 0.9rem;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.cookie-bar.is-shown { opacity: 1; transform: translateY(0); }
+.cookie-bar.is-hidden { opacity: 0; transform: translateY(14px); }
+.cookie-bar__text { flex: 1; min-width: 260px; line-height: 1.5; }
+.cookie-bar__text a { color: var(--color-gold-bright); text-decoration: underline; }
+.cookie-bar__actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.cookie-bar__btn { white-space: nowrap; }
+.cookie-bar__btn--ghost {
+  background: transparent;
+  color: #EDE4D3;
+  border: 1px solid rgba(237, 228, 211, 0.4);
+}
+.cookie-bar__btn--ghost:hover { background: rgba(237, 228, 211, 0.1); color: #fff; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cookie-bar { transition: none; }
+}
+@media (max-width: 560px) {
+  .cookie-bar { left: 8px; right: 8px; bottom: 8px; padding: 14px 16px; }
+  .cookie-bar__actions { width: 100%; }
+  .cookie-bar__btn { flex: 1; }
+}
