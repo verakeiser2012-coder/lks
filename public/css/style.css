@@ -436,6 +436,44 @@ main.container { padding-top: 32px; padding-bottom: 60px; min-height: 60vh; }
   box-shadow: 0 2px 8px rgba(184, 134, 11, 0.2);
 }
 
+/* «Поделиться» — не панель, требующая внимания, а тихая строка под
+   содержимым. Знаки те же, что в подвале, поэтому ряд узнаётся. */
+.share {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 28px 0 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
+}
+.share-label { font-size: 0.85rem; color: var(--color-muted); }
+.share-buttons { display: flex; gap: 6px; flex-wrap: wrap; }
+.share-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-muted);
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+.share-btn svg { width: 17px; height: 17px; }
+.share-btn:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+  transform: translateY(-1px);
+}
+.share-done { font-size: 0.8rem; color: var(--color-accent); }
+@media (prefers-reduced-motion: reduce) {
+  .share-btn:hover { transform: none; }
+}
+
 .product-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));

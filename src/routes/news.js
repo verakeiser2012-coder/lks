@@ -48,7 +48,18 @@ function createNewsRouter(lang) {
     `).all();
     const coverByNewsId = {};
     covers.forEach((c) => { coverByNewsId[c.news_id] = c.file_path; });
-    res.render('news-detail', { post, media, allPosts, coverByNewsId, title: post.title });
+    const cover = media.find((m) => m.type === 'photo');
+    res.render('news-detail', {
+      post,
+      media,
+      allPosts,
+      coverByNewsId,
+      title: post.title,
+      pageImage: cover ? cover.file_path : '',
+      // Первый абзац без разметки — то, что человек и так увидит под заголовком.
+      pageDescription: String(post.content || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 200),
+      pageType: 'article',
+    });
   });
 
   return router;

@@ -23,7 +23,16 @@ router.get('/:slug', (req, res) => {
   const otherPosts = db
     .prepare('SELECT id, slug, title, cover_image, created_at FROM diary_posts WHERE is_published = 1 AND id != ? ORDER BY created_at DESC LIMIT 3')
     .all(post.id);
-  res.render('diary-detail', { post, media, otherPosts, title: post.title });
+  const cover = post.cover_image || (media.find((m) => m.type === 'photo') || {}).file_path || '';
+  res.render('diary-detail', {
+    post,
+    media,
+    otherPosts,
+    title: post.title,
+    pageImage: cover,
+    pageDescription: post.excerpt || String(post.content || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 200),
+    pageType: 'article',
+  });
 });
 
 module.exports = router;

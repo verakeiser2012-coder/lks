@@ -53,7 +53,16 @@ router.get('/:releaseSlug', (req, res, next) => {
     .prepare('SELECT * FROM tracks WHERE release_id = ? AND is_published = 1 ORDER BY sort_order ASC, id ASC')
     .all(release.id);
 
-  res.render('release', { title: release.title, release, tracks });
+  res.render('release', {
+    title: release.title,
+    release,
+    tracks,
+    // Превью репоста — обложка релиза. Без неё ссылка в мессенджере
+    // показывала общую картинку сайта, одинаковую для всех страниц.
+    pageImage: release.cover_image || '',
+    pageDescription: release.description || `${release.title} (${release.year}) — ${release.release_type} DJ Levka`,
+    pageType: 'music.album',
+  });
 });
 
 router.get('/:releaseSlug/:trackSlug', (req, res, next) => {
@@ -78,7 +87,18 @@ router.get('/:releaseSlug/:trackSlug', (req, res, next) => {
     .prepare('SELECT * FROM gallery_items WHERE track_id = ? ORDER BY sort_order ASC, created_at DESC')
     .all(track.id);
 
-  res.render('track', { title: track.title, release, track, prevTrack, nextTrack, trackGalleryItems });
+  res.render('track', {
+    title: track.title,
+    release,
+    track,
+    prevTrack,
+    nextTrack,
+    trackGalleryItems,
+    // У трека своя обложка бывает не всегда — тогда берём обложку релиза.
+    pageImage: track.cover_image || (release && release.cover_image) || '',
+    pageDescription: track.description || (release ? `Трек из релиза ${release.title} (${release.year})` : 'Трек DJ Levka'),
+    pageType: 'music.song',
+  });
 });
 
 module.exports = router;

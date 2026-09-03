@@ -1,0 +1,37 @@
+<%#
+  Блок «поделиться». Ставится только там, где есть чем делиться:
+  релиз, трек, товар, новость, запись дневника, экземпляр бюста.
+
+  Адрес собираем от основного домена, а не от того, по которому человек
+  зашёл: доменов восемнадцать, и без этого один и тот же трек расходился
+  бы по восемнадцати ссылкам. Шапка считает то же самое, но своей
+  локальной переменной наружу не отдаёт, поэтому считаем здесь заново.
+
+  Все ссылки — обычные <a href>: без скрипта они всё равно работают.
+  Скрипт добавляет системное окно на телефоне и «скопировать ссылку».
+%>
+<%
+  const sharePath = (typeof currentPath === 'string' ? currentPath : '/').split('?')[0];
+  const shareUrl = (typeof canonicalBase === 'string' ? canonicalBase : '') + (sharePath === '/' ? '' : sharePath);
+  const shareTitle = (typeof shareText !== 'undefined' && shareText) ? shareText : title;
+  const u = encodeURIComponent(shareUrl);
+  const t = encodeURIComponent(shareTitle);
+%>
+<div class="share" data-share data-url="<%= shareUrl %>" data-title="<%= shareTitle %>">
+  <span class="share-label">Поделиться</span>
+  <div class="share-buttons">
+    <a class="share-btn" href="https://t.me/share/url?url=<%= u %>&text=<%= t %>" target="_blank" rel="noopener" title="Telegram" aria-label="Поделиться в Telegram"><%- socialIcons.telegram %></a>
+    <a class="share-btn" href="https://vk.com/share.php?url=<%= u %>&title=<%= t %>" target="_blank" rel="noopener" title="ВКонтакте" aria-label="Поделиться во ВКонтакте"><%- socialIcons.vk %></a>
+    <a class="share-btn" href="https://api.whatsapp.com/send?text=<%= t %>%20<%= u %>" target="_blank" rel="noopener" title="WhatsApp" aria-label="Поделиться в WhatsApp"><%- socialIcons.whatsapp %></a>
+    <a class="share-btn" href="https://connect.ok.ru/offer?url=<%= u %>&title=<%= t %>" target="_blank" rel="noopener" title="Одноклассники" aria-label="Поделиться в Одноклассниках"><%- socialIcons.ok %></a>
+    <a class="share-btn" href="https://twitter.com/intent/tweet?url=<%= u %>&text=<%= t %>" target="_blank" rel="noopener" title="X" aria-label="Поделиться в X"><%- socialIcons.x %></a>
+    <a class="share-btn" href="https://www.facebook.com/sharer/sharer.php?u=<%= u %>" target="_blank" rel="noopener" title="Facebook" aria-label="Поделиться в Facebook"><%- socialIcons.facebook %></a>
+    <button class="share-btn share-copy" type="button" data-share-copy title="Скопировать ссылку" aria-label="Скопировать ссылку">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V5"/></svg>
+    </button>
+    <button class="share-btn share-native" type="button" data-share-native hidden title="Поделиться" aria-label="Поделиться">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.3 10.8 15.7 6.4M8.3 13.2l7.4 4.4"/></svg>
+    </button>
+  </div>
+  <span class="share-done" data-share-done hidden>Ссылка скопирована</span>
+</div>

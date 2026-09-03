@@ -33,7 +33,7 @@
   <title><%= docTitle %></title>
   <meta name="description" content="<%= metaDesc %>">
   <link rel="canonical" href="<%= canonicalUrl %>">
-  <meta property="og:type" content="website">
+  <meta property="og:type" content="<%= (typeof pageType !== 'undefined' && pageType) ? pageType : 'website' %>">
   <meta property="og:site_name" content="<%= siteBase %>">
   <meta property="og:title" content="<%= docTitle %>">
   <meta property="og:description" content="<%= metaDesc %>">
