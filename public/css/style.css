@@ -94,8 +94,27 @@ a:hover { color: var(--color-accent-hover); }
   animation: type-cursor-blink 1s steps(1, end) infinite;
 }
 @keyframes type-cursor-blink { 50% { opacity: 0; } }
+
+/* Когда фраза допечатана, курсор замирает и рядом проявляется стрелка —
+   вход в дневник, где девиз объяснён целиком. До конца печати её нет:
+   ссылка на текст, которого ещё не видно, была бы преждевременной. */
+.logo-motto.is-done .type-cursor { animation: none; }
+.logo-motto-arrow {
+  display: inline-block;
+  margin-left: 6px;
+  color: var(--color-accent);
+  text-decoration: none;
+  font-weight: 700;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  pointer-events: none;
+}
+.logo-motto.is-done .logo-motto-arrow { opacity: 1; transform: none; pointer-events: auto; }
+.logo-motto-arrow:hover { color: var(--color-gold-bright); }
 @media (prefers-reduced-motion: reduce) {
   .type-cursor { animation: none; }
+  .logo-motto-arrow { opacity: 1; transform: none; pointer-events: auto; transition: none; }
 }
 
 .hero-tagline { font-size: 1.1rem; color: var(--color-muted); margin-top: -8px; }
@@ -1658,7 +1677,9 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
   text-shadow: 0 0 6px rgba(143, 198, 92, 0.9), 0 0 14px rgba(111, 168, 60, 0.6);
 }
 .music-ticker__item.is-current::before { content: '▸ '; }
-.music-ticker__dot { color: rgba(143, 198, 92, 0.35); font-size: 0.7rem; }
+/* Точки золотые, а не зелёные в тон подсветки: на чёрной ленте они
+   держат ритм между названиями, и в цвете сайта это читается как своё. */
+.music-ticker__dot { color: var(--color-gold-bright); font-size: 0.7rem; }
 
 @media (prefers-reduced-motion: reduce) {
   .music-ticker__track { animation: none; }

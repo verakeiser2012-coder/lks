@@ -9,8 +9,10 @@
   if (!el) return;
 
   var text = el.textContent;
+  var line = el.closest('.logo-motto');
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reduce) return;
+  // Без анимации фраза уже на месте — стрелка нужна сразу.
+  if (reduce) { if (line) line.classList.add('is-done'); return; }
 
   var DELAY_MS = 150;   // одна буква
   var START_MS = 700;   // пауза перед первой буквой — курсор успевает мигнуть
@@ -20,6 +22,7 @@
   function tick() {
     el.textContent = text.slice(0, ++i);
     if (i < text.length) setTimeout(tick, DELAY_MS);
+    else if (line) line.classList.add('is-done');
   }
   setTimeout(tick, START_MS);
 })();
