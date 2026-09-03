@@ -7,6 +7,9 @@ const API_VERSION = '5.199';
 const fields = [
   { name: 'accessToken', label: 'Токен доступа (права wall, photos, video)', type: 'password' },
   { name: 'groupId', label: 'ID группы (число, без минуса)', type: 'text' },
+  // Групповой ключ стену читать не может. Для импорта опубликованного нужен
+  // сервисный ключ любого приложения VK — он читает открытые стены без OAuth.
+  { name: 'serviceToken', label: 'Сервисный ключ приложения (чтение стены для «Уже в ленте»)', type: 'password' },
 ];
 
 async function vkCall(method, params) {

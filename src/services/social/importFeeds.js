@@ -162,9 +162,11 @@ async function importRutube() {
 async function importVK() {
   const c = credentials('vk');
   if (!c) return { key: 'vk', skipped: 'сеть отключена' };
-  const token = c.userToken;
+  // Сервисный ключ приложения читает открытые стены; пользовательский тоже
+  // подходит. Групповой — нет: у него нет права читать даже свою стену.
+  const token = c.serviceToken || c.userToken;
   const groupId = String(c.groupId || '').replace(/^-/, '');
-  if (!token) return { key: 'vk', skipped: 'нет пользовательского ключа (userToken): групповой стену читать не может' };
+  if (!token) return { key: 'vk', skipped: 'нет сервисного ключа (serviceToken): групповой стену читать не может' };
   if (!groupId) return { key: 'vk', skipped: 'не задан groupId' };
 
   const json = JSON.parse(await text(
