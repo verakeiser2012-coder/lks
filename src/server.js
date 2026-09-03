@@ -109,6 +109,9 @@ app.use((req, res, next) => {
   next();
 });
 
+// robots.txt и sitemap.xml — до остальных маршрутов, чтобы их не перехватил
+// обработчик страниц по адресу.
+app.use('/', require('./routes/seo'));
 app.use('/', indexRoutes);
 app.use('/catalog', catalogRoutes);
 app.use('/cart', cartRoutes);
