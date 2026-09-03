@@ -60,6 +60,16 @@ function listRecentlyPublished(limit = 12) {
 }
 
 /**
+ * Архив — посты, убранные с глаз, но не удалённые. Свежие сверху:
+ * достают обычно то, что отложили недавно.
+ */
+function listArchived() {
+  return db
+    .prepare("SELECT * FROM social_posts WHERE status = 'archived' ORDER BY scheduled_at DESC")
+    .all();
+}
+
+/**
  * Всё, что ждёт подтверждения. Не ограничиваем неделей: затор обычно
  * копится дальше, и подтверждать удобнее сразу пачкой.
  */
@@ -80,7 +90,8 @@ function listPostsForMonth(year, month) {
   const nextYear = month === 12 ? year + 1 : year;
   const end = `${nextYear}-${pad(nextMonth)}-01 00:00:00`;
   return db
-    .prepare('SELECT * FROM social_posts WHERE scheduled_at >= ? AND scheduled_at < ? ORDER BY scheduled_at ASC')
+    // Архив в сетке месяца не показываем: он для того и нужен, чтобы убрать с глаз.
+    .prepare("SELECT * FROM social_posts WHERE scheduled_at >= ? AND scheduled_at < ? AND status <> 'archived' ORDER BY scheduled_at ASC")
     .all(start, end);
 }
 
@@ -118,6 +129,7 @@ function normalizeScheduledAt(value) {
 }
 
 module.exports = {
+  listArchived,
   listRecentlyPublished,
   listPendingApproval,
   listNetworks,

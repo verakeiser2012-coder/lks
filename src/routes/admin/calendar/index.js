@@ -10,6 +10,7 @@ const {
   listUpcoming,
   listPendingApproval,
   listRecentlyPublished,
+  listArchived,
   listEventsForMonth,
   listPostsForMonth,
   getPost,
@@ -42,6 +43,7 @@ router.get('/', (req, res) => {
   const upcoming = listUpcoming(7);
   const pending = listPendingApproval();
   const published = listRecentlyPublished();
+  const archivedCount = listArchived().length;
   const calendarError = req.session.calendarError || null;
   req.session.calendarError = null;
   for (const post of upcoming) {
@@ -72,6 +74,7 @@ router.get('/', (req, res) => {
 
   res.render('admin/calendar', {
     published,
+    archivedCount,
     calendarError,
     pending,
     year,
@@ -134,6 +137,47 @@ router.post('/log', (req, res) => {
     throw err;
   }
   res.redirect('/admin/calendar');
+});
+
+/**
+ * Архив. Туда уходит всё неопубликованное — будущее или просроченное —
+ * что не хочется ни удалять, ни держать перед глазами. Опубликованное
+ * в архив не берём: оно уже вышло, и убирать его из ленты — врать себе.
+ *
+ * Возврат из архива снимает подтверждение: дата могла уйти в прошлое,
+ * и подтверждённый пост планировщик отправил бы немедленно. Пусть
+ * сначала на него посмотрят.
+ */
+const ARCHIVE_SQL = "UPDATE social_posts SET status = 'archived' WHERE id = ? AND status = 'scheduled'";
+const RESTORE_SQL = "UPDATE social_posts SET status = 'scheduled', approved = 0 WHERE id = ? AND status = 'archived'";
+
+function idsFrom(raw) {
+  return (Array.isArray(raw) ? raw : [raw]).map((x) => parseInt(x, 10)).filter((x) => Number.isInteger(x));
+}
+
+router.get('/archive', (req, res) => {
+  res.render('admin/calendar-archive', { posts: listArchived() });
+});
+
+router.post('/archive-batch', (req, res) => {
+  const ids = idsFrom(req.body.ids);
+  if (ids.length) {
+    const stmt = db.prepare(ARCHIVE_SQL);
+    db.exec('BEGIN');
+    try { for (const id of ids) stmt.run(id); db.exec('COMMIT'); }
+    catch (err) { db.exec('ROLLBACK'); throw err; }
+  }
+  res.redirect('/admin/calendar');
+});
+
+router.post('/:id/archive', (req, res) => {
+  db.prepare(ARCHIVE_SQL).run(req.params.id);
+  res.redirect('/admin/calendar');
+});
+
+router.post('/:id/restore', (req, res) => {
+  db.prepare(RESTORE_SQL).run(req.params.id);
+  res.redirect('/admin/calendar/' + req.params.id);
 });
 
 router.post('/approve-batch', (req, res) => {

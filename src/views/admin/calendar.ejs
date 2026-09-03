@@ -4,6 +4,7 @@
   <h1>Календарь публикаций</h1>
   <div>
     <a href="/admin/calendar/instagram-grid">Превью Instagram-сетки</a>
+    <a href="/admin/calendar/archive">Архив<% if (archivedCount) { %> (<%= archivedCount %>)<% } %></a>
     &nbsp;&nbsp;
     <a class="btn" href="/admin/calendar/new">+ Запланировать пост</a>
   </div>
@@ -85,6 +86,7 @@
           <input type="checkbox" id="pending-select-all"> выбрать все
         </label>
         <button class="btn" type="submit">✓ Подтвердить выбранные</button>
+        <button class="link-btn" type="submit" formaction="/admin/calendar/archive-batch">В архив выбранные</button>
       </div>
     </div>
     <p class="hint">Без подтверждения планировщик пост не опубликует, даже когда время наступит.</p>

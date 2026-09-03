@@ -391,3 +391,10 @@
   .feed-item { grid-template-columns: 1fr; gap: 3px; }
   .feed-form input[type="url"], .feed-form input[type="text"] { min-width: 0; flex: 1 1 100%; }
 }
+
+/* Архив публикаций: строка = дата, первая строка текста, действия. */
+.archive-row { display: grid; grid-template-columns: 116px 1fr auto; gap: 12px; align-items: baseline; padding: 9px 0; border-top: 1px solid #eee4cf; }
+.archive-when { font-size: 0.82rem; color: #8a8272; font-variant-numeric: tabular-nums; }
+.archive-actions { display: flex; gap: 12px; }
+.flash-info { background: #fff7dd; border: 1px solid #e6cf8a; color: #6b5a1e; padding: 10px 14px; border-radius: 4px; margin-bottom: 12px; }
+@media (max-width: 700px) { .archive-row { grid-template-columns: 1fr; gap: 3px; } }

@@ -108,17 +108,30 @@
   <button class="btn" type="submit">Сохранить ссылки</button>
 </form>
 
-<% if (post.status === 'scheduled') { %>
+<% if (post.status === 'archived') { %>
+  <div class="flash flash-info">
+    Пост в архиве: планировщик его не тронет. Вернуть — и он снова
+    появится в календаре, но без подтверждения: дату стоит перепроверить.
+  </div>
+  <form class="inline" action="/admin/calendar/<%= post.id %>/restore" method="POST">
+    <button class="btn" type="submit">Вернуть из архива</button>
+  </form>
+<% } else if (post.status === 'scheduled') { %>
   <a class="btn" href="/admin/calendar/<%= post.id %>/edit">Редактировать</a>
+  <form class="inline" action="/admin/calendar/<%= post.id %>/archive" method="POST">
+    <button class="link-btn" type="submit">В архив</button>
+  </form>
 <% } else { %>
   <p style="color:var(--color-muted); font-size:0.9rem;">
     Пост уже опубликован, поэтому текст и дата не редактируются — в сетях они
     от этого не изменятся. Правятся только ссылки выше.
   </p>
 <% } %>
+<% if (post.status !== 'archived') { %>
 <form class="inline" action="/admin/calendar/<%= post.id %>/publish" method="POST">
   <button class="btn" type="submit">Опубликовать сейчас</button>
 </form>
+<% } %>
 <form class="inline" action="/admin/calendar/<%= post.id %>/delete" method="POST" onsubmit="return confirm('Удалить пост?');">
   <button class="link-btn" type="submit">Удалить</button>
 </form>

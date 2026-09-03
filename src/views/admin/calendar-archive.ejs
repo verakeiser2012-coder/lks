@@ -1,0 +1,39 @@
+<%- include('partials/header') %>
+
+<div class="admin-toolbar">
+  <h1>Архив публикаций</h1>
+  <div>
+    <span class="badge">в архиве: <%= posts.length %></span>
+    &nbsp;&nbsp;
+    <a class="btn" href="/admin/calendar">← Календарь</a>
+  </div>
+</div>
+
+<p class="admin-hint">
+  Сюда уходят посты, которые не хочется ни удалять, ни держать перед глазами.
+  Планировщик архив не трогает. Вернуть можно в любой момент — пост встанет
+  на свою дату без подтверждения, чтобы его сначала перепроверили.
+</p>
+
+<% if (posts.length === 0) { %>
+  <p>Архив пуст.</p>
+<% } else { %>
+  <div class="archive-list">
+    <% posts.forEach(function (p) { %>
+      <div class="archive-row">
+        <div class="archive-when"><%= String(p.scheduled_at).slice(0, 16) %></div>
+        <a class="archive-text" href="/admin/calendar/<%= p.id %>"><%= String(p.text).split('\n')[0].slice(0, 110) || '(без текста)' %></a>
+        <div class="archive-actions">
+          <form class="inline" action="/admin/calendar/<%= p.id %>/restore" method="POST">
+            <button class="link-btn" type="submit">Вернуть</button>
+          </form>
+          <form class="inline" action="/admin/calendar/<%= p.id %>/delete" method="POST" onsubmit="return confirm('Удалить навсегда?');">
+            <button class="link-btn" type="submit">Удалить</button>
+          </form>
+        </div>
+      </div>
+    <% }); %>
+  </div>
+<% } %>
+
+<%- include('partials/footer') %>
