@@ -99,6 +99,9 @@ app.use((req, res, next) => {
   res.locals.musicLinks = db
     .prepare("SELECT group_name, label, url FROM page_links WHERE section = 'music' ORDER BY sort_order, id")
     .all();
+  res.locals.videoLinks = db
+    .prepare("SELECT group_name, label, url FROM page_links WHERE section = 'video' ORDER BY sort_order, id")
+    .all();
   res.locals.subscribeSuccess = Boolean(req.session.subscribeSuccess);
   res.locals.subscribeError = req.session.subscribeError || null;
   delete req.session.subscribeSuccess;

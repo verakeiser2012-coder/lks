@@ -899,8 +899,8 @@ form.inline { display: inline; }
 }
 .footer-inner {
   display: grid;
-  grid-template-columns: 1.15fr 0.7fr 1fr 1.1fr;
-  gap: 32px;
+  grid-template-columns: 1.1fr 0.7fr 1fr 0.9fr;
+  gap: 24px 28px;
 }
 @media (max-width: 1000px) { .footer-inner { grid-template-columns: 1fr 1fr; } }
 .footer-inner h4 {
@@ -945,22 +945,23 @@ form.inline { display: inline; }
 .subscribe-form .btn { padding: 8px 16px; white-space: nowrap; }
 .footer-subscribe .flash { padding: 8px 12px; font-size: 0.85rem; margin-bottom: 10px; }
 
-.footer-social-groups { display: flex; gap: 32px; flex-wrap: wrap; }
-.social-group { min-width: 140px; }
-.social-icons { display: flex; flex-wrap: wrap; gap: 8px; }
+.footer-social-groups { display: flex; flex-direction: column; gap: 12px; }
+.social-group h4 { margin-bottom: 5px; font-size: 0.8rem; }
+.social-group { min-width: 0; }
+.social-icons { display: flex; flex-wrap: wrap; gap: 5px; }
 .social-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 29px;
+  height: 29px;
   border-radius: 50%;
   background: #fff;
   border: 1px solid #e6cf8a;
   color: var(--color-accent);
   transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
 }
-.social-icon svg { width: 17px; height: 17px; }
+.social-icon svg { width: 14px; height: 14px; }
 .social-icon:hover {
   color: var(--color-gold-ink);
   background: linear-gradient(180deg, var(--color-gold-shine), var(--color-gold-bright));

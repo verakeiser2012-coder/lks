@@ -9,7 +9,8 @@
       'SoundCloud': 'soundcloud', 'Bandcamp': 'bandcamp', 'TIDAL': 'tidal',
       'X (Twitter)': 'x', 'Facebook': 'facebook',
     };
-    const links = (typeof musicLinks !== 'undefined' ? musicLinks : []);
+    const links = (typeof musicLinks !== 'undefined' ? musicLinks : [])
+      .concat(typeof videoLinks !== 'undefined' ? videoLinks : []);
     const pick = function (group, labels) {
       return labels.map(function (l) {
         const r = links.find(function (x) { return x.group_name === group && x.label === l; });
@@ -22,7 +23,11 @@
       { key: 'youtube', label: 'YouTube', url: settings.youtube_url },
       { key: 'tiktok', label: 'TikTok', url: settings.tiktok_url },
       { key: 'rutube', label: 'Rutube', url: settings.rutube_url },
-    ].filter(function (n) { return n.url; });
+    ].concat(
+      // Yappy и Likee живут только в page_links — в настройках их полей нет.
+      links.filter(function (x) { return x.section !== 'x' && /^(Yappy|Likee)/.test(x.label); })
+        .map(function (x) { return { key: x.label.split(' ')[0].toLowerCase(), label: x.label, url: x.url }; })
+    ).filter(function (n) { return n.url; });
     const otherSocial = [
       { key: 'vk', label: 'VK', url: settings.vk_url },
       { key: 'telegram', label: 'Telegram', url: settings.telegram_url },
