@@ -110,7 +110,22 @@
             </a>
           <% } %>
         </span>
-        <% if (settings.site_tagline) { %><span class="logo-tagline"><%= settings.site_tagline %></span><% } %>
+        <%
+          // Девиз — вторая часть слогана после « · ». Его печатает бегущий курсор:
+          // фраза про медленность сама появляется медленно. Первая часть статична.
+          // Без разделителя слоган остаётся одной строкой, как был.
+          const taglineParts = String(settings.site_tagline || '').split(' · ');
+          const taglineHead = taglineParts.length > 1 ? taglineParts[0] : settings.site_tagline;
+          const taglineMotto = taglineParts.length > 1 ? taglineParts.slice(1).join(' · ') : '';
+        %>
+        <% if (settings.site_tagline) { %>
+          <span class="logo-tagline">
+            <span class="logo-tagline-head"><%= taglineHead %></span>
+            <% if (taglineMotto) { %>
+              <span class="logo-motto"><span class="logo-motto-text" data-typewriter><%= taglineMotto %></span><span class="type-cursor" aria-hidden="true"></span></span>
+            <% } %>
+          </span>
+        <% } %>
       </div>
       <%# Маскоты Темп и Василий временно скрыты — вернуть, когда будут доделаны. %>
       <div class="shop-nav">

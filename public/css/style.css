@@ -77,7 +77,26 @@ a:hover { color: var(--color-accent-hover); }
 .logo-names { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; }
 .logo-name { display: inline-flex; align-items: center; gap: 4px; }
 .badge-icon { width: 15px; height: 15px; color: var(--color-accent); flex-shrink: 0; }
-.logo-tagline { font-size: 0.75rem; font-weight: 400; color: var(--color-muted); }
+.logo-tagline { font-size: 0.75rem; font-weight: 400; color: var(--color-muted); display: block; }
+.logo-tagline-head { display: block; }
+
+/* Девиз печатается сам. Высота строки зарезервирована заранее, чтобы шапка
+   не дёргалась, пока буквы ещё не появились. Курсор — не символ, а брусок:
+   не зависит от шрифта и мигает ступенькой, как в терминале, без плавности. */
+.logo-motto { display: block; min-height: 1.3em; white-space: nowrap; }
+.type-cursor {
+  display: inline-block;
+  width: 0.55em;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: -0.15em;
+  background: var(--color-accent);
+  animation: type-cursor-blink 1s steps(1, end) infinite;
+}
+@keyframes type-cursor-blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .type-cursor { animation: none; }
+}
 
 .hero-tagline { font-size: 1.1rem; color: var(--color-muted); margin-top: -8px; }
 
