@@ -36,12 +36,18 @@
     <% } %>
 
     <%
+      // Поля в базе общие для всех товаров, а подписи — нет. У файла нет
+      // ни веса, ни материала, ни ухода: «Вес: 54 МБ» и «Материал:
+      // цифровой архив» превращают карточку в недоразумение.
+      const specLabels = product.is_digital
+        ? ['Когда придёт', 'Размер', 'Объём файлов', 'Формат', 'Важно знать']
+        : ['Срок изготовления', 'Размер', 'Вес', 'Материал', 'Уход'];
       const specs = [
-        ['Срок изготовления', product.lead_time],
-        ['Размер', product.dimensions],
-        ['Вес', product.weight],
-        ['Материал', product.material],
-        ['Уход', product.care],
+        [specLabels[0], product.lead_time],
+        [specLabels[1], product.dimensions],
+        [specLabels[2], product.weight],
+        [specLabels[3], product.material],
+        [specLabels[4], product.care],
       ].filter(function (row) { return row[1]; });
     %>
     <% if (specs.length) { %>
@@ -65,7 +71,16 @@
         <button class="btn" type="submit"><%= Number(product.price) === 0 ? 'Забрать бесплатно' : 'Купить и скачать' %></button>
       </form>
     <% } else if (product.stock > 0) { %>
-      <p>В наличии: <%= product.stock %> шт.</p>
+      <%# Точный остаток честен только там, где вещь лежит готовой. У нас всё
+          отливается под заказ, и остаток в базе — заглушка «сколько угодно»:
+          «в наличии 999 шт.» спорит и с шапкой каталога, и с описанием, где
+          каждый экземпляр отливается отдельно. Признак изготовления под заказ —
+          указанный срок; когда он указан, называем срок, а не количество. %>
+      <% if (product.lead_time) { %>
+        <p class="product-made-to-order">Изготавливается под заказ</p>
+      <% } else { %>
+        <p>В наличии: <%= product.stock %> шт.</p>
+      <% } %>
       <form action="/cart/add" method="POST">
         <input type="hidden" name="productId" value="<%= product.id %>">
         <label>

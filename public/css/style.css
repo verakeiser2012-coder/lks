@@ -444,6 +444,9 @@ main.container { padding-top: 32px; padding-bottom: 60px; min-height: 60vh; }
 }
 .product-detail-info { flex: 1; min-width: 280px; }
 .out-of-stock { color: #b91c1c; font-weight: 600; }
+/* Не тревожный красный, как у отсутствия товара: под заказ — это норма,
+   а не проблема. Тон спокойный, вес обычный. */
+.product-made-to-order { color: var(--color-muted); font-weight: 600; }
 
 /* Цифровые товары: DJ-версии, стемы, пресеты */
 .product-digital-note {
