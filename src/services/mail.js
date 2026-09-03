@@ -15,6 +15,11 @@ if (isConfigured) {
     port: SMTP_PORT,
     secure: SMTP_PORT === 465,
     auth: { user: SMTP_USER, pass: SMTP_PASSWORD },
+    // Без явных таймаутов nodemailer ждёт молчащий сервер две минуты.
+    // Столько не должен ждать никто: ни покупатель, ни вебхук банка.
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 20000,
   });
 }
 

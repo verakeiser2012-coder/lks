@@ -118,19 +118,22 @@ async function sendDownloadEmail(orderId) {
 
 /**
  * Полный цикл после оплаты: выдать ссылки и отправить письмо.
- * Ошибка письма не должна ронять оплату — ссылки уже в базе,
- * их видно на странице «спасибо» и в админке заказа.
+ *
+ * Ссылки выдаются сразу — они и есть доставка: покупатель видит их
+ * на странице «спасибо», они же лежат в админке заказа. Письмо только
+ * дублирует их, поэтому уходит вдогонку и никого не задерживает.
+ *
+ * Раньше ответ ждал почтовый сервер. Молчащий SMTP держал покупателя
+ * до таймаута, хотя файлы к тому моменту были уже выданы.
  */
 async function deliverDigital(orderId) {
   const downloads = issueDownloads(orderId);
   if (downloads.length === 0) {
     return [];
   }
-  try {
-    await sendDownloadEmail(orderId);
-  } catch (err) {
+  sendDownloadEmail(orderId).catch((err) => {
     console.error('[digital] Не удалось отправить письмо со ссылками:', err.message);
-  }
+  });
   return downloads;
 }
 
