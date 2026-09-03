@@ -60,7 +60,7 @@
       <% if (digitalOnly) { %>
       <label style="display:flex; align-items:flex-start; gap:8px;">
         <input type="checkbox" name="digitalConsent" value="1" style="width:auto; margin-top:4px;" required>
-        <span>Согласен получить доступ к файлам сразу после оплаты и понимаю, что после
+        <span>Согласен получить доступ к файлам сразу после <%= total === 0 ? 'оформления' : 'оплаты' %> и понимаю, что после
         открытия доступа отказ от цифрового товара надлежащего качества не производится *</span>
       </label>
       <% } %>
@@ -70,7 +70,9 @@
         и даю согласие на обработку персональных данных в соответствии с
         <a href="/legal/privacy" target="_blank" rel="noopener">политикой конфиденциальности</a> *</span>
       </label>
-      <button class="btn" type="submit">Перейти к оплате</button>
+      <%# Бесплатный заказ платить нечем: кнопка «Перейти к оплате» над «Итого:
+          Бесплатно» выглядела бы ловушкой. Называем действие тем, что случится. %>
+      <button class="btn" type="submit"><%= total === 0 ? 'Получить файлы' : 'Перейти к оплате' %></button>
     </form>
   </div>
 
