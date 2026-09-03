@@ -4,8 +4,10 @@ require('./db/init');
 const path = require('path');
 const express = require('express');
 const session = require('express-session');
+const db = require('./db');
 const { formatDate, formatDateShort } = require('./utils/dates');
 const { formatPrice } = require('./utils/price');
+const { ICONS: socialIcons } = require('./utils/socialIcons');
 const SqliteSessionStore = require('./services/sqliteSessionStore');
 const morgan = require('morgan');
 
@@ -38,6 +40,7 @@ app.set('trust proxy', true);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.locals.renderLinkedText = renderLinkedText;
+app.locals.socialIcons = socialIcons;
 
 app.use(morgan('dev'));
 
@@ -91,6 +94,11 @@ app.use((req, res, next) => {
   res.locals.formatDate = formatDate;
   res.locals.formatDateShort = formatDateShort;
   res.locals.formatPrice = formatPrice;
+  // Площадки и соцсети музыки — единый источник для раздела /music и подвала,
+  // чтобы списки не расходились: добавил площадку в одном месте — она везде.
+  res.locals.musicLinks = db
+    .prepare("SELECT group_name, label, url FROM page_links WHERE section = 'music' ORDER BY sort_order, id")
+    .all();
   res.locals.subscribeSuccess = Boolean(req.session.subscribeSuccess);
   res.locals.subscribeError = req.session.subscribeError || null;
   delete req.session.subscribeSuccess;
