@@ -1,0 +1,70 @@
+<%- include('partials/header') %>
+
+<h1>Написать</h1>
+
+<% if (sent) { %>
+  <div class="flash flash-success contact-sent">
+    <strong>Сообщение отправлено.</strong>
+    Отвечаем обычно в течение пары дней. Ответ придёт на указанную почту —
+    проверьте папку «Спам», если его долго нет.
+  </div>
+  <p><a href="/">← На главную</a></p>
+<% } else { %>
+
+  <p class="contact-intro">
+    Вопрос, предложение о сотрудничестве, приглашение выступить или свой вокал —
+    выберите тему, чтобы письмо сразу попало в нужные руки.
+  </p>
+
+  <% if (error) { %><div class="flash flash-error"><%= error %></div><% } %>
+
+  <form class="contact-form" action="/contact" method="POST">
+    <label>
+      Тема <span class="req">*</span>
+      <select name="topic" required>
+        <option value="">— выберите —</option>
+        <% topics.forEach(function (t) { %>
+          <option value="<%= t.key %>" <%= form.topic === t.key ? 'selected' : '' %>><%= t.label %></option>
+        <% }); %>
+      </select>
+    </label>
+
+    <label>
+      Как к вам обращаться <span class="req">*</span>
+      <input type="text" name="name" value="<%= form.name %>" maxlength="120" required>
+    </label>
+
+    <label>
+      Почта для ответа <span class="req">*</span>
+      <input type="email" name="email" value="<%= form.email %>" maxlength="200" required>
+    </label>
+
+    <label>
+      Сообщение <span class="req">*</span>
+      <textarea name="body" rows="7" maxlength="5000" required><%= form.body %></textarea>
+    </label>
+
+    <%# Ловушка для ботов: живой человек этого поля не видит и не заполняет. %>
+    <div class="hp" aria-hidden="true">
+      <label>Не заполняйте это поле<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+    </div>
+
+    <label class="checkbox-row">
+      <input type="checkbox" name="dataConsent" value="1" required>
+      <span>Даю согласие на обработку персональных данных в соответствии
+        с <a href="/legal/privacy">политикой конфиденциальности</a> <span class="req">*</span></span>
+    </label>
+
+    <button class="btn" type="submit">Отправить</button>
+  </form>
+
+  <p class="contact-alt">
+    Не любите формы — пишите напрямую:
+    <a href="mailto:info@levkeiser.com">info@levkeiser.com</a> (общие вопросы),
+    <a href="mailto:brand@levkeiser.com">brand@levkeiser.com</a> (бренды),
+    <a href="mailto:booking@levkeiser.com">booking@levkeiser.com</a> (выступления).
+  </p>
+
+<% } %>
+
+<%- include('partials/footer') %>

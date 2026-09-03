@@ -54,9 +54,11 @@
         <strong><%= settings.site_name %></strong>
         <% if (settings.site_alt_name || true) { %><span class="footer-alt">DJ Levka</span><% } %>
         <% if (settings.address) { %><p><%= settings.address %></p><% } %>
-        <% if (settings.phone) { %>
-          <p class="footer-contacts"><a href="tel:<%= settings.phone.replace(/[^+\d]/g, '') %>"><%= settings.phone %></a></p>
-        <% } %>
+        <%# Телефон с каждой страницы собирают роботы, и он превращается
+            в поток спам-звонков. Здесь его нет: он остался на странице
+            «Оплата», где его требуют закон и банк, но куда не заходят
+            сборщики номеров. Вместо него — форма обращения. %>
+        <p class="footer-contacts"><a href="/contact">Написать нам →</a></p>
         <details class="footer-mail">
           <summary>Почта</summary>
           <p class="footer-contacts">
@@ -78,6 +80,7 @@
         <a href="/redheads">Рыжие</a>
         <a href="/catalog">Каталог</a>
         <a href="/drops">Дропы</a>
+        <a href="/contact">Написать</a>
       </nav>
 
       <div class="footer-subscribe">

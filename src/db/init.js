@@ -216,6 +216,20 @@ function init() {
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
 
+    -- Обращения с формы на сайте. Храним, потому что письмо может не дойти
+    -- или уехать в спам, а обращение потерять нельзя.
+    CREATE TABLE IF NOT EXISTS messages (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      topic TEXT NOT NULL,
+      name TEXT NOT NULL,
+      email TEXT NOT NULL,
+      body TEXT NOT NULL,
+      sent_to TEXT NOT NULL,
+      mail_error TEXT,
+      is_read INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
     CREATE TABLE IF NOT EXISTS redhead_spotlights (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,

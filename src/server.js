@@ -128,6 +128,7 @@ app.use('/drops', collectionsRoutes);
 app.use('/redheads', redheadsRoutes);
 app.use('/contest', contestRoutes);
 app.use('/subscribe', subscribeRoutes);
+app.use('/contact', require('./routes/contact'));
 app.use('/unsubscribe', require('./routes/unsubscribe'));
 app.use('/search', require('./routes/search'));
 app.use('/legal', legalRoutes);

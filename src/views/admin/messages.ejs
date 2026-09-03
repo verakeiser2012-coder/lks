@@ -1,0 +1,47 @@
+<%- include('partials/header') %>
+
+<% const unread = messages.filter(function (m) { return !m.is_read; }).length; %>
+
+<div class="admin-toolbar">
+  <h1>Обращения с сайта</h1>
+  <div>
+    <% if (unread) { %><span class="badge badge-scheduled">новых: <%= unread %></span>&nbsp;<% } %>
+    <span class="badge">всего: <%= messages.length %></span>
+  </div>
+</div>
+
+<p class="admin-hint">
+  Каждое обращение уходит письмом на нужный ящик, а сюда пишется на случай,
+  если письмо не дойдёт или уедет в спам. Отвечать удобнее из почты.
+</p>
+
+<% if (messages.length === 0) { %>
+  <p>Обращений пока нет. Форма живёт на <a href="/contact">/contact</a>.</p>
+<% } else { %>
+  <% messages.forEach(function (m) { %>
+    <div class="message-card<%= m.is_read ? ' is-read' : '' %>">
+      <div class="message-head">
+        <strong><%= m.name %></strong>
+        <a href="mailto:<%= m.email %>"><%= m.email %></a>
+        <span class="badge"><%= m.topic %></span>
+        <span class="badge">→ <%= m.sent_to %></span>
+        <% if (m.mail_error) { %>
+          <span class="badge badge-failed" title="<%= m.mail_error %>">письмо не ушло</span>
+        <% } %>
+        <span class="message-date"><%= m.created_at %></span>
+      </div>
+      <p class="message-body"><%= m.body %></p>
+      <div class="message-actions">
+        <a class="link-btn" href="mailto:<%= m.email %>?subject=<%= encodeURIComponent('Re: ' + m.topic) %>">Ответить</a>
+        <form class="inline" action="/admin/messages/<%= m.id %>/read" method="POST">
+          <button class="link-btn" type="submit"><%= m.is_read ? 'Вернуть в новые' : 'Прочитано' %></button>
+        </form>
+        <form class="inline" action="/admin/messages/<%= m.id %>/delete" method="POST" onsubmit="return confirm('Удалить обращение? Оно исчезнет навсегда.');">
+          <button class="link-btn" type="submit">Удалить</button>
+        </form>
+      </div>
+    </div>
+  <% }); %>
+<% } %>
+
+<%- include('partials/footer') %>
