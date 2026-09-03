@@ -18,9 +18,20 @@
   <div class="network-row">
     <div class="network-row-main">
       <strong><%= n.label %></strong>
-      <span class="badge badge-<%= n.enabled ? 'published' : 'disabled' %>">
-        <%= n.enabled ? 'подключено' : 'не подключено' %>
-      </span>
+      <%
+        // «Подключено» только когда есть и галочка, и ключи. Включённая сеть без
+        // ключей выглядела как рабочая, и легко было решить, что пост ушёл туда.
+        const def = connectors.find(function(c) { return c.key === n.connector; });
+        let creds = {}; try { creds = JSON.parse(n.credentials || '{}'); } catch (e) {}
+        const needsKeys = def && def.fields && def.fields.length > 0;
+        const hasKeys = !needsKeys || def.fields.every(function(f) { return String(creds[f.name] || '').trim() !== ''; });
+        // Коннектор «вручную» ничего не публикует сам: он ставит напоминание.
+        // Для него «подключено» — такая же неправда, как и «нет ключей».
+        const state = !n.enabled ? 'off' : (n.connector === 'manual' ? 'manual' : (hasKeys ? 'ok' : 'nokeys'));
+        const badge = { ok: 'published', nokeys: 'scheduled', manual: 'manual', off: 'disabled' }[state];
+        const caption = { ok: 'публикует сам', nokeys: 'включено, нет ключей', manual: 'напоминание, публикуешь сама', off: 'не подключено' }[state];
+      %>
+      <span class="badge badge-<%= badge %>"><%= caption %></span>
       <span class="badge">коннектор: <%= n.connector %></span>
     </div>
     <div class="network-row-actions">
