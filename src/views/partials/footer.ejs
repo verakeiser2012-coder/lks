@@ -18,7 +18,11 @@
       }).filter(Boolean);
     };
     // Стриминги в порядке, в котором их ищут: сначала мировые, потом российские.
-    const streaming = pick('Площадки', ['Spotify', 'Apple Music', 'YouTube Music', 'Яндекс Музыка', 'VK Музыка', 'Zvuk', 'Deezer', 'SoundCloud', 'Bandcamp', 'TIDAL']);
+    // В конце — музыкальный инстаграм @djlevka: он про музыку, а не про Льва,
+    // и стоять ему тут правильнее, чем в общем ряду. Личный @levkeiser
+    // остаётся в «Остальном» — это разные аккаунты, их легко перепутать.
+    const streaming = pick('Площадки', ['Spotify', 'Apple Music', 'YouTube Music', 'Яндекс Музыка', 'VK Музыка', 'Zvuk', 'Deezer', 'SoundCloud', 'Bandcamp', 'TIDAL'])
+      .concat(pick('Соцсети', ['Instagram']).map(function (n) { return { key: 'instagram', label: 'Instagram — музыка', url: n.url }; }));
     const videoSocial = [
       { key: 'youtube', label: 'YouTube', url: settings.youtube_url },
       { key: 'tiktok', label: 'TikTok', url: settings.tiktok_url },
@@ -32,7 +36,7 @@
       { key: 'vk', label: 'VK', url: settings.vk_url },
       { key: 'telegram', label: 'Telegram', url: settings.telegram_url },
       { key: 'whatsapp', label: 'WhatsApp', url: settings.whatsapp_url },
-      { key: 'instagram', label: 'Instagram', url: settings.instagram_url },
+      { key: 'instagram', label: 'Instagram — личный', url: settings.instagram_url },
       { key: 'pinterest', label: 'Pinterest', url: settings.pinterest_url },
       { key: 'ok', label: 'Одноклассники', url: settings.ok_url },
       { key: 'dzen', label: 'Дзен', url: settings.dzen_url },
