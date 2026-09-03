@@ -19,6 +19,47 @@ function listUpcoming(days) {
 }
 
 /**
+ * Что уже вышло — последние публикации со ссылками и списком площадок,
+ * куда пост НЕ попал.
+ *
+ * Пропуски здесь важнее самих публикаций: по ним видно, что можно
+ * перепостить. Без этого списка человек, открывший календарь, знает
+ * только про будущее и не знает, что уже лежит в ленте.
+ */
+function listRecentlyPublished(limit = 12) {
+  const posts = db
+    .prepare("SELECT * FROM social_posts WHERE status = 'published' ORDER BY scheduled_at DESC LIMIT ?")
+    .all(limit);
+  if (posts.length === 0) return [];
+
+  const targets = db
+    .prepare('SELECT * FROM social_post_targets WHERE post_id IN (' + posts.map(() => '?').join(',') + ')')
+    .all(...posts.map((p) => p.id));
+
+  // Считаем пропуски только по живым площадкам: предлагать перепост
+  // в отключённую сеть — совет, которым нельзя воспользоваться.
+  const live = db
+    .prepare('SELECT key, label, category FROM social_networks WHERE enabled = 1')
+    .all();
+
+  // Площадки, где без видео делать нечего. Совет «выложите статью в TikTok»
+  // не просто бесполезен — из-за него перестают читать всю строку.
+  const VIDEO_ONLY = new Set(['youtube', 'rutube']);
+  const isVideoOnly = (n) => VIDEO_ONLY.has(n.key) || n.category === 'shorts';
+
+  return posts.map((post) => {
+    const mine = targets.filter((t) => t.post_id === post.id);
+    const went = new Set(mine.map((t) => t.network_key));
+    const hasVideo = post.media_type === 'video';
+    return {
+      ...post,
+      targets: mine,
+      missing: live.filter((n) => !went.has(n.key) && (hasVideo || !isVideoOnly(n))),
+    };
+  });
+}
+
+/**
  * Всё, что ждёт подтверждения. Не ограничиваем неделей: затор обычно
  * копится дальше, и подтверждать удобнее сразу пачкой.
  */
@@ -77,6 +118,7 @@ function normalizeScheduledAt(value) {
 }
 
 module.exports = {
+  listRecentlyPublished,
   listPendingApproval,
   listNetworks,
   listUpcoming,

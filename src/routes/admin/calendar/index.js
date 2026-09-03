@@ -4,10 +4,12 @@ const { uploadGalleryFile } = require('../../../middleware/upload');
 const { isValidMediaUpload, mediaFilePath } = require('../../../services/media');
 const { publishPost, refreshStats } = require('../../../services/social/publish');
 const { suggestHashtags } = require('../../../utils/hashtags');
+const { detectNetwork } = require('../../../utils/postUrl');
 const {
   listNetworks,
   listUpcoming,
   listPendingApproval,
+  listRecentlyPublished,
   listEventsForMonth,
   listPostsForMonth,
   getPost,
@@ -39,6 +41,9 @@ router.get('/', (req, res) => {
 
   const upcoming = listUpcoming(7);
   const pending = listPendingApproval();
+  const published = listRecentlyPublished();
+  const calendarError = req.session.calendarError || null;
+  req.session.calendarError = null;
   for (const post of upcoming) {
     if (!targetsByPost[post.id]) targetsByPost[post.id] = getTargets(post.id);
   }
@@ -66,6 +71,8 @@ router.get('/', (req, res) => {
   }
 
   res.render('admin/calendar', {
+    published,
+    calendarError,
     pending,
     year,
     month,
@@ -84,6 +91,51 @@ router.get('/', (req, res) => {
 
 // Подтверждение пачкой. Пока подтверждение вообще существует, открывать
 // полсотни страниц по одной — главный затор в работе с календарём.
+/**
+ * Записать пост, опубликованный руками мимо календаря.
+ *
+ * Так в ленту попадают спонтанные публикации — репост в X, пост в Facebook,
+ * статья в Дзене. Без этого календарь знает только про то, что планировали,
+ * и человек со стороны не понимает, что уже вышло.
+ *
+ * Просим только ссылку: площадка видна из адреса, время по умолчанию —
+ * сейчас. Чем меньше полей, тем выше шанс, что запись вообще сделают.
+ */
+router.post('/log', (req, res) => {
+  const url = String(req.body.url || '').trim();
+  const key = detectNetwork(url);
+  if (!key) {
+    req.session.calendarError = url
+      ? 'Не удалось понять площадку по ссылке. Проверьте адрес или заведите пост вручную.'
+      : 'Вставьте ссылку на публикацию.';
+    return res.redirect('/admin/calendar');
+  }
+
+  const known = db.prepare('SELECT key FROM social_networks WHERE key = ?').get(key);
+  if (!known) {
+    req.session.calendarError = `Площадка «${key}» не заведена в соцсетях — добавьте её, чтобы вести учёт.`;
+    return res.redirect('/admin/calendar');
+  }
+
+  const when = normalizeScheduledAt(req.body.scheduled_at) ||
+    new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Yekaterinburg' }).slice(0, 16).replace('T', ' ') + ':00';
+  const text = String(req.body.text || '').trim() || 'Опубликовано вручную';
+
+  db.exec('BEGIN');
+  try {
+    const info = db
+      .prepare("INSERT INTO social_posts (text, scheduled_at, status, approved, link_url) VALUES (?, ?, 'published', 1, ?)")
+      .run(text, when, url);
+    db.prepare("INSERT INTO social_post_targets (post_id, network_key, status, published_url) VALUES (?, ?, 'published', ?)")
+      .run(info.lastInsertRowid, key, url);
+    db.exec('COMMIT');
+  } catch (err) {
+    db.exec('ROLLBACK');
+    throw err;
+  }
+  res.redirect('/admin/calendar');
+});
+
 router.post('/approve-batch', (req, res) => {
   const raw = req.body.ids;
   const ids = (Array.isArray(raw) ? raw : [raw])

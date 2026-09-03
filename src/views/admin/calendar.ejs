@@ -25,6 +25,55 @@
   function netShort(key) { return NET_SHORT[key] || key.slice(0, 3).toUpperCase(); }
 %>
 
+<%# Спонтанные публикации мимо календаря — репост в X, пост в Facebook,
+    статья в Дзене. Раньше они нигде не отражались, и человек, открывший
+    календарь, знал только про будущее: что уже вышло и что можно
+    перепостить, видно не было. %>
+<% if (typeof calendarError !== 'undefined' && calendarError) { %>
+  <div class="flash flash-error"><%= calendarError %></div>
+<% } %>
+
+<section class="feed-log">
+  <div class="feed-head">
+    <h2>Уже в ленте</h2>
+    <form class="feed-form" action="/admin/calendar/log" method="POST">
+      <input type="url" name="url" placeholder="Ссылка на публикацию" required>
+      <input type="text" name="text" placeholder="О чём — необязательно">
+      <button class="btn" type="submit">Записать</button>
+    </form>
+  </div>
+  <p class="feed-hint">Опубликовали руками — вставьте ссылку. Площадку и время определим сами.</p>
+
+  <% if (!published || published.length === 0) { %>
+    <p class="feed-empty">Пока ничего не записано.</p>
+  <% } else { %>
+    <ul class="feed-list">
+      <% published.forEach(function (p) { %>
+        <li class="feed-item">
+          <div class="feed-when"><%= String(p.scheduled_at).slice(0, 16) %></div>
+          <div class="feed-body">
+            <a class="feed-text" href="/admin/calendar/<%= p.id %>"><%= String(p.text).split('\n')[0].slice(0, 90) %></a>
+            <div class="feed-where">
+              <% p.targets.forEach(function (t) { %>
+                <% if (t.published_url) { %>
+                  <a class="badge badge-published" href="<%= t.published_url %>" target="_blank" rel="noopener"><%= t.network_key %> ↗</a>
+                <% } else { %>
+                  <span class="badge badge-published"><%= t.network_key %></span>
+                <% } %>
+              <% }); %>
+              <% if (p.missing.length > 0) { %>
+                <span class="feed-missing">можно ещё:
+                  <% p.missing.forEach(function (n, i) { %><%= i ? ', ' : '' %><%= n.label %><% }); %>
+                </span>
+              <% } %>
+            </div>
+          </div>
+        </li>
+      <% }); %>
+    </ul>
+  <% } %>
+</section>
+
 <%# Пока подтверждение существует, открывать посты по одному — главный затор.
     Когда календарю начнём доверять полностью, этот блок просто убрать. %>
 <% if (pending && pending.length > 0) { %>
