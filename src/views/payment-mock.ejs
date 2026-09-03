@@ -7,7 +7,7 @@
   здесь будет форма оплаты ЮKassa.
 </div>
 
-<p>Заказ №<%= order.id %> на сумму <strong><%= order.total %> ₽</strong></p>
+<p>Заказ №<%= order.id %> на сумму <strong><%= formatPrice(order.total) %></strong></p>
 
 <form action="/checkout/pay/<%= order.id %>/confirm" method="POST">
   <button class="btn" type="submit">Подтвердить оплату (тест)</button>

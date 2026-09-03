@@ -19,15 +19,15 @@
     <% items.forEach(function(item) { %>
       <tr>
         <td><%= item.product_name %></td>
-        <td><%= item.price %> ₽</td>
+        <td><%= formatPrice(item.price) %></td>
         <td><%= item.qty %></td>
-        <td><%= item.price * item.qty %> ₽</td>
+        <td><%= formatPrice(item.price * item.qty) %></td>
       </tr>
     <% }); %>
   </tbody>
 </table>
 
-<p><strong>Итого: <%= order.total %> ₽</strong></p>
+<p><strong>Итого: <%= formatPrice(order.total) %></strong></p>
 
 <form action="/admin/orders/<%= order.id %>/status" method="POST">
   <label>

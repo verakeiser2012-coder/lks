@@ -22,7 +22,7 @@
         <td><%= order.id %></td>
         <td><%= order.customer_name %></td>
         <td><%= order.phone %></td>
-        <td><%= order.total %> ₽</td>
+        <td><%= formatPrice(order.total) %></td>
         <td><%= order.delivery_method === 'pickup' ? 'ПВЗ' : 'Курьер/адрес' %></td>
         <td><%= order.status %></td>
         <td><%= order.payment_status %></td>

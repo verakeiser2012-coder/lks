@@ -25,7 +25,7 @@
             <% if (item.product.image) { %><img src="<%= item.product.image %>" alt=""><% } %>
             <a href="/catalog/<%= item.product.slug %>"><%= item.product.name %></a>
           </td>
-          <td><%= item.product.price %> ₽</td>
+          <td><%= formatPrice(item.product.price) %></td>
           <td>
             <% if (item.product.is_digital) { %>
               1 <span style="color:var(--color-muted); font-size:0.85rem;">файл</span>
@@ -36,7 +36,7 @@
               </form>
             <% } %>
           </td>
-          <td><%= item.subtotal %> ₽</td>
+          <td><%= formatPrice(item.subtotal) %></td>
           <td>
             <form class="inline" action="/cart/remove" method="POST">
               <input type="hidden" name="productId" value="<%= item.product.id %>">
@@ -48,7 +48,7 @@
     </tbody>
   </table>
 
-  <p><strong>Итого: <%= total %> ₽</strong></p>
+  <p><strong>Итого: <%= formatPrice(total) %></strong></p>
   <a class="btn" href="/checkout">Оформить заказ</a>
 <% } %>
 

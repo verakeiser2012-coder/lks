@@ -78,10 +78,10 @@
     <h3>Ваш заказ</h3>
     <ul>
       <% items.forEach(function(item) { %>
-        <li><%= item.product.name %> × <%= item.qty %> — <%= item.subtotal %> ₽</li>
+        <li><%= item.product.name %> × <%= item.qty %> — <%= formatPrice(item.subtotal) %></li>
       <% }); %>
     </ul>
-    <p><strong>Итого: <%= total %> ₽</strong></p>
+    <p><strong>Итого: <%= formatPrice(total) %></strong></p>
   </aside>
 </div>
 

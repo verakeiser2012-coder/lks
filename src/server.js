@@ -5,6 +5,7 @@ const path = require('path');
 const express = require('express');
 const session = require('express-session');
 const { formatDate, formatDateShort } = require('./utils/dates');
+const { formatPrice } = require('./utils/price');
 const SqliteSessionStore = require('./services/sqliteSessionStore');
 const morgan = require('morgan');
 
@@ -89,6 +90,7 @@ app.use((req, res, next) => {
   res.locals.bgPlaylist = require('./utils/bgPlaylist').getBgPlaylist();
   res.locals.formatDate = formatDate;
   res.locals.formatDateShort = formatDateShort;
+  res.locals.formatPrice = formatPrice;
   res.locals.subscribeSuccess = Boolean(req.session.subscribeSuccess);
   res.locals.subscribeError = req.session.subscribeError || null;
   delete req.session.subscribeSuccess;

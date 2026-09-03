@@ -3,8 +3,13 @@
 <section class="hero">
   <h1><%= settings.site_name %></h1>
   <% if (settings.site_tagline) { %><p class="hero-tagline"><%= settings.site_tagline %></p><% } %>
-  <p>Добро пожаловать! Смотрите каталог товаров и нашу галерею.</p>
-  <a class="btn" href="/catalog">Перейти в каталог</a>
+  <%# Пояснять «добро пожаловать, смотрите каталог» не нужно: девиз уже сказан
+      выше, а манифест идёт следом. Герою остаётся только развести по двум
+      главным дорогам — музыка и вещи. %>
+  <div class="hero-actions">
+    <a class="btn" href="/music">Слушать музыку</a>
+    <a class="btn btn-ghost" href="/catalog">Каталог</a>
+  </div>
 </section>
 
 <section class="slow-strip">
@@ -30,7 +35,7 @@
           <% } %>
         </div>
         <div>
-          <div class="news-date"><%= post.created_at %></div>
+          <div class="news-date"><%= formatDate(post.created_at, 'ru') %></div>
           <div class="news-title"><%= post.title %></div>
         </div>
       </a>
@@ -56,7 +61,7 @@
             <% } %>
           </div>
           <div class="product-name"><%= product.name %></div>
-          <div class="product-price"><%= product.price %> ₽</div>
+          <div class="product-price"><%= formatPrice(product.price) %></div>
         </a>
       <% }); %>
     </div>

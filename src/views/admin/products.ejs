@@ -23,7 +23,7 @@
           <% if (product.image) { %><img src="<%= product.image %>" alt="" style="width:48px;height:48px;object-fit:cover;border-radius:4px;"><% } %>
         </td>
         <td><%= product.name %></td>
-        <td><%= product.price %> ₽</td>
+        <td><%= formatPrice(product.price) %></td>
         <td><%= product.stock %></td>
         <td><%= product.is_active ? 'Да' : 'Нет' %></td>
         <td>
