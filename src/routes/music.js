@@ -5,6 +5,14 @@ const { getGalleryItems } = require('../utils/gallery');
 
 const router = express.Router();
 
+// Один список для раздела и для плёнки на страницах релиза и трека:
+// порядок везде должен совпадать, иначе «соседи» на плёнке не те.
+function listReleases() {
+  return db
+    .prepare('SELECT * FROM releases WHERE is_published = 1 ORDER BY sort_order ASC, created_at DESC')
+    .all();
+}
+
 router.get('/', (req, res) => {
   const introRow = db.prepare("SELECT value FROM settings WHERE key = 'music_intro'").get();
   const links = db.prepare(
@@ -16,9 +24,7 @@ router.get('/', (req, res) => {
   const featuredMap = {};
   for (const row of featuredRows) featuredMap[row.key] = row.value;
 
-  const releases = db
-    .prepare('SELECT * FROM releases WHERE is_published = 1 ORDER BY sort_order ASC, created_at DESC')
-    .all();
+  const releases = listReleases();
   const trackCounts = db
     .prepare('SELECT release_id, COUNT(*) AS c FROM tracks WHERE is_published = 1 AND release_id IS NOT NULL GROUP BY release_id')
     .all();
@@ -57,6 +63,8 @@ router.get('/:releaseSlug', (req, res, next) => {
     title: release.title,
     release,
     tracks,
+    allReleases: listReleases(),
+    currentReleaseId: release.id,
     // Превью репоста — обложка релиза. Без неё ссылка в мессенджере
     // показывала общую картинку сайта, одинаковую для всех страниц.
     pageImage: release.cover_image || '',
@@ -94,6 +102,8 @@ router.get('/:releaseSlug/:trackSlug', (req, res, next) => {
     prevTrack,
     nextTrack,
     trackGalleryItems,
+    allReleases: listReleases(),
+    currentReleaseId: release.id,
     // У трека своя обложка бывает не всегда — тогда берём обложку релиза.
     pageImage: track.cover_image || (release && release.cover_image) || '',
     pageDescription: track.description || (release ? `Трек из релиза ${release.title} (${release.year})` : 'Трек DJ Levka'),

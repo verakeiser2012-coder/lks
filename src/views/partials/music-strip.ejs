@@ -1,0 +1,51 @@
+<%# Плёнка со всей музыкой на странице релиза или трека.
+    Ожидает allReleases (в порядке раздела «Музыка») и currentReleaseId.
+    Смысл — не уходить в раздел, чтобы посмотреть остальное: с сингла
+    видно весь каталог, и он листается на месте. %>
+<% if (typeof allReleases !== 'undefined' && allReleases.length > 1) { %>
+<section class="music-strip-section">
+  <h2>Вся музыка <span class="music-strip-hint">· листайте</span></h2>
+  <div class="filmstrip filmstrip--timeline" id="music-strip">
+    <div class="filmstrip-track">
+      <% allReleases.forEach(function (r, idx) { %>
+        <% const isCurrent = r.id === currentReleaseId; %>
+        <div class="film-cell <%= isCurrent ? 'current' : '' %>" data-code="DJ LEVKA · <%= r.release_type %>" data-num="№ <%= String(idx + 1).padStart(2, '0') %><% if (r.year) { %> · <%= r.year %><% } %>">
+          <a class="disc-frame" href="/music/<%= r.slug %>" <%= isCurrent ? 'data-current="1" aria-current="page"' : '' %>>
+            <% if (r.cover_image) { %>
+              <img src="<%= r.cover_image %>" alt="" loading="lazy">
+            <% } else { %>
+              <div class="no-image">Нет обложки</div>
+            <% } %>
+            <div class="disc-frame-caption">
+              <div class="disc-frame-type"><%= r.release_type %><% if (r.year) { %> · <%= r.year %><% } %></div>
+              <div class="disc-frame-title"><%= r.title %></div>
+            </div>
+          </a>
+        </div>
+      <% }); %>
+    </div>
+  </div>
+</section>
+<script>
+  // Текущий релиз — в центр плёнки, чтобы было видно соседей слева и справа.
+  // Двигаем только саму плёнку: scrollIntoView дёргал бы и страницу.
+  // Центрируем после полной загрузки: на DOMContentLoaded ширина плёнки
+  // ещё бывает нулевой, и кадр уезжает за левый край.
+  (function () {
+    var done = false;
+    function center() {
+      if (done) return;
+      var strip = document.getElementById('music-strip');
+      var link = strip && strip.querySelector('[data-current]');
+      var cell = link && link.closest('.film-cell');
+      if (!cell || !strip.clientWidth) return;
+      var offset = cell.getBoundingClientRect().left - strip.getBoundingClientRect().left + strip.scrollLeft;
+      strip.scrollLeft = offset - (strip.clientWidth - cell.offsetWidth) / 2;
+      done = true;
+    }
+    document.addEventListener('DOMContentLoaded', center);
+    window.addEventListener('load', center);
+    window.addEventListener('resize', center);
+  })();
+</script>
+<% } %>

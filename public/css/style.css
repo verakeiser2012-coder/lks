@@ -742,6 +742,33 @@ main.container { padding-top: 32px; padding-bottom: 60px; min-height: 60vh; }
 .filmstrip--timeline .film-cell.current::after { color: #F7F3EA; opacity: 1; }
 .filmstrip--timeline .news-frame:hover { background: #3a2f22; color: #fff; }
 
+/* Плёнка со всей музыкой на страницах релиза и трека. Кадры квадратные —
+   обложки квадратные, и резать их под новостной формат было бы жалко. */
+.music-strip-section { margin-top: 28px; }
+.music-strip-hint { font-size: 0.8rem; font-weight: 400; color: var(--color-muted); letter-spacing: 0.04em; }
+.filmstrip--timeline .disc-frame {
+  width: 150px; border-radius: 4px; overflow: hidden; display: block;
+  background: #2c241a; color: #F7F3EA;
+  box-shadow: inset 0 0 0 1px rgba(247, 243, 234, 0.08);
+}
+.filmstrip--timeline .disc-frame img,
+.filmstrip--timeline .disc-frame .no-image {
+  width: 150px; height: 150px; object-fit: cover; display: block;
+  background: #3a2f22; color: #8a7a63; font-size: 0.75rem; text-align: center; line-height: 150px;
+  filter: sepia(0.32) saturate(0.8) contrast(1.06) brightness(0.96);
+  transition: filter 0.35s ease;
+}
+.filmstrip--timeline .disc-frame:hover img { filter: none; }
+.filmstrip--timeline .disc-frame-caption { padding: 6px 8px; }
+.filmstrip--timeline .disc-frame-type { font-size: 0.7rem; color: #C9A06A; text-transform: uppercase; letter-spacing: 0.06em; }
+.filmstrip--timeline .disc-frame-title {
+  font-size: 0.8rem; line-height: 1.25; margin-top: 2px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.filmstrip--timeline .film-cell.current .disc-frame { outline: 2px solid #D99A2B; outline-offset: 2px; }
+.filmstrip--timeline .film-cell.current .disc-frame img { filter: none; }
+.filmstrip--timeline .disc-frame:hover { background: #3a2f22; color: #fff; }
+
 /* Masonry-галерея: разная высота карточек, лайтбокс по клику — public/js/lightbox.js */
 .gallery-grid {
   column-count: 3;
