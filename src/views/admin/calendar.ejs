@@ -48,12 +48,22 @@
   <% if (!published || published.length === 0) { %>
     <p class="feed-empty">Пока ничего не записано.</p>
   <% } else { %>
-    <ul class="feed-list">
+    <%# Плитками, а не строками: ленту просматривают глазами по картинкам.
+        Списком из тридцати строк текста никто пользоваться не станет. %>
+    <div class="feed-grid">
       <% published.forEach(function (p) { %>
-        <li class="feed-item">
-          <div class="feed-when"><%= String(p.scheduled_at).slice(0, 16) %></div>
-          <div class="feed-body">
-            <a class="feed-text" href="/admin/calendar/<%= p.id %>"><%= String(p.text).split('\n')[0].slice(0, 90) %></a>
+        <article class="feed-card">
+          <a class="feed-thumb" href="/admin/calendar/<%= p.id %>">
+            <% if (p.thumb_url) { %>
+              <img src="<%= p.thumb_url %>" alt="" loading="lazy" referrerpolicy="no-referrer">
+            <% } else { %>
+              <span class="feed-thumb-empty"><%= p.media_type === 'video' ? '▶' : '✎' %></span>
+            <% } %>
+            <% if (p.media_type === 'video') { %><span class="feed-play">▶</span><% } %>
+          </a>
+          <div class="feed-card-body">
+            <div class="feed-when"><%= String(p.scheduled_at).slice(0, 16) %></div>
+            <a class="feed-text" href="/admin/calendar/<%= p.id %>"><%= String(p.text).split('\n')[0].slice(0, 70) %></a>
             <div class="feed-where">
               <% p.targets.forEach(function (t) { %>
                 <% if (t.published_url) { %>
@@ -62,16 +72,14 @@
                   <span class="badge badge-published"><%= t.network_key %></span>
                 <% } %>
               <% }); %>
-              <% if (p.missing.length > 0) { %>
-                <span class="feed-missing">можно ещё:
-                  <% p.missing.forEach(function (n, i) { %><%= i ? ', ' : '' %><%= n.label %><% }); %>
-                </span>
-              <% } %>
             </div>
+            <% if (p.missing.length > 0) { %>
+              <div class="feed-missing">можно ещё: <% p.missing.forEach(function (n, i) { %><%= i ? ', ' : '' %><%= n.label %><% }); %></div>
+            <% } %>
           </div>
-        </li>
+        </article>
       <% }); %>
-    </ul>
+    </div>
   <% } %>
 </section>
 

@@ -57,7 +57,7 @@ function alreadyKnown(url) {
  * Дописать публикацию в календарь как уже вышедшую.
  * Пост и его площадка появляются вместе или не появляются вовсе.
  */
-function record({ key, url, when, body, mediaType }) {
+function record({ key, url, when, body, mediaType, thumb }) {
   if (!url || alreadyKnown(url)) return false;
   const localWhen = toLocal(when);
   if (!localWhen) return false;
@@ -67,9 +67,9 @@ function record({ key, url, when, body, mediaType }) {
   db.exec('BEGIN');
   try {
     const info = db
-      .prepare(`INSERT INTO social_posts (text, scheduled_at, status, approved, link_url, media_type, sources)
-                VALUES (?, ?, 'published', 1, ?, ?, 'импорт с площадки')`)
-      .run((body || '').slice(0, 2000) || 'Публикация на площадке', localWhen, url, mediaType || '');
+      .prepare(`INSERT INTO social_posts (text, scheduled_at, status, approved, link_url, media_type, thumb_url, sources)
+                VALUES (?, ?, 'published', 1, ?, ?, ?, 'импорт с площадки')`)
+      .run((body || '').slice(0, 2000) || 'Публикация на площадке', localWhen, url, mediaType || '', thumb || '');
     db.prepare("INSERT INTO social_post_targets (post_id, network_key, status, published_url) VALUES (?, ?, 'published', ?)")
       .run(info.lastInsertRowid, key, url);
     db.exec('COMMIT');
@@ -95,6 +95,8 @@ async function importTelegram() {
     const body = (block.match(/tgme_widget_message_text[^>]*>([\s\S]*?)<\/div>/) || [])[1];
     const hasVideo = /tgme_widget_message_video|message_video_player/.test(block);
     const hasPhoto = /tgme_widget_message_photo/.test(block);
+    // Превью лежит фоном в стиле — и у фото, и у видео.
+    const thumb = (block.match(/background-image:\s*url\('([^']+)'\)/) || [])[1];
     if (!id || !when) continue;
     if (record({
       key: 'telegram',
@@ -102,6 +104,7 @@ async function importTelegram() {
       when,
       body: decode(body || ''),
       mediaType: hasVideo ? 'video' : hasPhoto ? 'photo' : '',
+      thumb,
     })) added += 1;
   }
   return { key: 'telegram', added, seen: blocks.length };
@@ -113,7 +116,15 @@ async function importYouTube() {
   const channelId = (url.match(/channel\/(UC[\w-]+)/) || [])[1];
   if (!channelId) return { key: 'youtube', skipped: 'в настройках нет ссылки на канал вида /channel/UC…' };
 
-  const xml = await text(`https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`);
+  // RSS иногда отвечает 404 на живой канал — YouTube так придерживает
+  // запросы с серверных адресов. Тогда читаем страницу «Видео»: там те же
+  // ролики, только без дат, и время приходится ставить по факту находки.
+  let xml = '';
+  try {
+    xml = await text(`https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`);
+  } catch (err) {
+    return importYouTubePage(channelId, err.message);
+  }
   const entries = xml.split('<entry>').slice(1);
   let added = 0;
   for (const e of entries) {
@@ -127,9 +138,52 @@ async function importYouTube() {
       when,
       body: decode(title || ''),
       mediaType: 'video',
+      thumb: `https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`,
     })) added += 1;
   }
   return { key: 'youtube', added, seen: entries.length };
+}
+
+/**
+ * Запасной путь для YouTube: страница «Видео» канала.
+ *
+ * Дат на ней нет, поэтому дату каждого нового ролика берём с его страницы —
+ * там лежит настоящая uploadDate. Ставить вместо неё «сейчас» нельзя:
+ * старые ролики встали бы в ленту сегодняшним днём и соврали бы о истории.
+ * Страница тяжёлая, но ходим только за теми, которых ещё нет в базе.
+ */
+async function importYouTubePage(channelId, rssError) {
+  const html = await text(`https://www.youtube.com/channel/${channelId}/videos`);
+  const ids = [];
+  for (const m of html.matchAll(/"videoId":"([A-Za-z0-9_-]{11})"/g)) {
+    if (!ids.includes(m[1])) ids.push(m[1]);
+  }
+  let added = 0;
+  let undated = 0;
+  for (const id of ids) {
+    const url = `https://www.youtube.com/watch?v=${id}`;
+    if (alreadyKnown(url)) continue;
+    let page;
+    try {
+      page = await text(url);
+    } catch (err) {
+      continue;
+    }
+    const when = (page.match(/"uploadDate":"([^"]+)"/) || [])[1];
+    if (!when) { undated += 1; continue; }
+    const title = (page.match(/<meta name="title" content="([^"]*)"/) || [])[1]
+      || (page.match(/"title":"([^"]+)"/) || [])[1] || 'Видео на YouTube';
+    if (record({
+      key: 'youtube',
+      url,
+      when,
+      body: decode(title),
+      mediaType: 'video',
+      thumb: `https://i.ytimg.com/vi/${id}/mqdefault.jpg`,
+    })) added += 1;
+  }
+  const note = 'через страницу канала, RSS: ' + rssError + (undated ? `; без даты пропущено ${undated}` : '');
+  return { key: 'youtube', added, seen: ids.length, note };
 }
 
 // ── Rutube: открытый API канала ──
@@ -153,12 +207,27 @@ async function importRutube() {
       when,
       body: decode(v.title || ''),
       mediaType: 'video',
+      thumb: v.thumbnail_url || '',
     })) added += 1;
   }
   return { key: 'rutube', added, seen: items.length };
 }
 
-// ── VK: стена сообщества, нужен пользовательский ключ ──
+// Из вложений VK берём картинку среднего размера: для превью хватает,
+// а самая большая тянула бы мегабайты ради плитки в сто пикселей.
+function vkThumb(post) {
+  for (const a of post.attachments || []) {
+    const sizes = (a.photo && a.photo.sizes) || (a.video && a.video.image) || [];
+    if (sizes.length) {
+      const sorted = [...sizes].sort((x, y) => (x.width || 0) - (y.width || 0));
+      const pick = sorted.find((s) => (s.width || 0) >= 320) || sorted[sorted.length - 1];
+      if (pick && pick.url) return pick.url;
+    }
+  }
+  return '';
+}
+
+// ── VK: стена сообщества, нужен сервисный ключ ──
 async function importVK() {
   const c = credentials('vk');
   if (!c) return { key: 'vk', skipped: 'сеть отключена' };
@@ -184,6 +253,7 @@ async function importVK() {
       when: p.date * 1000,
       body: p.text || '',
       mediaType: hasVideo ? 'video' : hasPhoto ? 'photo' : '',
+      thumb: vkThumb(p),
     })) added += 1;
   }
   return { key: 'vk', added, seen: items.length };
@@ -204,7 +274,7 @@ async function importFeeds() {
   }
   const added = results.reduce((s, r) => s + (r.added || 0), 0);
   const line = results
-    .map((r) => r.error ? `${r.key}: ошибка — ${r.error}` : r.skipped ? `${r.key}: пропуск — ${r.skipped}` : `${r.key}: +${r.added} из ${r.seen}`)
+    .map((r) => r.error ? `${r.key}: ошибка — ${r.error}` : r.skipped ? `${r.key}: пропуск — ${r.skipped}` : `${r.key}: +${r.added} из ${r.seen}${r.note ? ' (' + r.note + ')' : ''}`)
     .join('; ');
   if (added > 0 || results.some((r) => r.error)) console.log('[импорт лент] ' + line);
   return results;

@@ -305,6 +305,13 @@ function init() {
     );
   `);
 
+  // Превью публикации на площадке: ленту просматривают глазами по картинкам,
+  // а не по тексту. Ссылка внешняя — файл к себе не тянем.
+  const postCols = db.prepare('PRAGMA table_info(social_posts)').all();
+  if (!postCols.some((c) => c.name === 'thumb_url')) {
+    db.exec("ALTER TABLE social_posts ADD COLUMN thumb_url TEXT NOT NULL DEFAULT ''");
+  }
+
   const orderCols = db.prepare('PRAGMA table_info(orders)').all();
   if (!orderCols.some((c) => c.name === 'delivery_method')) {
     db.exec("ALTER TABLE orders ADD COLUMN delivery_method TEXT NOT NULL DEFAULT 'courier'");
