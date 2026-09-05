@@ -34,6 +34,18 @@
     <input type="url" name="url" value="<%= track ? track.url : '' %>" placeholder="https://...">
   </label>
   <label>
+    Клип — ссылка на видео (YouTube, Rutube, VK Видео, Vimeo)
+    <input type="url" name="videoUrl" value="<%= track ? (track.video_url || '') : '' %>" placeholder="https://www.youtube.com/watch?v=...">
+  </label>
+  <label>
+    Формат видео
+    <select name="videoFormat">
+      <option value="landscape" <%= !track || (track.video_format || 'landscape') === 'landscape' ? 'selected' : '' %>>Горизонтальное 16:9</option>
+      <option value="portrait" <%= track && track.video_format === 'portrait' ? 'selected' : '' %>>Вертикальное 9:16 (shorts, вертикалка)</option>
+    </select>
+  </label>
+  <p class="hint">Клип покажется плеером на странице трека. Ссылку из плейлиста (с list=) вставлять можно: после клипа плеер продолжит подборку.</p>
+  <label>
     Обложка
     <input type="file" name="cover" accept="image/*">
   </label>

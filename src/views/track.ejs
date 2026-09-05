@@ -9,6 +9,15 @@
   </div>
 </section>
 
+<% if (trackVideo) { %>
+<section class="link-section">
+  <h2>Клип</h2>
+  <div class="video-embed <%= track.video_format === 'portrait' ? 'is-portrait' : '' %>">
+    <iframe src="<%= trackVideo.embedUrl %>" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="Клип: <%= track.title %>"></iframe>
+  </div>
+</section>
+<% } %>
+
 <% if (track.description) { %>
   <div class="prose drop-description"><%- renderLinkedText(track.description) %></div>
 <% } %>

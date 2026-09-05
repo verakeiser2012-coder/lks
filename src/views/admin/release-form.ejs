@@ -37,6 +37,18 @@
     <input type="url" name="streamingUrl" value="<%= release ? release.streaming_url : '' %>" placeholder="https://band.link/...">
   </label>
   <label>
+    Видео к релизу — плейлист YouTube (или один ролик)
+    <input type="url" name="videoUrl" value="<%= release ? (release.video_url || '') : '' %>" placeholder="https://www.youtube.com/playlist?list=PL...">
+  </label>
+  <label>
+    Формат видео
+    <select name="videoFormat">
+      <option value="landscape" <%= !release || (release.video_format || 'landscape') === 'landscape' ? 'selected' : '' %>>Горизонтальное 16:9</option>
+      <option value="portrait" <%= release && release.video_format === 'portrait' ? 'selected' : '' %>>Вертикальное 9:16 (shorts, вертикалка)</option>
+    </select>
+  </label>
+  <p class="hint">Плейлист покажется плеером на странице релиза под списком треков. Понимает YouTube, Rutube, VK Видео и Vimeo.</p>
+  <label>
     Обложка
     <input type="file" name="cover" accept="image/*">
   </label>

@@ -2,6 +2,7 @@ const express = require('express');
 const db = require('../db');
 const { groupLinks } = require('../utils/links');
 const { getGalleryItems } = require('../utils/gallery');
+const { parseVideoEmbedUrl } = require('../utils/videoEmbed');
 
 const router = express.Router();
 
@@ -63,6 +64,7 @@ router.get('/:releaseSlug', (req, res, next) => {
     title: release.title,
     release,
     tracks,
+    releaseVideo: parseVideoEmbedUrl(release.video_url),
     allReleases: listReleases(),
     currentReleaseId: release.id,
     // Превью репоста — обложка релиза. Без неё ссылка в мессенджере
@@ -102,6 +104,7 @@ router.get('/:releaseSlug/:trackSlug', (req, res, next) => {
     prevTrack,
     nextTrack,
     trackGalleryItems,
+    trackVideo: parseVideoEmbedUrl(track.video_url),
     allReleases: listReleases(),
     currentReleaseId: release.id,
     // У трека своя обложка бывает не всегда — тогда берём обложку релиза.

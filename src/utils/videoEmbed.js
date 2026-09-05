@@ -3,9 +3,17 @@ function parseVideoEmbedUrl(url) {
   if (!url || typeof url !== 'string') return null;
   const trimmed = url.trim();
 
-  let m = trimmed.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([\w-]{6,})/i);
+  // Плейлист YouTube: ссылка вида youtube.com/playlist?list=PL… — плеер
+  // крутит подборку целиком. Если в ссылке есть и видео, и list=, встраиваем
+  // видео, а плейлист передаём плееру — после клипа пойдут остальные.
+  const list = (trimmed.match(/[?&]list=([\w-]+)/i) || [])[1];
+  let m = trimmed.match(/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/)|youtu\.be\/)([\w-]{6,})/i);
   if (m) {
-    return { provider: 'youtube', embedUrl: `https://www.youtube.com/embed/${m[1]}` };
+    const embedUrl = `https://www.youtube.com/embed/${m[1]}` + (list ? `?list=${list}` : '');
+    return { provider: 'youtube', embedUrl };
+  }
+  if (list && /youtube\.com|youtu\.be/i.test(trimmed)) {
+    return { provider: 'youtube', embedUrl: `https://www.youtube.com/embed/videoseries?list=${list}` };
   }
 
   m = trimmed.match(/rutube\.ru\/(?:video|shorts)\/([a-z0-9]+)/i);
@@ -29,4 +37,9 @@ function parseVideoEmbedUrl(url) {
   return null;
 }
 
-module.exports = { parseVideoEmbedUrl };
+// Формат из формы: всё, что не «вертикальное», считаем горизонтальным.
+function videoFormat(value) {
+  return value === 'portrait' ? 'portrait' : 'landscape';
+}
+
+module.exports = { parseVideoEmbedUrl, videoFormat };

@@ -2,6 +2,7 @@ const express = require('express');
 const db = require('../../db');
 const { slugify } = require('../../utils/slugify');
 const { uploadImage } = require('../../middleware/upload');
+const { videoFormat } = require('../../utils/videoEmbed');
 
 const router = express.Router();
 
@@ -20,7 +21,7 @@ router.get('/new', (req, res) => {
 });
 
 router.post('/', uploadImage.single('cover'), (req, res) => {
-  const { title, releaseType, year, description, streamingUrl, sortOrder, isPublished } = req.body;
+  const { title, releaseType, year, description, streamingUrl, videoUrl, sortOrder, isPublished } = req.body;
   if (!title) {
     return res.render('admin/release-form', { release: req.body, error: 'Укажите название релиза.' });
   }
@@ -28,11 +29,11 @@ router.post('/', uploadImage.single('cover'), (req, res) => {
   const cover = req.file ? `/uploads/${req.file.filename}` : '';
 
   db.prepare(`
-    INSERT INTO releases (title, slug, release_type, year, description, cover_image, streaming_url, sort_order, is_published)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO releases (title, slug, release_type, year, description, cover_image, streaming_url, video_url, video_format, sort_order, is_published)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     title, slugify(title), releaseType || 'EP', year || '', description || '', cover, streamingUrl || '',
-    Number(sortOrder) || 0, isPublished ? 1 : 0
+    (videoUrl || '').trim(), videoFormat(req.body.videoFormat), Number(sortOrder) || 0, isPublished ? 1 : 0
   );
 
   res.redirect('/admin/releases');
@@ -51,7 +52,7 @@ router.post('/:id', uploadImage.single('cover'), (req, res) => {
   const release = db.prepare('SELECT * FROM releases WHERE id = ?').get(req.params.id);
   if (!release) return res.status(404).render('404');
 
-  const { title, releaseType, year, description, streamingUrl, sortOrder, isPublished } = req.body;
+  const { title, releaseType, year, description, streamingUrl, videoUrl, sortOrder, isPublished } = req.body;
   if (!title) {
     return res.render('admin/release-form', { release: { ...release, ...req.body }, error: 'Укажите название релиза.' });
   }
@@ -60,11 +61,11 @@ router.post('/:id', uploadImage.single('cover'), (req, res) => {
 
   db.prepare(`
     UPDATE releases SET title = ?, release_type = ?, year = ?, description = ?, cover_image = ?, streaming_url = ?,
-      sort_order = ?, is_published = ?
+      video_url = ?, video_format = ?, sort_order = ?, is_published = ?
     WHERE id = ?
   `).run(
     title, releaseType || 'EP', year || '', description || '', cover, streamingUrl || '',
-    Number(sortOrder) || 0, isPublished ? 1 : 0, release.id
+    (videoUrl || '').trim(), videoFormat(req.body.videoFormat), Number(sortOrder) || 0, isPublished ? 1 : 0, release.id
   );
 
   res.redirect('/admin/releases');

@@ -819,6 +819,16 @@ main.container { padding-top: 32px; padding-bottom: 60px; min-height: 60vh; }
 
 .gallery-item.is-embed { cursor: default; }
 .gallery-item.is-embed:hover { transform: none; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); }
+/* Плеер клипа или плейлиста на странице трека и релиза.
+   Горизонтальный — 16:9 во всю колонку текста; вертикальный — 9:16, узкий
+   столбик по высоте экрана телефона, чтобы вертикалка не растягивалась во всю ширину. */
+.video-embed {
+  position: relative; width: 100%; max-width: 760px; aspect-ratio: 16 / 9;
+  background: #211A12; border-radius: 10px; overflow: hidden;
+  box-shadow: inset 0 0 26px rgba(0, 0, 0, 0.55);
+}
+.video-embed.is-portrait { max-width: 360px; aspect-ratio: 9 / 16; }
+.video-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 .gallery-embed-frame { position: relative; width: 100%; padding-top: 56.25%; }
 .gallery-embed-frame iframe {
   position: absolute;

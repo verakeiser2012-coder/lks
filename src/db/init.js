@@ -406,6 +406,19 @@ function init() {
   if (!trackCols.some((c) => c.name === 'slug')) {
     db.exec("ALTER TABLE tracks ADD COLUMN slug TEXT DEFAULT ''");
   }
+  // Видео к треку и релизу: клип или плейлист YouTube (или любая ссылка,
+  // которую понимает utils/videoEmbed). Хранится ссылка, не файл.
+  // Формат — горизонтальный 16:9 или вертикальный 9:16 (shorts, вертикалки):
+  // плеер сам его не сообщает, поэтому выбирают в админке.
+  for (const table of ['tracks', 'releases']) {
+    const cols = db.prepare(`PRAGMA table_info(${table})`).all();
+    if (!cols.some((c) => c.name === 'video_url')) {
+      db.exec(`ALTER TABLE ${table} ADD COLUMN video_url TEXT DEFAULT ''`);
+    }
+    if (!cols.some((c) => c.name === 'video_format')) {
+      db.exec(`ALTER TABLE ${table} ADD COLUMN video_format TEXT NOT NULL DEFAULT 'landscape'`);
+    }
+  }
 
   const socialTargetCols = db.prepare('PRAGMA table_info(social_post_targets)').all();
   if (!socialTargetCols.some((c) => c.name === 'stats')) {

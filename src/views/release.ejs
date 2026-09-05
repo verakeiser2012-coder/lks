@@ -24,6 +24,15 @@
   </div>
 </section>
 
+<% if (releaseVideo) { %>
+<section class="link-section">
+  <h2>Видео</h2>
+  <div class="video-embed <%= release.video_format === 'portrait' ? 'is-portrait' : '' %>">
+    <iframe src="<%= releaseVideo.embedUrl %>" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="Видео: <%= release.title %>"></iframe>
+  </div>
+</section>
+<% } %>
+
 <%- include('partials/music-strip') %>
 
 <p class="drop-back"><a href="/music">← Все релизы</a></p>
