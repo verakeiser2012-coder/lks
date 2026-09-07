@@ -120,14 +120,14 @@
   <p class="chapter-deck"><%- renderLinkedText(texts.redhead || 'Цвет волос у 1–2% людей на планете. Я не крашу и не прячу: это часть стиля, а не особенность. Тут же собираю рыжих, на которых смотрю сам.') %></p>
 </section>
 
-<%# 05 Плёнка. Бэкстейдж: площадка, свет, дубли. %>
+<%# 05 Кино. Бэкстейдж со съёмок кино и рекламы: площадка, свет, дубли. %>
 <% if (filmItems.length > 0) { %>
 <section class="chapter" id="film">
   <header class="chapter-head">
     <span class="chapter-num">05</span>
-    <h2 class="chapter-title">Плёнка</h2>
+    <h2 class="chapter-title">Кино</h2>
   </header>
-  <p class="chapter-deck"><%= texts.film || 'Снимаем на плёнку. Не ради ретро: плёнка не даёт переснять сто дублей, поэтому каждый кадр решают до нажатия.' %></p>
+  <p class="chapter-deck"><%= texts.film || 'Кино и реклама, в которых снимаюсь, и то, что остаётся за кадром: площадка, свет, дубли.' %></p>
   <%- include('partials/gallery-section', { galleryItems: filmItems, galleryTitle: '' }) %>
 </section>
 <% } %>

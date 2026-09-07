@@ -10,7 +10,7 @@ const TEXT_KEYS = {
   style_walks_intro: 'Проходка — подпись под заголовком',
   style_wear_intro: 'Что ношу — подпись под заголовком',
   style_redhead_note: 'Рыжий — абзац',
-  style_film_intro: 'Плёнка — подпись под заголовком',
+  style_film_intro: 'Кино — подпись под заголовком',
 };
 
 function loadItems() {
