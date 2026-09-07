@@ -31,7 +31,7 @@ const current = (k) => (db.prepare('SELECT value FROM settings WHERE key = ?').g
 
 // Вводный текст меняем только если стоит старый служебный.
 if (current('style_intro') === '' || /Актёрство и моделинг/.test(current('style_intro'))) {
-  upsert.run('style_intro', 'Как я выгляжу и почему. Рыжий, без фильтров и нейросетей, вещи маленькими тиражами.');
+  upsert.run('style_intro', 'Как я выгляжу и почему. Рыжий, без фильтров и нейросетей, кастомные вещи.');
 }
 const texts = {
   style_looks_intro: 'Какой образ снимать следующим? Отметьте: один голос с устройства на образ, итог виден всем.',

@@ -3,7 +3,7 @@ const path = require('path');
 const { DatabaseSync } = require('node:sqlite');
 const db = new DatabaseSync(path.join(__dirname, '..', 'data', 'shop.db'));
 const up = db.prepare('UPDATE settings SET value = ? WHERE key = ? AND value = ?');
-up.run('Как я выгляжу и почему. Рыжий, без фильтров и нейросетей, вещи маленькими тиражами.', 'style_intro', 'Как я выгляжу и почему. Рыжий, плёнка вместо фильтров, вещи маленькими тиражами.');
+up.run('Как я выгляжу и почему. Рыжий, без фильтров и нейросетей, кастомные вещи.', 'style_intro', 'Как я выгляжу и почему. Рыжий, плёнка вместо фильтров, вещи маленькими тиражами.');
 up.run('Кино и реклама, в которых снимаюсь, и то, что остаётся за кадром: площадка, свет, дубли.', 'style_film_intro', 'Снимаем на плёнку. Не ради ретро: плёнка не даёт переснять сто дублей, поэтому каждый кадр решают до нажатия.');
 const md = db.prepare("SELECT value FROM settings WHERE key = 'meta_description'").get();
 if (md && md.value.includes('съёмки на плёнку')) db.prepare("UPDATE settings SET value = ? WHERE key = 'meta_description'").run(md.value.replace('съёмки на плёнку', 'кино и реклама'));
