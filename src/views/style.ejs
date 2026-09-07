@@ -9,17 +9,145 @@
   <%- include('partials/banner', { banner }) %>
 <% }); %>
 
-<%- include('partials/gallery-section', { galleryItems: galleryItems, galleryTitle: 'Образы' }) %>
-
-<% groups.forEach(function(group) { %>
-  <section class="link-section">
-    <% if (group.name) { %><h2><%= group.name %></h2><% } %>
-    <div class="link-grid">
-      <% group.items.forEach(function(link) { %>
-        <a class="link-card" href="<%= link.url %>" target="_blank" rel="noopener"><%= link.label %></a>
+<%# 01 Образы. Не витрина, а вопрос посетителю: какой образ снимать следующим.
+    Голос — один с устройства на образ, счётчик виден всем. %>
+<section class="chapter" id="looks">
+  <header class="chapter-head">
+    <span class="chapter-num">01</span>
+    <h2 class="chapter-title">Образы</h2>
+  </header>
+  <p class="chapter-deck"><%= texts.looks || 'Какой образ снимать следующим? Отметьте: один голос с устройства на образ, итог виден всем.' %></p>
+  <% if (looks.length === 0) { %>
+    <p class="hint">Кадры появятся здесь после первой съёмки для раздела.</p>
+  <% } else { %>
+    <div class="looks-grid">
+      <% looks.forEach(function(item, i) { %>
+        <figure class="look polaroid polaroid-<%= i % 3 %>" data-look-id="<%= item.id %>">
+          <% if (item.type === 'photo') { %>
+            <img src="<%= thumb(item.file_path, 640) %>" srcset="<%= srcset(item.file_path) %>" sizes="(max-width: 640px) 46vw, 260px" alt="<%= item.title %>" loading="lazy">
+          <% } else { %>
+            <video src="<%= item.file_path %>" muted loop playsinline preload="metadata"></video>
+          <% } %>
+          <figcaption class="look-caption">
+            <span class="look-title"><%= item.title %></span>
+            <button type="button" class="look-vote" aria-pressed="false" aria-label="На следующую съёмку">
+              <span class="look-vote-mark" aria-hidden="true">✦</span>
+              <span class="look-vote-count"><%= item.votes %></span>
+            </button>
+          </figcaption>
+        </figure>
       <% }); %>
     </div>
-  </section>
-<% }); %>
+  <% } %>
+</section>
 
+<%# 02 Проходка. Подиум по годам, и игра: год спрятан, посетитель угадывает. %>
+<section class="chapter" id="walks">
+  <header class="chapter-head">
+    <span class="chapter-num">02</span>
+    <h2 class="chapter-title">Проходка</h2>
+    <a class="chapter-more" href="/contest">Твой выход под трек →</a>
+  </header>
+  <p class="chapter-deck"><%= texts.walks || 'Подиум с четырёх лет до сейчас. Год не подписан: угадайте его по ролику.' %></p>
+  <% if (walks.length === 0) { %>
+    <p class="hint">Ролики с подиума появятся здесь по одному на год.</p>
+  <% } else { %>
+    <div class="walks-game" data-years="<%= years.join(',') %>">
+      <div class="filmstrip"><div class="filmstrip-track">
+        <% walks.forEach(function(item, idx) {
+          var isEmbed = item.type === 'video' && item.file_path.indexOf('http') === 0;
+        %>
+          <div class="film-cell" data-code="LEVKEYSER · ПОДИУМ" data-num="ВЫХОД <%= String(idx + 1).padStart(2, '0') %>">
+            <div class="gallery-item edge-soft walk <%= item.type === 'video' && !isEmbed ? 'is-video' : '' %> <%= isEmbed ? 'is-embed' : '' %>" data-year="<%= item.year %>">
+              <% if (item.type === 'photo') { %>
+                <img src="<%= thumb(item.file_path, 640) %>" alt="<%= item.title %>" loading="lazy">
+              <% } else if (isEmbed) { %>
+                <div class="gallery-embed-frame"><iframe src="<%= item.file_path %>" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen frameborder="0"></iframe></div>
+              <% } else { %>
+                <video src="<%= item.file_path %>" muted loop playsinline preload="metadata"></video>
+              <% } %>
+              <% if (item.year) { %>
+                <div class="walk-guess">
+                  <span class="walk-guess-q">Какой год?</span>
+                  <div class="walk-guess-options"></div>
+                  <span class="walk-guess-answer" hidden></span>
+                </div>
+              <% } else if (item.title) { %>
+                <div class="gallery-caption"><%= item.title %></div>
+              <% } %>
+            </div>
+          </div>
+        <% }); %>
+      </div></div>
+      <p class="walks-score" hidden>Угадано <strong class="walks-score-hit">0</strong> из <span class="walks-score-total">0</span>. <span class="walks-score-note"></span></p>
+    </div>
+  <% } %>
+</section>
+
+<%# 03 Что ношу. Вещи с историей: откуда, почему, сколько лет с ней. %>
+<section class="chapter" id="wear">
+  <header class="chapter-head">
+    <span class="chapter-num">03</span>
+    <h2 class="chapter-title">Что ношу</h2>
+    <a class="chapter-more" href="/drops">Дропы →</a>
+  </header>
+  <p class="chapter-deck"><%= texts.wear || 'Вещи, которые со мной не первый год. Откуда и почему именно они.' %></p>
+  <% if (wearItems.length === 0) { %>
+    <p class="hint">Здесь будут вещи с историей: три-пять для начала.</p>
+  <% } else { %>
+    <div class="wear-list">
+      <% wearItems.forEach(function(item) { %>
+        <article class="wear-item">
+          <% if (item.photo) { %><img class="wear-photo edge-soft" src="<%= thumb(item.photo, 480) %>" alt="<%= item.name %>" loading="lazy"><% } %>
+          <div class="wear-body">
+            <h3 class="wear-name"><%= item.name %></h3>
+            <% if (item.story) { %><p class="wear-story"><%- renderLinkedText(item.story) %></p><% } %>
+            <% if (item.link_url) { %><a class="wear-link" href="<%= item.link_url %>" <% if (item.link_url.startsWith('http')) { %>target="_blank" rel="noopener"<% } %>><%= item.link_label || 'Смотреть' %> →</a><% } %>
+          </div>
+        </article>
+      <% }); %>
+    </div>
+  <% } %>
+</section>
+
+<%# 04 Рыжий. Только дверь в раздел, сам раздел живёт отдельно. %>
+<section class="chapter chapter--tight" id="redhead">
+  <header class="chapter-head">
+    <span class="chapter-num">04</span>
+    <h2 class="chapter-title">Рыжий</h2>
+    <a class="chapter-more" href="/redheads">Рыжие, которые вдохновляют →</a>
+  </header>
+  <p class="chapter-deck"><%- renderLinkedText(texts.redhead || 'Цвет волос у 1–2% людей на планете. Я не крашу и не прячу: это часть стиля, а не особенность. Тут же собираю рыжих, на которых смотрю сам.') %></p>
+</section>
+
+<%# 05 Плёнка. Бэкстейдж: площадка, свет, дубли. %>
+<% if (filmItems.length > 0) { %>
+<section class="chapter" id="film">
+  <header class="chapter-head">
+    <span class="chapter-num">05</span>
+    <h2 class="chapter-title">Плёнка</h2>
+  </header>
+  <p class="chapter-deck"><%= texts.film || 'Снимаем на плёнку. Не ради ретро: плёнка не даёт переснять сто дублей, поэтому каждый кадр решают до нажатия.' %></p>
+  <%- include('partials/gallery-section', { galleryItems: filmItems, galleryTitle: '' }) %>
+</section>
+<% } %>
+
+<section class="chapter chapter--tight" id="brands-line">
+  <p class="style-brands-line">Снимаюсь для брендов, работаем по договору. <a href="/brands/media-kit">Медиакит и форматы →</a></p>
+</section>
+
+<% if (groups.length > 0) { %>
+  <section class="link-section">
+    <h2>Архив</h2>
+    <% groups.forEach(function(group) { %>
+      <div class="link-grid">
+        <% group.items.forEach(function(link) { %>
+          <a class="link-card" href="<%= link.url %>" target="_blank" rel="noopener"><%= link.label %></a>
+        <% }); %>
+      </div>
+    <% }); %>
+  </section>
+<% } %>
+
+<script src="/js/style-page.js" defer></script>
 <%- include('partials/footer') %>

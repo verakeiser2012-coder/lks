@@ -1,0 +1,49 @@
+<%- include('partials/header') %>
+
+<h1><%= item && item.id ? 'Редактировать вещь' : 'Добавить вещь' %></h1>
+
+<% if (error) { %>
+  <div class="flash flash-error"><%= error %></div>
+<% } %>
+
+<form
+  action="<%= item && item.id ? `/admin/style-items/${item.id}` : '/admin/style-items' %>"
+  method="POST"
+  enctype="multipart/form-data"
+>
+  <label>
+    Вещь *
+    <input type="text" name="name" value="<%= item ? item.name : '' %>" required placeholder="Куртка с барахолки на Уралмаше">
+  </label>
+  <label>
+    История: откуда, почему именно эта, сколько лет с ней
+    <textarea name="story" rows="3"><%= item ? item.story : '' %></textarea>
+  </label>
+  <label>
+    Ссылка (дроп, бренд, страница вещи)
+    <input type="url" name="linkUrl" value="<%= item ? item.link_url : '' %>" placeholder="https://... или /drops/fleur-x-lev">
+  </label>
+  <label>
+    Текст ссылки
+    <input type="text" name="linkLabel" value="<%= item ? item.link_label : '' %>" placeholder="Смотреть дроп">
+  </label>
+  <label>
+    Фото
+    <input type="file" name="photo" accept="image/*">
+  </label>
+  <% if (item && item.photo) { %>
+    <img src="<%= item.photo %>" alt="" style="width:120px;border-radius:8px;margin-bottom:14px;">
+  <% } %>
+  <label>
+    Порядок сортировки
+    <input type="number" name="sortOrder" value="<%= item ? item.sort_order : 0 %>">
+  </label>
+  <label>
+    <input type="checkbox" name="isPublished" value="1" style="width:auto;display:inline-block;"
+      <%= !item || item.is_published ? 'checked' : '' %>>
+    Опубликована
+  </label>
+  <button class="btn" type="submit">Сохранить</button>
+</form>
+
+<%- include('partials/footer') %>

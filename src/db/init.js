@@ -388,6 +388,30 @@ function init() {
     CREATE INDEX IF NOT EXISTS idx_track_plays_src ON track_plays(src);
   `);
 
+  // Раздел «Стиль»: вещи с историей и голоса за образы.
+  // Голос — один на образ с одного устройства (voter приходит из localStorage),
+  // без регистрации: это игра, а не выборы.
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS style_items (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      story TEXT DEFAULT '',
+      photo TEXT DEFAULT '',
+      link_url TEXT DEFAULT '',
+      link_label TEXT DEFAULT '',
+      sort_order INTEGER NOT NULL DEFAULT 0,
+      is_published INTEGER NOT NULL DEFAULT 1,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE TABLE IF NOT EXISTS look_votes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      item_id INTEGER NOT NULL REFERENCES gallery_items(id) ON DELETE CASCADE,
+      voter TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      UNIQUE(item_id, voter)
+    );
+  `);
+
   const redheadSubmissionCols = db.prepare('PRAGMA table_info(redhead_submissions)').all();
   if (!redheadSubmissionCols.some((c) => c.name === 'age_consent')) {
     db.exec("ALTER TABLE redhead_submissions ADD COLUMN age_consent INTEGER NOT NULL DEFAULT 0");

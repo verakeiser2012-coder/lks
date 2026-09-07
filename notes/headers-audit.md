@@ -80,6 +80,21 @@ music`) — она уже стоит в SoundCloud и в названии кан
     Lev Keiser — DJ Levka. Inspirational music, made without AI.
     levkeiser.com
 
+## Сделано 07.09 (вечер, Claude in Chrome)
+
+| Площадка | Что стоит теперь |
+|---|---|
+| **band.link/djlevka** (vImfc) | SEO: «DJ Levka — вдохновительная музыка без нейросетей. Все видео под собственные треки. levkeiser.com»; контакты → booking@levkeiser.com + levkeiser.com; оф. сайт levkeiser.com вместо Linktree; Instagram/TikTok → @levkeiser; Дзен добавлен; во «Внешних ссылках» «My link tree» заменён на «Сайт levkeiser.com» |
+| **band.link/levkeiser** (2rX23) | SEO: «Лев Кейсер — вдохновительный парень. Двигаюсь медленно в быстром мире: музыка без ИИ, съёмки на плёнку, вещи маленькими тиражами. levkeiser.com»; контакты → booking@; оф. сайт levkeiser.com. «13 лет, Екатеринбург» убрано с обеих страниц |
+| **YouTube** UC2NFcW… (@DJLEVKA) | описание по плану (вдохновительная музыка без нейросетей…), ссылки «Сайт» levkeiser.com + «Музыка на всех площадках» band.link/djlevka, почта booking@. Русский **перевод** описания (раздел «Переводы») тоже заменён на этот же текст — старая почта dj.levka.music@gmail.com и Linktree оттуда ушли |
+| **SoundCloud** | био «Lev Keiser — DJ Levka. Inspirational music, made without AI. levkeiser.com · booking@levkeiser.com», ссылки levkeiser.com + band.link/djlevka |
+| **Rutube** | «Лев Кейсер — вдохновительный парень. Вдохновительная музыка без нейросетей: клипы, «Состояния»…, сайт/band.link/booking@» — сохранено (levkeiser.com и booking@ видны в HTML канала) |
+| **TikTok** @levkeiser | ⏳ форма «Edit profile» принимает текст и закрывается без ошибки, но профиль остаётся старым («Music creator (DJ Levka), model, actor / Release! band.link/soundstates», имя DJ Levka). Скорее всего то же ограничение, что и на загрузку: из России аккаунт «только просмотр» → править через VPN (см. `notes/tiktok-upload-access.md`). Целевой текст: имя «Лев Кейсер · DJ Levka», био «Вдохновительная музыка без ИИ. Медленно в быстром мире. / levkeiser.com» |
+| **Одноклассники** profile/910221978637 | посмотрено, не правлено: у личного профиля нет поля «о себе», есть только статус. ⚠️ В «Подробной информации» открыто стоит **дата рождения 21 марта 2012** и место рождения — по решению «дату не публикуем» скрыть в настройках приватности (Настройки → Публичность → Дата рождения) или убрать год. «Другие профили»: Twitter @djlevka, VK levkeiser, Telegram djlevkatg — сайт туда не добавить (только соцсети). Статус поставить: «Вдохновительный парень. Двигаюсь медленно в быстром мире. levkeiser.com» |
+| **Bandcamp** djlevka | био: «Lev Keiser — DJ Levka. Inspirational music, made without AI.» + синтвейв/даунтемпо, «пишу с 10 лет, всё сам», клич вокалистам, levkeiser.com · booking@; «born 2012» убрано. Ссылка в сайдбаре: levkeiser.com вместо Linktree (второй ссылки Bandcamp не даёт). Поле Location «Russia» не трогала — это фильтр каталога, а не текст |
+| **Instagram @djlevka** (в Chrome вход именно в него) | био: «Вдохновительная музыка без нейросетей / Медленно в быстром мире / Лев Кейсер → @levkeiser / levkeiser.com · booking@levkeiser.com» (123 знака). Ссылки Instagram правит только из приложения: там linktr.ee + 4 — заменить первую на levkeiser.com |
+| **Instagram @levkeiser** | не правлено — нужен вход в этот аккаунт (в Chrome сейчас @djlevka). Текст готов выше в «Предлагаемых текстах» |
+
 ## Pinterest: сделано 07.09
 
 - Описание профиля — английская версия эталона.

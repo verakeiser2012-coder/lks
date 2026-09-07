@@ -2265,3 +2265,62 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
   color: var(--color-gold-light);
   margin: 0 0 12px;
 }
+
+/* ---- Стиль: образы с голосами, игра «Какой год?», вещи с историей ---- */
+.chapter--tight { padding-bottom: 8px; }
+.looks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 26px 22px;
+  padding: 10px 6px 4px;
+}
+.look { margin: 0; }
+.look img, .look video { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; display: block; }
+.look-caption { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; }
+.look-title { font-size: 0.9rem; color: var(--color-text); }
+.look-vote {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid var(--color-border); background: transparent; color: var(--color-muted);
+  border-radius: 999px; padding: 4px 10px; font: inherit; font-size: 0.85rem; cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+.look-vote:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.look-vote[aria-pressed="true"] { border-color: var(--color-accent); color: var(--color-accent); cursor: default; transform: scale(1.04); }
+.look-vote-mark { font-size: 0.95rem; line-height: 1; }
+
+.walk { position: relative; }
+.walk-guess {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 10px 12px 12px;
+  background: linear-gradient(to top, rgba(0,0,0,0.78), rgba(0,0,0,0));
+  color: #fff; display: flex; flex-direction: column; gap: 6px;
+}
+.walk-guess-q { font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; opacity: 0.85; }
+.walk-guess-options { display: flex; gap: 6px; flex-wrap: wrap; }
+.walk-guess-btn {
+  border: 1px solid rgba(255,255,255,0.55); background: rgba(0,0,0,0.35); color: #fff;
+  border-radius: 999px; padding: 4px 10px; font: inherit; font-size: 0.85rem; cursor: pointer;
+}
+.walk-guess-btn:hover { border-color: #fff; }
+.walk-guess-btn.is-hit { background: var(--color-accent); border-color: var(--color-accent); color: #111; }
+.walk-guess-btn.is-miss { opacity: 0.5; text-decoration: line-through; }
+.walk.is-answered .walk-guess-btn { cursor: default; }
+.walk-guess-answer { font-size: 0.9rem; }
+.walks-score { margin: 14px 6px 0; color: var(--color-muted); }
+.walks-score strong { color: var(--color-text); }
+
+.wear-list { display: grid; gap: 22px; }
+.wear-item {
+  display: grid; grid-template-columns: 180px 1fr; gap: 18px; align-items: start;
+  padding: 18px 0; border-top: 1px solid var(--color-border);
+}
+.wear-item:last-child { border-bottom: 1px solid var(--color-border); }
+.wear-photo { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
+.wear-name { margin: 0 0 6px; font-family: var(--font-display); font-size: 1.25rem; }
+.wear-story { margin: 0 0 8px; color: var(--color-text); max-width: 62ch; }
+.wear-link { font-weight: 600; }
+.style-brands-line { color: var(--color-muted); margin: 0; }
+@media (max-width: 640px) {
+  .wear-item { grid-template-columns: 1fr; }
+  .wear-photo { max-width: 240px; }
+}
