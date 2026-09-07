@@ -16,8 +16,10 @@ const {
   getPost,
   getTargets,
   listInstagramGridPosts,
+  listFeedsByNetwork,
   normalizeScheduledAt,
 } = require('./helpers');
+const { importFeeds } = require('../../../services/social/importFeeds');
 
 const router = express.Router();
 
@@ -285,6 +287,25 @@ ${tags.join(' ')}`;
 
 router.post('/hashtags', (req, res) => {
   res.json({ hashtags: suggestHashtags(String(req.body.text || '')) });
+});
+
+router.get('/feeds', (req, res) => {
+  const notice = req.session.feedsNotice || '';
+  delete req.session.feedsNotice;
+  res.render('admin/calendar-feeds', { feeds: listFeedsByNetwork(12), notice });
+});
+
+// Не ждать часового импорта: нажала — и через несколько секунд ленты свежие.
+router.post('/feeds/refresh', async (req, res) => {
+  try {
+    const results = await importFeeds();
+    req.session.feedsNotice = results
+      .map((r) => r.error ? `${r.key}: ошибка — ${r.error}` : r.skipped ? `${r.key}: пропуск — ${r.skipped}` : `${r.key}: +${r.added} новых из ${r.seen}`)
+      .join(' · ');
+  } catch (err) {
+    req.session.feedsNotice = 'Импорт не удался: ' + err.message;
+  }
+  res.redirect('/admin/calendar/feeds');
 });
 
 router.get('/instagram-grid', (req, res) => {

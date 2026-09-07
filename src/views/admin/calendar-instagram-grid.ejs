@@ -2,27 +2,39 @@
 
 <div class="admin-toolbar">
   <h1>Превью Instagram-сетки</h1>
-  <a href="/admin/calendar">← К календарю</a>
+  <div>
+    <a href="/admin/calendar/feeds">Ленты площадок</a>
+    <a href="/admin/calendar">← К календарю</a>
+  </div>
 </div>
 
 <p class="hint">
-  Так будущие посты будут смотреться подряд в ленте — по порядку даты публикации. Публикация в Instagram
-  вручную, эта страница только помогает выбрать, что и в каком порядке постить.
+  Лента подряд, как её увидит подписчик: сначала то, что уже вышло (в том числе опубликованное руками и
+  записанное через «Уже в ленте»), дальше — запланированное. Публикация в Instagram вручную, эта
+  страница помогает выбрать, что и в каком порядке постить. Плитки без картинки — ручные записи,
+  у которых указана только ссылка.
 </p>
 
 <% if (posts.length === 0) { %>
-  <p>Пока нет постов с фото/видео, отмеченных для Instagram.</p>
+  <p>Пока пусто: ни один пост календаря не отмечен для Instagram, и ручных записей о публикациях нет.
+    Опубликовали руками — вставьте ссылку в «Уже в ленте» на странице календаря.</p>
 <% } %>
 
 <div class="ig-grid">
   <% posts.forEach(function(post) { %>
-    <a class="ig-grid-cell" href="/admin/calendar/<%= post.id %>" title="<%= post.scheduled_at %>">
-      <% if (post.media_type === 'video') { %>
-        <video src="<%= post.media_path %>" muted></video>
+    <% const live = post.status === 'published'; %>
+    <a class="ig-grid-cell <%= live ? 'is-live' : 'is-planned' %>" href="/admin/calendar/<%= post.id %>" title="<%= post.scheduled_at %><%= live ? ' · в ленте' : ' · план' %>">
+      <% if (post.thumb_url) { %>
+        <img src="<%= post.thumb_url %>" alt="" loading="lazy" referrerpolicy="no-referrer">
+      <% } else if (post.media_path && post.media_type === 'video') { %>
+        <video src="<%= post.media_path %>" muted preload="metadata"></video>
+      <% } else if (post.media_path) { %>
+        <img src="<%= thumb(post.media_path, 480) %>" alt="" loading="lazy">
       <% } else { %>
-        <img src="<%= post.media_path %>" alt="">
+        <span class="ig-grid-text"><%= String(post.text).split('\n')[0].slice(0, 80) || 'Публикация' %></span>
       <% } %>
-      <span class="ig-grid-date"><%= post.scheduled_at.slice(0, 10) %></span>
+      <span class="ig-grid-date"><%= post.scheduled_at.slice(0, 10) %><%= live ? ' ✓' : '' %></span>
+      <% if (post.network_key === 'instagram-djlevka') { %><span class="ig-grid-acct">@djlevka</span><% } %>
     </a>
   <% }); %>
 </div>

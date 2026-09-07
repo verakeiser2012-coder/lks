@@ -1,0 +1,77 @@
+<%- include('partials/header') %>
+
+<div class="admin-toolbar">
+  <h1>Ленты площадок</h1>
+  <div>
+    <a href="/admin/calendar">← К календарю</a>
+    &nbsp;&nbsp;
+    <form class="inline" action="/admin/calendar/feeds/refresh" method="POST">
+      <button class="btn" type="submit">Обновить ленты сейчас</button>
+    </form>
+  </div>
+</div>
+
+<% if (notice) { %>
+  <div class="flash flash-success"><%= notice %></div>
+<% } %>
+
+<p class="hint">
+  По одной полосе на каждую подключённую соцсеть: что там уже лежит, когда было последнее и сколько
+  стоит в очереди. Telegram, YouTube и Rutube подтягиваются сами раз в час; остальные площадки из России
+  ленту не отдают — по ним видно только то, что опубликовал календарь или что вы записали руками
+  через «Уже в ленте». Кнопка справа у каждой полосы открывает живую ленту на самой площадке.
+</p>
+
+<% feeds.forEach(function (f) { %>
+  <section class="feed-lane">
+    <div class="feed-lane-head">
+      <div class="feed-lane-title">
+        <h2><%= f.label %></h2>
+        <span class="badge"><%= f.published %> в ленте</span>
+        <% if (f.queued) { %><span class="badge badge-scheduled"><%= f.queued %> в очереди</span><% } %>
+        <% if (f.lastAt) { %><span class="feed-lane-last">последнее <%= String(f.lastAt).slice(0, 16) %></span><% } %>
+        <% if (f.importedVia) { %><span class="feed-lane-src">читаем: <%= f.importedVia %></span><% } else { %><span class="feed-lane-src">вручную</span><% } %>
+      </div>
+      <div class="feed-lane-actions">
+        <% if (f.key === 'instagram' || f.key === 'instagram-djlevka') { %>
+          <a href="/admin/calendar/instagram-grid">Превью сетки</a>
+        <% } %>
+        <% if (f.liveUrl) { %>
+          <a class="btn btn-small" href="<%= f.liveUrl %>" target="_blank" rel="noopener">Открыть ленту ↗</a>
+        <% } %>
+      </div>
+    </div>
+
+    <% if (f.items.length === 0) { %>
+      <p class="feed-empty">Пока пусто: календарь сюда ничего не публиковал, и записей руками нет.</p>
+    <% } else { %>
+      <div class="feed-strip">
+        <% f.items.forEach(function (p) { %>
+          <article class="feed-card">
+            <a class="feed-thumb" href="<%= p.published_url || ('/admin/calendar/' + p.id) %>" <%= p.published_url ? 'target="_blank" rel="noopener"' : '' %>>
+              <% if (p.thumb_url) { %>
+                <img src="<%= p.thumb_url %>" alt="" loading="lazy" referrerpolicy="no-referrer">
+              <% } else if (p.media_path && p.media_type !== 'video') { %>
+                <img src="<%= thumb(p.media_path, 320) %>" alt="" loading="lazy">
+              <% } else if (p.media_path && p.media_type === 'video') { %>
+                <video src="<%= p.media_path %>" muted preload="metadata"></video>
+              <% } else { %>
+                <span class="feed-thumb-empty"><%= p.media_type === 'video' ? '▶' : '✎' %></span>
+              <% } %>
+              <% if (p.media_type === 'video') { %><span class="feed-play">▶</span><% } %>
+            </a>
+            <div class="feed-card-body">
+              <div class="feed-when"><%= String(p.scheduled_at).slice(0, 16) %></div>
+              <a class="feed-text" href="/admin/calendar/<%= p.id %>"><%= String(p.text).split('\n')[0].slice(0, 70) || '(без текста)' %></a>
+              <% if (p.published_url) { %>
+                <a class="feed-link" href="<%= p.published_url %>" target="_blank" rel="noopener">на площадке ↗</a>
+              <% } %>
+            </div>
+          </article>
+        <% }); %>
+      </div>
+    <% } %>
+  </section>
+<% }); %>
+
+<%- include('partials/footer') %>
