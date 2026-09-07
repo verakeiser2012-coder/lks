@@ -24,7 +24,7 @@
     const metaDesc = (typeof pageDescription !== 'undefined' && pageDescription)
       ? pageDescription
       : (settings.meta_description
-        || [settings.site_tagline, 'Музыка DJ Levka, съёмки, выступления и мерч.'].filter(Boolean).join('. '));
+        || [settings.site_tagline, 'Создаю кастомные вещи и музыку без ИИ.'].filter(Boolean).join('. '));
     const ogImagePath = (typeof pageImage !== 'undefined' && pageImage) ? pageImage : (settings.og_image || '');
     const ogImageUrl = ogImagePath
       ? (ogImagePath.startsWith('http') ? ogImagePath : (typeof canonicalBase === 'string' ? canonicalBase : '') + ogImagePath)

@@ -2258,3 +2258,10 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 .drop-band-label { color: rgba(243, 234, 211, 0.7); max-width: 60ch; margin: -6px 0 22px; }
 .product-card--dark { background: #fff; color: var(--color-text); border-color: transparent; }
 .product-card--dark:hover { border-color: var(--color-gold-bright); }
+.poster-kicker {
+  font-size: 0.82rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--color-gold-light);
+  margin: 0 0 12px;
+}
