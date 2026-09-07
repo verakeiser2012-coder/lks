@@ -33,6 +33,35 @@
     </label>
   <% } %>
 
+  <% if (typeof podcast !== 'undefined' && podcast) { %>
+    <h3>Анонс подкаста на главной</h3>
+    <p class="hint">Показывается сразу под первым экраном. Пустое название — блок скрыт. Вокруг анонса автоматически подтягиваются таблетка «Груша × Лев», трек d r e a m и дневник.</p>
+    <label>
+      Название
+      <input type="text" name="podcastTitle" value="<%= podcast.title %>" placeholder="Подкаст «Груша»: музыка и благовония">
+    </label>
+    <label>
+      С кем / где
+      <input type="text" name="podcastGuest" value="<%= podcast.guest %>" placeholder="Разговор в мастерской благовоний «Груша», Екатеринбург">
+    </label>
+    <label>
+      Подпись
+      <textarea name="podcastNote" rows="3" placeholder="О чём разговор, одна-две фразы"><%= podcast.note %></textarea>
+    </label>
+    <label>
+      Дата или статус
+      <input type="text" name="podcastDate" value="<%= podcast.date %>" placeholder="выходит в сентябре">
+    </label>
+    <label>
+      Ссылка «Смотреть» (пусто — покажем «Скоро»)
+      <input type="url" name="podcastUrl" value="<%= podcast.url %>" placeholder="https://youtube.com/...">
+    </label>
+    <label>
+      Обложка (путь к файлу из галереи, например /uploads/xxx.jpg)
+      <input type="text" name="podcastCover" value="<%= podcast.cover %>" placeholder="/uploads/...">
+    </label>
+  <% } %>
+
   <button class="btn" type="submit">Сохранить текст</button>
 </form>
 

@@ -28,7 +28,7 @@
     <div class="mk-releases">
       <% releases.forEach(function(r) { %>
         <div class="mk-release">
-          <% if (r.cover_image) { %><img src="<%= r.cover_image %>" alt="<%= r.title %>" loading="lazy"><% } %>
+          <% if (r.cover_image) { %><img src="<%= thumb(r.cover_image, 320) %>" alt="<%= r.title %>" loading="lazy"><% } %>
           <div class="mk-release-title"><%= r.title %></div>
           <div class="mk-release-year"><%= r.year %></div>
         </div>
@@ -40,6 +40,63 @@
       и Röyksopp. «d r e a m» звучит в «Nostalgic Synthwave» и «Lo-Fi Planet» с раздачей в Apple Music,
       YouTube, SoundCloud и Tidal, «Back to the Future» — в «Synth Pop Sugar» и «Poolside Groove».
     </p>
+  </section>
+
+  <section class="mk-section" id="audience">
+    <h2>Аудитория</h2>
+    <p class="mk-lead">
+      Цифры на <%= audience.snapshotDate %>, сняты с публичных страниц и через API сообщества ВКонтакте.
+      Пересечения между площадками не учтены. Пол и возраст видны только в ВК — там мы их и считаем.
+    </p>
+    <div class="mk-facts">
+      <% audience.platforms.forEach(function(p) { %>
+        <div class="mk-fact"><strong><%= p.count.toLocaleString('ru-RU') %></strong><span><%= p.name %><% if (p.note) { %> · <%= p.note %><% } %></span></div>
+      <% }); %>
+    </div>
+    <div class="mk-audience-grid">
+      <div class="mk-audience-col">
+        <h3>Пол · ВК, <%= audience.vk.members %> чел.</h3>
+        <% audience.vk.sex.forEach(function(row) { %>
+          <div class="mk-bar"><span class="mk-bar-label"><%= row.label %></span><span class="mk-bar-track"><span class="mk-bar-fill" style="width:<%= row.share %>%"></span></span><span class="mk-bar-value"><%= row.share %>%</span></div>
+        <% }); %>
+      </div>
+      <div class="mk-audience-col">
+        <h3>Возраст · указан у <%= audience.vk.withAge %> чел.</h3>
+        <% audience.vk.age.forEach(function(row) { %>
+          <div class="mk-bar"><span class="mk-bar-label"><%= row.label %></span><span class="mk-bar-track"><span class="mk-bar-fill" style="width:<%= row.share %>%"></span></span><span class="mk-bar-value"><%= row.share %>%</span></div>
+        <% }); %>
+      </div>
+      <div class="mk-audience-col">
+        <h3>Города · ВК</h3>
+        <% audience.vk.cities.forEach(function(row) { %>
+          <div class="mk-bar"><span class="mk-bar-label"><%= row.label %></span><span class="mk-bar-track"><span class="mk-bar-fill" style="width:<%= row.share %>%"></span></span><span class="mk-bar-value"><%= row.share %>%</span></div>
+        <% }); %>
+      </div>
+    </div>
+    <p class="hint">
+      Это взрослая аудитория: две трети старше 35, женщин <%= audience.vk.sex[1].share %>%, треть в Москве,
+      а не подростки из Екатеринбурга. Она собралась вокруг модельной карьеры Льва и держится годами:
+      охват поста в Telegram остаётся на уровне подписчиков даже после долгих пауз.
+      Подростковую и молодую аудиторию мы только начинаем набирать через музыку и конкурс.
+    </p>
+  </section>
+
+  <section class="mk-section">
+    <h2>Два способа работать с брендом</h2>
+    <div class="mk-offers">
+      <div class="mk-offer">
+        <h3>На имидж</h3>
+        <p>Бренд получает материал, который остаётся у него: джингл, съёмку на плёнку, ролик, выпуск подкаста.
+        Наши площадки здесь бонус, а не главный товар: с нашими цифрами продавать охват было бы нечестно.
+        Так уже сделаны джинглы для «Груши», «Флёр» и «Франта» и подкаст с «Грушей».</p>
+      </div>
+      <div class="mk-offer">
+        <h3>На продажи через дроп</h3>
+        <p>Делаем совместную вещь, привязываем к треку и продаём в нашем магазине ограниченным тиражом,
+        с датой и обратным отсчётом. Бренд получает продажи и новых покупателей из нашей аудитории, мы — вещь
+        в каталоге. Так сделаны таблетка «Груша × Лев» под альбом Soundstates и абажуры «Флёр × Лев».</p>
+      </div>
+    </div>
   </section>
 
   <section class="mk-section">

@@ -1,35 +1,177 @@
 <%- include('partials/header') %>
 
-<section class="hero">
-  <h1><%= settings.site_name %></h1>
-  <% if (settings.site_tagline) { %><p class="hero-tagline"><%= settings.site_tagline %></p><% } %>
-  <%# Пояснять «добро пожаловать, смотрите каталог» не нужно: девиз уже сказан
-      выше, а манифест идёт следом. Герою остаётся только развести по двум
-      главным дорогам — музыка и вещи. %>
-  <div class="hero-actions">
-    <a class="btn" href="/music">Слушать музыку</a>
-    <a class="btn btn-ghost" href="/catalog">Каталог</a>
+<%# Первый экран — плакат. Один тезис на экран, слаб-сериф крупно, зерно плёнки,
+    тёплое золото на чёрном. Оттенок фона чуть меняется по часу суток посетителя:
+    «медленный мир» живёт во времени, а не в анимации. %>
+<section class="poster full-bleed" id="poster">
+  <div class="container poster-inner">
+    <p class="poster-name"><span class="poster-name-main"><%= settings.site_name %></span><span class="poster-name-alt">DJ Levka</span></p>
+    <h1 class="poster-statement">Двигаюсь медленно<br>в быстром мире.</h1>
+    <p class="poster-en">Slow in a fast world</p>
+    <p class="poster-lead">Музыка без нейросетей. Съёмки на плёнку. Вещи маленькими тиражами. Не потому что не умею быстрее, а потому что процесс важнее скорости.</p>
+    <div class="hero-actions poster-actions">
+      <a class="btn" href="/music">Слушать музыку</a>
+      <a class="btn btn-ghost poster-ghost" href="/catalog">Каталог</a>
+    </div>
+    <p class="poster-now" id="poster-now" hidden>
+      <span class="poster-now-dot" aria-hidden="true"></span>
+      сейчас играет: <strong id="poster-now-title"></strong>
+    </p>
   </div>
 </section>
 
-<section class="slow-strip">
-  <%# Маскоты Темп и Василий временно скрыты — вернуть, когда будут доделаны. %>
-  <div>
-    <p class="slow-strip-motto">Двигаюсь медленно в быстром мире</p>
-    <p class="slow-strip-en">Slow in a fast world</p>
-    <p class="slow-strip-text">Пока нейросеть пишет трек за десять секунд, я свожу бас третий день. Музыка без ИИ, съёмки на плёнку, вещи маленькими тиражами — не потому что не умею быстрее, а потому что процесс важнее скорости.</p>
+<% if (podcast.title) { %>
+<%# Анонс подкаста и всё, что вокруг него: вещь, родившаяся из разговора,
+    и записи дневника. Поля — в /admin/pages/home. %>
+<section class="chapter" id="podcast">
+  <header class="chapter-head">
+    <span class="chapter-num">01</span>
+    <h2 class="chapter-title">Подкаст</h2>
+  </header>
+  <p class="chapter-deck">Разговоры с людьми, которые делают вещи руками. Первый выпуск: мастерская благовоний «Груша».</p>
+  <div class="podcast-block">
+    <div class="podcast-main">
+      <% if (podcast.cover) { %>
+        <img class="podcast-cover" src="<%= thumb(podcast.cover, 640) %>" srcset="<%= srcset(podcast.cover) %>" sizes="(max-width: 640px) 92vw, 320px" alt="<%= podcast.title %>">
+      <% } %>
+      <div class="podcast-body">
+        <p class="podcast-kicker"><%= podcast.date || 'Первый выпуск' %></p>
+        <h3 class="podcast-title"><%= podcast.title %></h3>
+        <% if (podcast.guest) { %><p class="podcast-guest"><%= podcast.guest %></p><% } %>
+        <% if (podcast.note) { %><p class="podcast-note"><%- renderLinkedText(podcast.note) %></p><% } %>
+        <% if (podcast.url) { %>
+          <a class="btn" href="<%= podcast.url %>" <% if (podcast.url.startsWith('http')) { %>target="_blank" rel="noopener"<% } %>>Смотреть</a>
+        <% } else { %>
+          <span class="podcast-soon">Скоро</span>
+        <% } %>
+      </div>
+    </div>
+    <div class="podcast-around">
+      <% if (podcastProduct) { %>
+        <a class="podcast-around-card" href="/catalog/<%= podcastProduct.slug %>">
+          <% if (podcastProduct.image) { %><img src="<%= thumb(podcastProduct.image, 320) %>" alt="<%= podcastProduct.name %>"><% } %>
+          <span class="podcast-around-label">Вещь из подкаста</span>
+          <span class="podcast-around-title"><%= podcastProduct.name %></span>
+          <span class="podcast-around-meta"><%= formatPrice(podcastProduct.price) %></span>
+        </a>
+      <% } %>
+      <a class="podcast-around-card" href="/music/soundstates/d-r-e-a-m">
+        <span class="podcast-around-label">Трек из подкаста</span>
+        <span class="podcast-around-title">d r e a m</span>
+        <span class="podcast-around-meta">звучит в разговоре про альбом</span>
+      </a>
+      <a class="podcast-around-card" href="/diary">
+        <span class="podcast-around-label">Дневник</span>
+        <span class="podcast-around-title">Что осталось за кадром</span>
+        <span class="podcast-around-meta">записи по мотивам подкастов</span>
+      </a>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<% if (diaryPosts.length > 0) { %>
+<section class="chapter" id="diary">
+  <header class="chapter-head">
+    <span class="chapter-num">02</span>
+    <h2 class="chapter-title">Дневник</h2>
+    <a class="chapter-more" href="/diary">Все записи →</a>
+  </header>
+  <p class="chapter-deck">Что не вошло в подкаст и в релиз: короткие записи от первого лица.</p>
+  <div class="news-list">
+    <% diaryPosts.forEach(function(post) { %>
+      <a class="news-card" href="/diary/<%= post.slug %>">
+        <div class="news-card-image">
+          <% if (post.cover_image) { %>
+            <img src="<%= thumb(post.cover_image, 640) %>" srcset="<%= srcset(post.cover_image) %>" sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 300px" alt="<%= post.title %>">
+          <% } else { %>
+            <div class="no-image">Нет фото</div>
+          <% } %>
+        </div>
+        <div>
+          <div class="news-date"><%= formatDate(post.created_at, 'ru') %></div>
+          <div class="news-title"><%= post.title %></div>
+          <% if (post.excerpt) { %><p class="diary-excerpt"><%= post.excerpt %></p><% } %>
+        </div>
+      </a>
+    <% }); %>
+  </div>
+</section>
+<% } %>
+
+<section class="chapter redheads-home" id="redheads">
+  <header class="chapter-head">
+    <span class="chapter-num">03</span>
+    <h2 class="chapter-title">Рыжие, которые вдохновляют</h2>
+    <a class="chapter-more" href="/redheads">Смотреть подборку →</a>
+  </header>
+  <% if (redheadIntro) { %><p class="redheads-home-intro"><%- renderLinkedText(redheadIntro) %></p><% } %>
+  <% if (redheads.length > 0) { %>
+    <div class="redheads-home-row">
+      <% redheads.forEach(function(person, i) { %>
+        <div class="redheads-home-card polaroid polaroid-<%= i % 3 %>">
+          <% if (person.photo) { %>
+            <img src="<%= thumb(person.photo, 320) %>" alt="<%= person.name %>">
+          <% } else { %>
+            <div class="no-image">Нет фото</div>
+          <% } %>
+          <span class="redheads-home-name"><%= person.name %></span>
+          <% if (person.role) { %><span class="redheads-home-role"><%= person.role %></span><% } %>
+        </div>
+      <% }); %>
+    </div>
+  <% } %>
+</section>
+
+<%# Магазин внутри повествования, а не вкладкой: тёмная полоса дропа, как у
+    артистов, где мерч стоит посреди главной, а не в подвале. %>
+<section class="drop-band full-bleed" id="drop">
+  <div class="container">
+    <header class="chapter-head chapter-head--dark">
+      <span class="chapter-num">04</span>
+      <h2 class="chapter-title">Вещи к трекам</h2>
+      <a class="chapter-more" href="/catalog">Весь каталог →</a>
+    </header>
+    <p class="drop-band-label">Бюсты отлиты под альбом Soundstates. Каждая вещь привязана к треку, из которого выросла.</p>
+    <% if (products.length === 0) { %>
+      <p>Товаров пока нет.</p>
+    <% } else { %>
+      <div class="product-grid">
+        <% products.forEach(function(product) { %>
+          <a class="product-card product-card--dark" href="/catalog/<%= product.slug %>">
+            <div class="product-image edge-soft">
+              <% if (product.image) { %>
+                <img src="<%= thumb(product.image, 640) %>" srcset="<%= srcset(product.image) %>" sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 300px" alt="<%= product.name %>">
+              <% } else { %>
+                <div class="no-image">Нет фото</div>
+              <% } %>
+            </div>
+            <div class="product-name"><%= product.name %></div>
+            <% if (product.release_id && releaseTitles[product.release_id]) { %>
+              <div class="product-release-tag">к релизу <%= releaseTitles[product.release_id].title %></div>
+            <% } %>
+            <div class="product-price"><%= formatPrice(product.price) %></div>
+          </a>
+        <% }); %>
+      </div>
+    <% } %>
   </div>
 </section>
 
 <% if (news.length > 0) { %>
-<section>
-  <h2>Новости</h2>
+<section class="chapter" id="news">
+  <header class="chapter-head">
+    <span class="chapter-num">05</span>
+    <h2 class="chapter-title">Новости</h2>
+    <a class="chapter-more" href="/news">Все новости →</a>
+  </header>
+  <p class="chapter-deck">Релизы, съёмки, выступления: коротко и по датам.</p>
   <div class="news-list">
     <% news.forEach(function(post) { %>
       <a class="news-card" href="/news/<%= post.slug %>">
         <div class="news-card-image">
           <% if (coverByNewsId[post.id]) { %>
-            <img src="<%= coverByNewsId[post.id] %>" alt="<%= post.title %>">
+            <img src="<%= thumb(coverByNewsId[post.id], 640) %>" srcset="<%= srcset(coverByNewsId[post.id]) %>" sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 300px" alt="<%= post.title %>">
           <% } else { %>
             <div class="no-image">Нет фото</div>
           <% } %>
@@ -41,33 +183,35 @@
       </a>
     <% }); %>
   </div>
-  <p><a href="/news">Все новости →</a></p>
 </section>
 <% } %>
 
-<section>
-  <h2>Новые товары</h2>
-  <% if (products.length === 0) { %>
-    <p>Товаров пока нет.</p>
-  <% } else { %>
-    <div class="product-grid">
-      <% products.forEach(function(product) { %>
-        <a class="product-card" href="/catalog/<%= product.slug %>">
-          <div class="product-image edge-soft">
-            <% if (product.image) { %>
-              <img src="<%= product.image %>" alt="<%= product.name %>">
-            <% } else { %>
-              <div class="no-image">Нет фото</div>
-            <% } %>
-          </div>
-          <div class="product-name"><%= product.name %></div>
-          <div class="product-price"><%= formatPrice(product.price) %></div>
-        </a>
-      <% }); %>
-    </div>
-  <% } %>
-</section>
-
 <%- include('partials/gallery-section', { galleryItems: galleryItems, galleryTitle: 'Моменты' }) %>
+
+<script>
+  // Оттенок плаката по часу суток: ночью глубже и холоднее, днём теплее.
+  // Одна CSS-переменная, никакой анимации.
+  (function () {
+    var h = new Date().getHours();
+    var night = h < 6 || h >= 22;
+    var evening = h >= 18 && h < 22;
+    document.getElementById('poster').style.setProperty(
+      '--poster-tint',
+      night ? '#0b0b12' : evening ? '#14100a' : '#171310'
+    );
+  })();
+  // «Сейчас играет» — подписывается на фоновый плеер (public/js/bg-music.js).
+  document.addEventListener('levka:track', function (e) {
+    var box = document.getElementById('poster-now');
+    var title = document.getElementById('poster-now-title');
+    if (!box || !title) return;
+    if (e.detail && e.detail.playing && e.detail.title) {
+      title.textContent = e.detail.title;
+      box.hidden = false;
+    } else {
+      box.hidden = true;
+    }
+  });
+</script>
 
 <%- include('partials/footer') %>

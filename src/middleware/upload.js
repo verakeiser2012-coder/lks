@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const multer = require('multer');
+const { withShrink, shrinkUploadedImages } = require('./shrinkImage');
 
 const uploadsDir = path.join(__dirname, '..', '..', 'public', 'uploads');
 
@@ -44,17 +45,19 @@ function fileFilter(allowedExts) {
   };
 }
 
-const uploadImage = multer({
+// Все картинки после загрузки ужимаются (см. shrinkImage.js): маршруты
+// по-прежнему зовут uploadImage.single('cover') и про это не знают.
+const uploadImage = withShrink(multer({
   storage,
   fileFilter: fileFilter(imageTypes),
   limits: { fileSize: 8 * 1024 * 1024 },
-});
+}));
 
-const uploadGalleryFile = multer({
+const uploadGalleryFile = withShrink(multer({
   storage,
   fileFilter: fileFilter([...imageTypes, ...videoTypes]),
   limits: { fileSize: 200 * 1024 * 1024 },
-});
+}));
 
 // Что продаём цифрового: DJ-версии и отдельные треки (wav/mp3/flac/aiff),
 // стемы и пресеты — архивом (zip).
@@ -83,7 +86,7 @@ const productStorage = multer.diskStorage({
   },
 });
 
-const uploadProductFiles = multer({
+const uploadProductFilesRaw = multer({
   storage: productStorage,
   fileFilter: (req, file, cb) => {
     const allowed = file.fieldname === 'digitalFile' ? digitalTypes : imageTypes;
@@ -98,6 +101,9 @@ const uploadProductFiles = multer({
   { name: 'image', maxCount: 1 },
   { name: 'digitalFile', maxCount: 1 },
 ]);
+// Фото товара тоже ужимаем; файл цифрового товара (zip/wav) sharp не трогает —
+// он не картинка по расширению.
+const uploadProductFiles = (req, res, next) => uploadProductFilesRaw(req, res, (err) => (err ? next(err) : shrinkUploadedImages(req, res, next)));
 
 module.exports = {
   uploadImage,

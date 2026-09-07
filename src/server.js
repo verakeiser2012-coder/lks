@@ -14,6 +14,7 @@ const morgan = require('morgan');
 const { getSettings } = require('./utils/settings');
 const { getCart } = require('./utils/cart');
 const { renderLinkedText } = require('./utils/text');
+const { thumb, srcset } = require('./utils/images');
 const { toAsciiHost, REDIRECT_LOOKUP, CANONICAL_STORE_ASCII } = require('./config/domains');
 
 const indexRoutes = require('./routes/index');
@@ -68,6 +69,9 @@ app.use((req, res, next) => {
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+// Уменьшенные версии картинок (/uploads/x.jpg?w=480) — до статики, иначе
+// express.static отдаст полный файл, не глядя на ?w=.
+app.use('/uploads', require('./routes/thumbs'));
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
 app.use(
@@ -94,6 +98,9 @@ app.use((req, res, next) => {
   res.locals.formatDate = formatDate;
   res.locals.formatDateShort = formatDateShort;
   res.locals.formatPrice = formatPrice;
+  // thumb(url, w) и srcset(url, [w…]) — уменьшенные картинки, utils/images.js.
+  res.locals.thumb = thumb;
+  res.locals.srcset = srcset;
   // Площадки и соцсети музыки — единый источник для раздела /music и подвала,
   // чтобы списки не расходились: добавил площадку в одном месте — она везде.
   res.locals.musicLinks = db
@@ -112,6 +119,8 @@ app.use((req, res, next) => {
 // robots.txt и sitemap.xml — до остальных маршрутов, чтобы их не перехватил
 // обработчик страниц по адресу.
 app.use('/', require('./routes/seo'));
+// /health — для внешнего монитора: жив ли сервер и открывается ли база.
+app.use('/health', require('./routes/health'));
 app.use('/', indexRoutes);
 app.use('/catalog', catalogRoutes);
 app.use('/cart', cartRoutes);

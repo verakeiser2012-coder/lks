@@ -93,6 +93,18 @@
       <% }); %>
     </select>
   </label>
+  <label>
+    Трек
+    <select name="trackId">
+      <option value="">— без привязки —</option>
+      <% (typeof tracks !== 'undefined' ? tracks : []).forEach(function(t) { %>
+        <option value="<%= t.id %>" <%= product && Number(product.track_id) === t.id ? 'selected' : '' %>>
+          <%= t.title %><% if (t.release_title) { %> — <%= t.release_title %><% } %>
+        </option>
+      <% }); %>
+    </select>
+    <span class="hint">Вещь покажется на странице трека блоком «Вещи к треку», а в карточке появится ссылка на трек.</span>
+  </label>
   <fieldset style="border:1px solid var(--color-border); border-radius:var(--radius); padding:12px 14px; margin:0 0 16px;">
     <legend style="padding:0 6px;">Параметры для карточки</legend>
     <p style="color:var(--color-muted); font-size:0.85rem; margin-top:0;">

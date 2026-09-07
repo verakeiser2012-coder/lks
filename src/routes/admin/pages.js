@@ -5,6 +5,7 @@ const { groupLinks } = require('../../utils/links');
 const router = express.Router();
 
 const SECTIONS = {
+  home: 'Главная',
   music: 'Музыка',
   style: 'Стиль',
   video: 'Видео',
@@ -17,12 +18,33 @@ const FEATURED_KEYS = {
   url: 'music_featured_url',
 };
 
+// Анонс подкаста на главной (routes/index.js читает те же ключи).
+const PODCAST_KEYS = {
+  title: 'podcast_title',
+  guest: 'podcast_guest',
+  note: 'podcast_note',
+  date: 'podcast_date',
+  url: 'podcast_url',
+  cover: 'podcast_cover',
+};
+
 function loadSectionData(section) {
   const introRow = db.prepare('SELECT value FROM settings WHERE key = ?').get(`${section}_intro`);
   const links = db
     .prepare('SELECT * FROM page_links WHERE section = ? ORDER BY sort_order ASC, id ASC')
     .all(section);
-  const data = { intro: introRow ? introRow.value : '', links, groups: groupLinks(links), featured: null };
+  const data = { intro: introRow ? introRow.value : '', links, groups: groupLinks(links), featured: null, podcast: null };
+
+  if (section === 'home') {
+    const keys = Object.values(PODCAST_KEYS);
+    const rows = db
+      .prepare(`SELECT key, value FROM settings WHERE key IN (${keys.map(() => '?').join(',')})`)
+      .all(...keys);
+    const map = {};
+    for (const row of rows) map[row.key] = row.value;
+    data.podcast = {};
+    for (const [field, key] of Object.entries(PODCAST_KEYS)) data.podcast[field] = map[key] || '';
+  }
 
   if (section === 'music') {
     const rows = db
@@ -68,6 +90,12 @@ router.post('/:section', (req, res) => {
     upsert.run(FEATURED_KEYS.title, req.body.featuredTitle || '');
     upsert.run(FEATURED_KEYS.note, req.body.featuredNote || '');
     upsert.run(FEATURED_KEYS.url, req.body.featuredUrl || '');
+  }
+  if (section === 'home') {
+    for (const [field, key] of Object.entries(PODCAST_KEYS)) {
+      const formField = `podcast${field[0].toUpperCase()}${field.slice(1)}`;
+      upsert.run(key, (req.body[formField] || '').trim());
+    }
   }
 
   res.render('admin/page-links', {

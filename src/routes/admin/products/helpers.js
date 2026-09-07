@@ -13,4 +13,16 @@ function resolveCategoryId(categoryId, newCategory) {
   return categoryId ? Number(categoryId) : null;
 }
 
-module.exports = { resolveCategoryId };
+// Треки для выпадающего списка «к какому треку вещь»: с названием релиза,
+// чтобы «soundstates (Soundstates)» и «flowers (Flowers)» не путались.
+function listTracksForForm() {
+  return db
+    .prepare(`
+      SELECT t.id, t.title, t.release_id, r.title AS release_title
+      FROM tracks t LEFT JOIN releases r ON r.id = t.release_id
+      ORDER BY r.sort_order ASC, t.sort_order ASC, t.id ASC
+    `)
+    .all();
+}
+
+module.exports = { resolveCategoryId, listTracksForForm };

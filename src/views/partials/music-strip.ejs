@@ -12,7 +12,7 @@
         <div class="film-cell <%= isCurrent ? 'current' : '' %>" data-code="DJ LEVKA · <%= r.release_type %>" data-num="№ <%= String(idx + 1).padStart(2, '0') %><% if (r.year) { %> · <%= r.year %><% } %>">
           <a class="disc-frame" href="/music/<%= r.slug %>" <%= isCurrent ? 'data-current="1" aria-current="page"' : '' %>>
             <% if (r.cover_image) { %>
-              <img src="<%= r.cover_image %>" alt="" loading="lazy">
+              <img src="<%= thumb(r.cover_image, 320) %>" alt="" loading="lazy">
             <% } else { %>
               <div class="no-image">Нет обложки</div>
             <% } %>

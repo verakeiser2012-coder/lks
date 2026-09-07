@@ -11,6 +11,7 @@
       <th>Телефон</th>
       <th>Email</th>
       <th>Сайт</th>
+      <th>Что интересует</th>
       <th>Сообщение</th>
       <th>Статус</th>
       <th>Дата</th>
@@ -19,6 +20,10 @@
   </thead>
   <tbody>
     <% requests.forEach(function(item) { %>
+      <%
+        var wants = [];
+        try { wants = JSON.parse(item.wants || '[]'); } catch (e) { wants = []; }
+      %>
       <tr>
         <td><%= item.id %></td>
         <td><%= item.company_name %></td>
@@ -26,6 +31,7 @@
         <td><%= item.phone %></td>
         <td><%= item.email %></td>
         <td><% if (item.website) { %><a href="<%= item.website %>" target="_blank" rel="noopener"><%= item.website %></a><% } %></td>
+        <td><%= wants.length ? wants.join(', ') : '—' %></td>
         <td><%= item.message %></td>
         <td><%= item.status %></td>
         <td><%= item.created_at %></td>

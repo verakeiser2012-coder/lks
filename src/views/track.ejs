@@ -1,7 +1,7 @@
 <%- include('partials/header') %>
 
 <section class="hero release-hero">
-  <% if (track.cover_image) { %><img class="release-hero-cover" src="<%= track.cover_image %>" alt="<%= track.title %>"><% } %>
+  <% if (track.cover_image) { %><img class="release-hero-cover" src="<%= thumb(track.cover_image, 480) %>" srcset="<%= srcset(track.cover_image, [320, 480, 640, 960]) %>" sizes="(max-width: 480px) 92vw, 200px" alt="<%= track.title %>"><% } %>
   <div>
     <p class="drop-season"><a href="/music/<%= release.slug %>"><%= release.title %></a></p>
     <h1><%= track.title %></h1>
@@ -20,6 +20,27 @@
 
 <% if (track.description) { %>
   <div class="prose drop-description"><%- renderLinkedText(track.description) %></div>
+<% } %>
+
+<% if (products && products.length) { %>
+<section class="link-section">
+  <h2>Вещи к этому треку</h2>
+  <div class="product-grid">
+    <% products.forEach(function(product) { %>
+      <a class="product-card" href="/catalog/<%= product.slug %>">
+        <div class="product-image edge-soft">
+          <% if (product.image) { %>
+            <img src="<%= thumb(product.image, 640) %>" srcset="<%= srcset(product.image) %>" sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 300px" alt="<%= product.name %>">
+          <% } else { %>
+            <div class="no-image">Нет фото</div>
+          <% } %>
+        </div>
+        <div class="product-name"><%= product.name %></div>
+        <div class="product-price"><%= formatPrice(product.price) %></div>
+      </a>
+    <% }); %>
+  </div>
+</section>
 <% } %>
 
 <%- include('partials/gallery-section', { galleryItems: trackGalleryItems, galleryTitle: 'Со съёмок к этому треку' }) %>

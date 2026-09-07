@@ -65,6 +65,30 @@
     });
   }
 
+  // Счётчик прослушиваний. Стриминги не видят, что играет на сайте, поэтому
+  // считаем сами: 30 секунд непрерывной игры одного трека — одно прослушивание
+  // (то же правило, что у Spotify). Не чаще одного раза на трек за загрузку страницы.
+  var COUNT_AFTER_SEC = 30;
+  var counted = {};
+  var playedSince = null;
+  function resetPlayed() { playedSince = audio.currentTime || 0; }
+  audio.addEventListener('play', resetPlayed);
+  audio.addEventListener('seeked', resetPlayed);
+  function maybeCount() {
+    var src = playlist[trackIndex];
+    if (!src || counted[src] || audio.paused || playedSince === null) return;
+    if (audio.currentTime - playedSince < COUNT_AFTER_SEC) return;
+    counted[src] = true;
+    try {
+      var body = JSON.stringify({ src: src, page: location.pathname });
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon('/music/play', new Blob([body], { type: 'application/json' }));
+      } else {
+        fetch('/music/play', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body, keepalive: true });
+      }
+    } catch (e) { /* счётчик не важнее музыки */ }
+  }
+
   var lastSave = 0;
   audio.addEventListener('timeupdate', function () {
     var now = Date.now();
@@ -72,6 +96,7 @@
       lastSave = now;
       savePosition();
     }
+    maybeCount();
   });
   // Уход со страницы — записать точку, иначе потеряем до двух секунд
   window.addEventListener('pagehide', savePosition);
@@ -90,11 +115,23 @@
     play();
   });
 
+  function currentTitle() {
+    var src = playlist[trackIndex];
+    for (var i = 0; i < items.length; i += 1) {
+      if (items[i].getAttribute('data-src') === src) return items[i].textContent.trim();
+    }
+    return src ? src.replace(/^\/audio\//, '').replace(/\.mp3$/i, '').replace(/[-_]+/g, ' ') : '';
+  }
+
   function setState(playing) {
     toggle.classList.toggle('is-playing', playing);
     toggle.setAttribute('aria-pressed', playing ? 'true' : 'false');
     toggle.setAttribute('aria-label', playing ? 'Выключить музыку' : 'Включить музыку');
     markCurrent();
+    // Кому интересно, что играет (плакат на главной), — подписывается на событие.
+    try {
+      document.dispatchEvent(new CustomEvent('levka:track', { detail: { title: currentTitle(), playing: playing } }));
+    } catch (e) { /* старые браузеры без CustomEvent — просто без подписи */ }
   }
 
   function play() {

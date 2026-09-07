@@ -11,7 +11,7 @@
       <% media.forEach(function(item) { %>
         <div class="gallery-item <%= item.type === 'video' ? 'is-video' : '' %>">
           <% if (item.type === 'photo') { %>
-            <img src="<%= item.file_path %>" alt="" loading="lazy">
+            <img src="<%= thumb(item.file_path, 640) %>" srcset="<%= srcset(item.file_path) %>" sizes="(max-width: 560px) 92vw, (max-width: 900px) 46vw, 30vw" alt="" loading="lazy">
           <% } else { %>
             <video src="<%= item.file_path %>" muted loop playsinline preload="metadata"></video>
           <% } %>
@@ -27,7 +27,7 @@
           <div class="film-cell <%= p.id === post.id ? 'current' : '' %>" data-code="LEVKEYSER · 35 MM" data-num="КАДР <%= String(idx + 1).padStart(2, '0') %> · <%= mark %>">
           <a class="news-frame" href="<%= post.lang === 'en' ? '/en/news/' : '/news/' %><%= p.slug %>" <%= p.id === post.id ? 'data-current="1"' : '' %>>
             <% if (coverByNewsId[p.id]) { %>
-              <img src="<%= coverByNewsId[p.id] %>" alt="" loading="lazy">
+              <img src="<%= thumb(coverByNewsId[p.id], 320) %>" alt="" loading="lazy">
             <% } else { %>
               <div class="no-image"><%= post.lang === 'en' ? 'No photo' : 'Нет фото' %></div>
             <% } %>
@@ -61,6 +61,8 @@
     <a href="/news">← Ко всем новостям</a>
   <% } %>
 </p>
+
+<%- include('partials/channel-cta', { channelCtaLang: post.lang, channelCtaTitle: post.lang === 'en' ? 'Backstage is in the channel' : 'Продолжение и бэкстейдж — в канале', channelCtaText: post.lang === 'en' ? 'Process, outtakes and what never makes it to the site.' : 'Процесс, неудачные дубли и то, что не попадает на сайт.' }) %>
 
 <%- include('partials/share') %>
 

@@ -438,6 +438,30 @@ main.container { padding-top: 32px; padding-bottom: 60px; min-height: 60vh; }
 
 /* «Поделиться» — не панель, требующая внимания, а тихая строка под
    содержимым. Знаки те же, что в подвале, поэтому ряд узнаётся. */
+/* Блок «Канал» после дочитанного текста: одна кнопка на площадку. */
+.channel-cta {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 20px;
+  margin: 28px 0 18px; padding: 16px 18px;
+  border: 1px solid var(--color-border); border-left: 4px solid var(--color-accent); border-radius: var(--radius);
+  background: var(--color-gold-shine);
+}
+.channel-cta-text { display: flex; flex-direction: column; gap: 4px; max-width: 52ch; }
+.channel-cta-text strong { font-family: var(--font-display); font-size: 1.05rem; }
+.channel-cta-text span { color: var(--color-muted); font-size: 0.92rem; line-height: 1.4; }
+.channel-cta-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+.channel-cta-btn {
+  display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 999px;
+  background: var(--color-accent); color: #fff; font-weight: 600; font-size: 0.92rem; text-decoration: none;
+}
+.channel-cta-btn:hover { background: var(--color-accent-hover); color: #fff; }
+.channel-cta-btn--vk { background: #0077ff; }
+.channel-cta-btn--vk:hover { background: #0062d1; }
+.channel-cta-btn--x { background: #1a1a1a; }
+.channel-cta-btn--x:hover { background: #000; }
+.channel-cta-btn--fb { background: #1877f2; }
+.channel-cta-btn--fb:hover { background: #145dbf; }
+.channel-cta-btn svg { width: 16px; height: 16px; }
+
 .share {
   display: flex;
   align-items: center;
@@ -1930,3 +1954,307 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
   line-height: 1.55;
 }
 .prelaunch-notice strong { display: block; margin-bottom: 2px; }
+
+/* ---- Главная: анонс подкаста и то, что вокруг него ---- */
+.podcast-block {
+  margin: 8px 0 40px;
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-accent);
+  border-radius: var(--radius);
+  background: #fffaf0;
+  padding: 24px 26px;
+}
+.podcast-main { display: flex; gap: 24px; align-items: flex-start; }
+.podcast-cover {
+  flex: 0 0 240px;
+  width: 240px;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: var(--radius);
+  background: #f2f2f2;
+}
+.podcast-body { flex: 1; min-width: 0; }
+.podcast-kicker {
+  font-size: 0.82rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin: 0 0 6px;
+}
+.podcast-title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  line-height: 1.2;
+  margin: 0 0 6px;
+}
+.podcast-guest { margin: 0 0 10px; font-weight: 600; }
+.podcast-note { margin: 0 0 16px; color: var(--color-muted); max-width: 60ch; }
+.podcast-soon {
+  display: inline-block;
+  padding: 8px 16px;
+  border: 1px dashed var(--color-accent);
+  border-radius: 999px;
+  color: var(--color-accent-hover);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.podcast-around {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--color-border);
+}
+.podcast-around-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: #fff;
+  color: var(--color-text);
+  text-decoration: none;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.podcast-around-card:hover { border-color: var(--color-accent); transform: translateY(-2px); }
+.podcast-around-card img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: calc(var(--radius) - 2px);
+  margin-bottom: 6px;
+}
+.podcast-around-label { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-accent); }
+.podcast-around-title { font-weight: 700; }
+.podcast-around-meta { font-size: 0.85rem; color: var(--color-muted); }
+@media (max-width: 640px) {
+  .podcast-main { flex-direction: column; }
+  .podcast-cover { width: 100%; flex-basis: auto; }
+}
+
+/* ---- Главная: рыжие ---- */
+.redheads-home { margin-bottom: 40px; }
+.redheads-home-intro { color: var(--color-muted); max-width: 60ch; }
+.redheads-home-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 14px;
+  margin: 16px 0;
+}
+.redheads-home-card { display: flex; flex-direction: column; gap: 2px; }
+.redheads-home-card img, .redheads-home-card .no-image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: var(--radius);
+  background: #f2f2f2;
+  margin-bottom: 6px;
+}
+.redheads-home-name { font-weight: 700; }
+.redheads-home-role { font-size: 0.82rem; color: var(--color-accent); font-weight: 600; }
+
+/* Подпись «к релизу …» в карточке товара на главной */
+.product-release-tag { font-size: 0.8rem; color: var(--color-accent); font-weight: 600; margin-top: 2px; }
+
+/* ---- Брендам: джинглы, галочки, аудитория ---- */
+.offer-audio { display: flex; flex-direction: column; gap: 8px; }
+.offer-audio-row { display: flex; flex-direction: column; gap: 2px; }
+.offer-audio-row audio { width: 100%; height: 34px; }
+.offer-audio-title { font-size: 0.82rem; font-weight: 600; }
+.offer-audio-title small { font-weight: 400; color: var(--color-muted); }
+.offer-example .offer-example-link { display: block; margin-top: 8px; }
+.wants-fieldset {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 12px 14px 14px;
+  margin: 0 0 16px;
+}
+.wants-fieldset legend { padding: 0 6px; font-weight: 700; }
+.wants-fieldset .hint { margin: 0 0 10px; }
+.wants-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 6px 16px;
+}
+.wants-item { display: flex; align-items: center; gap: 8px; font-weight: 400; margin: 0; }
+.wants-item input { width: auto; margin: 0; }
+.audience-brief .prose { max-width: 70ch; }
+
+/* ---- Медиа-кит: аудитория ---- */
+.mk-audience-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  margin: 20px 0 12px;
+}
+.mk-audience-col h3 { font-size: 0.95rem; margin: 0 0 10px; }
+.mk-bar { display: grid; grid-template-columns: 110px 1fr 40px; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 0.88rem; }
+.mk-bar-track { display: block; height: 10px; background: #f0e9d8; border-radius: 999px; overflow: hidden; }
+.mk-bar-fill { display: block; height: 100%; background: var(--color-accent); border-radius: 999px; }
+.mk-bar-value { text-align: right; font-variant-numeric: tabular-nums; color: var(--color-muted); }
+
+/* ==== Главная как плакат: один тезис на экран, зерно плёнки, золото на чёрном ==== */
+.full-bleed { width: 100vw; margin-left: calc(50% - 50vw); }
+
+.poster {
+  --poster-tint: #171310;
+  position: relative;
+  margin-top: -32px; /* прижать к шапке: main.container даёт padding-top 32px */
+  margin-bottom: 56px;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 0%, rgba(184, 134, 11, 0.22), transparent 70%),
+    var(--poster-tint);
+  color: #f3ead3;
+  overflow: hidden;
+  isolation: isolate;
+}
+/* Зерно: SVG-шум в data-URI, без картинок и без JS. */
+.poster::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.14;
+  mix-blend-mode: screen;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 0.92  0 0 0 0 0.7  0 0 0 0.9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: 220px 220px;
+  z-index: -1;
+}
+.poster-inner {
+  padding: 72px 20px 64px;
+  text-align: center;
+}
+.poster-name {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 14px;
+  margin: 0 0 18px;
+}
+.poster-name-main {
+  font-family: var(--font-script);
+  font-size: 2.2rem;
+  color: var(--color-gold-bright);
+  filter: url(#gold-emboss) drop-shadow(0 2px 3px rgba(0, 0, 0, 0.6));
+}
+.poster-name-alt {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-gold-light);
+  border: 1px solid rgba(240, 196, 25, 0.5);
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+.poster-statement {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2.6rem, 8vw, 6.4rem);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  margin: 0 auto 14px;
+  max-width: 20ch;
+  color: #fff8e6;
+  text-wrap: balance;
+}
+.poster-en {
+  font-size: 0.82rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--color-gold-bright);
+  margin: 0 0 22px;
+}
+.poster-lead {
+  max-width: 52ch;
+  margin: 0 auto 28px;
+  color: rgba(243, 234, 211, 0.78);
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+.poster-actions { margin-bottom: 22px; }
+.poster-ghost { color: #f3ead3; border-color: var(--color-gold-bright); }
+.poster-ghost:hover { color: #fff; background: rgba(240, 196, 25, 0.12); }
+.poster-now {
+  margin: 0;
+  font-size: 0.85rem;
+  color: rgba(243, 234, 211, 0.7);
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 6px 8px;
+}
+.poster-now strong { color: var(--color-gold-bright); font-weight: 600; }
+.poster-now-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--color-gold-bright);
+  box-shadow: 0 0 0 0 rgba(240, 196, 25, 0.6);
+  animation: poster-pulse 2.4s ease-out infinite;
+}
+@keyframes poster-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(240, 196, 25, 0.6); }
+  100% { box-shadow: 0 0 0 10px rgba(240, 196, 25, 0); }
+}
+@media (prefers-reduced-motion: reduce) { .poster-now-dot { animation: none; } }
+@media (max-width: 640px) {
+  .poster-inner { padding: 48px 16px 44px; }
+  .poster-name { font-size: 1.7rem; }
+}
+
+/* Главы: номер крупно слаб-серифом, заголовок рядом, ссылка «все» справа. */
+.chapter { margin-bottom: 56px; }
+.chapter-head {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  border-top: 1px solid var(--color-border);
+  padding-top: 18px;
+  margin-bottom: 20px;
+}
+.chapter-num {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 2.4rem;
+  line-height: 1;
+  color: var(--color-accent);
+  letter-spacing: -0.03em;
+}
+.chapter-title { margin: 0; font-size: 1.5rem; flex: 1; }
+.chapter-more { font-size: 0.9rem; font-weight: 600; white-space: nowrap; }
+.chapter-deck { color: var(--color-muted); max-width: 60ch; margin: -8px 0 18px; }
+.redheads-home-intro { margin-top: -8px; }
+.chapter-head--dark { border-top-color: rgba(255, 255, 255, 0.14); }
+.chapter-head--dark .chapter-title { color: #fff8e6; }
+.chapter-head--dark .chapter-more { color: var(--color-gold-bright); }
+.chapter .podcast-block { margin-top: 0; }
+.podcast-title { font-size: 1.6rem; }
+
+/* Полароиды для рыжих: белая рамка, лёгкий наклон, тень. Без JS. */
+.polaroid {
+  background: #fff;
+  padding: 10px 10px 14px;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.10);
+  transition: transform 0.25s ease;
+}
+.polaroid img, .polaroid .no-image { border-radius: 2px; margin-bottom: 8px; }
+.polaroid-0 { transform: rotate(-2deg); }
+.polaroid-1 { transform: rotate(1.5deg); }
+.polaroid-2 { transform: rotate(-1deg); }
+.polaroid:hover { transform: rotate(0) translateY(-3px); }
+.redheads-home-row { padding: 8px 6px; }
+
+/* Полоса дропа: магазин внутри повествования. */
+.drop-band {
+  background: #121010;
+  color: #f3ead3;
+  padding: 8px 0 44px;
+  margin-bottom: 56px;
+}
+.drop-band-label { color: rgba(243, 234, 211, 0.7); max-width: 60ch; margin: -6px 0 22px; }
+.product-card--dark { background: #fff; color: var(--color-text); border-color: transparent; }
+.product-card--dark:hover { border-color: var(--color-gold-bright); }

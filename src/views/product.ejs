@@ -10,7 +10,7 @@
 <div class="product-detail">
   <div class="product-detail-image edge-soft">
     <% if (product.image) { %>
-      <img src="<%= product.image %>" alt="<%= product.name %>">
+      <img src="<%= thumb(product.image, 960) %>" srcset="<%= srcset(product.image, [480, 640, 960, 1280]) %>" sizes="(max-width: 640px) 92vw, 480px" alt="<%= product.name %>">
     <% } else { %>
       <div class="no-image">Нет фото</div>
     <% } %>
@@ -23,23 +23,28 @@
       <p class="product-description"><% para.trim().split(/\r?\n/).forEach(function (line, i) { %><% if (i) { %><br><% } %><%= line %><% }); %></p>
     <% }); %>
 
-    <%# С чем связана вещь на сайте: категория каталога, дроп и релиз, из которого она выросла %>
-    <% if (category || collection || release) { %>
+    <%# С чем связана вещь на сайте: раздел каталога, дроп, трек и релиз, из которого она выросла %>
+    <%
+      var linkCategory = locals.category || null;
+      var linkCollection = locals.collection || null;
+      var linkTrack = locals.track || null;
+      var linkRelease = release && release.is_published && release.slug ? release : null;
+    %>
+    <% if (linkCategory || linkCollection || release) { %>
       <ul class="product-links">
-        <% if (category) { %>
-          <li>Раздел: <a href="/catalog?category=<%= encodeURIComponent(category.slug) %>"><%= category.name %></a></li>
+        <% if (linkCategory) { %>
+          <li>Раздел: <a href="/catalog?category=<%= encodeURIComponent(linkCategory.slug) %>"><%= linkCategory.name %></a></li>
         <% } %>
-        <% if (collection) { %>
-          <li>Дроп: <a href="/drops/<%= collection.slug %>"><%= collection.name %></a></li>
+        <% if (linkCollection) { %>
+          <li>Дроп: <a href="/drops/<%= linkCollection.slug %>"><%= linkCollection.name %></a></li>
         <% } %>
-        <% if (release) { %>
-          <li>Из релиза:
-            <% if (release.is_published && release.slug) { %>
-              <a href="/music/<%= release.slug %>"><%= release.title %> (<%= release.year %>)</a>
-            <% } else { %>
-              <%= release.title %> (<%= release.year %>)
-            <% } %>
-          </li>
+        <% if (linkTrack && linkRelease) { %>
+          <li>К треку <a href="/music/<%= linkRelease.slug %>/<%= linkTrack.slug %>"><%= linkTrack.title %></a>
+            из релиза <a href="/music/<%= linkRelease.slug %>"><%= linkRelease.title %> (<%= linkRelease.year %>)</a></li>
+        <% } else if (linkRelease) { %>
+          <li>К релизу <a href="/music/<%= linkRelease.slug %>"><%= linkRelease.title %> (<%= linkRelease.year %>)</a></li>
+        <% } else if (release) { %>
+          <li>К релизу <%= release.title %> (<%= release.year %>)</li>
         <% } %>
       </ul>
     <% } %>

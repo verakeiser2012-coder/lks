@@ -9,7 +9,7 @@
         <div class="film-cell" data-code="LEVKEYSER · 35 MM" data-num="КАДР <%= String(idx + 1).padStart(2, '0') %><%= markG %>">
         <div class="gallery-item edge-soft <%= item.type === 'video' && !isEmbed ? 'is-video' : '' %> <%= isEmbed ? 'is-embed' : '' %>">
           <% if (item.type === 'photo') { %>
-            <img src="<%= item.file_path %>" alt="<%= item.title %>" loading="lazy">
+            <img src="<%= thumb(item.file_path, 640) %>" alt="<%= item.title %>" loading="lazy">
           <% } else if (isEmbed) { %>
             <div class="gallery-embed-frame">
               <iframe src="<%= item.file_path %>" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen frameborder="0"></iframe>

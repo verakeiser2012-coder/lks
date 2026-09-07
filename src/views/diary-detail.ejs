@@ -5,7 +5,7 @@
   <h1><%= post.title %></h1>
 
   <% if (post.cover_image) { %>
-    <img src="<%= post.cover_image %>" alt="<%= post.title %>" style="width:100%;border-radius:var(--radius);margin-bottom:20px;">
+    <img src="<%= thumb(post.cover_image, 960) %>" srcset="<%= srcset(post.cover_image, [640, 960, 1280]) %>" sizes="(max-width: 760px) 92vw, 720px" alt="<%= post.title %>" style="width:100%;border-radius:var(--radius);margin-bottom:20px;">
   <% } %>
 
   <div class="prose"><%- renderLinkedText(post.content) %></div>
@@ -15,7 +15,7 @@
       <% media.forEach(function(item) { %>
         <div class="gallery-item <%= item.type === 'video' ? 'is-video' : '' %>">
           <% if (item.type === 'photo') { %>
-            <img src="<%= item.file_path %>" alt="" loading="lazy">
+            <img src="<%= thumb(item.file_path, 640) %>" srcset="<%= srcset(item.file_path) %>" sizes="(max-width: 560px) 92vw, (max-width: 900px) 46vw, 30vw" alt="" loading="lazy">
           <% } else { %>
             <video src="<%= item.file_path %>" muted loop playsinline preload="metadata"></video>
           <% } %>
@@ -39,7 +39,7 @@
         <a class="news-card" href="/diary/<%= p.slug %>">
           <div class="news-card-image">
             <% if (p.cover_image) { %>
-              <img src="<%= p.cover_image %>" alt="<%= p.title %>">
+              <img src="<%= thumb(p.cover_image, 640) %>" srcset="<%= srcset(p.cover_image) %>" sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 300px" alt="<%= p.title %>">
             <% } else { %>
               <div class="no-image">Нет фото</div>
             <% } %>
@@ -55,6 +55,8 @@
 <% } %>
 
 <p style="margin-top:24px;"><a href="/diary">← Ко всем записям</a></p>
+
+<%- include('partials/channel-cta', { channelCtaTitle: 'Обсуждаем в канале', channelCtaText: 'Короткие записи между большими — там, четыре раза в неделю.' }) %>
 
 <%- include('partials/share') %>
 

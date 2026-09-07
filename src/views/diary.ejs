@@ -11,7 +11,7 @@
       <a class="news-card" href="/diary/<%= post.slug %>">
         <div class="news-card-image">
           <% if (post.cover_image) { %>
-            <img src="<%= post.cover_image %>" alt="<%= post.title %>">
+            <img src="<%= thumb(post.cover_image, 640) %>" srcset="<%= srcset(post.cover_image) %>" sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 300px" alt="<%= post.title %>">
           <% } else { %>
             <div class="no-image">Нет фото</div>
           <% } %>

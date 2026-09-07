@@ -35,8 +35,14 @@ router.get('/:slug', (req, res) => {
     return res.status(404).render('404');
   }
 
-  const release = product.release_id
-    ? db.prepare('SELECT * FROM releases WHERE id = ?').get(product.release_id)
+  const track = product.track_id
+    ? db.prepare('SELECT * FROM tracks WHERE id = ?').get(product.track_id)
+    : null;
+  // Релиз берём из привязки товара, а если её нет — из релиза трека:
+  // ссылка «к треку» без релиза не строится, у трека адрес через релиз.
+  const releaseId = product.release_id || (track && track.release_id) || null;
+  const release = releaseId
+    ? db.prepare('SELECT * FROM releases WHERE id = ?').get(releaseId)
     : null;
   const category = product.category_id
     ? db.prepare('SELECT * FROM categories WHERE id = ?').get(product.category_id)
@@ -50,6 +56,7 @@ router.get('/:slug', (req, res) => {
     title: product.name,
     product,
     release,
+    track,
     category,
     collection,
     pageImage: product.image || '',

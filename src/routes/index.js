@@ -4,6 +4,26 @@ const { getGalleryItems } = require('../utils/gallery');
 
 const router = express.Router();
 
+// Анонс подкаста на главной. Поля редактируются в /admin/pages/home.
+// Пустое название — блок не показываем (вместо него ничего: пустой анонс хуже отсутствия).
+const PODCAST_KEYS = ['podcast_title', 'podcast_guest', 'podcast_note', 'podcast_date', 'podcast_url', 'podcast_cover'];
+
+function loadPodcast() {
+  const rows = db
+    .prepare(`SELECT key, value FROM settings WHERE key IN (${PODCAST_KEYS.map(() => '?').join(',')})`)
+    .all(...PODCAST_KEYS);
+  const map = {};
+  for (const row of rows) map[row.key] = row.value;
+  return {
+    title: map.podcast_title || '',
+    guest: map.podcast_guest || '',
+    note: map.podcast_note || '',
+    date: map.podcast_date || '',
+    url: map.podcast_url || '',
+    cover: map.podcast_cover || '',
+  };
+}
+
 router.get('/', (req, res) => {
   const products = db
     .prepare('SELECT * FROM products WHERE is_active = 1 ORDER BY created_at DESC LIMIT 8')
@@ -26,7 +46,39 @@ router.get('/', (req, res) => {
   `).all();
   const coverByNewsId = {};
   covers.forEach((c) => { coverByNewsId[c.news_id] = c.file_path; });
-  res.render('index', { products, news, coverByNewsId, galleryItems: getGalleryItems('home') });
+
+  // Вокруг подкаста: вещь, которая родилась из него, и записи дневника.
+  const podcast = loadPodcast();
+  const podcastProduct = db
+    .prepare("SELECT id, name, slug, price, image FROM products WHERE is_active = 1 AND slug = 'aromaticheskaya-tabletka-grusha-lev'")
+    .get();
+  const diaryPosts = db
+    .prepare('SELECT id, title, slug, excerpt, cover_image, created_at FROM diary_posts WHERE is_published = 1 ORDER BY created_at DESC LIMIT 3')
+    .all();
+
+  // Рыжие — на главную, а не в хвост меню: единственный раздел, который
+  // удивляет чужого человека, и единственный, куда уже ведёт статья в Дзене.
+  const redheadIntroRow = db.prepare("SELECT value FROM settings WHERE key = 'redheads_intro'").get();
+  const redheads = db
+    .prepare('SELECT name, role, photo FROM redhead_spotlights WHERE is_published = 1 ORDER BY sort_order ASC, created_at ASC LIMIT 4')
+    .all();
+
+  // Вещи к трекам: в карточке на главной подписываем, к какому релизу вещь.
+  const releaseTitles = {};
+  for (const r of db.prepare('SELECT id, title, slug FROM releases').all()) releaseTitles[r.id] = r;
+
+  res.render('index', {
+    products,
+    releaseTitles,
+    news,
+    coverByNewsId,
+    podcast,
+    podcastProduct,
+    diaryPosts,
+    redheadIntro: redheadIntroRow ? redheadIntroRow.value : '',
+    redheads,
+    galleryItems: getGalleryItems('home'),
+  });
 });
 
 module.exports = router;

@@ -39,7 +39,7 @@
             <tr>
               <td class="music-table-cover-col">
                 <a href="/music/<%= release.slug %>">
-                  <% if (release.cover_image) { %><img class="music-table-cover" src="<%= release.cover_image %>" alt="<%= release.title %>"><% } %>
+                  <% if (release.cover_image) { %><img class="music-table-cover" src="<%= thumb(release.cover_image, 160) %>" alt="<%= release.title %>"><% } %>
                 </a>
               </td>
               <td><a class="music-table-title" href="/music/<%= release.slug %>"><%= release.title %></a></td>
@@ -85,7 +85,7 @@
           <% tracks.forEach(function(track) { %>
             <tr>
               <td class="music-table-cover-col">
-                <% if (track.cover_image) { %><img class="music-table-cover" src="<%= track.cover_image %>" alt="<%= track.title %>"><% } %>
+                <% if (track.cover_image) { %><img class="music-table-cover" src="<%= thumb(track.cover_image, 160) %>" alt="<%= track.title %>"><% } %>
               </td>
               <td class="music-table-title"><%= track.title %></td>
               <td class="music-table-desc"><% if (track.description) { %><%- renderLinkedText(track.description) %><% } %></td>
@@ -107,6 +107,8 @@
 </section>
 
 <%- include('partials/gallery-section', { galleryItems: galleryItems, galleryTitle: 'Со студии и концертов' }) %>
+
+<%- include('partials/channel-cta', { channelCtaTitle: 'Как это сводится — в канале', channelCtaText: 'Экран проекта, неудачные дубли и серия «Состояния» по альбому Soundstates. Четыре поста в неделю.' }) %>
 
 <% groups.forEach(function(group) { %>
   <section class="link-section">

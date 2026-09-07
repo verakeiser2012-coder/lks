@@ -11,7 +11,7 @@
       <div class="film-cell" data-code="LEVKEYSER · 35 MM" data-num="КАДР <%= String(idx + 1).padStart(2, '0') %><%= markA %>">
       <div class="gallery-item <%= item.type === 'video' ? 'is-video' : '' %>">
         <% if (item.type === 'photo') { %>
-          <img src="<%= item.file_path %>" alt="<%= item.title %>" loading="lazy">
+          <img src="<%= thumb(item.file_path, 640) %>" alt="<%= item.title %>" loading="lazy">
         <% } else { %>
           <video src="<%= item.file_path %>" muted loop playsinline preload="metadata"></video>
         <% } %>

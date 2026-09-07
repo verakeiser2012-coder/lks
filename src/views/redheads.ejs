@@ -12,7 +12,7 @@
     <% people.forEach(function(person) { %>
       <div class="spotlight-card">
         <% if (person.photo) { %>
-          <img class="spotlight-photo" src="<%= person.photo %>" alt="<%= person.name %>">
+          <img class="spotlight-photo" src="<%= thumb(person.photo, 640) %>" srcset="<%= srcset(person.photo) %>" sizes="(max-width: 640px) 92vw, 300px" alt="<%= person.name %>">
         <% } else { %>
           <div class="spotlight-photo no-image">Нет фото</div>
         <% } %>

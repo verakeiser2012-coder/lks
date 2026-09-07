@@ -14,6 +14,30 @@ function listReleases() {
     .all();
 }
 
+// Вещи, привязанные к релизу или треку. Товар без привязки здесь не показываем.
+function productsForRelease(releaseId) {
+  return db
+    .prepare('SELECT id, name, slug, price, image, track_id FROM products WHERE is_active = 1 AND release_id = ? ORDER BY created_at DESC')
+    .all(releaseId);
+}
+function productsForTrack(trackId) {
+  return db
+    .prepare('SELECT id, name, slug, price, image FROM products WHERE is_active = 1 AND track_id = ? ORDER BY created_at DESC')
+    .all(trackId);
+}
+
+// Счётчик прослушиваний фонового плеера. Стриминги эти прослушивания не
+// видят: файл играет с нашего сервера. Считаем сами: клиент шлёт маячок,
+// когда трек проиграл 30 секунд подряд (правило Spotify). Один маячок на
+// трек за одну загрузку страницы, проверка на клиенте.
+router.post('/play', express.json({ limit: '2kb' }), (req, res) => {
+  const src = typeof req.body.src === 'string' ? req.body.src.slice(0, 200) : '';
+  const page = typeof req.body.page === 'string' ? req.body.page.slice(0, 200) : '';
+  if (!/^\/audio\/[\w.-]+\.mp3$/.test(src)) return res.status(400).end();
+  db.prepare('INSERT INTO track_plays (src, page) VALUES (?, ?)').run(src, page);
+  res.status(204).end();
+});
+
 router.get('/', (req, res) => {
   const introRow = db.prepare("SELECT value FROM settings WHERE key = 'music_intro'").get();
   const links = db.prepare(
@@ -64,6 +88,7 @@ router.get('/:releaseSlug', (req, res, next) => {
     title: release.title,
     release,
     tracks,
+    products: productsForRelease(release.id),
     releaseVideo: parseVideoEmbedUrl(release.video_url),
     allReleases: listReleases(),
     currentReleaseId: release.id,
@@ -104,6 +129,7 @@ router.get('/:releaseSlug/:trackSlug', (req, res, next) => {
     prevTrack,
     nextTrack,
     trackGalleryItems,
+    products: productsForTrack(track.id),
     trackVideo: parseVideoEmbedUrl(track.video_url),
     allReleases: listReleases(),
     currentReleaseId: release.id,

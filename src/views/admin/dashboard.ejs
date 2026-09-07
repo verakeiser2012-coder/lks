@@ -15,6 +15,29 @@
     <div class="stat-value"><%= newOrdersCount %></div>
     <div class="stat-label">Новых заказов</div>
   </div>
+  <div class="stat-card">
+    <div class="stat-value"><%= plays30 %></div>
+    <div class="stat-label">Прослушиваний на сайте за 30 дней</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value"><%= playsTotal %></div>
+    <div class="stat-label">Прослушиваний на сайте всего</div>
+  </div>
 </div>
+
+<h2>Что слушают на сайте</h2>
+<p class="hint">Считается фоновый плеер: 30 секунд непрерывной игры одного трека — одно прослушивание, как у Spotify. В статистику стримингов эти цифры не попадают: файлы играют с нашего сервера.</p>
+<% if (playsByTrack.length === 0) { %>
+  <p>Пока ни одного прослушивания.</p>
+<% } else { %>
+  <table>
+    <thead><tr><th>Трек</th><th>За 30 дней</th><th>Всего</th></tr></thead>
+    <tbody>
+      <% playsByTrack.forEach(function(row) { %>
+        <tr><td><%= row.title %></td><td><%= row.last30 %></td><td><%= row.total %></td></tr>
+      <% }); %>
+    </tbody>
+  </table>
+<% } %>
 
 <%- include('partials/footer') %>

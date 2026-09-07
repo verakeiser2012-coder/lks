@@ -1,0 +1,33 @@
+<%#
+  Блок «Канал»: зовёт в Telegram и ВКонтакте там, где человек уже дочитал —
+  конец новости, записи дневника, раздел музыки. Из разбора канала (06.09):
+  сайт упоминал Telegram только в подвале, а именно сайт, Дзен и вертикалки
+  должны приводить в канал. Одна кнопка на площадку, без списка стримингов.
+%>
+<%
+  // Английским читателям (страницы /en/…) вместо ВКонтакте показываем X и Facebook:
+  // это англоязычные витрины, адреса лежат в page_links (раздел «Музыка → Соцсети»).
+  const ctaLang = typeof channelCtaLang !== 'undefined' ? channelCtaLang : 'ru';
+  const findLink = (label) => { const l = (typeof musicLinks !== 'undefined' ? musicLinks : []).find((x) => x.label === label); return l ? l.url : ''; };
+  const xUrl = ctaLang === 'en' ? findLink('X (Twitter)') : '';
+  const fbUrl = ctaLang === 'en' ? findLink('Facebook') : '';
+%>
+<% if (settings.telegram_url || settings.vk_url || xUrl || fbUrl) { %>
+<aside class="channel-cta">
+  <div class="channel-cta-text">
+    <strong><%= typeof channelCtaTitle !== 'undefined' ? channelCtaTitle : 'Продолжение — в канале' %></strong>
+    <span><%= typeof channelCtaText !== 'undefined' ? channelCtaText : 'Процесс, бэкстейдж и то, что не попадает на сайт: четыре поста в неделю.' %></span>
+  </div>
+  <div class="channel-cta-buttons">
+    <% if (settings.telegram_url) { %>
+      <a class="channel-cta-btn" href="<%= settings.telegram_url %>" target="_blank" rel="noopener"><%- socialIcons.telegram %> Telegram</a>
+    <% } %>
+    <% if (ctaLang === 'en') { %>
+      <% if (xUrl) { %><a class="channel-cta-btn channel-cta-btn--x" href="<%= xUrl %>" target="_blank" rel="noopener"><%- socialIcons.x %> X</a><% } %>
+      <% if (fbUrl) { %><a class="channel-cta-btn channel-cta-btn--fb" href="<%= fbUrl %>" target="_blank" rel="noopener"><%- socialIcons.facebook %> Facebook</a><% } %>
+    <% } else if (settings.vk_url) { %>
+      <a class="channel-cta-btn channel-cta-btn--vk" href="<%= settings.vk_url %>" target="_blank" rel="noopener"><%- socialIcons.vk %> ВКонтакте</a>
+    <% } %>
+  </div>
+</aside>
+<% } %>

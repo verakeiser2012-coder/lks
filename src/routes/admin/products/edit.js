@@ -1,5 +1,5 @@
 const db = require('../../../db');
-const { resolveCategoryId } = require('./helpers');
+const { resolveCategoryId, listTracksForForm } = require('./helpers');
 
 function editForm(req, res) {
   const product = db.prepare('SELECT * FROM products WHERE id = ?').get(req.params.id);
@@ -9,7 +9,8 @@ function editForm(req, res) {
   const categories = db.prepare('SELECT * FROM categories ORDER BY name').all();
   const collections = db.prepare('SELECT * FROM collections ORDER BY name').all();
   const releases = db.prepare('SELECT * FROM releases ORDER BY sort_order ASC, created_at DESC').all();
-  res.render('admin/product-form', { product, categories, collections, releases, error: null });
+  const tracks = listTracksForForm();
+  res.render('admin/product-form', { product, categories, collections, releases, tracks, error: null });
 }
 
 function update(req, res) {
@@ -18,16 +19,18 @@ function update(req, res) {
     return res.status(404).render('404');
   }
 
-  const { name, description, price, categoryId, newCategory, collectionId, releaseId, stock, isActive, isDigital, leadTime, includes, dimensions, weight, material, care } = req.body;
+  const { name, description, price, categoryId, newCategory, collectionId, releaseId, trackId, stock, isActive, isDigital, leadTime, includes, dimensions, weight, material, care } = req.body;
   if (!name || !price) {
     const categories = db.prepare('SELECT * FROM categories ORDER BY name').all();
     const collections = db.prepare('SELECT * FROM collections ORDER BY name').all();
     const releases = db.prepare('SELECT * FROM releases ORDER BY sort_order ASC, created_at DESC').all();
+    const tracks = listTracksForForm();
     return res.render('admin/product-form', {
       product: { ...product, ...req.body },
       categories,
       collections,
       releases,
+      tracks,
       error: 'Заполните название и цену.',
     });
   }
@@ -40,7 +43,7 @@ function update(req, res) {
   // Новый файл заменяет прежний; если не приложили — оставляем что было,
   // иначе редактирование названия сносило бы товар с уже выданными ссылками.
   db.prepare(`
-    UPDATE products SET name = ?, description = ?, price = ?, category_id = ?, collection_id = ?, release_id = ?, image = ?, stock = ?, is_active = ?, is_digital = ?, digital_file = ?, digital_filename = ?, digital_size = ?, lead_time = ?, includes = ?, dimensions = ?, weight = ?, material = ?, care = ?
+    UPDATE products SET name = ?, description = ?, price = ?, category_id = ?, collection_id = ?, release_id = ?, track_id = ?, image = ?, stock = ?, is_active = ?, is_digital = ?, digital_file = ?, digital_filename = ?, digital_size = ?, lead_time = ?, includes = ?, dimensions = ?, weight = ?, material = ?, care = ?
     WHERE id = ?
   `).run(
     name,
@@ -49,6 +52,7 @@ function update(req, res) {
     resolvedCategoryId,
     collectionId ? Number(collectionId) : null,
     releaseId ? Number(releaseId) : null,
+    trackId ? Number(trackId) : null,
     image,
     Number(stock) || 0,
     isActive ? 1 : 0,

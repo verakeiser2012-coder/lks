@@ -361,6 +361,32 @@ function init() {
   if (!productCols.some((c) => c.name === 'care')) {
     db.exec("ALTER TABLE products ADD COLUMN care TEXT NOT NULL DEFAULT ''");
   }
+  // Вещь привязана к конкретному треку, а не только к релизу: бюсты сделаны
+  // под Soundstates, таблетка «Груша × Лев» звучит под d r e a m. На странице
+  // трека показываем «вещи к этому треку», в карточке — ссылку на трек.
+  if (!productCols.some((c) => c.name === 'track_id')) {
+    db.exec('ALTER TABLE products ADD COLUMN track_id INTEGER REFERENCES tracks(id) ON DELETE SET NULL');
+  }
+
+  // Бренд отмечает галочками, какие форматы из ассортимента ему нужны.
+  // Храним как JSON-массив названий, чтобы список форматов жил в одном месте (routes/brands.js).
+  const brandCols = db.prepare('PRAGMA table_info(brand_requests)').all();
+  if (!brandCols.some((c) => c.name === 'wants')) {
+    db.exec("ALTER TABLE brand_requests ADD COLUMN wants TEXT NOT NULL DEFAULT '[]'");
+  }
+
+  // Прослушивания фонового плеера на сайте. Стриминги их не считают —
+  // это наш собственный счётчик: трек засчитывается после 30 секунд
+  // непрерывного воспроизведения, как на Spotify.
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS track_plays (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      src TEXT NOT NULL,
+      page TEXT NOT NULL DEFAULT '',
+      played_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_track_plays_src ON track_plays(src);
+  `);
 
   const redheadSubmissionCols = db.prepare('PRAGMA table_info(redhead_submissions)').all();
   if (!redheadSubmissionCols.some((c) => c.name === 'age_consent')) {

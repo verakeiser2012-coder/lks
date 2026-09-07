@@ -2,20 +2,37 @@
 
 <h1>Брендам</h1>
 
-<p><a href="/brands/media-kit">Медиа-кит: коротко о Льве, форматы сотрудничества, контакты →</a></p>
+<p><a href="/brands/media-kit">Медиа-кит: коротко о Льве, аудитория, форматы сотрудничества, контакты →</a></p>
 
-<p class="prose">Если вы представляете бренд и хотите сотрудничать с нами — заполните форму ниже, и мы свяжемся с вами.</p>
+<p class="prose">Если вы представляете бренд и хотите сотрудничать с нами — отметьте, что вам интересно, заполните форму ниже, и мы свяжемся с вами.</p>
 
 <div class="link-section offer-section">
   <h2>Что мы предлагаем</h2>
   <div class="offer-grid">
     <% offers.forEach(function(offer) { %>
-      <div class="offer-card">
+      <div class="offer-card" id="offer-<%= offer.key %>">
         <h3><%= offer.title %></h3>
         <p><%= offer.description %></p>
-        <% if (offer.example.type === 'photo') { %>
+        <% if (offer.example.type === 'audio') { %>
+          <div class="offer-example offer-audio">
+            <% offer.example.items.forEach(function(item) { %>
+              <div class="offer-audio-row">
+                <audio controls preload="none" src="<%= item.src %>"></audio>
+                <span class="offer-audio-title"><%= item.title %> <small><%= item.sub %></small></span>
+              </div>
+            <% }); %>
+          </div>
+        <% } else if (offer.example.type === 'photo') { %>
           <div class="offer-example">
-            <img src="<%= offer.example.src %>" alt="<%= offer.title %>" loading="lazy">
+            <% if (offer.example.url) { %><a href="<%= offer.example.url %>"><% } %>
+            <img src="<%= offer.example.src %>" alt="<%= offer.example.label || offer.title %>" loading="lazy">
+            <% if (offer.example.url) { %></a><% } %>
+            <% if (offer.example.label) { %>
+              <a class="offer-example-link" href="<%= offer.example.url %>"><%= offer.example.label %> →</a>
+            <% } %>
+            <% if (offer.extraLink) { %>
+              <a class="offer-example-link" href="<%= offer.extraLink.url %>"><%= offer.extraLink.label %> →</a>
+            <% } %>
           </div>
         <% } else if (offer.example.type === 'video') { %>
           <div class="offer-example">
@@ -34,6 +51,17 @@
   <p class="offer-note">Льву 14 лет — все съёмки и договорённости проходят с участием родителя.</p>
 </div>
 
+<div class="link-section audience-brief">
+  <h2>Кто нас читает</h2>
+  <p class="prose">
+    Честные цифры на <%= audience.snapshotDate %>: около <%= audience.platforms.reduce(function(s, p) { return s + p.count; }, 0).toLocaleString('ru-RU') %> подписчиков
+    на пяти площадках, без учёта пересечений. В ВК, где видны пол и возраст, женщин <%= audience.vk.sex[1].share %>%,
+    две трети аудитории старше 35, треть из Москвы. Это не подростки, а взрослые, которые следят за Львом годами.
+    Поэтому брендам мы продаём не охват, а съёмку, звук и вещи, которые остаются у бренда.
+    Подробно — <a href="/brands/media-kit#audience">в медиа-ките</a>.
+  </p>
+</div>
+
 <% if (success) { %>
   <div class="flash flash-success">Спасибо! Заявка отправлена, мы свяжемся с вами в ближайшее время.</div>
 <% } %>
@@ -42,10 +70,25 @@
   <div class="flash flash-error"><%= error %></div>
 <% } %>
 
+<%
+  var checked = values.wants ? (Array.isArray(values.wants) ? values.wants : [values.wants]) : [];
+%>
 <div class="catalog-layout">
   <div class="catalog-main">
-    <form action="/brands" method="POST">
+    <form action="/brands" method="POST" id="brand-form">
   <input type="text" name="website" value="" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;" aria-hidden="true">
+      <fieldset class="wants-fieldset">
+        <legend>Что вам интересно</legend>
+        <p class="hint">Можно отметить несколько — так мы сразу поймём, с чего начинать разговор.</p>
+        <div class="wants-grid">
+          <% offers.forEach(function(offer) { %>
+            <label class="wants-item">
+              <input type="checkbox" name="wants" value="<%= offer.key %>" <%= checked.includes(offer.key) ? 'checked' : '' %>>
+              <span><%= offer.title %></span>
+            </label>
+          <% }); %>
+        </div>
+      </fieldset>
       <label>
         Название бренда/компании *
         <input type="text" name="companyName" value="<%= values.companyName || '' %>" required>
@@ -68,7 +111,7 @@
       </label>
       <label>
         Сообщение
-        <textarea name="message" rows="4"><%= values.message || '' %></textarea>
+        <textarea name="message" rows="4" placeholder="Что за бренд, какая задача, сроки"><%= values.message || '' %></textarea>
       </label>
       <label style="display:flex; align-items:flex-start; gap:8px;">
         <input type="checkbox" name="dataConsent" value="1" style="width:auto; margin-top:4px;" <%= values.dataConsent ? 'checked' : '' %> required>

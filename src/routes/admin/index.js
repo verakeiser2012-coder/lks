@@ -36,7 +36,20 @@ router.get('/', (req, res) => {
   const productsCount = db.prepare('SELECT COUNT(*) AS c FROM products').get().c;
   const ordersCount = db.prepare('SELECT COUNT(*) AS c FROM orders').get().c;
   const newOrdersCount = db.prepare("SELECT COUNT(*) AS c FROM orders WHERE status = 'new'").get().c;
-  res.render('admin/dashboard', { productsCount, ordersCount, newOrdersCount });
+  // Прослушивания фонового плеера на сайте: всего, за 30 дней и по трекам.
+  // Это наш счётчик (30 секунд непрерывной игры = одно прослушивание),
+  // в статистику стримингов эти цифры не попадают.
+  const playsTotal = db.prepare('SELECT COUNT(*) AS c FROM track_plays').get().c;
+  const plays30 = db.prepare("SELECT COUNT(*) AS c FROM track_plays WHERE played_at >= datetime('now', '-30 days')").get().c;
+  const playsByTrack = db
+    .prepare(`
+      SELECT src, COUNT(*) AS total,
+             SUM(CASE WHEN played_at >= datetime('now', '-30 days') THEN 1 ELSE 0 END) AS last30
+      FROM track_plays GROUP BY src ORDER BY total DESC
+    `)
+    .all()
+    .map((row) => ({ ...row, title: row.src.replace(/^\/audio\//, '').replace(/\.mp3$/i, '').replace(/[-_]+/g, ' ') }));
+  res.render('admin/dashboard', { productsCount, ordersCount, newOrdersCount, playsTotal, plays30, playsByTrack });
 });
 
 router.use('/products', productsRoutes);
