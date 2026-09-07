@@ -38,11 +38,20 @@ router.get('/:slug', (req, res) => {
   const release = product.release_id
     ? db.prepare('SELECT * FROM releases WHERE id = ?').get(product.release_id)
     : null;
+  const category = product.category_id
+    ? db.prepare('SELECT * FROM categories WHERE id = ?').get(product.category_id)
+    : null;
+  // Неопубликованный дроп не показываем: ссылка на него отдаст 404.
+  const collection = product.collection_id
+    ? db.prepare('SELECT * FROM collections WHERE id = ? AND is_published = 1').get(product.collection_id)
+    : null;
 
   res.render('product', {
     title: product.name,
     product,
     release,
+    category,
+    collection,
     pageImage: product.image || '',
     pageDescription: product.description || '',
     pageType: 'product',

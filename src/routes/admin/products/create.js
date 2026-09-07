@@ -10,7 +10,7 @@ function newForm(req, res) {
 }
 
 function create(req, res) {
-  const { name, description, price, categoryId, newCategory, collectionId, releaseId, stock, isActive, isDigital } = req.body;
+  const { name, description, price, categoryId, newCategory, collectionId, releaseId, stock, isActive, isDigital, leadTime, includes, dimensions, weight, material, care } = req.body;
   if (!name || !price) {
     const categories = db.prepare('SELECT * FROM categories ORDER BY name').all();
     const collections = db.prepare('SELECT * FROM collections ORDER BY name').all();
@@ -31,8 +31,8 @@ function create(req, res) {
   const resolvedCategoryId = resolveCategoryId(categoryId, newCategory);
 
   db.prepare(`
-    INSERT INTO products (name, slug, description, price, category_id, collection_id, release_id, image, stock, is_active, is_digital, digital_file, digital_filename, digital_size)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO products (name, slug, description, price, category_id, collection_id, release_id, image, stock, is_active, is_digital, digital_file, digital_filename, digital_size, lead_time, includes, dimensions, weight, material, care)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     name,
     slug,
@@ -47,7 +47,13 @@ function create(req, res) {
     isDigital ? 1 : 0,
     digitalFile ? digitalFile.filename : '',
     digitalFile ? digitalFile.originalname : '',
-    digitalFile ? digitalFile.size : 0
+    digitalFile ? digitalFile.size : 0,
+    (leadTime || '').trim(),
+    (includes || '').trim(),
+    (dimensions || '').trim(),
+    (weight || '').trim(),
+    (material || '').trim(),
+    (care || '').trim()
   );
 
   res.redirect('/admin/products');
