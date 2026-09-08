@@ -2403,3 +2403,8 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 .set-item-release { color: var(--color-muted); font-size: 0.85rem; }
 .set-item.is-playing .set-item-title { color: var(--color-accent); }
 .set-item-state { color: var(--color-accent); }
+
+/* Плашка «приём заказов не открыт» в корзине */
+.notice { border: 1px solid var(--color-border); border-radius: var(--radius); padding: 16px 18px; }
+.notice-muted { background: rgba(0,0,0,0.02); }
+.notice-muted p { margin: 6px 0 0; color: var(--color-muted); }

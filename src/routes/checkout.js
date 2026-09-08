@@ -1,10 +1,18 @@
 const express = require('express');
+const { shopClosedNotice } = require('../utils/shopOpen');
 const db = require('../db');
 const { getCartDetails, getCart } = require('../utils/cart');
 const { createPayment } = require('../services/payments/yookassa');
 const { cartIsDigitalOnly, deliverDigital } = require('../services/digital');
 
 const router = express.Router();
+
+// Пока магазин закрыт, оформление недоступно: настоящий заказ и тестовая
+// страница оплаты вместе выглядели бы как обман.
+router.use((req, res, next) => {
+  if (shopClosedNotice()) return res.redirect('/cart');
+  next();
+});
 
 router.get('/', (req, res) => {
   const { items, total } = getCartDetails(req);

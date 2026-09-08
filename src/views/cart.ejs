@@ -49,7 +49,15 @@
   </table>
 
   <p><strong>Итого: <%= formatPrice(total) %></strong></p>
-  <a class="btn" href="/checkout">Оформить заказ</a>
+  <% if (typeof shopClosed !== 'undefined' && shopClosed) { %>
+    <div class="notice notice-muted">
+      <strong>Приём заказов ещё не открыт.</strong>
+      <p><%= shopClosed %></p>
+      <p>Корзина сохранится: вернитесь, когда откроем оплату. Чтобы не пропустить — <a href="/#subscribe">подпишитесь на письма</a>.</p>
+    </div>
+  <% } else { %>
+    <a class="btn" href="/checkout">Оформить заказ</a>
+  <% } %>
 <% } %>
 
 <%- include('partials/footer') %>

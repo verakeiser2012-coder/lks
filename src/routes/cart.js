@@ -1,4 +1,5 @@
 const express = require('express');
+const { shopClosedNotice } = require('../utils/shopOpen');
 const db = require('../db');
 const { getCart, getCartDetails } = require('../utils/cart');
 
@@ -6,7 +7,7 @@ const router = express.Router();
 
 router.get('/', (req, res) => {
   const { items, total } = getCartDetails(req);
-  res.render('cart', { items, total });
+  res.render('cart', { shopClosed: shopClosedNotice(), items, total });
 });
 
 router.post('/add', (req, res) => {
