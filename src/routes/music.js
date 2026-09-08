@@ -3,6 +3,8 @@ const db = require('../db');
 const { groupLinks } = require('../utils/links');
 const { getGalleryItems } = require('../utils/gallery');
 const { parseVideoEmbedUrl } = require('../utils/videoEmbed');
+const { getBgPlaylist } = require('../utils/bgPlaylist');
+const QUIZ = require('../data/quiz');
 
 const router = express.Router();
 
@@ -71,6 +73,107 @@ router.get('/', (req, res) => {
     releases: releases.map((r) => ({ ...r, trackCount: countMap[r.id] || 0 })),
     tracks: looseTracks,
     galleryItems: getGalleryItems('music'),
+  });
+});
+
+// ---- Игры -----------------------------------------------------------------
+// Треки, у которых есть mp3 в public/audio: только их можно проиграть.
+// Имя файла совпадает со слагом трека, либо со слагом без дефисов (dream ↔ d-r-e-a-m).
+function playableTracks() {
+  const byKey = {};
+  for (const t of db.prepare(`
+    SELECT tracks.slug, tracks.title, tracks.cover_image, releases.slug AS release_slug, releases.title AS release_title
+    FROM tracks LEFT JOIN releases ON releases.id = tracks.release_id
+    WHERE tracks.is_published = 1
+  `).all()) {
+    byKey[t.slug] = t;
+    byKey[t.slug.replace(/-/g, '')] = t;
+  }
+  const out = [];
+  for (const item of getBgPlaylist()) {
+    const name = item.src.replace(/^\/audio\//, '').replace(/\.mp3$/i, '');
+    const t = byKey[name] || byKey[name.replace(/-/g, '')];
+    out.push({
+      src: item.src,
+      slug: t ? t.slug : name,
+      title: t ? t.title : item.title,
+      cover: t ? t.cover_image : '',
+      url: t && t.release_slug ? `/music/${t.release_slug}/${t.slug}` : '/music',
+      release: t ? t.release_title : '',
+    });
+  }
+  return out;
+}
+
+router.get('/guess', (req, res) => {
+  res.render('games/guess', {
+    tracks: playableTracks(),
+    title: 'Угадай трек по пяти секундам',
+    pageDescription: 'Пять секунд трека DJ Levka, четыре названия. Угадай все.',
+  });
+});
+
+router.get('/quiz', (req, res) => {
+  res.render('games/quiz', {
+    questions: QUIZ.QUESTIONS,
+    title: 'Какой ты трек Soundstates',
+    pageDescription: 'Пять вопросов, и альбом Soundstates скажет, какой ты трек.',
+  });
+});
+
+router.post('/quiz', (req, res) => {
+  const score = {};
+  QUIZ.QUESTIONS.forEach((q, i) => {
+    const a = q.answers[Number(req.body[`q${i}`])];
+    if (a) score[a.slug] = (score[a.slug] || 0) + 1;
+  });
+  const best = Object.keys(QUIZ.TRACKS).sort((a, b) => (score[b] || 0) - (score[a] || 0))[0];
+  res.redirect(`/music/quiz/${best}`);
+});
+
+router.get('/quiz/:slug', (req, res, next) => {
+  const info = QUIZ.TRACKS[req.params.slug];
+  if (!info) return next();
+  const track = db.prepare(`
+    SELECT tracks.*, releases.slug AS release_slug FROM tracks
+    LEFT JOIN releases ON releases.id = tracks.release_id WHERE tracks.slug = ?
+  `).get(req.params.slug);
+  const audio = playableTracks().find((t) => t.slug === req.params.slug);
+  const shareUrl = `https://levkeiser.com/music/quiz/${req.params.slug}`;
+  res.render('games/quiz-result', {
+    slug: req.params.slug,
+    info,
+    track,
+    audio,
+    shareUrl,
+    shareText: `Я — «${info.title}» из альбома Soundstates. А ты какой трек?`,
+    title: `Ты — ${info.title}`,
+    pageDescription: info.line,
+    pageImage: track ? track.cover_image : '',
+  });
+});
+
+router.get('/set', (req, res) => {
+  res.render('games/set', {
+    tracks: playableTracks(),
+    title: 'Собери сет',
+    pageDescription: 'Три трека DJ Levka в своём порядке, одной ссылкой.',
+  });
+});
+
+router.get('/set/:combo', (req, res, next) => {
+  const slugs = String(req.params.combo).split('.').slice(0, 3);
+  const all = playableTracks();
+  const picked = slugs.map((s) => all.find((t) => t.slug === s)).filter(Boolean);
+  if (picked.length !== 3 || new Set(slugs).size !== 3) return next();
+  const shareUrl = `https://levkeiser.com/music/set/${picked.map((t) => t.slug).join('.')}`;
+  res.render('games/set-view', {
+    picked,
+    shareUrl,
+    shareText: `Мой сет из треков DJ Levka: ${picked.map((t) => t.title).join(' → ')}`,
+    title: `Сет: ${picked.map((t) => t.title).join(' → ')}`,
+    pageDescription: 'Три трека DJ Levka в порядке, который выбрал слушатель.',
+    pageImage: picked[0].cover || '',
   });
 });
 

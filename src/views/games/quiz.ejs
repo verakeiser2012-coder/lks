@@ -1,0 +1,25 @@
+<%- include('../partials/header') %>
+
+<section class="hero">
+  <h1>Какой ты трек Soundstates</h1>
+  <p class="hero-tagline">Пять вопросов. Отвечай как есть, альбом разберётся.</p>
+</section>
+
+<form class="quiz" action="/music/quiz" method="POST">
+  <% questions.forEach(function(q, i) { %>
+    <fieldset class="quiz-q">
+      <legend><span class="quiz-num"><%= i + 1 %></span> <%= q.text %></legend>
+      <% q.answers.forEach(function(a, j) { %>
+        <label class="quiz-a">
+          <input type="radio" name="q<%= i %>" value="<%= j %>" required>
+          <span><%= a.text %></span>
+        </label>
+      <% }); %>
+    </fieldset>
+  <% }); %>
+  <button class="btn" type="submit">Узнать свой трек</button>
+</form>
+
+<p class="game-back"><a href="/music#games">← Другие игры</a></p>
+
+<%- include('../partials/footer') %>

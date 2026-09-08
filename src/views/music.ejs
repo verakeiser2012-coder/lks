@@ -106,6 +106,28 @@
   </div>
 </section>
 
+<%# Игры: то, что можно сделать с музыкой, а не только послушать. %>
+<section class="link-section games" id="games">
+  <h2>Поиграть</h2>
+  <div class="games-grid">
+    <a class="game-tile" href="/music/guess">
+      <span class="game-tile-kicker">Пять секунд</span>
+      <span class="game-tile-title">Угадай трек</span>
+      <span class="game-tile-note">Четыре названия, пять раундов, счёт в конце.</span>
+    </a>
+    <a class="game-tile" href="/music/quiz">
+      <span class="game-tile-kicker">Тест</span>
+      <span class="game-tile-title">Какой ты трек Soundstates</span>
+      <span class="game-tile-note">Пять вопросов, результат можно отправить друзьям.</span>
+    </a>
+    <a class="game-tile" href="/music/set">
+      <span class="game-tile-kicker">Конструктор</span>
+      <span class="game-tile-title">Собери сет</span>
+      <span class="game-tile-note">Три трека в своём порядке, одной ссылкой.</span>
+    </a>
+  </div>
+</section>
+
 <%- include('partials/gallery-section', { galleryItems: galleryItems, galleryTitle: 'Со студии и концертов' }) %>
 
 <%- include('partials/channel-cta', { channelCtaTitle: 'Как это сводится — в канале', channelCtaText: 'Экран проекта, неудачные дубли и серия «Состояния» по альбому Soundstates. Четыре поста в неделю.' }) %>

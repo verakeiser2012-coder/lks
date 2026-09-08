@@ -1,0 +1,31 @@
+<%- include('../partials/header') %>
+
+<section class="hero">
+  <h1>Собери сет</h1>
+  <p class="hero-tagline">Выбери три трека в своём порядке. Получишь ссылку, по которой они играют подряд.</p>
+</section>
+
+<% if (tracks.length < 3) { %>
+  <p class="hint">Для сета нужно хотя бы три трека с аудио.</p>
+<% } else { %>
+<section class="game" id="set-builder">
+  <div class="set-pick" role="group" aria-label="Треки">
+    <% tracks.forEach(function(t) { %>
+      <button type="button" class="set-track" data-slug="<%= t.slug %>" data-title="<%= t.title %>">
+        <% if (t.cover) { %><img src="<%= thumb(t.cover, 160) %>" alt=""><% } %>
+        <span class="set-track-title"><%= t.title %></span>
+        <span class="set-track-order" aria-hidden="true"></span>
+      </button>
+    <% }); %>
+  </div>
+  <div class="set-bar">
+    <p class="set-chosen">Выбрано <strong class="set-count">0</strong> из 3</p>
+    <a class="btn set-go" href="#" aria-disabled="true">Собрать сет →</a>
+  </div>
+</section>
+<% } %>
+
+<p class="game-back"><a href="/music#games">← Другие игры</a></p>
+
+<script src="/js/game-set.js" defer></script>
+<%- include('../partials/footer') %>

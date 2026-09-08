@@ -1,0 +1,35 @@
+<%- include('../partials/header') %>
+
+<section class="hero">
+  <h1>Угадай трек</h1>
+  <p class="hero-tagline">Пять секунд, четыре названия, пять раундов. Играет с нашего сервера, счёт остаётся у тебя.</p>
+</section>
+
+<% if (tracks.length < 4) { %>
+  <p class="hint">Для игры нужно хотя бы четыре трека с аудио. Пока их меньше.</p>
+<% } else { %>
+<section class="game" id="guess-game" data-tracks='<%- JSON.stringify(tracks.map(function(t){ return { src: t.src, title: t.title, url: t.url }; })).replace(/'/g, "&#39;") %>'>
+  <div class="game-card">
+    <p class="game-round"><span class="game-round-num">1</span> из <span class="game-round-total">5</span></p>
+    <button type="button" class="btn game-play">▶ Слушать пять секунд</button>
+    <div class="game-options" role="group" aria-label="Варианты"></div>
+    <p class="game-verdict" aria-live="polite"></p>
+    <button type="button" class="btn btn-secondary game-next" hidden>Дальше →</button>
+  </div>
+  <div class="game-card game-final" hidden>
+    <p class="game-score">Угадано <strong class="game-score-hit">0</strong> из <span class="game-score-total">5</span></p>
+    <p class="game-score-note"></p>
+    <div class="game-share">
+      <a class="btn" target="_blank" rel="noopener" data-share="tg" href="#">Отправить в Telegram</a>
+      <a class="btn btn-secondary" target="_blank" rel="noopener" data-share="vk" href="#">Во ВКонтакте</a>
+      <button type="button" class="btn btn-secondary game-again">Ещё раз</button>
+    </div>
+    <p class="hint">Не угадал? Все треки целиком: <a href="/music">на странице музыки</a>.</p>
+  </div>
+</section>
+<% } %>
+
+<p class="game-back"><a href="/music#games">← Другие игры</a></p>
+
+<script src="/js/game-guess.js" defer></script>
+<%- include('../partials/footer') %>

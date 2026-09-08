@@ -1,0 +1,32 @@
+<%- include('../partials/header') %>
+
+<section class="hero">
+  <p class="quiz-kicker">Твой трек из Soundstates</p>
+  <h1><%= info.title %></h1>
+  <p class="hero-tagline"><%= info.line %></p>
+</section>
+
+<section class="game-card quiz-result">
+  <% if (track && track.cover_image) { %>
+    <img class="quiz-cover edge-soft" src="<%= thumb(track.cover_image, 480) %>" alt="<%= info.title %>">
+  <% } %>
+  <div class="quiz-result-body">
+    <p><%= info.note %></p>
+    <% if (audio) { %>
+      <audio class="quiz-audio" controls preload="none" src="<%= audio.src %>"></audio>
+    <% } %>
+    <p>
+      <% if (track && track.release_slug) { %><a class="btn btn-secondary" href="/music/<%= track.release_slug %>/<%= track.slug %>">Страница трека</a><% } %>
+      <a class="btn btn-secondary" href="https://band.link/soundstates" target="_blank" rel="noopener">Слушать альбом</a>
+    </p>
+    <div class="game-share">
+      <a class="btn" href="https://t.me/share/url?url=<%= encodeURIComponent(shareUrl) %>&text=<%= encodeURIComponent(shareText) %>" target="_blank" rel="noopener">Отправить в Telegram</a>
+      <a class="btn btn-secondary" href="https://vk.com/share.php?url=<%= encodeURIComponent(shareUrl) %>&title=<%= encodeURIComponent(shareText) %>" target="_blank" rel="noopener">Во ВКонтакте</a>
+      <a class="btn btn-secondary" href="/music/quiz">Пройти ещё раз</a>
+    </div>
+  </div>
+</section>
+
+<p class="game-back"><a href="/music#games">← Другие игры</a></p>
+
+<%- include('../partials/footer') %>

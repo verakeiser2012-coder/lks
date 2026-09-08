@@ -1,0 +1,32 @@
+<%- include('../partials/header') %>
+
+<section class="hero">
+  <p class="quiz-kicker">Сет слушателя</p>
+  <h1><%= picked.map(function(t){ return t.title; }).join(' → ') %></h1>
+  <p class="hero-tagline">Три трека DJ Levka в порядке, который выбрал слушатель. Играют подряд.</p>
+</section>
+
+<section class="game-card set-view" id="set-view">
+  <ol class="set-list">
+    <% picked.forEach(function(t, i) { %>
+      <li class="set-item" data-src="<%= t.src %>">
+        <% if (t.cover) { %><img src="<%= thumb(t.cover, 160) %>" alt=""><% } %>
+        <span class="set-item-title"><a href="<%= t.url %>"><%= t.title %></a></span>
+        <span class="set-item-release"><%= t.release %></span>
+        <span class="set-item-state" aria-hidden="true"></span>
+      </li>
+    <% }); %>
+  </ol>
+  <audio id="set-audio" preload="none"></audio>
+  <div class="game-share">
+    <button type="button" class="btn set-play">▶ Слушать сет</button>
+    <a class="btn btn-secondary" href="https://t.me/share/url?url=<%= encodeURIComponent(shareUrl) %>&text=<%= encodeURIComponent(shareText) %>" target="_blank" rel="noopener">Отправить в Telegram</a>
+    <a class="btn btn-secondary" href="https://vk.com/share.php?url=<%= encodeURIComponent(shareUrl) %>&title=<%= encodeURIComponent(shareText) %>" target="_blank" rel="noopener">Во ВКонтакте</a>
+    <a class="btn btn-secondary" href="/music/set">Собрать свой</a>
+  </div>
+</section>
+
+<p class="game-back"><a href="/music#games">← Другие игры</a></p>
+
+<script src="/js/game-set.js" defer></script>
+<%- include('../partials/footer') %>
