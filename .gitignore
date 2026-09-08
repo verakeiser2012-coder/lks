@@ -1,6 +1,8 @@
 node_modules/
 .env
 data/*.db
+data/*.bak*
+data/*.db.bak*
 data/*.db-journal
 data/*.db-shm
 data/*.db-wal
