@@ -34,12 +34,17 @@
 
 <p><%= post.text %></p>
 
-<% if (post.media_path) { %>
-  <% if (post.media_type === 'video') { %>
-    <video src="<%= post.media_path %>" controls style="max-width:360px;"></video>
-  <% } else { %>
-    <img src="<%= post.media_path %>" alt="" style="max-width:360px;border-radius:8px;">
-  <% } %>
+<% if (typeof mediaItems !== 'undefined' && mediaItems.length > 0) { %>
+  <div class="media-items-grid">
+    <% mediaItems.forEach(function(m) { %>
+      <% if (m.type === 'video') { %>
+        <video src="<%= m.path %>" controls style="max-width:360px;"></video>
+      <% } else { %>
+        <img src="<%= m.path %>" alt="" style="max-width:360px;border-radius:8px;">
+      <% } %>
+    <% }); %>
+  </div>
+  <% if (mediaItems.length > 1) { %><p class="hint">Альбом из <%= mediaItems.length %> файлов: в Telegram и ВК уйдёт одним постом.</p><% } %>
 <% } %>
 
 <h2>Статус по соцсетям</h2>

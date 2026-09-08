@@ -1,7 +1,7 @@
 const express = require('express');
 const db = require('../../../db');
 const { uploadGalleryFile } = require('../../../middleware/upload');
-const { isValidMediaUpload, mediaFilePath } = require('../../../services/media');
+const { mediaItemsOf, mediaColumns, typeFromFilename, MAX_ITEMS } = require('../../../services/social/mediaItems');
 const { publishPost, refreshStats } = require('../../../services/social/publish');
 const { suggestHashtags } = require('../../../utils/hashtags');
 const { detectNetwork } = require('../../../utils/postUrl');
@@ -229,7 +229,13 @@ router.get('/new', (req, res) => {
   res.render('admin/calendar-form', { post: null, prefill, networks: listNetworks(), selectedKeys: [], products: listActiveProducts(), error: null });
 });
 
-router.post('/', uploadGalleryFile.single('file'), (req, res) => {
+// Загруженные файлы формы → элементы альбома. Тип берём по расширению:
+// выбирать «фото/видео» руками при десяти файлах бессмысленно.
+function uploadedItems(req) {
+  return (req.files || []).map((f) => ({ path: `/uploads/${f.filename}`, type: typeFromFilename(f.filename) }));
+}
+
+router.post('/', uploadGalleryFile.array('files', MAX_ITEMS), (req, res) => {
   const { text, textEn, newsHook, linkUrl, scheduledAt, prefillMediaPath, prefillMediaType } = req.body;
   const storyFlag = req.body.story ? 1 : 0;
   const rawNetworks = req.body.networks;
@@ -246,22 +252,11 @@ router.post('/', uploadGalleryFile.single('file'), (req, res) => {
     });
   }
 
-  let mediaPath = prefillMediaPath || '';
-  let mediaType = prefillMediaType || '';
-  if (req.file) {
-    if (!isValidMediaUpload(req)) {
-      return res.render('admin/calendar-form', {
-        post: null,
-        prefill: null,
-        networks: listNetworks(),
-        selectedKeys: [],
-        products: listActiveProducts(),
-        error: 'Некорректный тип медиафайла.',
-      });
-    }
-    mediaPath = mediaFilePath(req);
-    mediaType = req.body.type;
-  }
+  // Медиа: скопированное из источника (если было) + загруженные файлы, до десяти.
+  const items = [];
+  if (prefillMediaPath) items.push({ path: prefillMediaPath, type: prefillMediaType === 'video' ? 'video' : 'photo' });
+  items.push(...uploadedItems(req));
+  const media = mediaColumns(items);
 
   // Если в тексте нет ни одного хэштега — автоматически добавляем подобранные (потом можно отредактировать).
   let finalText = text || '';
@@ -273,9 +268,9 @@ ${tags.join(' ')}`;
   }
 
   const info = db.prepare(`
-    INSERT INTO social_posts (text, text_en, news_hook, link_url, story, media_path, media_type, scheduled_at, status)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'scheduled')
-  `).run(finalText, textEn || '', newsHook || '', (linkUrl || '').trim(), storyFlag, mediaPath, mediaType, normalizeScheduledAt(scheduledAt));
+    INSERT INTO social_posts (text, text_en, news_hook, link_url, story, media_path, media_type, media_items, scheduled_at, status)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'scheduled')
+  `).run(finalText, textEn || '', newsHook || '', (linkUrl || '').trim(), storyFlag, media.media_path, media.media_type, media.media_items, normalizeScheduledAt(scheduledAt));
 
   const insertTarget = db.prepare('INSERT INTO social_post_targets (post_id, network_key) VALUES (?, ?)');
   for (const key of selectedNetworks) {
@@ -317,7 +312,7 @@ router.get('/:id', (req, res) => {
   if (!post) {
     return res.status(404).render('404');
   }
-  res.render('admin/calendar-detail', { post, targets: getTargets(post.id) });
+  res.render('admin/calendar-detail', { post, targets: getTargets(post.id), mediaItems: mediaItemsOf(post) });
 });
 
 router.get('/:id/edit', (req, res) => {
@@ -329,10 +324,10 @@ router.get('/:id/edit', (req, res) => {
     return res.redirect(`/admin/calendar/${post.id}`);
   }
   const selectedKeys = getTargets(post.id).map((t) => t.network_key);
-  res.render('admin/calendar-form', { post, prefill: null, networks: listNetworks(), selectedKeys, products: listActiveProducts(), error: null });
+  res.render('admin/calendar-form', { post, prefill: null, networks: listNetworks(), selectedKeys, products: listActiveProducts(), mediaItems: mediaItemsOf(post), error: null });
 });
 
-router.post('/:id/edit', uploadGalleryFile.single('file'), (req, res) => {
+router.post('/:id/edit', uploadGalleryFile.array('files', MAX_ITEMS), (req, res) => {
   const post = getPost(req.params.id);
   if (!post) {
     return res.status(404).render('404');
@@ -348,6 +343,7 @@ router.post('/:id/edit', uploadGalleryFile.single('file'), (req, res) => {
   if (!scheduledAt || selectedNetworks.length === 0) {
     return res.render('admin/calendar-form', {
       post,
+      mediaItems: mediaItemsOf(post),
       prefill: null,
       networks: listNetworks(),
       selectedKeys: getTargets(post.id).map((t) => t.network_key),
@@ -356,26 +352,15 @@ router.post('/:id/edit', uploadGalleryFile.single('file'), (req, res) => {
     });
   }
 
-  let mediaPath = post.media_path;
-  let mediaType = post.media_type;
-  if (req.file) {
-    if (!isValidMediaUpload(req)) {
-      return res.render('admin/calendar-form', {
-        post,
-        prefill: null,
-        networks: listNetworks(),
-        selectedKeys: getTargets(post.id).map((t) => t.network_key),
-        products: listActiveProducts(),
-        error: 'Некорректный тип медиафайла.',
-      });
-    }
-    mediaPath = mediaFilePath(req);
-    mediaType = req.body.type;
-  }
+  // Медиа при правке: оставляем текущие, кроме отмеченных «убрать», и добавляем новые.
+  const rawRemove = req.body.removeMedia;
+  const removeIdx = new Set((Array.isArray(rawRemove) ? rawRemove : rawRemove ? [rawRemove] : []).map(Number));
+  const kept = mediaItemsOf(post).filter((_, i) => !removeIdx.has(i));
+  const media = mediaColumns([...kept, ...uploadedItems(req)]);
 
   db.prepare(`
-    UPDATE social_posts SET text = ?, text_en = ?, news_hook = ?, link_url = ?, story = ?, media_path = ?, media_type = ?, scheduled_at = ? WHERE id = ?
-  `).run(text || '', textEn || '', newsHook || '', (linkUrl || '').trim(), storyFlag, mediaPath, mediaType, normalizeScheduledAt(scheduledAt), post.id);
+    UPDATE social_posts SET text = ?, text_en = ?, news_hook = ?, link_url = ?, story = ?, media_path = ?, media_type = ?, media_items = ?, scheduled_at = ? WHERE id = ?
+  `).run(text || '', textEn || '', newsHook || '', (linkUrl || '').trim(), storyFlag, media.media_path, media.media_type, media.media_items, normalizeScheduledAt(scheduledAt), post.id);
 
   // Синхронизация соцсетей: убираем невыбранные (кроме уже опубликованных), добавляем новые.
   const existing = getTargets(post.id);

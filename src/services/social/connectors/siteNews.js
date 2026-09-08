@@ -1,3 +1,4 @@
+const { mediaItemsOf } = require('../mediaItems');
 const db = require('../../../db');
 const { slugify } = require('../../../utils/slugify');
 
@@ -42,11 +43,11 @@ async function publish(post) {
     INSERT INTO news (title, slug, content, is_published, lang) VALUES (?, ?, ?, 1, 'ru')
   `).run(title, slug, content);
 
-  if (post.media_path) {
+  mediaItemsOf(post).forEach((m, i) => {
     db.prepare(`
-      INSERT INTO news_media (news_id, type, file_path, sort_order) VALUES (?, ?, ?, 0)
-    `).run(info.lastInsertRowid, post.media_type === 'video' ? 'video' : 'photo', post.media_path);
-  }
+      INSERT INTO news_media (news_id, type, file_path, sort_order) VALUES (?, ?, ?, ?)
+    `).run(info.lastInsertRowid, m.type === 'video' ? 'video' : 'photo', m.path, i);
+  });
 
   return { url: `https://levkeiser.com/news/${slug}` };
 }

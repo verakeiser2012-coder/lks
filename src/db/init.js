@@ -515,6 +515,10 @@ function init() {
   if (!socialPostCols.some((c) => c.name === 'sources')) {
     db.exec("ALTER TABLE social_posts ADD COLUMN sources TEXT NOT NULL DEFAULT ''");
   }
+  // Альбом: до десяти файлов в одном посте (JSON), первый дублируется в media_path/media_type.
+  if (!postCols.some((c) => c.name === 'media_items')) {
+    db.exec("ALTER TABLE social_posts ADD COLUMN media_items TEXT NOT NULL DEFAULT '[]'");
+  }
 
   const socialTargetCols2 = db.prepare('PRAGMA table_info(social_post_targets)').all();
   if (!socialTargetCols2.some((c) => c.name === 'story_status')) {

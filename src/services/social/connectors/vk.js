@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
+const { mediaItemsOf } = require('../mediaItems');
 const uploadsDir = path.join(__dirname, '..', '..', '..', '..', 'public', 'uploads');
 const API_VERSION = '5.199';
 
@@ -85,17 +86,19 @@ async function publish(post, credentials) {
   if (!accessToken || !groupId) {
     throw new Error('Не указан токен доступа или ID группы.');
   }
-  let attachments = '';
-  if (post.media_path) {
-    const filePath = path.join(uploadsDir, path.basename(post.media_path));
-    if (post.media_type === 'video') {
+  // До десяти вложений в одном посте: фото и видео вперемешку, порядок как в календаре.
+  const attachList = [];
+  for (const m of mediaItemsOf(post)) {
+    const filePath = path.join(uploadsDir, path.basename(m.path));
+    if (m.type === 'video') {
       // Заголовок ролика — первая строка подписи: в списке видео сообщества он виден вместо имени файла.
       const title = (post.text || '').split(/\r?\n/)[0].trim();
-      attachments = await uploadVideo(groupId, accessToken, filePath, title, post.text || '');
+      attachList.push(await uploadVideo(groupId, accessToken, filePath, title, post.text || ''));
     } else {
-      attachments = await uploadPhoto(groupId, accessToken, filePath);
+      attachList.push(await uploadPhoto(groupId, accessToken, filePath));
     }
   }
+  const attachments = attachList.join(',');
 
   const params = {
     owner_id: -Math.abs(Number(groupId)),

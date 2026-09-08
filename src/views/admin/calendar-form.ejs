@@ -64,22 +64,29 @@
       value="<%= post ? post.scheduled_at.replace(' ', 'T').slice(0, 16) : '' %>"
     >
   </label>
-  <label>
-    Тип медиа (если прикладываете файл)
-    <select name="type">
-      <option value="photo" <%= (post && post.media_type === 'photo') || (prefill && prefill.mediaType === 'photo') ? 'selected' : '' %>>Фото</option>
-      <option value="video" <%= (post && post.media_type === 'video') || (prefill && prefill.mediaType === 'video') ? 'selected' : '' %>>Видео</option>
-    </select>
-  </label>
   <% if (prefill && prefill.mediaPath) { %>
-    <p class="hint">Медиа скопировано из исходного поста/новости — можно оставить как есть или заменить файлом ниже.</p>
+    <p class="hint">Медиа скопировано из исходного поста/новости — можно оставить как есть или добавить файлы ниже.</p>
     <input type="hidden" name="prefillMediaPath" value="<%= prefill.mediaPath %>">
     <input type="hidden" name="prefillMediaType" value="<%= prefill.mediaType %>">
   <% } %>
+  <% if (post && typeof mediaItems !== 'undefined' && mediaItems.length > 0) { %>
+    <div class="media-items">
+      <div class="network-group-title">Сейчас в посте: <%= mediaItems.length %> <%= mediaItems.length === 1 ? 'файл' : 'файлов' %></div>
+      <div class="media-items-grid">
+        <% mediaItems.forEach(function(m, i) { %>
+          <label class="media-item">
+            <% if (m.type === 'video') { %><video src="<%= m.path %>" muted preload="metadata"></video><% } else { %><img src="<%= m.path %>" alt=""><% } %>
+            <span><input type="checkbox" name="removeMedia" value="<%= i %>" style="width:auto;display:inline-block;"> убрать</span>
+          </label>
+        <% }); %>
+      </div>
+    </div>
+  <% } %>
   <label>
-    Файл <%= post && post.media_path ? '(оставьте пустым, чтобы не менять)' : '(необязательно)' %>
-    <input type="file" name="file" accept="image/*,video/*">
+    Файлы (до 10: фото и видео вместе, тип определяется по расширению)
+    <input type="file" name="files" accept="image/*,video/*" multiple>
   </label>
+  <p class="hint">Несколько файлов уходят альбомом в Telegram и ВКонтакте и все попадают в новость на сайте. Instagram, TikTok, YouTube и Pinterest берут первый файл.</p>
   <label>
     Соцсети
     <% [['music', '🎵 Музыка'], ['shorts', '📱 Видеовертикалки'], ['general', 'Остальные']].forEach(function(group) { %>
