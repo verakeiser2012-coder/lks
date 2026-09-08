@@ -71,9 +71,11 @@ music`) — она уже стоит в SoundCloud и в названии кан
     Вдохновительная музыка без нейросетей, съёмки в кино и рекламе, кастомные вещи.
     levkeiser.com
 
-**TikTok** @levkeiser (80 знаков):
+**TikTok** @levkeiser (80 знаков, по-английски: из России TikTok «только просмотр», новые ролики
+видит зарубежная аудитория). Имя `Lev Keiser · DJ Levka`, био 73 знака:
 
-    Вдохновительная музыка без ИИ. Медленно в быстром мире. levkeiser.com
+    Inspirational music, made without AI. Slow in a fast world.
+    levkeiser.com
 
 **Bandcamp** djlevka:
 

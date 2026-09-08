@@ -73,6 +73,8 @@ app.use(express.json());
 // express.static отдаст полный файл, не глядя на ?w=.
 app.use('/uploads', require('./routes/thumbs'));
 app.use(express.static(path.join(__dirname, '..', 'public')));
+// Просмотры страниц (путь + день, без слежки) — после статики, чтобы не считать файлы.
+app.use(require('./middleware/pageViews'));
 
 app.use(
   session({

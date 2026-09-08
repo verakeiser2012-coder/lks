@@ -21,6 +21,25 @@
   </div>
 </section>
 
+<% if (fresh.length > 0) { %>
+<%# «Свежее» — одна лента на всех: последнее из новостей, дневника, релизов и каталога.
+    Обновляется сама по датам записей, ничего о посетителе не помнит. %>
+<section class="fresh" aria-label="Свежее">
+  <div class="fresh-head"><span class="fresh-title">Свежее</span></div>
+  <ul class="fresh-list">
+    <% fresh.forEach(function(item) { %>
+      <li class="fresh-item">
+        <a href="<%= item.url %>">
+          <span class="fresh-kind"><%= item.kind %></span>
+          <span class="fresh-name"><%= item.title %></span>
+          <span class="fresh-date"><%= formatDateShort(item.created_at, 'ru') %></span>
+        </a>
+      </li>
+    <% }); %>
+  </ul>
+</section>
+<% } %>
+
 <% if (podcast.title) { %>
 <%# Анонс подкаста и всё, что вокруг него: вещь, родившаяся из разговора,
     и записи дневника. Поля — в /admin/pages/home. %>

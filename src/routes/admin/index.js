@@ -50,7 +50,12 @@ router.get('/', (req, res) => {
     `)
     .all()
     .map((row) => ({ ...row, title: row.src.replace(/^\/audio\//, '').replace(/\.mp3$/i, '').replace(/[-_]+/g, ' ') }));
-  res.render('admin/dashboard', { productsCount, ordersCount, newOrdersCount, playsTotal, plays30, playsByTrack });
+  const views14 = db.prepare("SELECT COALESCE(SUM(hits), 0) AS c FROM page_views WHERE day >= date('now', '-14 days')").get().c;
+  const topPages = db.prepare(`
+    SELECT path, SUM(hits) AS hits FROM page_views
+    WHERE day >= date('now', '-14 days') GROUP BY path ORDER BY hits DESC LIMIT 25
+  `).all();
+  res.render('admin/dashboard', { productsCount, ordersCount, newOrdersCount, playsTotal, plays30, playsByTrack, views14, topPages });
 });
 
 router.use('/products', productsRoutes);

@@ -388,6 +388,16 @@ function init() {
     CREATE INDEX IF NOT EXISTS idx_track_plays_src ON track_plays(src);
   `);
 
+  // Просмотры страниц: только путь и день, без IP и куки.
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS page_views (
+      path TEXT NOT NULL,
+      day TEXT NOT NULL,
+      hits INTEGER NOT NULL DEFAULT 0,
+      PRIMARY KEY (path, day)
+    );
+  `);
+
   // Раздел «Стиль»: вещи с историей и голоса за образы.
   // Голос — один на образ с одного устройства (voter приходит из localStorage),
   // без регистрации: это игра, а не выборы.

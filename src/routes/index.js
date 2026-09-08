@@ -67,7 +67,30 @@ router.get('/', (req, res) => {
   const releaseTitles = {};
   for (const r of db.prepare('SELECT id, title, slug FROM releases').all()) releaseTitles[r.id] = r;
 
+  // «Свежее»: одна лента на всех из последних записей всех разделов.
+  // Одинаковая для каждого посетителя — никакой персонализации и памяти о визитах.
+  // Не больше трёх новостей, двух записей дневника, одной вещи и одного дропа:
+  // иначе пять товаров, залитых в один день, вытесняют всё остальное.
+  // Релизы не берём: у них created_at — дата импорта, а не выхода.
+  const fresh = db.prepare(`
+    SELECT kind, title, url, created_at FROM (
+      SELECT kind, title, url, created_at,
+        ROW_NUMBER() OVER (PARTITION BY kind ORDER BY created_at DESC) AS n
+      FROM (
+        SELECT 'Новость' AS kind, title, '/news/' || slug AS url, created_at, 3 AS cap FROM news WHERE is_published = 1 AND lang = 'ru'
+        UNION ALL
+        SELECT 'Дневник', title, '/diary/' || slug, created_at, 2 FROM diary_posts WHERE is_published = 1
+        UNION ALL
+        SELECT 'Вещь', name, '/catalog/' || slug, created_at, 1 FROM products WHERE is_active = 1
+        UNION ALL
+        SELECT 'Дроп', name, '/drops/' || slug, created_at, 1 FROM collections WHERE is_published = 1
+      ) WHERE created_at <= datetime('now')
+    ) WHERE n <= CASE kind WHEN 'Новость' THEN 3 WHEN 'Дневник' THEN 2 ELSE 1 END
+    ORDER BY created_at DESC LIMIT 6
+  `).all();
+
   res.render('index', {
+    fresh,
     products,
     releaseTitles,
     news,

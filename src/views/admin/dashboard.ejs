@@ -40,4 +40,19 @@
   </table>
 <% } %>
 
+<h2>Куда ходят: страницы за 14 дней</h2>
+<p class="hint">Считаем только «страница и день», без IP, куки и идентификаторов. Роботы и служебные адреса не учитываются. Всего просмотров за 14 дней: <strong><%= views14 %></strong>.</p>
+<% if (topPages.length === 0) { %>
+  <p>Пока ни одного просмотра.</p>
+<% } else { %>
+  <table>
+    <thead><tr><th>Страница</th><th>Просмотров</th></tr></thead>
+    <tbody>
+      <% topPages.forEach(function(row) { %>
+        <tr><td><a href="<%= row.path %>" target="_blank" rel="noopener"><%= row.path %></a></td><td><%= row.hits %></td></tr>
+      <% }); %>
+    </tbody>
+  </table>
+<% } %>
+
 <%- include('partials/footer') %>
