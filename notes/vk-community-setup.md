@@ -27,10 +27,11 @@
 | `2-конкурс.png` | Конкурс | levkeiser.com/contest |
 | `3-каталог.png` | Каталог | levkeiser.com/catalog |
 | `4-музыка.png` | Музыка | band.link/djlevka |
-| `5-telegram.png` | Telegram | t.me/djlevkatg |
+| `5-рыжие.png` | Рыжие | levkeiser.com/redheads |
+| `6-telegram.png` | Telegram | t.me/djlevkatg |
 
 Уже стоят два пункта: «Плейлисты по пт» и «Магазин за баллы». Порядок: Сайт, Музыка,
-Каталог, Конкурс, Telegram, дальше существующие.
+Рыжие, Каталог, Конкурс, Telegram, дальше существующие.
 
 ## Кнопка действия
 
