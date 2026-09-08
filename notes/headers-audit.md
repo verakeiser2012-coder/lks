@@ -3,12 +3,12 @@
 Проверено 07.09.2026. Эталон, согласованный с пользователем:
 
     Вдохновительный парень. Двигаюсь медленно в быстром мире.
-    Создаю кастомные вещи и музыку без ИИ.
+    Создаю кастомные вещи и музыку.
     levkeiser.com
 
 Английская версия (Pinterest и другие зарубежные):
 
-    Lev Keiser — inspirational music and custom things. Redhead model & producer. Made without AI.
+    Lev Keiser — inspirational music and custom things. Redhead model & producer.
 
 **«Вдохновительный парень» — обязательная первая строка** там, где текст на русском.
 Для музыкальных площадок допустима форма **«вдохновительная музыка»** (англ. `inspirational
@@ -18,8 +18,8 @@ music`) — она уже стоит в SoundCloud и в названии кан
 
 | Площадка | Название | Описание | Сайт |
 |---|---|---|---|
-| **Telegram** @djlevkatg | Лев Кейсер · DJ Levka | эталон, три строки | в описании |
-| **ВКонтакте** vk.com/levkeiser | Лев Кейсер · DJ Levka | эталон, три строки; статус «Принципиально не пользуюсь ИИ» оставлен | поле «Сайт» пока band.link/djlevka — сменить на levkeiser.com в день открытия |
+| **Telegram** @djlevkatg | Лев Кейсер · DJ Levka | ⚠️ описание ещё со строкой «музыку без ИИ» — правится только в видимой вкладке Telegram Web | в описании |
+| **ВКонтакте** vk.com/levkeiser | Лев Кейсер · DJ Levka | 08.09 описание без «без ИИ» (через groups.edit). ⚠️ статус «Принципиально не пользуюсь ИИ для создания моей музыки!» ещё стоит — групповой токен статус не меняет, только руками | поле «Сайт» пока band.link/djlevka — сменить на levkeiser.com в день открытия |
 | **Pinterest** levkeiser | Lev Keiser | английская версия, без города | **levkeiser.com** (был старый djlevka.com) |
 
 ## Требуют правки
@@ -41,14 +41,14 @@ music`) — она уже стоит в SoundCloud и в названии кан
 
     Вдохновительный парень
     Двигаюсь медленно в быстром мире
-    Музыка без ИИ → @djlevka
+    Музыка → @djlevka
     booking@levkeiser.com
 
 Ссылка в профиле: levkeiser.com (после открытия), band.link — второй строкой в «ещё».
 
 **YouTube, оба канала** (первые 2 строки видны в поиске):
 
-    Лев Кейсер — DJ Levka. Вдохновительная музыка без нейросетей, съёмки в кино и рекламе,
+    Лев Кейсер — DJ Levka. Вдохновительная музыка, съёмки в кино и рекламе,
     кастомные вещи. Двигаюсь медленно в быстром мире.
 
     Музыка на всех площадках: band.link/djlevka
@@ -57,45 +57,64 @@ music`) — она уже стоит в SoundCloud и в названии кан
 
 **SoundCloud**:
 
-    Lev Keiser — DJ Levka. Inspirational music, made without AI.
+    Lev Keiser — DJ Levka. Inspirational music. Slow in a fast world.
     levkeiser.com · booking@levkeiser.com
 
 **Rutube**:
 
-    DJ Levka — вдохновительная музыка без нейросетей. Клипы, «Состояния» по альбому
+    DJ Levka — вдохновительная музыка. Клипы, «Состояния» по альбому
     Soundstates, закулисье съёмок. levkeiser.com
 
 **Одноклассники** (профиль 910221978637):
 
     Вдохновительный парень. Двигаюсь медленно в быстром мире.
-    Вдохновительная музыка без нейросетей, съёмки в кино и рекламе, кастомные вещи.
+    Вдохновительная музыка, съёмки в кино и рекламе, кастомные вещи.
     levkeiser.com
 
 **TikTok** @levkeiser (80 знаков, по-английски: из России TikTok «только просмотр», новые ролики
 видит зарубежная аудитория). Имя `Lev Keiser · DJ Levka`, био 73 знака:
 
-    Inspirational music, made without AI. Slow in a fast world.
+    Inspirational music. Slow in a fast world.
     levkeiser.com
 
 **Bandcamp** djlevka:
 
-    Lev Keiser — DJ Levka. Inspirational music, made without AI.
+    Lev Keiser — DJ Levka. Inspirational music. Slow in a fast world.
     levkeiser.com
 
 ## Сделано 07.09 (вечер, Claude in Chrome)
 
 | Площадка | Что стоит теперь |
 |---|---|
-| **band.link/djlevka** (vImfc) | SEO: «DJ Levka — вдохновительная музыка без нейросетей. Все видео под собственные треки. levkeiser.com»; контакты → booking@levkeiser.com + levkeiser.com; оф. сайт levkeiser.com вместо Linktree; Instagram/TikTok → @levkeiser; Дзен добавлен; во «Внешних ссылках» «My link tree» заменён на «Сайт levkeiser.com» |
-| **band.link/levkeiser** (2rX23) | SEO: «Лев Кейсер — вдохновительный парень. Двигаюсь медленно в быстром мире: музыка без ИИ, съёмки в кино и рекламе, кастомные вещи. levkeiser.com»; контакты → booking@; оф. сайт levkeiser.com. «13 лет, Екатеринбург» убрано с обеих страниц |
-| **YouTube** UC2NFcW… (@DJLEVKA) | описание по плану (вдохновительная музыка без нейросетей…), ссылки «Сайт» levkeiser.com + «Музыка на всех площадках» band.link/djlevka, почта booking@. Русский **перевод** описания (раздел «Переводы») тоже заменён на этот же текст — старая почта dj.levka.music@gmail.com и Linktree оттуда ушли |
-| **SoundCloud** | био «Lev Keiser — DJ Levka. Inspirational music, made without AI. levkeiser.com · booking@levkeiser.com», ссылки levkeiser.com + band.link/djlevka |
-| **Rutube** | «Лев Кейсер — вдохновительный парень. Вдохновительная музыка без нейросетей: клипы, «Состояния»…, сайт/band.link/booking@» — сохранено (levkeiser.com и booking@ видны в HTML канала) |
-| **TikTok** @levkeiser | ⏳ форма «Edit profile» принимает текст и закрывается без ошибки, но профиль остаётся старым («Music creator (DJ Levka), model, actor / Release! band.link/soundstates», имя DJ Levka). Скорее всего то же ограничение, что и на загрузку: из России аккаунт «только просмотр» → править через VPN (см. `notes/tiktok-upload-access.md`). Целевой текст: имя «Лев Кейсер · DJ Levka», био «Вдохновительная музыка без ИИ. Медленно в быстром мире. / levkeiser.com» |
+| **band.link/djlevka** (vImfc) | SEO: «DJ Levka — вдохновительная музыка. Все видео под собственные треки. levkeiser.com»; контакты → booking@levkeiser.com + levkeiser.com; оф. сайт levkeiser.com вместо Linktree; Instagram/TikTok → @levkeiser; Дзен добавлен; во «Внешних ссылках» «My link tree» заменён на «Сайт levkeiser.com» |
+| **band.link/levkeiser** (2rX23) | SEO: «Лев Кейсер — вдохновительный парень. Двигаюсь медленно в быстром мире: музыка, съёмки в кино и рекламе, кастомные вещи. levkeiser.com»; контакты → booking@; оф. сайт levkeiser.com. «13 лет, Екатеринбург» убрано с обеих страниц |
+| **YouTube** UC2NFcW… (@DJLEVKA) | описание по плану (вдохновительная музыка, съёмки в кино и рекламе, кастомные вещи), ссылки «Сайт» levkeiser.com + «Музыка на всех площадках» band.link/djlevka, почта booking@. Русский **перевод** описания (раздел «Переводы») тоже заменён на этот же текст — старая почта dj.levka.music@gmail.com и Linktree оттуда ушли |
+| **SoundCloud** | био «Lev Keiser — DJ Levka. Inspirational music. Slow in a fast world. levkeiser.com · booking@levkeiser.com», ссылки levkeiser.com + band.link/djlevka |
+| **Rutube** | «Лев Кейсер — вдохновительный парень. Вдохновительная музыка: клипы, «Состояния»…, сайт/band.link/booking@» — сохранено (levkeiser.com и booking@ видны в HTML канала) |
+| **TikTok** @levkeiser | ⏳ форма «Edit profile» принимает текст и закрывается без ошибки, но профиль остаётся старым («Music creator (DJ Levka), model, actor / Release! band.link/soundstates», имя DJ Levka). Скорее всего то же ограничение, что и на загрузку: из России аккаунт «только просмотр» → править через VPN (см. `notes/tiktok-upload-access.md`). Целевой текст (по-английски): имя «Lev Keiser · DJ Levka», био «Inspirational music. Slow in a fast world. / levkeiser.com» |
 | **Одноклассники** profile/910221978637 | посмотрено, не правлено: у личного профиля нет поля «о себе», есть только статус. ⚠️ В «Подробной информации» открыто стоит **дата рождения 21 марта 2012** и место рождения — по решению «дату не публикуем» скрыть в настройках приватности (Настройки → Публичность → Дата рождения) или убрать год. «Другие профили»: Twitter @djlevka, VK levkeiser, Telegram djlevkatg — сайт туда не добавить (только соцсети). Статус поставить: «Вдохновительный парень. Двигаюсь медленно в быстром мире. levkeiser.com» |
-| **Bandcamp** djlevka | био: «Lev Keiser — DJ Levka. Inspirational music, made without AI.» + синтвейв/даунтемпо, «пишу с 10 лет, всё сам», клич вокалистам, levkeiser.com · booking@; «born 2012» убрано. Ссылка в сайдбаре: levkeiser.com вместо Linktree (второй ссылки Bandcamp не даёт). Поле Location «Russia» не трогала — это фильтр каталога, а не текст |
-| **Instagram @djlevka** (в Chrome вход именно в него) | био: «Вдохновительная музыка без нейросетей / Медленно в быстром мире / Лев Кейсер → @levkeiser / levkeiser.com · booking@levkeiser.com» (123 знака). Ссылки Instagram правит только из приложения: там linktr.ee + 4 — заменить первую на levkeiser.com |
+| **Bandcamp** djlevka | био: «Lev Keiser — DJ Levka. Inspirational music. Slow in a fast world.» + синтвейв/даунтемпо, «пишу с 10 лет, всё сам», клич вокалистам, levkeiser.com · booking@; «born 2012» убрано. Ссылка в сайдбаре: levkeiser.com вместо Linktree (второй ссылки Bandcamp не даёт). Поле Location «Russia» не трогала — это фильтр каталога, а не текст |
+| **Instagram @djlevka** (в Chrome вход именно в него) | био: «Вдохновительная музыка / Медленно в быстром мире / Лев Кейсер → @levkeiser / levkeiser.com · booking@levkeiser.com» (106 знаков). Ссылки Instagram правит только из приложения: там linktr.ee + 4 — заменить первую на levkeiser.com |
 | **Instagram @levkeiser** | не правлено — нужен вход в этот аккаунт (в Chrome сейчас @djlevka). Текст готов выше в «Предлагаемых текстах» |
+
+## Решение 08.09: «без ИИ» убрано из шапок
+
+Обещание «музыка без ИИ / made without AI» снято со всех коротких описаний. Причина: ролики
+к части треков (например, Glitch) сделаны нейросетью, и широкое «без ИИ» в шапке читается как
+обещание про всё сразу — первый же клип его опровергает. Плюс шапка должна отвечать «кто это»,
+а не «чего он не делает», а мысль уже несёт «двигаюсь медленно в быстром мире».
+
+Где «без ИИ» остаётся уместным: страница «Обо мне», описания релизов, ответы на вопросы —
+там это факт о процессе, а не лозунг. У роликов с нейросетевой картинкой стоит писать прямо:
+«Музыка: DJ Levka. Визуал: нейросеть».
+
+Новый эталон:
+
+    Вдохновительный парень. Двигаюсь медленно в быстром мире.
+    Создаю кастомные вещи и музыку.
+    levkeiser.com
+
+Английский: `Inspirational music. Slow in a fast world.`
 
 ## Pinterest: сделано 07.09
 
@@ -146,10 +165,10 @@ music`) — она уже стоит в SoundCloud и в названии кан
 
 Предлагаемый текст для `band.link/djlevka`:
 
-    DJ Levka — вдохновительная музыка без нейросетей. Все видео под собственные треки.
+    DJ Levka — вдохновительная музыка. Все видео под собственные треки.
     levkeiser.com
 
 Для `band.link/levkeiser`:
 
     Лев Кейсер — вдохновительный парень. Двигаюсь медленно в быстром мире:
-    музыка без ИИ, съёмки в кино и рекламе, кастомные вещи. levkeiser.com
+    музыка, съёмки в кино и рекламе, кастомные вещи. levkeiser.com
