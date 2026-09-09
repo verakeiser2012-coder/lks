@@ -1195,6 +1195,21 @@ form.inline { display: inline; }
 .link-section { margin-bottom: 40px; }
 .link-section h2 { margin-bottom: 16px; }
 
+/* «Чем вдохновляюсь»: три карточки, плеер подгружается по клику. */
+.inspired-lead { max-width: 62ch; color: var(--color-muted); margin: -6px 0 16px; }
+.inspired-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+@media (max-width: 820px) { .inspired-grid { grid-template-columns: 1fr; } }
+.inspired-card {
+  border: 1px solid var(--color-border); border-radius: 10px;
+  padding: 18px 18px 16px; background: #fff; display: flex; flex-direction: column; gap: 10px;
+}
+.inspired-name { margin: 0; font-size: 1.05rem; }
+.inspired-note { margin: 0; font-size: 0.92rem; line-height: 1.45; color: var(--color-text); flex: 1; }
+.inspired-player { min-height: 44px; }
+.inspired-play { width: 100%; }
+.inspired-frame { border-radius: 10px; display: block; }
+.inspired-more { font-size: 0.88rem; }
+
 /* Клич про вокал: карточка, а не просто текст в потоке, — иначе на длинной
    странице музыки он читается как примечание и его пролистывают. */
 .vocal-call {
@@ -1486,6 +1501,12 @@ a.music-table-title:hover { color: var(--color-accent); }
 }
 .promo-banner-subtitle { margin: 0; color: var(--color-muted); font-size: 0.9rem; max-width: 46ch; }
 .promo-banner-cta { flex-shrink: 0; white-space: nowrap; }
+/* Заглушка места под баннер: чёрная полоса, видно, где он вылезет.
+   Включается адресом кнопки «#slot», выключается удалением такого баннера. */
+.promo-banner-slot { background: #111 none; border-color: #111; color: #fff; }
+.promo-banner-slot .promo-banner-title,
+.promo-banner-slot .promo-banner-subtitle { color: #fff; }
+
 @media (max-width: 560px) {
   .promo-banner { flex-direction: column; align-items: flex-start; }
 }
@@ -2207,6 +2228,13 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
   gap: 6px 8px;
 }
 .poster-now strong { color: var(--color-gold-bright); font-weight: 600; }
+/* Кнопка «включить музыку» — та же строка, только кликабельная. */
+.poster-now-off {
+  border: none; background: none; padding: 0; cursor: pointer; font: inherit;
+  color: rgba(243, 234, 211, 0.7);
+}
+.poster-now-off:hover { color: var(--color-gold-bright); }
+.poster-now-dot-off { animation: none; opacity: 0.55; }
 .poster-now-dot {
   width: 8px; height: 8px; border-radius: 50%;
   background: var(--color-gold-bright);

@@ -41,6 +41,38 @@ router.post('/play', express.json({ limit: '2kb' }), (req, res) => {
   res.status(204).end();
 });
 
+// «Чем вдохновляюсь»: три музыканта, из которых выросло звучание Льва.
+// Список правится здесь, а не в базе: он меняется раз в год, а не раз в неделю,
+// и к каждому пункту привязана своя запись дневника.
+const INSPIRED_BY = [
+  {
+    name: 'Tyler, the Creator',
+    spotify: '4V8LLVI7PbaPR0K2TGSxFF',
+    note: 'Продюсирует себе сам и меняет звучание каждый альбом, теряя часть слушателей. Из-за него я перестал бояться, что моя музыка «не в формате».',
+    slug: 'vdohnovilo-tyler-the-creator',
+  },
+  {
+    name: 'Joji',
+    spotify: '3MZsBdqDrRTJihTHQrO6Dq',
+    note: 'Закрыл шумный YouTube-канал на миллионы подписчиков и начал делать тихую электронику. Из него вырос Soundstates и привычка убирать лишний слой.',
+    slug: 'vdohnovilo-joji',
+  },
+  {
+    name: 'Tame Impala',
+    spotify: '5INjqkS1o8h1imAzPqGZBb',
+    note: 'Звучит как рок-группа, а на записях это один человек. Научил не вылизывать звук: лёгкая расстроенность делает трек живым.',
+    slug: 'vdohnovilo-tame-impala',
+  },
+];
+
+/** Ссылку на дневник показываем только у опубликованных записей. */
+function inspiredBy() {
+  const published = new Set(
+    db.prepare('SELECT slug FROM diary_posts WHERE is_published = 1').all().map((r) => r.slug)
+  );
+  return INSPIRED_BY.map((a) => ({ ...a, diaryUrl: published.has(a.slug) ? `/diary/${a.slug}` : '' }));
+}
+
 router.get('/', (req, res) => {
   const introRow = db.prepare("SELECT value FROM settings WHERE key = 'music_intro'").get();
   const links = db.prepare(
@@ -65,6 +97,7 @@ router.get('/', (req, res) => {
 
   res.render('music', {
     banners: getBanners('music'),
+    inspired: inspiredBy(),
     intro: introRow ? introRow.value : '',
     groups: groupLinks(links),
     featured: {

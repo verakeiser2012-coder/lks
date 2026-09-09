@@ -33,6 +33,7 @@ const redheadsRoutes = require('./routes/redheads');
 const contestRoutes = require('./routes/contest');
 const subscribeRoutes = require('./routes/subscribe');
 const legalRoutes = require('./routes/legal');
+const aromaRoutes = require('./routes/aroma');
 const adminRoutes = require('./routes/admin');
 
 const app = express();
@@ -123,6 +124,7 @@ app.use((req, res, next) => {
 app.use('/', require('./routes/seo'));
 // /health — для внешнего монитора: жив ли сервер и открывается ли база.
 app.use('/health', require('./routes/health'));
+app.use('/aroma', aromaRoutes);
 app.use('/', indexRoutes);
 app.use('/catalog', catalogRoutes);
 app.use('/cart', cartRoutes);

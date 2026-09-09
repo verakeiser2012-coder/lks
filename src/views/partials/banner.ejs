@@ -1,4 +1,4 @@
-<div class="promo-banner">
+<div class="promo-banner<%= banner.cta_url === '#slot' ? ' promo-banner-slot' : '' %>">
   <div class="promo-banner-text">
     <p class="promo-banner-title"><%= banner.title %></p>
     <% if (banner.subtitle) { %><p class="promo-banner-subtitle"><%= banner.subtitle %></p><% } %>
