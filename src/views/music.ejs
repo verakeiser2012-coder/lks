@@ -112,6 +112,7 @@
     подходит ли ему это по звуку. До этого он жил только пунктом в выпадающем
     списке на «Контактах», где его никто не видел. %>
 <section class="link-section vocal-call">
+  <img class="vocal-call-art" src="<%= thumb('/uploads/vocal-call.jpg', 960) %>" srcset="<%= srcset('/uploads/vocal-call.jpg', [480, 640, 960]) %>" sizes="(max-width: 640px) 92vw, 560px" alt="" loading="lazy">
   <h2>Ищу вокалиста</h2>
   <p class="vocal-call-lead">
     Продакшн есть, голоса не хватает — об этом мне написали сразу двое кураторов плейлистов.
@@ -137,6 +138,7 @@
   <div class="inspired-grid">
     <% inspired.forEach(function (a) { %>
       <article class="inspired-card">
+        <img class="inspired-art" src="<%= thumb(a.art, 640) %>" srcset="<%= srcset(a.art, [320, 480, 640]) %>" sizes="(max-width: 820px) 92vw, 300px" alt="" loading="lazy">
         <h3 class="inspired-name"><%= a.name %></h3>
         <p class="inspired-note"><%= a.note %></p>
         <div class="inspired-player" data-yandex="<%= a.yandex %>">

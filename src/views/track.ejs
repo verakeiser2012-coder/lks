@@ -5,7 +5,24 @@
   <div>
     <p class="drop-season"><a href="/music/<%= release.slug %>"><%= release.title %></a></p>
     <h1><%= track.title %></h1>
-    <% if (track.url) { %><a class="btn" href="<%= track.url %>" target="_blank" rel="noopener">Слушать</a><% } %>
+    <%# Слушать можно прямо здесь: раньше единственная кнопка уводила на чужую
+        площадку, и человек уходил с сайта, не дочитав про трек. %>
+    <% if (track.audio) { %>
+      <audio class="track-player" controls preload="none" src="<%= track.audio %>"></audio>
+    <% } %>
+    <div class="track-links">
+      <% if (release.streaming_url) { %>
+        <a class="btn" href="<%= release.streaming_url %>" target="_blank" rel="noopener">Добавить в свой плейлист</a>
+      <% } else if (track.url) { %>
+        <a class="btn" href="<%= track.url %>" target="_blank" rel="noopener">Слушать на площадках</a>
+      <% } %>
+      <% if (release.streaming_url && track.url) { %>
+        <a class="btn btn-ghost" href="<%= track.url %>" target="_blank" rel="noopener">Открыть в Spotify</a>
+      <% } %>
+    </div>
+    <% if (release.streaming_url) { %>
+      <p class="track-links-hint">Одна ссылка на все площадки: Яндекс Музыка, ВК, Звук, Spotify, Apple Music. Открывается там, где вы слушаете.</p>
+    <% } %>
   </div>
 </section>
 

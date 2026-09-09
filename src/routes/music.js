@@ -5,6 +5,7 @@ const { groupLinks } = require('../utils/links');
 const { getGalleryItems } = require('../utils/gallery');
 const { parseVideoEmbedUrl } = require('../utils/videoEmbed');
 const { getBgPlaylist } = require('../utils/bgPlaylist');
+const { trackAudio, withAudio } = require('../utils/trackAudio');
 const QUIZ = require('../data/quiz');
 
 const router = express.Router();
@@ -47,6 +48,7 @@ router.post('/play', express.json({ limit: '2kb' }), (req, res) => {
 const INSPIRED_BY = [
   {
     name: 'Tyler, the Creator',
+    art: '/uploads/inspired-tyler.jpg',
     // Плеер — Яндекс Музыка: Spotify из России часто не открывается вовсе,
     // и блок «послушать» превращался бы в пустой прямоугольник.
     yandex: '593298',
@@ -56,6 +58,7 @@ const INSPIRED_BY = [
   },
   {
     name: 'Joji',
+    art: '/uploads/inspired-joji.jpg',
     yandex: '3116561',
     spotify: '3MZsBdqDrRTJihTHQrO6Dq',
     note: 'Закрыл шумный YouTube-канал на миллионы подписчиков и начал делать тихую электронику. Из него вырос Soundstates и привычка убирать лишний слой.',
@@ -63,6 +66,7 @@ const INSPIRED_BY = [
   },
   {
     name: 'Tame Impala',
+    art: '/uploads/inspired-tame-impala.jpg',
     yandex: '853465',
     spotify: '5INjqkS1o8h1imAzPqGZBb',
     note: 'Звучит как рок-группа, а на записях это один человек. Научил не вылизывать звук: лёгкая расстроенность делает трек живым.',
@@ -230,7 +234,7 @@ router.get('/:releaseSlug', (req, res, next) => {
   res.render('release', {
     title: release.title,
     release,
-    tracks,
+    tracks: withAudio(tracks),
     products: productsForRelease(release.id),
     releaseVideo: parseVideoEmbedUrl(release.video_url),
     allReleases: listReleases(),
@@ -268,7 +272,7 @@ router.get('/:releaseSlug/:trackSlug', (req, res, next) => {
   res.render('track', {
     title: track.title,
     release,
-    track,
+    track: { ...track, audio: trackAudio(track.slug) },
     prevTrack,
     nextTrack,
     trackGalleryItems,
