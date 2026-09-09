@@ -99,16 +99,22 @@
           <span class="podcast-around-meta"><%= priceLabel(podcastProduct) %></span>
         </a>
       <% } %>
-      <a class="podcast-around-card" href="/music/soundstates/d-r-e-a-m">
-        <span class="podcast-around-label">Трек из подкаста</span>
-        <span class="podcast-around-title">d r e a m</span>
-        <span class="podcast-around-meta">звучит в разговоре про альбом</span>
-      </a>
-      <a class="podcast-around-card" href="/diary">
-        <span class="podcast-around-label">Дневник</span>
-        <span class="podcast-around-title">Что осталось за кадром</span>
-        <span class="podcast-around-meta">записи по мотивам подкастов</span>
-      </a>
+      <% if (podcastTrack) { %>
+        <a class="podcast-around-card" href="/music/<%= podcastTrack.release_slug %>/<%= podcastTrack.slug %>">
+          <% if (podcastTrack.image) { %><img src="<%= thumb(podcastTrack.image, 320) %>" alt="<%= podcastTrack.title %>"><% } %>
+          <span class="podcast-around-label">Трек из подкаста</span>
+          <span class="podcast-around-title"><%= podcastTrack.title %></span>
+          <span class="podcast-around-meta">звучит в разговоре про альбом</span>
+        </a>
+      <% } %>
+      <% if (podcastDiary) { %>
+        <a class="podcast-around-card" href="/diary/<%= podcastDiary.slug %>">
+          <% if (podcastDiary.cover_image) { %><img src="<%= thumb(podcastDiary.cover_image, 320) %>" alt="<%= podcastDiary.title %>"><% } %>
+          <span class="podcast-around-label">Дневник</span>
+          <span class="podcast-around-title">Что осталось за кадром</span>
+          <span class="podcast-around-meta">запись по мотивам подкаста</span>
+        </a>
+      <% } %>
     </div>
   </div>
 </section>

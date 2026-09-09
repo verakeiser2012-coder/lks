@@ -53,6 +53,15 @@ router.get('/', (req, res) => {
   const podcastProduct = db
     .prepare("SELECT id, name, slug, price, image FROM products WHERE is_active = 1 AND slug = 'aromaticheskaya-tabletka-grusha-lev'")
     .get();
+  // Трек и запись дневника, которые стоят рядом с подкастом: их обложки
+  // нужны карточкам «вокруг подкаста», иначе там пустые прямоугольники.
+  const podcastTrack = db
+    .prepare(`SELECT t.title, t.slug, r.slug AS release_slug, COALESCE(NULLIF(t.cover_image, ''), r.cover_image) AS image
+              FROM tracks t JOIN releases r ON r.id = t.release_id WHERE t.slug = 'd-r-e-a-m'`)
+    .get();
+  const podcastDiary = db
+    .prepare("SELECT title, slug, cover_image FROM diary_posts WHERE slug = 'chto-ostalos-za-kadrom-podkasta-s-grushey' AND is_published = 1")
+    .get();
   const diaryPosts = db
     .prepare('SELECT id, title, slug, excerpt, cover_image, created_at FROM diary_posts WHERE is_published = 1 ORDER BY created_at DESC LIMIT 4')
     .all();
@@ -114,6 +123,8 @@ router.get('/', (req, res) => {
     coverByNewsId,
     podcast,
     podcastProduct,
+    podcastTrack,
+    podcastDiary,
     diaryPosts,
     redheadIntro: redheadIntroRow ? redheadIntroRow.value : '',
     redheads,

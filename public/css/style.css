@@ -2396,6 +2396,11 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 .redheads-home-row { padding: 8px 6px; }
 
 /* Полоса дропа: магазин внутри повествования. */
+/* Восемь вещей при пяти колонках ложились как 5+3 — ряд с дырой.
+   Четыре колонки дают два полных ряда, и карточка становится крупнее. */
+.drop-band .product-grid { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 900px) { .drop-band .product-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 620px) { .drop-band .product-grid { grid-template-columns: repeat(2, 1fr); } }
 .drop-band {
   background: #121010;
   color: #f3ead3;
@@ -2479,12 +2484,17 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 .fresh-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
 .fresh-title { font-family: var(--font-display); font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-muted); }
 .fresh-list {
-  list-style: none; margin: 0; padding: 0; display: grid; gap: var(--grid-gap);
-  /* Ровно три в ряд: записей всегда шесть, и auto-fill на широком экране
-     разложил бы их как 4+2 — ряд с дырой. */
-  grid-template-columns: repeat(3, 1fr);
+  list-style: none; margin: 0; padding: 0; display: grid; gap: 14px 12px;
+  /* Шесть в ряд мелкими кадрами: это не глава, а строка «что нового»,
+     она должна проглядываться одним движением глаз и не спорить с главами
+     ниже. Записей ровно шесть — ряд заполняется целиком. */
+  grid-template-columns: repeat(6, 1fr);
 }
-@media (max-width: 700px) { .fresh-list { grid-template-columns: repeat(2, 1fr); gap: 14px 12px; } }
+@media (max-width: 1000px) { .fresh-list { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 560px) { .fresh-list { grid-template-columns: repeat(2, 1fr); } }
+.fresh-list .fresh-name { font-size: 0.86rem; }
+.fresh-list .fresh-date { font-size: 0.72rem; }
+.fresh-list .fresh-kind { font-size: 0.6rem; padding: 2px 6px; left: 6px; bottom: 6px; }
 .fresh-item a { display: block; color: var(--color-text); text-decoration: none; }
 .fresh-shot {
   position: relative; display: block; aspect-ratio: var(--shot-story); margin-bottom: 8px;
@@ -2543,6 +2553,22 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 .about-mails li { font-size: 0.95rem; }
 .about-mails span { color: var(--color-muted); font-size: 0.85rem; }
 .about-links-title { margin: 18px 0 8px; font-size: 0.95rem; }
+
+/* Сеты и стемы. */
+.set-list { display: grid; gap: 24px; }
+.set-card { border: 1px solid var(--color-border); border-radius: var(--radius); padding: 16px; background: #fff; }
+.set-meta { display: flex; flex-wrap: wrap; gap: 10px; font-size: 0.78rem; color: var(--color-muted); }
+.set-with { color: var(--color-accent); font-weight: 600; }
+.set-title { margin: 6px 0 4px; font-size: 1.1rem; }
+.set-note { margin: 0 0 12px; color: var(--color-muted); font-size: 0.9rem; max-width: 62ch; }
+.stem-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--card-min), 1fr)); gap: var(--grid-gap); }
+.stem-card { border: 1px solid var(--color-border); border-radius: var(--radius); padding: 14px; background: #fff; }
+.stem-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.stem-title { margin: 0; font-size: 1rem; }
+.stem-format { font-size: 0.72rem; color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+.stem-note { margin: 6px 0 10px; font-size: 0.86rem; color: var(--color-muted); }
+.stem-soon { display: inline-block; font-size: 0.8rem; color: var(--color-muted); border: 1px dashed var(--color-border); border-radius: 999px; padding: 3px 10px; }
+.stem-license { margin-top: 16px; font-size: 0.86rem; color: var(--color-muted); max-width: 66ch; }
 
 /* Подкаст: карточка выпуска — обложка слева, текст справа. */
 .episode-list { display: grid; gap: var(--grid-gap); }

@@ -516,6 +516,38 @@ function init() {
     db.exec("ALTER TABLE releases ADD COLUMN platform_links TEXT NOT NULL DEFAULT '{}'");
   }
 
+  // Сеты и стемы: записи целиком и отдельные дорожки треков. Заготовка —
+  // наполняется по мере того, как сводятся стемы и выкладываются записи.
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS dj_sets (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      slug TEXT UNIQUE NOT NULL,
+      description TEXT NOT NULL DEFAULT '',
+      with_whom TEXT NOT NULL DEFAULT '',
+      duration TEXT NOT NULL DEFAULT '',
+      video_url TEXT NOT NULL DEFAULT '',
+      audio_url TEXT NOT NULL DEFAULT '',
+      set_date TEXT NOT NULL DEFAULT '',
+      is_published INTEGER NOT NULL DEFAULT 0,
+      sort_order INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    )
+  `);
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS stem_packs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      track_id INTEGER REFERENCES tracks(id) ON DELETE SET NULL,
+      title TEXT NOT NULL DEFAULT '',
+      tracks_note TEXT NOT NULL DEFAULT '',
+      format TEXT NOT NULL DEFAULT '',
+      archive_url TEXT NOT NULL DEFAULT '',
+      is_published INTEGER NOT NULL DEFAULT 0,
+      sort_order INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    )
+  `);
+
   // Подкаст: раздел заведён до первого выпуска, поэтому запись может жить
   // без файла — тогда карточка показывается как «скоро».
   db.exec(`

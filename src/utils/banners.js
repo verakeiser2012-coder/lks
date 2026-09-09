@@ -12,6 +12,7 @@ const SLOTS = [
   { key: 'home', label: 'Главная', where: 'под лентой «Что нового», до блока свежих релизов' },
   { key: 'music', label: 'Музыка', where: 'после релизов, перед кличем про вокал' },
   { key: 'catalog', label: 'Каталог', where: 'над сеткой товаров' },
+  { key: 'sets', label: 'Сеты и стемы', where: 'страница /sets, под заголовком' },
   { key: 'podcast', label: 'Подкаст', where: 'страница /podcast, под заголовком' },
   { key: 'games', label: 'Поиграть', where: 'над плитками игр' },
   { key: 'news', label: 'Новости', where: 'над списком новостей' },
