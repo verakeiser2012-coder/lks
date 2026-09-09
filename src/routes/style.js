@@ -45,6 +45,8 @@ router.get('/', (req, res) => {
       walks: setting('style_walks_intro'),
       redhead: setting('style_redhead_note'),
       film: setting('style_film_intro'),
+      ads: setting('style_ads_intro'),
+      inspires: setting('style_inspires_intro'),
       portfolio: setting('style_portfolio_intro'),
     },
     portfolio: getGalleryItems('style-portfolio'),
@@ -52,6 +54,9 @@ router.get('/', (req, res) => {
     walks,
     years,
     filmItems: getGalleryItems('style-film'),
+    adItems: getGalleryItems('style-ads'),
+    inspireItems: getGalleryItems('style-inspires'),
+    adBrands: setting('style_ads_brands'),
     groups: groupLinks(links),
     banners: getBanners('style'),
   });

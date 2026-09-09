@@ -127,27 +127,62 @@
   <% } %>
 </section>
 
-<%# 04 Рыжий. Только дверь в раздел, сам раздел живёт отдельно. %>
-<section class="chapter chapter--tight" id="redhead">
+<%# 04 Что вдохновляет. Подборка кадров и роликов с подписями: самая первая
+    съёмка, самая длинная смена, самая ранняя. Материал заводится в галерее
+    (ключ «Стиль — что вдохновляет»), подпись кадра и есть история. %>
+<section class="chapter" id="inspires">
   <header class="chapter-head">
     <span class="chapter-num">04</span>
+    <h2 class="chapter-title">Что вдохновляет</h2>
+  </header>
+  <p class="chapter-deck"><%= texts.inspires || 'Съёмки, которые запомнились: самая первая, самая длинная, самая ранняя. Подпись под каждым кадром — про то, чем он дорог.' %></p>
+  <% if (inspireItems.length) { %>
+    <%- include('partials/gallery-section', { galleryItems: inspireItems, galleryTitle: '' }) %>
+  <% } else { %>
+    <p class="hint">Подборка собирается: кадры и ролики с подписями появятся здесь.</p>
+  <% } %>
+</section>
+
+<%# 05 Рыжий. Только дверь в раздел, сам раздел живёт отдельно. %>
+<section class="chapter chapter--tight" id="redhead">
+  <header class="chapter-head">
+    <span class="chapter-num">05</span>
     <h2 class="chapter-title">Рыжий</h2>
     <a class="chapter-more" href="/redheads">Рыжие, которые вдохновляют →</a>
   </header>
   <p class="chapter-deck"><%- renderLinkedText(texts.redhead || 'Цвет волос у 1–2% людей на планете. Я не крашу и не прячу: это часть стиля, а не особенность. Тут же собираю рыжих, на которых смотрю сам.') %></p>
 </section>
 
-<%# 05 Кино. Бэкстейдж со съёмок кино и рекламы: площадка, свет, дубли. %>
+<%# 06 Кино. Бэкстейдж со съёмок кино и рекламы: площадка, свет, дубли. %>
 <% if (filmItems.length > 0) { %>
 <section class="chapter" id="film">
   <header class="chapter-head">
-    <span class="chapter-num">05</span>
+    <span class="chapter-num">06</span>
     <h2 class="chapter-title">Кино</h2>
   </header>
   <p class="chapter-deck"><%= texts.film || 'Кино и реклама, в которых снимаюсь, и то, что остаётся за кадром: площадка, свет, дубли.' %></p>
   <%- include('partials/gallery-section', { galleryItems: filmItems, galleryTitle: '' }) %>
 </section>
 <% } %>
+
+<%# 07 Реклама. Отдельно от кино: бренду важно увидеть не роль, а то, как
+    Лев работает в рекламном кадре, и с кем уже снимался. %>
+<section class="chapter" id="ads">
+  <header class="chapter-head">
+    <span class="chapter-num">07</span>
+    <h2 class="chapter-title">Реклама</h2>
+    <a class="chapter-more" href="/brands">Предложить съёмку →</a>
+  </header>
+  <p class="chapter-deck"><%= texts.ads || 'Съёмки для брендов: одежда, торговые центры, продукты, застройщики — от каталожной съёмки до рекламного ролика и дефиле.' %></p>
+  <% if (adBrands) { %>
+    <p class="ads-brands"><%- renderLinkedText(adBrands) %></p>
+  <% } %>
+  <% if (adItems.length) { %>
+    <%- include('partials/gallery-section', { galleryItems: adItems, galleryTitle: '' }) %>
+  <% } else { %>
+    <p class="hint">Ролики со съёмок добавим сюда — они лежат в видео ВКонтакте.</p>
+  <% } %>
+</section>
 
 <section class="chapter chapter--tight" id="brands-line">
   <p class="style-brands-line">Снимаюсь для брендов, работаем по договору. <a href="/brands/media-kit">Медиакит и форматы →</a></p>

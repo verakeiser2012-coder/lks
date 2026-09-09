@@ -2500,6 +2500,8 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 .game-tile-where { font-size: 0.76rem; color: var(--color-muted); margin-top: 2px; }
 .game-tile-art { padding-top: 0; overflow: hidden; }
 .game-tile-cover { width: 100%; aspect-ratio: 8 / 5; object-fit: cover; display: block; margin: 0 0 12px; border-radius: 8px; }
+.ads-brands { max-width: 68ch; color: var(--color-text); font-size: 0.95rem; }
+
 /* Шоурил в портфолио: одно-два видео во всю ширину колонки. */
 .showreel { display: grid; gap: 16px; margin: 14px 0 18px; }
 .showreel-item { margin: 0; }

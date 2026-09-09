@@ -6,7 +6,7 @@ const { parseVideoEmbedUrl } = require('../../utils/videoEmbed');
 
 const router = express.Router();
 
-const PAGE_KEYS = ['', 'home', 'music', 'style', 'style-portfolio', 'style-walks', 'style-film', 'gigs'];
+const PAGE_KEYS = ['', 'home', 'music', 'style', 'style-portfolio', 'style-walks', 'style-film', 'style-ads', 'style-inspires', 'gigs'];
 
 function loadItems() {
   return db.prepare(`

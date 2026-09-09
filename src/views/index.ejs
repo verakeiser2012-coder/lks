@@ -67,7 +67,8 @@
 <section class="chapter" id="podcast">
   <header class="chapter-head">
     <span class="chapter-num">01</span>
-    <h2 class="chapter-title">Подкаст</h2>
+    <h2 class="chapter-title"><a href="/podcast">Подкаст</a></h2>
+    <a class="chapter-more" href="/podcast">Все выпуски →</a>
   </header>
   <p class="chapter-deck">Разговоры с людьми, которые делают вещи руками. Первый выпуск: мастерская благовоний «Груша».</p>
   <div class="podcast-block">
@@ -80,10 +81,12 @@
         <h3 class="podcast-title"><%= podcast.title %></h3>
         <% if (podcast.guest) { %><p class="podcast-guest"><%= podcast.guest %></p><% } %>
         <% if (podcast.note) { %><p class="podcast-note"><%- renderLinkedText(podcast.note) %></p><% } %>
+        <%# Пока выпуска нет, «Смотреть» вело бы в никуда: ведём на страницу
+            выпуска в разделе, где написано, на какой он стадии. %>
         <% if (podcast.url) { %>
-          <a class="btn" href="<%= podcast.url %>" <% if (podcast.url.startsWith('http')) { %>target="_blank" rel="noopener"<% } %>>Смотреть</a>
+          <a class="btn" href="<%= podcast.url %>" <% if (podcast.url.startsWith('http')) { %>target="_blank" rel="noopener"<% } %>><%= podcast.url.startsWith('http') ? 'Смотреть' : 'Открыть выпуск' %></a>
         <% } else { %>
-          <span class="podcast-soon">Скоро</span>
+          <a class="btn btn-ghost" href="/podcast">О выпуске</a>
         <% } %>
       </div>
     </div>
