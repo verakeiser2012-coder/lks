@@ -28,7 +28,13 @@ function view(res, extra = {}) {
   });
 }
 
-router.get('/', (req, res) => view(res));
+// ?topic=vocal — чтобы кнопка «Предложить вокал» со страницы музыки открывала
+// форму с уже выбранной темой: одно поле меньше на пути человека к письму.
+router.get('/', (req, res) => {
+  const asked = String(req.query.topic || '');
+  const known = TOPICS.some((t) => t.key === asked);
+  view(res, known ? { form: { topic: asked, name: '', email: '', body: '' } } : {});
+});
 
 router.post('/', async (req, res, next) => {
   const form = {

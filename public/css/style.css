@@ -1194,6 +1194,18 @@ form.inline { display: inline; }
 
 .link-section { margin-bottom: 40px; }
 .link-section h2 { margin-bottom: 16px; }
+
+/* Клич про вокал: карточка, а не просто текст в потоке, — иначе на длинной
+   странице музыки он читается как примечание и его пролистывают. */
+.vocal-call {
+  border: 1px solid var(--color-border); border-radius: 10px;
+  padding: 22px 24px; background: #fffdf7;
+}
+.vocal-call h2 { margin-top: 0; }
+.vocal-call-lead { max-width: 62ch; margin: 0 0 12px; }
+.vocal-call-list { max-width: 62ch; margin: 0 0 18px; padding-left: 20px; color: var(--color-muted); }
+.vocal-call-list li { margin-bottom: 4px; }
+@media (max-width: 640px) { .vocal-call { padding: 18px 16px; } }
 .link-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
