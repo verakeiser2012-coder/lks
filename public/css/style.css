@@ -2500,6 +2500,13 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 .game-tile-where { font-size: 0.76rem; color: var(--color-muted); margin-top: 2px; }
 .game-tile-art { padding-top: 0; overflow: hidden; }
 .game-tile-cover { width: 100%; aspect-ratio: 8 / 5; object-fit: cover; display: block; margin: 0 0 12px; border-radius: 8px; }
+/* «Обо мне»: почты по темам и ссылки группами. */
+.about-contacts-lead { color: var(--color-muted); max-width: 62ch; }
+.about-mails { list-style: none; padding: 0; margin: 0 0 18px; display: grid; gap: 6px; }
+.about-mails li { font-size: 0.95rem; }
+.about-mails span { color: var(--color-muted); font-size: 0.85rem; }
+.about-links-title { margin: 18px 0 8px; font-size: 0.95rem; }
+
 /* Подкаст: карточка выпуска — обложка слева, текст справа. */
 .episode-list { display: grid; gap: 14px; }
 .episode-card {

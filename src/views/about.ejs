@@ -22,4 +22,26 @@
   </div></div>
 <% } %>
 
+<section class="link-section" id="contacts">
+  <h2>Как со мной связаться</h2>
+  <p class="about-contacts-lead">
+    Быстрее всего — <a href="/contact">через форму</a>: письмо сразу уходит в нужный ящик.
+    Если удобнее почтой, вот адреса по темам.
+  </p>
+  <ul class="about-mails">
+    <% mails.forEach(function (m) { %>
+      <li><a href="mailto:<%= m.address %>"><%= m.address %></a> <span><%= m.note %></span></li>
+    <% }); %>
+  </ul>
+
+  <% linkGroups.forEach(function (group) { %>
+    <% if (group.name) { %><h3 class="about-links-title"><%= group.name %></h3><% } %>
+    <div class="link-grid">
+      <% group.items.forEach(function (link) { %>
+        <a class="link-card" href="<%= link.url %>" <% if (link.url.startsWith('http')) { %>target="_blank" rel="noopener"<% } %>><%= link.label %></a>
+      <% }); %>
+    </div>
+  <% }); %>
+</section>
+
 <%- include('partials/footer') %>

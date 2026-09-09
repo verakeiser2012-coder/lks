@@ -10,6 +10,7 @@ const SECTIONS = {
   style: 'Стиль',
   video: 'Видео',
   gigs: 'Выступления',
+  about: 'Обо мне — контакты',
 };
 
 const FEATURED_KEYS = {
