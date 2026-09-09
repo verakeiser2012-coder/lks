@@ -1,6 +1,9 @@
 <%- include('partials/header') %>
 
-<h1><%= track && track.id ? 'Редактировать трек' : 'Новый трек' %></h1>
+<div class="admin-toolbar">
+  <h1><%= track && track.id ? 'Редактировать трек' : 'Новый трек' %></h1>
+  <a href="/admin/tracks">← К трекам</a>
+</div>
 
 <% if (error) { %>
   <div class="flash flash-error"><%= error %></div>

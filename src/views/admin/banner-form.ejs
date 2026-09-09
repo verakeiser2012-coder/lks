@@ -1,6 +1,9 @@
 <%- include('partials/header') %>
 
-<h1><%= banner && banner.id ? 'Редактировать баннер' : 'Новый баннер' %></h1>
+<div class="admin-toolbar">
+  <h1><%= banner && banner.id ? 'Редактировать баннер' : 'Новый баннер' %></h1>
+  <a href="/admin/banners">← К баннерам</a>
+</div>
 
 <% if (error) { %>
   <div class="flash flash-error"><%= error %></div>

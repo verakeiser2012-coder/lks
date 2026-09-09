@@ -1,6 +1,9 @@
 <%- include('partials/header') %>
 
-<h1><%= person && person.id ? 'Редактировать' : 'Добавить человека' %></h1>
+<div class="admin-toolbar">
+  <h1><%= person && person.id ? 'Редактировать' : 'Добавить человека' %></h1>
+  <a href="/admin/redheads">← К рыжим</a>
+</div>
 
 <% if (error) { %>
   <div class="flash flash-error"><%= error %></div>

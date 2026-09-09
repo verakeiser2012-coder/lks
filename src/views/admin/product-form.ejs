@@ -1,6 +1,9 @@
 <%- include('partials/header') %>
 
-<h1><%= product && product.id ? 'Редактировать товар' : 'Новый товар' %></h1>
+<div class="admin-toolbar">
+  <h1><%= product && product.id ? 'Редактировать товар' : 'Новый товар' %></h1>
+  <a href="/admin/products">← К товарам</a>
+</div>
 
 <% if (error) { %>
   <div class="flash flash-error"><%= error %></div>

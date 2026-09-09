@@ -1,6 +1,9 @@
 <%- include('partials/header') %>
 
-<h1><%= release && release.id ? 'Редактировать релиз' : 'Новый релиз' %></h1>
+<div class="admin-toolbar">
+  <h1><%= release && release.id ? 'Редактировать релиз' : 'Новый релиз' %></h1>
+  <a href="/admin/releases">← К релизам</a>
+</div>
 
 <% if (error) { %>
   <div class="flash flash-error"><%= error %></div>

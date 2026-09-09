@@ -1,6 +1,9 @@
 <%- include('partials/header') %>
 
-<h1>Новая новость</h1>
+<div class="admin-toolbar">
+  <h1>Новая новость</h1>
+  <a href="/admin/news">← К новостям</a>
+</div>
 
 <% if (error) { %>
   <div class="flash flash-error"><%= error %></div>
