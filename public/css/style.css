@@ -1551,6 +1551,30 @@ a.music-table-title:hover { color: var(--color-accent); }
   color: var(--color-muted);
 }
 .spotlight-body { padding: 16px; }
+/* Оценки записей дневника: школьная шкала как игра. */
+.diary-marks { margin: 28px 0 8px; padding: 18px 20px; border: 1px solid var(--color-border); border-radius: 10px; background: #fffdf7; }
+.diary-marks-title { margin: 0 0 4px; font-size: 1.05rem; }
+.diary-marks-hint { margin: 0 0 12px; color: var(--color-muted); font-size: 0.88rem; }
+.diary-marks-row { display: flex; gap: 8px; }
+.diary-mark {
+  width: 46px; height: 46px; border-radius: 10px; cursor: pointer;
+  border: 1px solid var(--color-border); background: #fff;
+  font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; color: var(--color-text);
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.diary-mark:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.diary-mark.is-mine { background: var(--color-accent); border-color: var(--color-accent); color: #fff; }
+.diary-marks-score { margin: 12px 0 0; font-size: 0.9rem; color: var(--color-muted); }
+.diary-marks-count::before { content: '· '; }
+.diary-marks-count::after { content: ' оценок'; }
+
+/* Карточка без фотографии: монограмма вместо серой плашки «нет фото».
+   Снимки знаменитостей мы публиковать не вправе, поэтому это основной вид. */
+.spotlight-initial {
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 4rem; color: var(--color-gold-deep);
+  background: linear-gradient(160deg, #f6efe0, #e8dcc2);
+}
 .spotlight-name { font-weight: 700; font-size: 1.05rem; }
 .spotlight-role { font-size: 0.82rem; color: var(--color-accent); font-weight: 600; margin-top: 2px; }
 .spotlight-note { font-size: 0.88rem; color: var(--color-muted); margin: 8px 0; }

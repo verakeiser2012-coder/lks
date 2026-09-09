@@ -16,7 +16,7 @@
         <% if (person.photo) { %>
           <img class="spotlight-photo" src="<%= thumb(person.photo, 640) %>" srcset="<%= srcset(person.photo) %>" sizes="(max-width: 640px) 92vw, 300px" alt="<%= person.name %>">
         <% } else { %>
-          <div class="spotlight-photo no-image">Нет фото</div>
+          <div class="spotlight-photo spotlight-initial" aria-hidden="true"><%= person.name.trim().charAt(0) %></div>
         <% } %>
         <div class="spotlight-body">
           <div class="spotlight-name"><%= person.name %></div>

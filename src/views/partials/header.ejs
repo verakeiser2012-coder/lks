@@ -204,14 +204,13 @@
       <div class="container nav-inner" id="site-nav-inner">
         <a href="/" class="<%= navActive('/') %>">Главная</a>
         <a href="/diary" class="<%= navActive('/diary') %>">Дневник</a>
-        <a href="/redheads" class="<%= navActive('/redheads') %>">Рыжие</a>
         <a href="/news" class="<%= navActive('/news') %>">Новости</a>
-        <%# DJ Levka — середина меню: слева личные разделы, справа музыкальные.
+        <%# DJ Levka — середина меню: по три раздела с каждой стороны.
             Разделители с обеих сторон, иначе имя читается как обычный пункт. %>
         <span class="nav-divider" aria-hidden="true"></span>
         <a href="/music" class="nav-music-link <%= navActive('/music') %>">DJ Levka</a>
         <span class="nav-divider" aria-hidden="true"></span>
-        <a href="/gigs" class="<%= navActive('/gigs') %>">Выступления</a>
+        <a href="/redheads" class="<%= navActive('/redheads') %>">Рыжие</a>
         <a href="/style" class="<%= navActive('/style') %>">Стиль</a>
         <a href="/contest" class="<%= navActive('/contest') %>">Конкурс</a>
       </div>

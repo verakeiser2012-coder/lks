@@ -422,6 +422,18 @@ function init() {
       is_published INTEGER NOT NULL DEFAULT 1,
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
+    -- Оценки записей дневника: школьная шкала от 2 до 5. Игра, а не рейтинг:
+    -- Лев пишет, читатель ставит оценку, как учитель на полях.
+    -- Один голос с устройства на запись, повторный меняет оценку.
+    CREATE TABLE IF NOT EXISTS diary_marks (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      post_id INTEGER NOT NULL REFERENCES diary_posts(id) ON DELETE CASCADE,
+      voter TEXT NOT NULL,
+      mark INTEGER NOT NULL CHECK (mark BETWEEN 2 AND 5),
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      UNIQUE(post_id, voter)
+    );
+
     CREATE TABLE IF NOT EXISTS look_votes (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       item_id INTEGER NOT NULL REFERENCES gallery_items(id) ON DELETE CASCADE,

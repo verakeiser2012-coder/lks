@@ -54,10 +54,28 @@
   </section>
 <% } %>
 
+<%# Оценка записи, как в школьном дневнике. Игра, а не рейтинг: двойку тоже
+    можно поставить, и это честнее, чем сердечки, где вариант всегда один. %>
+<section class="diary-marks" data-slug="<%= post.slug %>">
+  <h2 class="diary-marks-title">Поставьте оценку записи</h2>
+  <p class="diary-marks-hint">Дневник же. Оценку можно поменять, засчитается последняя.</p>
+  <div class="diary-marks-row" role="group" aria-label="Оценка записи">
+    <% [2, 3, 4, 5].forEach(function (m) { %>
+      <button type="button" class="diary-mark" data-mark="<%= m %>"><%= m %></button>
+    <% }); %>
+  </div>
+  <p class="diary-marks-score" id="diary-marks-score"<%= marksCount ? '' : ' hidden' %>>
+    Средний балл <strong id="diary-marks-avg"><%= marksAvg %></strong>
+    <span class="diary-marks-count" id="diary-marks-count"><%= marksCount %></span>
+  </p>
+</section>
+
 <p style="margin-top:24px;"><a href="/diary">← Ко всем записям</a></p>
 
 <%- include('partials/channel-cta', { channelCtaTitle: 'Обсуждаем в канале', channelCtaText: 'Короткие записи между большими — там, четыре раза в неделю.' }) %>
 
 <%- include('partials/share') %>
+
+<script src="/js/diary-marks.js" defer></script>
 
 <%- include('partials/footer') %>
