@@ -73,7 +73,8 @@ router.get('/:slug', (req, res) => {
     category,
     collection,
     pageImage: product.image || '',
-    pageDescription: product.description || '',
+    // в meta ссылка не нужна — оставляем только текст из [текст](адрес)
+    pageDescription: (product.description || '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1'),
     pageType: 'product',
   });
 });

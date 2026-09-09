@@ -20,7 +20,7 @@
     <p class="product-price"><%= formatPrice(product.price) %></p>
     <%# Описание набирают в textarea: пустая строка — новый абзац, одиночный перенос сохраняем %>
     <% (product.description || '').split(/\r?\n\s*\r?\n/).filter(function (p) { return p.trim(); }).forEach(function (para) { %>
-      <p class="product-description"><% para.trim().split(/\r?\n/).forEach(function (line, i) { %><% if (i) { %><br><% } %><%= line %><% }); %></p>
+      <p class="product-description"><% para.trim().split(/\r?\n/).forEach(function (line, i) { %><% if (i) { %><br><% } %><%- renderLinkedText(line) %><% }); %></p>
     <% }); %>
 
     <%# С чем связана вещь на сайте: раздел каталога, дроп, трек и релиз, из которого она выросла %>
