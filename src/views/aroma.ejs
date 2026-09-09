@@ -2,8 +2,15 @@
 
 <section class="hero">
   <h1>Карта натуральных ароматов</h1>
-  <p class="hero-tagline">166 ароматов на двенадцати семействах. Соберите свой состав — и увидите, где он встанет на карте.</p>
+  <p class="hero-tagline">166 материалов парфюмерии и благовоний на двенадцати семействах. Место аромата на карте — это уже его состав.</p>
 </section>
+
+<ul class="aroma-uses">
+  <li><b>Разобрать аромат</b> Наведите на точку — увидите, из каких семейств он собран и в каких долях. Круговая диаграмма в самой точке показывает это без наведения.</li>
+  <li><b>Подобрать пару</b> Цветная дуга ведёт ко второму семейству, к которому аромат тянется. Соседи по карте — родственники по составу: с ними он сойдётся.</li>
+  <li><b>Собрать свою смесь</b> Клик кладёт аромат в верстак справа, части задают пропорцию: три сандала на два ладана. Смесь встаёт на карту отдельной точкой — сразу видно, чего перебор.</li>
+  <li><b>Найти замену</b> «Похоже на» показывает материалы с самым близким профилем. Нет уда или он не по карману — карта подскажет, чем его заменить.</li>
+</ul>
 
 <div class="aroma" id="aroma">
   <div class="aroma-map-pane">
@@ -55,6 +62,11 @@
 </div>
 
 <style>
+.aroma-uses{list-style:none;margin:0 auto 26px;padding:0;max-width:1180px;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px 30px}
+.aroma-uses li{font-size:15px;line-height:1.55;color:var(--color-text)}
+.aroma-uses b{display:block;font-family:var(--font-display);font-size:15px;margin-bottom:3px}
+@media (max-width:700px){.aroma-uses{gap:14px;margin-bottom:20px}}
 .aroma{--ar-paper:#E4D8BE;--ar-ink:#231B12;--ar-soft:#6B5B45;--ar-rule:#C6B694;--ar-warm:#B4601C;
        display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:0;border:1px solid var(--color-border);
        border-radius:var(--radius);overflow:hidden;margin:0 0 40px}

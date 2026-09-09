@@ -97,9 +97,9 @@
       const label = el('text', { x: n.x, y: n.y + 17, class: 'ar-label', 'text-anchor': 'middle' });
       label.textContent = nm(n); g.appendChild(label);
       const hit = el('circle', { cx: n.x, cy: n.y, r: 13, fill: 'transparent', class: 'ar-hit' });
+      hit.dataset.i = idx;
       hit.addEventListener('pointerenter', (e) => showTip(n, e));
       hit.addEventListener('pointerleave', hideTip);
-      hit.addEventListener('click', () => add(idx));
       g.appendChild(hit); gNodes.appendChild(g);
       return { g: g, label: label, node: n };
     });
@@ -123,16 +123,33 @@
     if (vz === 1) { vx = 0; vy = 0; }
     apply();
   }, { passive: false });
+  // Захват указателя переносит все события на svg, и клик по кружку теряется.
+  // Поэтому захватываем только после того, как указатель уехал дальше порога,
+  // а короткое нажатие без движения считаем выбором аромата.
   let drag = null;
-  svg.addEventListener('pointerdown', (e) => { drag = { x: e.clientX, y: e.clientY, vx: vx, vy: vy }; svg.classList.add('ar-drag'); svg.setPointerCapture(e.pointerId); });
+  const MOVED = 4;
+  svg.addEventListener('pointerdown', (e) => {
+    drag = { x: e.clientX, y: e.clientY, vx: vx, vy: vy, id: e.pointerId, moved: false,
+             hit: e.target && e.target.classList.contains('ar-hit') ? e.target.dataset.i : null };
+  });
   svg.addEventListener('pointermove', (e) => {
     if (!drag) return;
+    if (!drag.moved) {
+      if (Math.abs(e.clientX - drag.x) + Math.abs(e.clientY - drag.y) < MOVED) return;
+      drag.moved = true;
+      svg.classList.add('ar-drag');
+      try { svg.setPointerCapture(drag.id); } catch (err) { /* указатель уже отпущен */ }
+    }
     const r = svg.getBoundingClientRect(), s = DATA.w / r.width;
     vx = drag.vx + (e.clientX - drag.x) * s; vy = drag.vy + (e.clientY - drag.y) * s; apply();
   });
-  const endDrag = () => { drag = null; svg.classList.remove('ar-drag'); };
+  const endDrag = (e) => {
+    if (drag && !drag.moved && drag.hit != null) add(+drag.hit);
+    if (drag && drag.moved) { try { svg.releasePointerCapture(drag.id); } catch (err) {} }
+    drag = null; svg.classList.remove('ar-drag');
+  };
   svg.addEventListener('pointerup', endDrag);
-  svg.addEventListener('pointercancel', endDrag);
+  svg.addEventListener('pointercancel', () => { drag = null; svg.classList.remove('ar-drag'); });
   $('ar-fit').addEventListener('click', () => { vx = 0; vy = 0; vz = 1; apply(); });
   $('ar-labels').addEventListener('click', (e) => { allLabels = !allLabels; e.currentTarget.setAttribute('aria-pressed', String(allLabels)); apply(); });
 
