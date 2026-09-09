@@ -1209,6 +1209,9 @@ form.inline { display: inline; }
 .inspired-play { width: 100%; }
 .inspired-frame { border-radius: 10px; display: block; }
 .inspired-more { font-size: 0.88rem; }
+.inspired-links { margin: 0; display: flex; gap: 14px; font-size: 0.85rem; }
+.inspired-links a { color: var(--color-muted); }
+.inspired-links a:hover { color: var(--color-accent); }
 
 /* Клич про вокал: карточка, а не просто текст в потоке, — иначе на длинной
    странице музыки он читается как примечание и его пролистывают. */
@@ -2228,6 +2231,9 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
   gap: 6px 8px;
 }
 .poster-now strong { color: var(--color-gold-bright); font-weight: 600; }
+.poster-now-btn { border: none; background: none; padding: 0; cursor: pointer; font: inherit; color: rgba(243, 234, 211, 0.7); }
+.poster-now-hint { opacity: 0; transition: opacity 0.2s ease; font-size: 0.78rem; }
+.poster-now-btn:hover .poster-now-hint { opacity: 0.75; }
 /* Кнопка «включить музыку» — та же строка, только кликабельная. */
 .poster-now-off {
   border: none; background: none; padding: 0; cursor: pointer; font: inherit;

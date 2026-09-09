@@ -139,9 +139,13 @@
       <article class="inspired-card">
         <h3 class="inspired-name"><%= a.name %></h3>
         <p class="inspired-note"><%= a.note %></p>
-        <div class="inspired-player" data-artist="<%= a.spotify %>">
+        <div class="inspired-player" data-yandex="<%= a.yandex %>">
           <button type="button" class="btn btn-ghost inspired-play">Послушать</button>
         </div>
+        <p class="inspired-links">
+          <a href="https://music.yandex.ru/artist/<%= a.yandex %>" target="_blank" rel="noopener">Яндекс&nbsp;Музыка</a>
+          <a href="https://open.spotify.com/artist/<%= a.spotify %>" target="_blank" rel="noopener">Spotify</a>
+        </p>
         <% if (a.diaryUrl) { %>
           <a class="inspired-more" href="<%= a.diaryUrl %>">Почему именно он →</a>
         <% } %>

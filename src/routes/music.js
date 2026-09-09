@@ -47,18 +47,23 @@ router.post('/play', express.json({ limit: '2kb' }), (req, res) => {
 const INSPIRED_BY = [
   {
     name: 'Tyler, the Creator',
+    // Плеер — Яндекс Музыка: Spotify из России часто не открывается вовсе,
+    // и блок «послушать» превращался бы в пустой прямоугольник.
+    yandex: '593298',
     spotify: '4V8LLVI7PbaPR0K2TGSxFF',
     note: 'Продюсирует себе сам и меняет звучание каждый альбом, теряя часть слушателей. Из-за него я перестал бояться, что моя музыка «не в формате».',
     slug: 'vdohnovilo-tyler-the-creator',
   },
   {
     name: 'Joji',
+    yandex: '3116561',
     spotify: '3MZsBdqDrRTJihTHQrO6Dq',
     note: 'Закрыл шумный YouTube-канал на миллионы подписчиков и начал делать тихую электронику. Из него вырос Soundstates и привычка убирать лишний слой.',
     slug: 'vdohnovilo-joji',
   },
   {
     name: 'Tame Impala',
+    yandex: '853465',
     spotify: '5INjqkS1o8h1imAzPqGZBb',
     note: 'Звучит как рок-группа, а на записях это один человек. Научил не вылизывать звук: лёгкая расстроенность делает трек живым.',
     slug: 'vdohnovilo-tame-impala',

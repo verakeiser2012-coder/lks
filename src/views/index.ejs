@@ -17,10 +17,11 @@
     <%# Строка живёт в двух состояниях. Играет — «сейчас играет: трек».
         Стоит — кнопка «включить музыку»: браузер запрещает автозапуск до
         первого клика, и без этой кнопки строка просто исчезала. %>
-    <p class="poster-now" id="poster-now" hidden>
+    <button type="button" class="poster-now poster-now-btn" id="poster-now" hidden>
       <span class="poster-now-dot" aria-hidden="true"></span>
       <span class="poster-now-label">сейчас играет:</span> <strong id="poster-now-title"></strong>
-    </p>
+      <span class="poster-now-hint">выключить</span>
+    </button>
     <button type="button" class="poster-now poster-now-off" id="poster-now-play" hidden>
       <span class="poster-now-dot poster-now-dot-off" aria-hidden="true"></span>
       включить музыку<span id="poster-now-next"></span>
@@ -257,12 +258,16 @@
   // Клик по строке включает фоновый плеер — это же снимает запрет браузера
   // на автозапуск, потому что считается действием пользователя.
   (function () {
-    var play = document.getElementById('poster-now-play');
-    if (!play) return;
-    play.addEventListener('click', function () {
+    function hitToggle() {
       var toggle = document.getElementById('bg-audio-toggle');
       if (toggle) toggle.click();
-    });
+    }
+    var play = document.getElementById('poster-now-play');
+    var now = document.getElementById('poster-now');
+    if (play) play.addEventListener('click', hitToggle);
+    // Та же строка во время игры выключает музыку: иначе включить можно было,
+    // а выключить только кнопкой в шапке, которую ещё надо найти.
+    if (now) now.addEventListener('click', hitToggle);
   })();
 </script>
 
