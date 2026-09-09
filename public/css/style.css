@@ -2281,6 +2281,11 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
   letter-spacing: -0.03em;
 }
 .chapter-title { margin: 0; font-size: 1.5rem; flex: 1; }
+/* Заголовок главы ведёт в свой раздел, но выглядит заголовком, а не ссылкой:
+   подчёркивание появляется только при наведении. */
+.chapter-title a { color: inherit; text-decoration: none; }
+.chapter-title a:hover { color: var(--color-accent); text-decoration: underline; text-underline-offset: 4px; }
+.chapter-head--dark .chapter-title a:hover { color: var(--color-gold-bright); }
 .chapter-more { font-size: 0.9rem; font-weight: 600; white-space: nowrap; }
 .chapter-deck { color: var(--color-muted); max-width: 60ch; margin: -8px 0 18px; }
 .redheads-home-intro { margin-top: -8px; }
