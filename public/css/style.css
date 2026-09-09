@@ -1,4 +1,15 @@
 :root {
+  /* Сетки на всех страницах живут по одним размерам: карточка-история —
+     от 220px, карточка-лицо или предмет — от 170px, зазор один и тот же.
+     Раньше у каждого блока были свои числа (160/200/220, зазор 12–20),
+     и главная выглядела собранной из четырёх разных сайтов. */
+  --grid-gap: 20px;
+  --card-min: 220px;
+  --card-min-small: 170px;
+  /* Два формата кадра вместо четырёх: горизонтальный для историй,
+     квадрат для предметов и портретов. */
+  --shot-story: 4 / 3;
+  --shot-square: 1 / 1;
   --color-bg: #ffffff;
   --color-text: #1a1a1a;
   --color-muted: #6b6b6b;
@@ -555,8 +566,8 @@ main.container { padding-top: 32px; padding-bottom: 60px; min-height: 60vh; }
 
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(var(--card-min-small), 1fr));
+  gap: var(--grid-gap);
 }
 
 .product-card {
@@ -566,11 +577,11 @@ main.container { padding-top: 32px; padding-bottom: 60px; min-height: 60vh; }
   color: var(--color-text);
   display: block;
 }
-.product-card:hover { border-color: var(--color-accent); color: var(--color-text); }
+.product-card:hover { color: var(--color-text); }
 
 .product-image img, .no-image {
   width: 100%;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: var(--shot-square);
   object-fit: cover;
   border-radius: var(--radius);
   background: #f2f2f2;
@@ -937,8 +948,8 @@ main.container { padding-top: 32px; padding-bottom: 60px; min-height: 60vh; }
 
 .news-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(var(--card-min), 1fr));
+  gap: var(--grid-gap);
 }
 .news-card {
   border: 1px solid var(--color-border);
@@ -947,10 +958,10 @@ main.container { padding-top: 32px; padding-bottom: 60px; min-height: 60vh; }
   color: var(--color-text);
   display: block;
 }
-.news-card:hover { border-color: var(--color-accent); color: var(--color-text); }
+.news-card:hover { color: var(--color-text); }
 .news-card-image img, .news-card-image .no-image {
   width: 100%;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: var(--shot-story);
   object-fit: cover;
   border-radius: var(--radius);
   background: #f2f2f2;
@@ -1560,8 +1571,8 @@ a.music-table-title:hover { color: var(--color-accent); }
    верх — портреты в 4:3 срезали лбы. */
 .spotlight-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(var(--card-min-small), 1fr));
+  gap: var(--grid-gap);
 }
 .redhead-reads { margin: 0 0 18px; font-size: 0.9rem; color: var(--color-muted); }
 .spotlight-card {
@@ -1571,14 +1582,10 @@ a.music-table-title:hover { color: var(--color-accent); }
   background: #fff;
   transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
-.spotlight-card:hover {
-  border-color: var(--color-accent);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(184, 134, 11, 0.12);
-}
+.spotlight-card:hover { box-shadow: 0 8px 20px rgba(184, 134, 11, 0.12); }
 .spotlight-photo {
   width: 100%;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: var(--shot-square);
   object-fit: cover;
   object-position: center 18%;
   display: block;
@@ -2113,8 +2120,8 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 }
 .podcast-around {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(var(--card-min-small), 1fr));
+  gap: var(--grid-gap);
   margin-top: 20px;
   padding-top: 18px;
   border-top: 1px solid var(--color-border);
@@ -2152,14 +2159,14 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 .redheads-home-intro { color: var(--color-muted); max-width: 60ch; }
 .redheads-home-row {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(var(--card-min-small), 1fr));
+  gap: var(--grid-gap);
   margin: 16px 0;
 }
 .redheads-home-card { display: flex; flex-direction: column; gap: 2px; }
 .redheads-home-card img, .redheads-home-card .no-image {
   width: 100%;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: var(--shot-square);
   object-fit: cover;
   border-radius: var(--radius);
   background: #f2f2f2;
@@ -2460,7 +2467,7 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 .fresh-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
 .fresh-title { font-family: var(--font-display); font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-muted); }
 .fresh-list {
-  list-style: none; margin: 0; padding: 0; display: grid; gap: 18px 16px;
+  list-style: none; margin: 0; padding: 0; display: grid; gap: var(--grid-gap);
   /* Ровно три в ряд: записей всегда шесть, и auto-fill на широком экране
      разложил бы их как 4+2 — ряд с дырой. */
   grid-template-columns: repeat(3, 1fr);
@@ -2468,7 +2475,7 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 @media (max-width: 700px) { .fresh-list { grid-template-columns: repeat(2, 1fr); gap: 14px 12px; } }
 .fresh-item a { display: block; color: var(--color-text); text-decoration: none; }
 .fresh-shot {
-  position: relative; display: block; aspect-ratio: 4 / 3; margin-bottom: 8px;
+  position: relative; display: block; aspect-ratio: var(--shot-story); margin-bottom: 8px;
   border-radius: 8px; overflow: hidden; background: #f1ece1;
 }
 .fresh-shot img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
@@ -2526,13 +2533,13 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 .about-links-title { margin: 18px 0 8px; font-size: 0.95rem; }
 
 /* Подкаст: карточка выпуска — обложка слева, текст справа. */
-.episode-list { display: grid; gap: 14px; }
+.episode-list { display: grid; gap: var(--grid-gap); }
 .episode-card {
   display: flex; gap: 16px; align-items: flex-start; text-decoration: none; color: inherit;
   border: 1px solid var(--color-border); border-radius: var(--radius); padding: 14px; background: #fff;
   transition: border-color 0.2s ease, transform 0.2s ease;
 }
-.episode-card:hover { border-color: var(--color-accent); transform: translateY(-2px); }
+
 .episode-cover { width: 140px; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
 .episode-meta { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; font-size: 0.78rem; color: var(--color-muted); }
 .episode-guest { font-weight: 700; color: var(--color-accent); }
@@ -2545,7 +2552,7 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 /* Карточка дропа с обложкой: картинка сверху, текст под ней. */
 .drop-card-art { padding-top: 0; overflow: hidden; }
 .drop-card-cover { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; margin-bottom: 12px; border-radius: 8px; }
-.games-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+.games-grid { gap: var(--grid-gap); display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
 .game-tile {
   display: flex; flex-direction: column; gap: 6px; padding: 18px;
   border: 1px solid var(--color-border); border-radius: var(--radius); color: var(--color-text); text-decoration: none;
@@ -2616,3 +2623,29 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 .notice { border: 1px solid var(--color-border); border-radius: var(--radius); padding: 16px 18px; }
 .notice-muted { background: rgba(0,0,0,0.02); }
 .notice-muted p { margin: 6px 0 0; color: var(--color-muted); }
+
+
+/* ---- Карточки: одно поведение на весь сайт ----
+   Раньше одна сетка подсвечивала рамку, другая приподнимала карточку,
+   третья увеличивала фотографию — на главной это читалось как набор
+   чужих друг другу блоков. Теперь правило одно для всех. */
+.news-card,
+.product-card,
+.spotlight-card,
+.episode-card,
+.drop-card,
+.game-tile {
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+.news-card:hover,
+.product-card:hover,
+.spotlight-card:hover,
+.episode-card:hover,
+.drop-card:hover,
+.game-tile:hover {
+  border-color: var(--color-accent);
+  transform: translateY(-2px);
+}
+.product-card--dark:hover { border-color: var(--color-gold-bright); }
+/* Полароиды рыжих и лента «Что нового» держат свои приёмы — наклон и
+   приближение кадра: они и так читаются как одна семья. */
