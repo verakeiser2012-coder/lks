@@ -26,8 +26,23 @@ function loadPodcast() {
 }
 
 router.get('/', (req, res) => {
+  // По две вещи из каждого раздела каталога, а не последние добавленные:
+  // иначе одна большая категория (сейчас это цифровые товары) съедает всю
+  // витрину, и человек не догадывается, что есть ещё бюсты, ароматы и пластинки.
+  // Первый ряд — по одной из каждого раздела, второй — вторые.
   const products = db
-    .prepare('SELECT * FROM products WHERE is_active = 1 ORDER BY created_at DESC LIMIT 8')
+    .prepare(`
+      SELECT * FROM (
+        SELECT p.*, COALESCE(c.name, 'Прочее') AS category_name,
+               ROW_NUMBER() OVER (PARTITION BY p.category_id ORDER BY p.created_at DESC) AS n
+        FROM products p
+        LEFT JOIN categories c ON c.id = p.category_id
+        WHERE p.is_active = 1
+      )
+      WHERE n <= 2
+      ORDER BY n ASC, category_name ASC
+      LIMIT 8
+    `)
     .all();
   // Только русские записи: без фильтра по языку на русскую главную
   // вылезала английская, написанная для /en/news.
