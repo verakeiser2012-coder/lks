@@ -4,8 +4,18 @@
   <h1>Баннеры между страницами</h1>
   <a class="btn" href="/admin/banners/new">+ Новый баннер</a>
 </div>
-<p class="hint">Страница (page_key) — куда выводится баннер: <code>home</code>, <code>style</code>, <code>music</code>,
-  <code>video</code>, <code>gigs</code>, <code>news</code>, <code>gallery</code>, <code>about</code>, <code>drops</code>, <code>redheads</code>.</p>
+<p class="hint">Баннер — широкая полоса с заголовком, подписью и кнопкой. Ниже показано,
+  на какой странице и в каком месте он появится. Мест семь, и каждое реально выводится:
+  ключ, которого нет в списке, означает баннер, который нигде не покажется.</p>
+
+<details class="hint">
+  <summary>Где именно стоят места</summary>
+  <ul>
+    <% slots.forEach(function (s) { %>
+      <li><strong><%= s.label %></strong> — <%= s.where %> <code><%= s.key %></code></li>
+    <% }); %>
+  </ul>
+</details>
 
 <table>
   <thead>
@@ -20,7 +30,7 @@
   <tbody>
     <% banners.forEach(function(b) { %>
       <tr>
-        <td><%= b.page_key %></td>
+        <td><%= slotLabel(b.page_key) %></td>
         <td><%= b.title %></td>
         <td><%= b.cta_url %></td>
         <td><%= b.is_published ? 'Да' : 'Нет' %></td>

@@ -1,4 +1,5 @@
 const express = require('express');
+const { getBanners } = require('../utils/banners');
 const db = require('../db');
 
 const router = express.Router();
@@ -23,7 +24,8 @@ router.get('/', (req, res) => {
       .all();
   }
 
-  res.render('catalog', { products, categories, activeCategory: category || null });
+  res.render('catalog', {
+    banners: getBanners('catalog'), products, categories, activeCategory: category || null });
 });
 
 router.get('/:slug', (req, res) => {

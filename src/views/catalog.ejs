@@ -11,6 +11,8 @@
   </div>
 <% } %>
 
+<% (banners || []).forEach(function(banner) { %><%- include('partials/banner', { banner }) %><% }); %>
+
 <div class="catalog-layout">
   <aside class="category-filter">
     <h3>Категории</h3>

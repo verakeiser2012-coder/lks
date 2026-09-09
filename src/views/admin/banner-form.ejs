@@ -14,8 +14,18 @@
   method="POST"
 >
   <label>
-    Страница (page_key) *
-    <input type="text" name="pageKey" value="<%= banner ? banner.page_key : '' %>" placeholder="style" required>
+    Где показывать *
+    <select name="pageKey" required>
+      <option value="">— выберите место —</option>
+      <% slots.forEach(function (s) { %>
+        <option value="<%= s.key %>" <%= banner && banner.page_key === s.key ? 'selected' : '' %>><%= s.label %> — <%= s.where %></option>
+      <% }); %>
+      <%# Старый баннер мог быть заведён на ключ, которого больше нет в списке:
+          показываем его отдельной строкой, чтобы правка не сбрасывала место. %>
+      <% if (banner && banner.page_key && !slots.some(function (s) { return s.key === banner.page_key; })) { %>
+        <option value="<%= banner.page_key %>" selected><%= banner.page_key %> — место не найдено, баннер не показывается</option>
+      <% } %>
+    </select>
   </label>
   <label>
     Заголовок *

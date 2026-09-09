@@ -1,4 +1,5 @@
 const express = require('express');
+const { getBanners } = require('../utils/banners');
 const db = require('../db');
 const { getGalleryItems } = require('../utils/gallery');
 
@@ -105,6 +106,7 @@ router.get('/', (req, res) => {
   `).all();
 
   res.render('index', {
+    banners: getBanners('home'),
     fresh,
     products,
     releaseTitles,

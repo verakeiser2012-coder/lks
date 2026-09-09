@@ -1,4 +1,5 @@
 const express = require('express');
+const { getBanners } = require('../utils/banners');
 const db = require('../db');
 const { groupLinks } = require('../utils/links');
 const { getGalleryItems } = require('../utils/gallery');
@@ -63,6 +64,7 @@ router.get('/', (req, res) => {
     .all();
 
   res.render('music', {
+    banners: getBanners('music'),
     intro: introRow ? introRow.value : '',
     groups: groupLinks(links),
     featured: {

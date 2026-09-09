@@ -1,4 +1,5 @@
 const express = require('express');
+const { getBanners } = require('../utils/banners');
 const db = require('../db');
 const { isBot, overLimit } = require('../middleware/antispam');
 const { notify } = require('../services/mail');
@@ -21,6 +22,7 @@ router.get('/', (req, res) => {
     .prepare('SELECT * FROM redhead_spotlights WHERE is_published = 1 ORDER BY sort_order ASC, created_at ASC')
     .all();
   res.render('redheads', {
+    banners: getBanners('redheads'),
     intro: introRow ? introRow.value : '',
     people,
     submitted: false,

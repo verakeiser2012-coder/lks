@@ -95,8 +95,12 @@ async function importTelegram() {
     const body = (block.match(/tgme_widget_message_text[^>]*>([\s\S]*?)<\/div>/) || [])[1];
     const hasVideo = /tgme_widget_message_video|message_video_player/.test(block);
     const hasPhoto = /tgme_widget_message_photo/.test(block);
-    // Превью лежит фоном в стиле — и у фото, и у видео.
-    const thumb = (block.match(/background-image:\s*url\('([^']+)'\)/) || [])[1];
+    // Превью лежит фоном в стиле — и у фото, и у видео. Первое совпадение брать
+    // нельзя: эмодзи в тексте поста тоже нарисованы фоном, и в календарь
+    // вместо кадра попадала иконка огонька с telegram.org.
+    const thumb = [...block.matchAll(/background-image:\s*url\('([^']+)'\)/g)]
+      .map((m) => m[1])
+      .find((u) => !/\/img\/emoji\//.test(u));
     if (!id || !when) continue;
     if (record({
       key: 'telegram',

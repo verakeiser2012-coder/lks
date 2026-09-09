@@ -1,21 +1,22 @@
 const express = require('express');
 const db = require('../../db');
+const { SLOTS, slotLabel } = require('../../utils/banners');
 
 const router = express.Router();
 
 router.get('/', (req, res) => {
   const banners = db.prepare('SELECT * FROM promo_banners ORDER BY page_key ASC, sort_order ASC').all();
-  res.render('admin/banners', { banners });
+  res.render('admin/banners', { banners, slots: SLOTS, slotLabel });
 });
 
 router.get('/new', (req, res) => {
-  res.render('admin/banner-form', { banner: null, error: null });
+  res.render('admin/banner-form', { banner: null, error: null, slots: SLOTS });
 });
 
 router.post('/', (req, res) => {
   const { pageKey, title, subtitle, ctaLabel, ctaUrl, sortOrder, isPublished } = req.body;
   if (!pageKey || !title) {
-    return res.render('admin/banner-form', { banner: req.body, error: 'Укажите страницу и заголовок.' });
+    return res.render('admin/banner-form', { banner: req.body, error: 'Укажите страницу и заголовок.', slots: SLOTS });
   }
 
   db.prepare(`
@@ -29,7 +30,7 @@ router.post('/', (req, res) => {
 router.get('/:id/edit', (req, res) => {
   const banner = db.prepare('SELECT * FROM promo_banners WHERE id = ?').get(req.params.id);
   if (!banner) return res.status(404).render('404');
-  res.render('admin/banner-form', { banner, error: null });
+  res.render('admin/banner-form', { banner, error: null, slots: SLOTS });
 });
 
 router.post('/:id', (req, res) => {

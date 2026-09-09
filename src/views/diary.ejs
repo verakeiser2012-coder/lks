@@ -3,6 +3,8 @@
 <h1>Дневник</h1>
 <p class="hero-tagline" style="margin-top:-8px;">Личные истории и разборы по мотивам подкастов — дублируются в Дзен.</p>
 
+<% (banners || []).forEach(function(banner) { %><%- include('partials/banner', { banner }) %><% }); %>
+
 <% if (posts.length === 0) { %>
   <p>Записей пока нет.</p>
 <% } else { %>

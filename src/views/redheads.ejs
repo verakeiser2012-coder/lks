@@ -5,6 +5,8 @@
   <% if (intro) { %><p class="hero-tagline"><%- renderLinkedText(intro) %></p><% } %>
 </section>
 
+<% (banners || []).forEach(function(banner) { %><%- include('partials/banner', { banner }) %><% }); %>
+
 <% if (people.length === 0) { %>
   <p>Подборка скоро появится.</p>
 <% } else { %>

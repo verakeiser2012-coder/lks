@@ -54,8 +54,15 @@
     <div class="feed-grid">
       <% published.forEach(function (p) { %>
         <article class="feed-card">
+          <%# Превью берём в три захода. Своё загруженное медиа — самое надёжное:
+              оно лежит в /uploads и не зависит от площадки. Дальше thumb_url,
+              который приходит от импорта лент. И только потом значок-заглушка. %>
           <a class="feed-thumb" href="/admin/calendar/<%= p.id %>">
-            <% if (p.thumb_url) { %>
+            <% if (p.media_path && p.media_type === 'video') { %>
+              <video src="<%= p.media_path %>" muted preload="metadata"></video>
+            <% } else if (p.media_path) { %>
+              <img src="<%= thumb(p.media_path, 320) %>" alt="" loading="lazy">
+            <% } else if (p.thumb_url) { %>
               <img src="<%= p.thumb_url %>" alt="" loading="lazy" referrerpolicy="no-referrer">
             <% } else { %>
               <span class="feed-thumb-empty"><%= p.media_type === 'video' ? '▶' : '✎' %></span>

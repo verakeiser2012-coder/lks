@@ -1,4 +1,5 @@
 const express = require('express');
+const { getBanners } = require('../utils/banners');
 const db = require('../db');
 
 const router = express.Router();
@@ -7,7 +8,8 @@ router.get('/', (req, res) => {
   const posts = db
     .prepare('SELECT * FROM diary_posts WHERE is_published = 1 ORDER BY created_at DESC')
     .all();
-  res.render('diary', { posts });
+  res.render('diary', {
+    banners: getBanners('diary'), posts });
 });
 
 router.get('/:slug', (req, res) => {
