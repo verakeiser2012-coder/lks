@@ -70,7 +70,7 @@ router.get('/', (req, res) => {
   // удивляет чужого человека, и единственный, куда уже ведёт статья в Дзене.
   const redheadIntroRow = db.prepare("SELECT value FROM settings WHERE key = 'redheads_intro'").get();
   const redheads = db
-    .prepare('SELECT name, role, photo FROM redhead_spotlights WHERE is_published = 1 ORDER BY sort_order ASC, created_at ASC LIMIT 4')
+    .prepare('SELECT name, role, photo FROM redhead_spotlights WHERE is_published = 1 ORDER BY sort_order ASC, created_at ASC LIMIT 5')
     .all();
 
   // Вещи к трекам: в карточке на главной подписываем, к какому релизу вещь.

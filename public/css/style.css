@@ -2554,22 +2554,6 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 .about-mails span { color: var(--color-muted); font-size: 0.85rem; }
 .about-links-title { margin: 18px 0 8px; font-size: 0.95rem; }
 
-/* Сеты и стемы. */
-.set-list { display: grid; gap: 24px; }
-.set-card { border: 1px solid var(--color-border); border-radius: var(--radius); padding: 16px; background: #fff; }
-.set-meta { display: flex; flex-wrap: wrap; gap: 10px; font-size: 0.78rem; color: var(--color-muted); }
-.set-with { color: var(--color-accent); font-weight: 600; }
-.set-title { margin: 6px 0 4px; font-size: 1.1rem; }
-.set-note { margin: 0 0 12px; color: var(--color-muted); font-size: 0.9rem; max-width: 62ch; }
-.stem-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--card-min), 1fr)); gap: var(--grid-gap); }
-.stem-card { border: 1px solid var(--color-border); border-radius: var(--radius); padding: 14px; background: #fff; }
-.stem-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
-.stem-title { margin: 0; font-size: 1rem; }
-.stem-format { font-size: 0.72rem; color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.08em; }
-.stem-note { margin: 6px 0 10px; font-size: 0.86rem; color: var(--color-muted); }
-.stem-soon { display: inline-block; font-size: 0.8rem; color: var(--color-muted); border: 1px dashed var(--color-border); border-radius: 999px; padding: 3px 10px; }
-.stem-license { margin-top: 16px; font-size: 0.86rem; color: var(--color-muted); max-width: 66ch; }
-
 /* Подкаст: карточка выпуска — обложка слева, текст справа. */
 .episode-list { display: grid; gap: var(--grid-gap); }
 .episode-card {
