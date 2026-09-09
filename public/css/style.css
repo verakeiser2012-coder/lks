@@ -17,6 +17,12 @@
 
 * { box-sizing: border-box; }
 
+/* Атрибут hidden обязан побеждать любой display из классов ниже. У браузерного
+   правила [hidden]{display:none} специфичность 0-1-0, и обычный класс вида
+   .poster-now{display:inline-flex} его перебивает: строка «сейчас играет»
+   висела на главной всегда, даже с пустым названием трека. */
+[hidden] { display: none !important; }
+
 body {
   margin: 0;
   font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
