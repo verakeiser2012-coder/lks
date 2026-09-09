@@ -93,7 +93,7 @@
           <% if (podcastProduct.image) { %><img src="<%= thumb(podcastProduct.image, 320) %>" alt="<%= podcastProduct.name %>"><% } %>
           <span class="podcast-around-label">Вещь из подкаста</span>
           <span class="podcast-around-title"><%= podcastProduct.name %></span>
-          <span class="podcast-around-meta"><%= formatPrice(podcastProduct.price) %></span>
+          <span class="podcast-around-meta"><%= priceLabel(podcastProduct) %></span>
         </a>
       <% } %>
       <a class="podcast-around-card" href="/music/soundstates/d-r-e-a-m">
@@ -191,7 +191,7 @@
             <% if (product.release_id && releaseTitles[product.release_id]) { %>
               <div class="product-release-tag">к релизу <%= releaseTitles[product.release_id].title %></div>
             <% } %>
-            <div class="product-price"><%= formatPrice(product.price) %></div>
+            <div class="product-price"><%= priceLabel(product) %></div>
           </a>
         <% }); %>
       </div>

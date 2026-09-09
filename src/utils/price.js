@@ -22,4 +22,21 @@ function formatPrice(value) {
   return `${body} ₽`;
 }
 
-module.exports = { formatPrice };
+/**
+ * Цена товара на витрине.
+ *
+ * Ноль у вещи, которую делают под заказ, — это не «бесплатно», а «цены пока
+ * нет»: она считается под конкретный тираж, размер или материал. Показываем
+ * «Под заказ» и уводим человека в переписку, а не в корзину. У цифрового
+ * товара ноль по-прежнему значит «бесплатно» — файл действительно отдаётся даром.
+ */
+function isMadeToOrder(product) {
+  return Boolean(product) && Number(product.is_digital) !== 1 && Number(product.price) === 0;
+}
+
+function priceLabel(product) {
+  if (isMadeToOrder(product)) return 'Под заказ';
+  return formatPrice(product ? product.price : 0);
+}
+
+module.exports = { formatPrice, priceLabel, isMadeToOrder };

@@ -17,7 +17,7 @@
   </div>
   <div class="product-detail-info">
     <h1><%= product.name %></h1>
-    <p class="product-price"><%= formatPrice(product.price) %></p>
+    <p class="product-price"><%= priceLabel(product) %></p>
     <%# Описание набирают в textarea: пустая строка — новый абзац, одиночный перенос сохраняем %>
     <% (product.description || '').split(/\r?\n\s*\r?\n/).filter(function (p) { return p.trim(); }).forEach(function (para) { %>
       <p class="product-description"><% para.trim().split(/\r?\n/).forEach(function (line, i) { %><% if (i) { %><br><% } %><%- renderLinkedText(line) %><% }); %></p>
@@ -96,6 +96,15 @@
         <input type="hidden" name="productId" value="<%= product.id %>">
         <button class="btn" type="submit"><%= Number(product.price) === 0 ? 'Забрать бесплатно' : 'Купить и скачать' %></button>
       </form>
+    <% } else if (isMadeToOrder(product)) { %>
+      <%# Вещь без цены: её считают под конкретный заказ — размер, тираж, материал.
+          Кнопки «в корзину» здесь быть не должно, иначе вещь уедет за 0 ₽. %>
+      <p class="product-made-to-order">Изготавливается под заказ</p>
+      <p class="product-digital-note">
+        Цену называем под ваш заказ: она зависит от размера, тиража и материала.
+        Напишите нам — ответим ценой и сроком.
+      </p>
+      <a class="btn" href="/contact">Спросить цену</a>
     <% } else if (product.stock > 0) { %>
       <%# Точный остаток честен только там, где вещь лежит готовой. У нас всё
           отливается под заказ, и остаток в базе — заглушка «сколько угодно»:

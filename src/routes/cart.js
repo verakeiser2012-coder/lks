@@ -2,6 +2,7 @@ const express = require('express');
 const { shopClosedNotice } = require('../utils/shopOpen');
 const db = require('../db');
 const { getCart, getCartDetails } = require('../utils/cart');
+const { isMadeToOrder } = require('../utils/price');
 
 const router = express.Router();
 
@@ -23,6 +24,11 @@ router.post('/add', (req, res) => {
   const isDigital = Number(product.is_digital) === 1;
   if (!isDigital && product.stock <= 0) {
     return res.redirect('/catalog');
+  }
+  // Вещь без цены («Под заказ») в корзину не кладём: иначе заказ уедет за 0 ₽.
+  // Такой товар ведёт в переписку, а не в оформление.
+  if (isMadeToOrder(product)) {
+    return res.redirect('/catalog/' + product.slug);
   }
 
   const cart = getCart(req);

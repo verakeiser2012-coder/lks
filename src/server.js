@@ -6,7 +6,7 @@ const express = require('express');
 const session = require('express-session');
 const db = require('./db');
 const { formatDate, formatDateShort } = require('./utils/dates');
-const { formatPrice } = require('./utils/price');
+const { formatPrice, priceLabel, isMadeToOrder } = require('./utils/price');
 const { ICONS: socialIcons } = require('./utils/socialIcons');
 const SqliteSessionStore = require('./services/sqliteSessionStore');
 const morgan = require('morgan');
@@ -101,6 +101,9 @@ app.use((req, res, next) => {
   res.locals.formatDate = formatDate;
   res.locals.formatDateShort = formatDateShort;
   res.locals.formatPrice = formatPrice;
+  // priceLabel(product) — ценник для витрины: у вещи под заказ вместо нуля «Под заказ».
+  res.locals.priceLabel = priceLabel;
+  res.locals.isMadeToOrder = isMadeToOrder;
   // thumb(url, w) и srcset(url, [w…]) — уменьшенные картинки, utils/images.js.
   res.locals.thumb = thumb;
   res.locals.srcset = srcset;

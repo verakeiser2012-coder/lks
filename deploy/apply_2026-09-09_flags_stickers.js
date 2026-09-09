@@ -1,10 +1,11 @@
 // Карточки флагов и стикерпаков.
 //
 // Флаги — по техзаданию notes/flags-tz.md (решение 08.09.2026: вместо гирлянд
-// интерьерные флаги 100 × 150 см, сублимация, люверсы по углам). Цены и фотографий
-// готового флага на стене ещё нет, поэтому карточки заводятся ЧЕРНОВИКАМИ
-// (is_active = 0): в каталоге они не показываются, но в /admin/products готовы —
-// осталось поставить цену и снимок.
+// интерьерные флаги 100 × 150 см, сублимация, люверсы по углам). Показываются
+// в каталоге с 09.09: по решению владельца вместо цены стоит «Под заказ»
+// (price = 0 у нецифрового товара, см. src/utils/price.js), а на карточке —
+// макет из tools/build_product_mockups.py с пометкой «макет» в углу и той же
+// оговоркой в описании. Настоящие снимки ставим, когда напечатаем первый флаг.
 //
 // Стикерпаки — бесплатные цифровые товары. Архивы собираются скриптом
 // tools/build_sticker_packs.py из папки «Эмодзи» на рабочем столе владельца
@@ -56,16 +57,22 @@ const FLAG_CARE = 'Деликатная стирка при 30 °C, без от�
 const FLAG_SIZE = '100 × 150 см. Второй размер — 60 × 90 см, под заказ';
 const FLAG_INCLUDES = 'Флаг с обработанными краями\nМеталлические люверсы по четырём углам\nКонверт\nОткрытка с инструкцией';
 
+// Оговорка про макет — в конце каждого описания флага. Про цену здесь не пишем:
+// «Под заказ» и приглашение написать нам карточка показывает сама.
+const FLAG_NOTE =
+  'На фото макет: снимок настоящего флага поставим, как только напечатаем первый.';
+
 const FLAG_TAIL =
   'Ткань плотная и полуматовая: не просвечивает на светлой стене и не бликует под лампой. ' +
   'Края обработаны, углы усилены, по четырём углам металлические люверсы — вешается на гвозди, ' +
   'крючки или шнур, рама не нужна.\n\n' +
   'Печать сублимационная: краска уходит в волокно, а не ложится плёнкой сверху, поэтому ' +
-  'изображение не трескается и переживает стирку.';
+  'изображение не трескается и переживает стирку.\n\n' + FLAG_NOTE;
 
 const flags = [
   {
     slug: 'flag-dvigayus-medlenno',
+    image: '/uploads/product-flag-medlenno.jpg',
     name: 'Флаг «Двигаюсь медленно»',
     collection_id: slowDrop,
     release_id: null,
@@ -77,6 +84,7 @@ const flags = [
   },
   {
     slug: 'flag-v-bystrom-mire',
+    image: '/uploads/product-flag-bystryy-mir.jpg',
     name: 'Флаг «в быстром мире»',
     collection_id: slowDrop,
     release_id: null,
@@ -88,6 +96,7 @@ const flags = [
   },
   {
     slug: 'flag-para-slow-in-a-fast-world',
+    image: '/uploads/product-flag-para.jpg',
     name: 'Пара флагов «Двигаюсь медленно в быстром мире»',
     collection_id: slowDrop,
     release_id: null,
@@ -102,6 +111,7 @@ const flags = [
   },
   {
     slug: 'flag-soundstates',
+    image: '/uploads/product-flag-soundstates.jpg',
     name: 'Флаг Soundstates',
     collection_id: null,
     release_id: soundstates,
@@ -112,6 +122,7 @@ const flags = [
   },
   {
     slug: 'flag-muzyka-bez-ii',
+    image: '/uploads/product-flag-bez-ii.jpg',
     name: 'Флаг «Музыка без ИИ»',
     collection_id: null,
     release_id: null,
@@ -232,14 +243,15 @@ for (const f of flags) {
       name: f.name,
       slug: f.slug,
       description: f.description,
-      // Цены ещё нет: ждём смету подрядчика по печати и пошиву. Карточка — черновик.
+      // Ноль здесь — не «бесплатно», а «Под заказ»: витрина покажет именно так,
+      // а в корзину такой товар не кладётся (src/routes/cart.js).
       price: 0,
       category_id: decor,
       collection_id: f.collection_id,
       release_id: f.release_id,
-      image: '',
+      image: f.image,
       stock: 999,
-      is_active: 0,
+      is_active: 1,
       is_digital: 0,
       digital_file: '',
       digital_filename: '',
