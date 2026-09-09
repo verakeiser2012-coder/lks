@@ -189,8 +189,9 @@
   const tokens = () => { try { return JSON.parse(localStorage.getItem(LS_TOK)) || {}; } catch (e) { return {}; } };
   const putToken = (id, t) => { try { const m = tokens(); m[id] = t; localStorage.setItem(LS_TOK, JSON.stringify(m)); } catch (e) {} };
 
-  const add = (i, p) => { blend.set(i, (blend.get(i) || 0) + (p || 1)); render(); };
-  const setParts = (i, v) => { if (v <= 0) blend.delete(i); else blend.set(i, v); render(); };
+  function hideExample() { const e = $('ar-example'); if (e) e.hidden = true; }
+  const add = (i, p) => { hideExample(); blend.set(i, (blend.get(i) || 0) + (p || 1)); render(); };
+  const setParts = (i, v) => { hideExample(); if (v <= 0) blend.delete(i); else blend.set(i, v); render(); };
 
   function blendVector() {
     const v = {}; let tot = 0;
@@ -360,12 +361,19 @@
   }
 
   /* ---------- старт ---------- */
+  const EXAMPLE = [
+    ['ладан', 4], ['лабданум', 3], ['амбра серая', 2], ['ваниль', 2],
+    ['бобы тонка', 2], ['мускатный орех', 1], ['нероли', 1],
+  ];
+
   fetch('/data/aroma-map.json').then((r) => r.json()).then((d) => {
     DATA = d; FAM = d.families; NODES = d.nodes; HUBS = d.hubs;
     buildMap(); drawLegend();
-    ['сандал', 'ладан', 'гималайский кедр'].forEach((n, k) => {
+    // Состав таблетки «Груша × Лев» — материалы из карточки товара.
+    // Пропорции наши, по порядку перечисления: в подписи это оговорено.
+    EXAMPLE.forEach(([n, parts]) => {
       const i = NODES.findIndex((x) => x.ru === n);
-      if (i >= 0) blend.set(i, k === 0 ? 3 : k === 1 ? 2 : 1);
+      if (i >= 0) blend.set(i, parts);
     });
     render();
     loadBlends();
