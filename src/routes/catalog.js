@@ -9,7 +9,18 @@ router.get('/', (req, res) => {
   const { category } = req.query;
 
   let products;
-  if (category) {
+  if (category === 'cifrovye-tovary') {
+    // «Цифровые товары» — это про способ доставки, а не про полку: показываем всё,
+    // что скачивается, даже если товар лежит в «Ароматах» или «Музыке».
+    products = db
+      .prepare(`
+        SELECT p.* FROM products p
+        LEFT JOIN categories c ON c.id = p.category_id
+        WHERE p.is_active = 1 AND (p.is_digital = 1 OR c.slug = ?)
+        ORDER BY p.created_at DESC
+      `)
+      .all(category);
+  } else if (category) {
     products = db
       .prepare(`
         SELECT p.* FROM products p
