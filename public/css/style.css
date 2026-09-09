@@ -2381,6 +2381,18 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 .polaroid-1 { transform: rotate(1.5deg); }
 .polaroid-2 { transform: rotate(-1deg); }
 .polaroid:hover { transform: rotate(0) translateY(-3px); }
+
+/* Тот же наклон для карточек-историй: применяется через главу, чтобы лента
+   главной шла ритмом «ровно — наклон», а не одной длинной сеткой. Углы мельче,
+   чем у полароидов: карточка крупнее, и на двух градусах она уже разъезжается. */
+.news-list--tilt .news-card { transition: transform 0.25s ease, border-color 0.2s ease, box-shadow 0.2s ease; }
+.news-list--tilt .tilt-0 { transform: rotate(-1.2deg); }
+.news-list--tilt .tilt-1 { transform: rotate(0.9deg); }
+.news-list--tilt .tilt-2 { transform: rotate(-0.6deg); }
+.news-list--tilt .news-card:hover { transform: rotate(0) translateY(-3px); }
+@media (prefers-reduced-motion: reduce) {
+  .news-list--tilt .news-card { transform: none; }
+}
 .redheads-home-row { padding: 8px 6px; }
 
 /* Полоса дропа: магазин внутри повествования. */

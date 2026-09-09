@@ -54,7 +54,7 @@ router.get('/', (req, res) => {
     .prepare("SELECT id, name, slug, price, image FROM products WHERE is_active = 1 AND slug = 'aromaticheskaya-tabletka-grusha-lev'")
     .get();
   const diaryPosts = db
-    .prepare('SELECT id, title, slug, excerpt, cover_image, created_at FROM diary_posts WHERE is_published = 1 ORDER BY created_at DESC LIMIT 3')
+    .prepare('SELECT id, title, slug, excerpt, cover_image, created_at FROM diary_posts WHERE is_published = 1 ORDER BY created_at DESC LIMIT 4')
     .all();
 
   // Рыжие — на главную, а не в хвост меню: единственный раздел, который

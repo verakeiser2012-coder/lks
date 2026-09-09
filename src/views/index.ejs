@@ -210,9 +210,9 @@
     <a class="chapter-more" href="/news">Все новости →</a>
   </header>
   <p class="chapter-deck">Релизы, съёмки, выступления: коротко и по датам.</p>
-  <div class="news-list">
-    <% news.forEach(function(post) { %>
-      <a class="news-card" href="/news/<%= post.slug %>">
+  <div class="news-list news-list--tilt">
+    <% news.forEach(function(post, i) { %>
+      <a class="news-card tilt-<%= i % 3 %>" href="/news/<%= post.slug %>">
         <div class="news-card-image">
           <% if (coverByNewsId[post.id]) { %>
             <img src="<%= thumb(coverByNewsId[post.id], 640) %>" srcset="<%= srcset(coverByNewsId[post.id]) %>" sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 300px" alt="<%= post.title %>">
