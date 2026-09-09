@@ -67,25 +67,40 @@ router.get('/', (req, res) => {
   const releaseTitles = {};
   for (const r of db.prepare('SELECT id, title, slug FROM releases').all()) releaseTitles[r.id] = r;
 
-  // «Свежее»: одна лента на всех из последних записей всех разделов.
+  // «Что нового»: одна лента на всех из последних записей всех разделов.
   // Одинаковая для каждого посетителя — никакой персонализации и памяти о визитах.
+  // Заголовок сознательно не «Свежее»: это слово намекает, что остальное на сайте
+  // залежалось, и заодно читается как «мы помним, что вы уже смотрели».
   // Не больше трёх новостей, двух записей дневника, одной вещи и одного дропа:
   // иначе пять товаров, залитых в один день, вытесняют всё остальное.
   // Релизы не берём: у них created_at — дата импорта, а не выхода.
+  // Обложка берётся из своей колонки у каждого типа, у новостей — первое фото.
   const fresh = db.prepare(`
-    SELECT kind, title, url, created_at FROM (
-      SELECT kind, title, url, created_at,
-        ROW_NUMBER() OVER (PARTITION BY kind ORDER BY created_at DESC) AS n
+    SELECT kind, title, url, created_at, image FROM (
+      SELECT kind, title, url, created_at, image,
+        ROW_NUMBER() OVER (PARTITION BY kind ORDER BY created_at DESC) AS n,
+        -- Один материал часто идёт и новостью, и записью дневника. В ленте это
+        -- две одинаковые карточки подряд с одной обложкой, поэтому по заголовку
+        -- оставляем что-то одно — то, что вышло позже.
+        ROW_NUMBER() OVER (PARTITION BY title ORDER BY created_at DESC) AS dup
       FROM (
-        SELECT 'Новость' AS kind, title, '/news/' || slug AS url, created_at, 3 AS cap FROM news WHERE is_published = 1 AND lang = 'ru'
+        SELECT 'Новость' AS kind, n.title, '/news/' || n.slug AS url, n.created_at,
+               COALESCE((SELECT m.file_path FROM news_media m
+                         WHERE m.news_id = n.id AND m.type = 'photo'
+                         ORDER BY m.id LIMIT 1), '') AS image
+          FROM news n WHERE n.is_published = 1 AND n.lang = 'ru'
         UNION ALL
-        SELECT 'Дневник', title, '/diary/' || slug, created_at, 2 FROM diary_posts WHERE is_published = 1
+        SELECT 'Дневник', title, '/diary/' || slug, created_at, COALESCE(cover_image, '') FROM diary_posts WHERE is_published = 1
         UNION ALL
-        SELECT 'Вещь', name, '/catalog/' || slug, created_at, 1 FROM products WHERE is_active = 1
+        SELECT 'Вещь', name, '/catalog/' || slug, created_at, COALESCE(image, '') FROM products WHERE is_active = 1
         UNION ALL
-        SELECT 'Дроп', name, '/drops/' || slug, created_at, 1 FROM collections WHERE is_published = 1
+        SELECT 'Дроп', c.name, '/drops/' || c.slug, c.created_at,
+               COALESCE((SELECT p.image FROM products p
+                         WHERE p.collection_id = c.id AND p.is_active = 1 AND p.image != ''
+                         ORDER BY p.created_at LIMIT 1), '') AS image
+          FROM collections c WHERE c.is_published = 1
       ) WHERE created_at <= datetime('now')
-    ) WHERE n <= CASE kind WHEN 'Новость' THEN 3 WHEN 'Дневник' THEN 2 ELSE 1 END
+    ) WHERE dup = 1 AND n <= CASE kind WHEN 'Новость' THEN 3 WHEN 'Дневник' THEN 2 ELSE 1 END
     ORDER BY created_at DESC LIMIT 6
   `).all();
 

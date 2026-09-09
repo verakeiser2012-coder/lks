@@ -22,15 +22,26 @@
 </section>
 
 <% if (fresh.length > 0) { %>
-<%# «Свежее» — одна лента на всех: последнее из новостей, дневника, релизов и каталога.
-    Обновляется сама по датам записей, ничего о посетителе не помнит. %>
-<section class="fresh" aria-label="Свежее">
-  <div class="fresh-head"><span class="fresh-title">Свежее</span></div>
+<%# «Что нового» — одна лента на всех: последнее из новостей, дневника, дропов и каталога.
+    Обновляется сама по датам записей, ничего о посетителе не помнит.
+    Карточками, а не строками: обложки у записей есть, и человек выбирает глазами. %>
+<section class="fresh" aria-label="Что нового">
+  <div class="fresh-head"><span class="fresh-title">Что нового</span></div>
   <ul class="fresh-list">
     <% fresh.forEach(function(item) { %>
       <li class="fresh-item">
         <a href="<%= item.url %>">
-          <span class="fresh-kind"><%= item.kind %></span>
+          <span class="fresh-shot">
+            <% if (item.image) { %>
+              <img src="<%= thumb(item.image, 480) %>" srcset="<%= srcset(item.image, [320, 480, 640]) %>"
+                   sizes="(max-width: 640px) 45vw, 220px" alt="" loading="lazy">
+            <% } else { %>
+              <%# Без обложки карточка не выпадает из ряда: то же место занимает
+                  крупная первая буква, иначе сетка съезжает на одну ячейку. %>
+              <span class="fresh-letter" aria-hidden="true"><%= item.title.trim().charAt(0) %></span>
+            <% } %>
+            <span class="fresh-kind"><%= item.kind %></span>
+          </span>
           <span class="fresh-name"><%= item.title %></span>
           <span class="fresh-date"><%= formatDateShort(item.created_at, 'ru') %></span>
         </a>
