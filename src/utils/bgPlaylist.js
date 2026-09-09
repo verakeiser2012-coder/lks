@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const db = require('../db');
 
 const audioDir = path.join(__dirname, '..', '..', 'public', 'audio');
 
@@ -10,6 +11,22 @@ function titleFromFile(name) {
     .replace(/\.mp3$/i, '')
     .replace(/[-_]+/g, ' ')
     .trim();
+}
+
+// Файл ↔ трек: сравниваем по «схлопнутому» имени (только буквы и цифры),
+// как в utils/trackAudio: файл dream.mp3, слаг d-r-e-a-m.
+function squash(name) {
+  return String(name).toLowerCase().replace(/\.mp3$/i, '').replace(/[^a-z0-9]/g, '');
+}
+function trackIndex() {
+  const map = {};
+  try {
+    db.prepare(`SELECT t.slug, t.title, r.slug AS release_slug FROM tracks t
+                JOIN releases r ON r.id = t.release_id
+                WHERE t.is_published = 1 AND r.is_published = 1`).all()
+      .forEach((t) => { map[squash(t.slug)] = { title: t.title, url: `/music/${t.release_slug}/${t.slug}` }; });
+  } catch (err) { /* без базы — останутся имена файлов и без ссылок */ }
+  return map;
 }
 
 let cache = null;
@@ -35,10 +52,16 @@ function getBgPlaylist() {
     files = [];
   }
 
-  cache = files.map((file) => ({
-    src: `/audio/${file}`,
-    title: titleFromFile(file),
-  }));
+  const index = trackIndex();
+  cache = files.map((file) => {
+    const track = index[squash(file)];
+    return {
+      src: `/audio/${file}`,
+      title: track ? track.title : titleFromFile(file),
+      // Страница трека: из бегущей строки по клику открывается она.
+      url: track ? track.url : '',
+    };
+  });
   cacheAt = now;
   return cache;
 }

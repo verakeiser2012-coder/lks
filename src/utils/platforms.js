@@ -65,4 +65,26 @@ function textToLinks(text) {
   return JSON.stringify(links);
 }
 
-module.exports = { PLATFORMS, platformButtons, linksToText, textToLinks, parseLinks };
+/**
+ * Площадки, из которых берут звук для вертикальных видео. TikTok и Reels сюда
+ * попадут, когда трек доедет до их библиотек (CML / Meta Sound Collection):
+ * прямой ссылки на звук у нас пока нет, и выдумывать её нельзя.
+ */
+const SHOOT = ['vk', 'yandex', 'youtube', 'zvuk'];
+
+function shootButtons(release) {
+  const links = parseLinks(release && release.platform_links);
+  const SHOOT_LABEL = {
+    vk: 'Звук в VK Клипах',
+    yandex: 'Трек в Яндекс Музыке',
+    youtube: 'Трек в YouTube Music',
+    zvuk: 'Трек в Звуке',
+  };
+  return SHOOT.filter((key) => links[key]).map((key) => ({
+    key,
+    label: SHOOT_LABEL[key] || PLATFORMS[key].ru,
+    url: links[key],
+  }));
+}
+
+module.exports = { PLATFORMS, platformButtons, shootButtons, linksToText, textToLinks, parseLinks };

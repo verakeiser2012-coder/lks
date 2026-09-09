@@ -1,16 +1,14 @@
 // Прослушивание треков прямо в списке релиза. Один общий элемент audio:
 // иначе два трека играют одновременно, стоит промахнуться мимо паузы.
 //
-// Фоновую музыку сайта на время глушим: слушать трек под другой трек нельзя,
-// а после паузы возвращаем как было.
+// Фоновую музыку и остальные плееры глушит общий арбитр (js/audio-solo.js):
+// этот Audio создан из кода и в DOM не попадает, поэтому регистрируем его сам.
 (function () {
   var rows = document.querySelectorAll('.track-row-play');
   if (!rows.length) return;
 
   var audio = new Audio();
   var current = null;
-  var bg = document.getElementById('bg-audio');
-  var bgWasPlaying = false;
 
   function reset() {
     document.querySelectorAll('.track-row-play').forEach(function (b) {
@@ -19,15 +17,7 @@
     });
   }
 
-  function restoreBg() {
-    if (bgWasPlaying && bg && bg.paused) {
-      var toggle = document.getElementById('bg-audio-toggle');
-      if (toggle) toggle.click();
-    }
-    bgWasPlaying = false;
-  }
-
-  audio.addEventListener('ended', function () { reset(); current = null; restoreBg(); });
+  audio.addEventListener('ended', function () { reset(); current = null; });
 
   rows.forEach(function (btn) {
     btn.addEventListener('click', function () {
@@ -35,14 +25,9 @@
       if (current === src && !audio.paused) {
         audio.pause();
         reset();
-        restoreBg();
         return;
       }
-      if (bg && !bg.paused) {
-        bgWasPlaying = true;
-        var toggle = document.getElementById('bg-audio-toggle');
-        if (toggle) toggle.click();
-      }
+      if (window.levkaSolo) window.levkaSolo(audio);
       reset();
       if (current !== src) {
         audio.src = src;

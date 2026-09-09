@@ -4,7 +4,7 @@ const db = require('../db');
 const { groupLinks } = require('../utils/links');
 const { getGalleryItems } = require('../utils/gallery');
 const { parseVideoEmbedUrl } = require('../utils/videoEmbed');
-const { platformButtons } = require('../utils/platforms');
+const { platformButtons, shootButtons } = require('../utils/platforms');
 const { getBgPlaylist } = require('../utils/bgPlaylist');
 const { trackAudio, withAudio } = require('../utils/trackAudio');
 const QUIZ = require('../data/quiz');
@@ -281,6 +281,8 @@ router.get('/:releaseSlug/:trackSlug', (req, res, next) => {
     products: productsForTrack(track.id),
     trackVideo: parseVideoEmbedUrl(track.video_url),
     platformButtons: platformButtons(release, 'ru'),
+    shootLinks: shootButtons(release),
+    templateUrl: (db.prepare("SELECT value FROM settings WHERE key = 'contest_template_url'").get() || {}).value || '',
     allReleases: listReleases(),
     currentReleaseId: release.id,
     // У трека своя обложка бывает не всегда — тогда берём обложку релиза.

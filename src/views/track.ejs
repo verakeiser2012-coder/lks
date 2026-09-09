@@ -59,13 +59,21 @@
 
 <% if (anims.length) { %>
 <section class="link-section">
-  <h2>Анимации к треку</h2>
-  <div class="anim-grid">
-    <% anims.forEach(function (a) { %>
-      <video src="<%= a.file_path %>" controls playsinline preload="metadata" title="<%= a.title %>"></video>
+  <h2>Анимации к треку <span class="music-strip-hint">· крутятся без звука, звук — кнопкой</span></h2>
+  <%# Кинолента: ролики идут сами и молча (иначе браузер не даст автозапуск),
+      звук включается на одном по кнопке — см. public/js/anim-strip.js. %>
+  <div class="filmstrip anim-strip"><div class="filmstrip-track">
+    <% anims.forEach(function (a, i) { %>
+      <div class="film-cell anim-cell" data-code="DJ LEVKA · <%= track.title.toUpperCase() %>" data-num="КАДР <%= String(i + 1).padStart(2, '0') %>">
+        <div class="anim-frame edge-soft">
+          <video src="<%= a.file_path %>" muted loop playsinline preload="metadata" title="<%= a.title %>"></video>
+          <button type="button" class="anim-sound" aria-pressed="false">🔇 звук</button>
+        </div>
+      </div>
     <% }); %>
-  </div>
+  </div></div>
 </section>
+<script src="/js/anim-strip.js" defer></script>
 <% } %>
 
 <% if (products && products.length) { %>
@@ -90,6 +98,28 @@
 <% } %>
 
 <%- include('partials/gallery-section', { galleryItems: otherItems, galleryTitle: 'Видео и кадры к треку' }) %>
+
+<%# «Сними под этот трек»: звук там, где снимают вертикальные видео, и шаблон
+    монтажа. Ссылки на площадки те же, что и для прослушивания, — в редакторах
+    VK Клипов и Reels трек ищут по названию, поэтому его показываем текстом. %>
+<section class="link-section shoot-block">
+  <h2>Снять видео под этот трек</h2>
+  <p class="shoot-name">Ищите в редакторе по названию: <strong><%= track.title %></strong> — DJ Levka</p>
+  <% if (shootLinks.length) { %>
+    <div class="platform-links">
+      <% shootLinks.forEach(function (b, i) { %>
+        <a class="btn <%= i ? 'btn-ghost' : '' %> platform-link" href="<%= b.url %>" target="_blank" rel="noopener"><%= b.label %></a>
+      <% }); %>
+    </div>
+  <% } %>
+  <% if (templateUrl) { %>
+    <p class="shoot-template"><a class="btn btn-ghost" href="<%= templateUrl %>" target="_blank" rel="noopener">Открыть шаблон монтажа</a></p>
+  <% } %>
+  <p class="track-links-hint">
+    Сняли — присылайте в <a href="/contest">конкурс</a>: за проход под трек разыгрываем съёмку в клипе.
+    Трек можно использовать в своих роликах свободно, с указанием DJ Levka.
+  </p>
+</section>
 
 <nav class="track-pager">
   <% if (prevTrack) { %>

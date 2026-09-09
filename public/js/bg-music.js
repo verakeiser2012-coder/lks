@@ -148,17 +148,26 @@
     setState(false);
   }
 
-  // Клик по названию в строке — включить именно этот трек.
-  // Это же снимает запрет браузера на автозапуск: клик считается действием пользователя.
+  // Клик по названию в строке — включить именно этот трек и открыть его страницу.
+  // Музыка не прерывается: позиция сохраняется, и на новой странице тот же трек
+  // продолжает играть с того же места. Повторный клик по уже играющему на его
+  // странице — пауза.
   items.forEach(function (el) {
     el.addEventListener('click', function () {
       var src = el.getAttribute('data-src');
+      var url = el.getAttribute('data-url') || '';
       var idx = playlist.indexOf(src);
       if (idx === -1) return;
+      var onItsPage = url && location.pathname === url;
 
       if (idx === trackIndex && !audio.paused) {
-        localStorage.setItem(STORAGE_KEY, '1');
-        pause();
+        if (onItsPage || !url) {
+          localStorage.setItem(STORAGE_KEY, '1');
+          pause();
+        } else {
+          savePosition();
+          location.href = url;
+        }
         return;
       }
       trackIndex = idx;
@@ -166,6 +175,11 @@
       localStorage.removeItem(STORAGE_KEY);
       savePosition();
       play();
+      if (url && !onItsPage) {
+        // Даём звуку стартовать до перехода: клик — действие пользователя,
+        // и на следующей странице автозапуск уже разрешён.
+        setTimeout(function () { savePosition(); location.href = url; }, 250);
+      }
     });
   });
 

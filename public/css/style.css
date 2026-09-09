@@ -1451,9 +1451,18 @@ a.music-table-title:hover { color: var(--color-accent); }
 .platform-links { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 4px; }
 .platform-link { font-size: 0.86rem; padding: 8px 14px; }
 .track-links-title { margin: 8px 0 0; font-weight: 700; font-size: 0.95rem; }
-/* Анимации к треку: вертикальные ролики 9:16 сеткой. */
-.anim-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
-.anim-grid video { width: 100%; aspect-ratio: 9 / 16; object-fit: cover; border-radius: 10px; background: #111; display: block; }
+.shoot-name { margin: 0 0 10px; color: var(--color-muted); font-size: 0.9rem; }
+.shoot-template { margin: 10px 0 0; }
+/* Анимации к треку: кинолента вертикальных роликов 9:16, крутятся без звука. */
+.anim-strip .anim-frame { position: relative; height: 320px; aspect-ratio: 9 / 16; border-radius: 4px; overflow: hidden; background: #111; }
+.anim-strip .anim-frame video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.anim-sound {
+  position: absolute; left: 8px; bottom: 8px; padding: 5px 10px; border: 0; border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55); color: #fff; font: inherit; font-size: 0.78rem; cursor: pointer;
+}
+.anim-sound:hover, .anim-cell.has-sound .anim-sound { background: var(--color-accent); color: #fff; }
+.anim-cell.has-sound .anim-frame { box-shadow: 0 0 0 2px var(--color-accent); }
+@media (max-width: 700px) { .anim-strip .anim-frame { height: 260px; } }
 .track-links-hint { margin: 8px 0 0; font-size: 0.82rem; color: var(--color-muted); max-width: 52ch; }
 
 .drop-back { text-align: center; margin-top: 32px; }

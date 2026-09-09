@@ -227,7 +227,7 @@
               <%# вторая копия нужна, чтобы лента шла без разрыва %>
               <% bgPlaylist.forEach(function (t, i) { %>
                 <button type="button" class="music-ticker__item"
-                        data-src="<%= t.src %>" data-index="<%= i %>"
+                        data-src="<%= t.src %>" data-index="<%= i %>"<% if (t.url) { %> data-url="<%= t.url %>"<% } %>
                         <%= pass ? 'tabindex="-1" aria-hidden="true"' : '' %>>
                   <%= t.title %>
                 </button>
