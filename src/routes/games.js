@@ -15,6 +15,7 @@ const router = express.Router();
 const GAMES = [
   {
     url: '/music/guess',
+    art: '/uploads/game-guess.jpg',
     kicker: 'Пять секунд',
     title: 'Угадай трек',
     note: 'Пять секунд трека и четыре названия. Пять раундов, счёт в конце.',
@@ -23,6 +24,7 @@ const GAMES = [
   },
   {
     url: '/music/quiz',
+    art: '/uploads/game-quiz.jpg',
     kicker: 'Тест',
     title: 'Какой ты трек Soundstates',
     note: 'Пять вопросов, и альбом отвечает, какой ты трек. Результат можно отправить друзьям.',
@@ -31,6 +33,7 @@ const GAMES = [
   },
   {
     url: '/music/set',
+    art: '/uploads/game-set.jpg',
     kicker: 'Конструктор',
     title: 'Собери сет',
     note: 'Три трека в своём порядке, одной ссылкой. Теперь собранное можно и послушать.',
@@ -39,6 +42,7 @@ const GAMES = [
   },
   {
     url: '/style#walks',
+    art: '/uploads/game-year.jpg',
     kicker: 'Архив',
     title: 'Какой год?',
     note: 'Кадр из архива с пяти лет до сейчас — угадайте, сколько Льву на фотографии.',

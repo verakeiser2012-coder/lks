@@ -1,0 +1,50 @@
+<%- include('partials/header') %>
+
+<section class="hero release-hero">
+  <% if (episode.cover_image) { %><img class="release-hero-cover" src="<%= thumb(episode.cover_image, 480) %>" srcset="<%= srcset(episode.cover_image, [320, 480, 640, 960]) %>" sizes="(max-width: 480px) 92vw, 200px" alt="<%= episode.title %>"><% } %>
+  <div>
+    <p class="drop-season"><a href="/podcast">Подкаст</a><% if (episode.episode_date) { %> · <%= formatDateShort(episode.episode_date, 'ru') %><% } %></p>
+    <h1><%= episode.title %></h1>
+    <% if (episode.guest) { %><p class="hero-tagline">В гостях: <%= episode.guest %></p><% } %>
+    <%# Пока выпуск не смонтирован, показываем честную строку вместо мёртвого плеера. %>
+    <% if (episode.audio_url) { %>
+      <audio class="track-player" controls preload="none" src="<%= episode.audio_url %>"></audio>
+    <% } else if (!episode.video_url) { %>
+      <p class="episode-soon-line">Выпуск смонтирован и ждёт финальной звуковой дорожки — появится здесь.</p>
+    <% } %>
+  </div>
+</section>
+
+<% if (video) { %>
+<section class="link-section">
+  <h2>Смотреть</h2>
+  <div class="video-embed"><iframe src="<%= video.embedUrl %>" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="<%= episode.title %>"></iframe></div>
+</section>
+<% } %>
+
+<% if (episode.description) { %>
+  <div class="prose drop-description"><%- renderLinkedText(episode.description) %></div>
+<% } %>
+
+<% if (others.length) { %>
+<section class="link-section">
+  <h2>Другие выпуски</h2>
+  <div class="episode-list">
+    <% others.forEach(function (e) { %>
+      <a class="episode-card" href="/podcast/<%= e.slug %>">
+        <% if (e.cover_image) { %><img class="episode-cover" src="<%= thumb(e.cover_image, 480) %>" alt="<%= e.title %>" loading="lazy"><% } %>
+        <div class="episode-body">
+          <% if (e.guest) { %><div class="episode-meta"><span class="episode-guest"><%= e.guest %></span></div><% } %>
+          <h3 class="episode-title"><%= e.title %></h3>
+        </div>
+      </a>
+    <% }); %>
+  </div>
+</section>
+<% } %>
+
+<p class="drop-back"><a href="/podcast">← Все выпуски</a></p>
+
+<%- include('partials/share') %>
+
+<%- include('partials/footer') %>

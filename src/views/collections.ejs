@@ -19,7 +19,10 @@
       }
     %>
     <% collections.forEach(function(c) { %>
-      <a class="drop-card" href="/drops/<%= c.slug %>">
+      <a class="drop-card <%= c.cover_image ? 'drop-card-art' : '' %>" href="/drops/<%= c.slug %>">
+        <% if (c.cover_image) { %>
+          <img class="drop-card-cover" src="<%= thumb(c.cover_image, 640) %>" srcset="<%= srcset(c.cover_image) %>" sizes="(max-width: 700px) 92vw, 320px" alt="<%= c.name %>" loading="lazy">
+        <% } %>
         <div class="drop-card-head">
           <% if (c.season_label) { %><span class="drop-season"><%= c.season_label %></span><% } %>
           <span class="drop-count"><%= c.productCount %> <%= productWord(c.productCount) %></span>

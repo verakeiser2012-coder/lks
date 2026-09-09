@@ -516,6 +516,32 @@ function init() {
     db.exec("ALTER TABLE releases ADD COLUMN platform_links TEXT NOT NULL DEFAULT '{}'");
   }
 
+  // Подкаст: раздел заведён до первого выпуска, поэтому запись может жить
+  // без файла — тогда карточка показывается как «скоро».
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS podcast_episodes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      slug TEXT UNIQUE NOT NULL,
+      guest TEXT NOT NULL DEFAULT '',
+      description TEXT NOT NULL DEFAULT '',
+      cover_image TEXT NOT NULL DEFAULT '',
+      audio_url TEXT NOT NULL DEFAULT '',
+      video_url TEXT NOT NULL DEFAULT '',
+      episode_date TEXT NOT NULL DEFAULT '',
+      is_published INTEGER NOT NULL DEFAULT 0,
+      sort_order INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    )
+  `);
+
+  // Обложка дропа: витрина коллабораций не может быть текстовой, а товары
+  // появляются позже самого дропа — брать картинку из первого товара нечем.
+  const collectionCols = db.prepare('PRAGMA table_info(collections)').all();
+  if (!collectionCols.some((c) => c.name === 'cover_image')) {
+    db.exec("ALTER TABLE collections ADD COLUMN cover_image TEXT NOT NULL DEFAULT ''");
+  }
+
   const socialTargetCols = db.prepare('PRAGMA table_info(social_post_targets)').all();
   if (!socialTargetCols.some((c) => c.name === 'stats')) {
     db.exec("ALTER TABLE social_post_targets ADD COLUMN stats TEXT DEFAULT '{}'");

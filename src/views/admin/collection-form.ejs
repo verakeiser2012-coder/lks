@@ -12,6 +12,7 @@
 <form
   action="<%= collection && collection.id ? `/admin/collections/${collection.id}` : '/admin/collections' %>"
   method="POST"
+  enctype="multipart/form-data"
 >
   <label>
     Название *
@@ -30,6 +31,13 @@
     <textarea name="description" rows="6"><%= collection ? collection.description : '' %></textarea>
   </label>
   <p class="hint">Чтобы вставить ссылку в текст: <code>[текст ссылки](https://example.com)</code></p>
+  <label>
+    Обложка дропа
+    <input type="file" name="cover" accept="image/*">
+  </label>
+  <% if (collection && collection.cover_image) { %>
+    <p class="hint">Сейчас: <img src="<%= thumb(collection.cover_image, 160) %>" alt="" style="height:60px;vertical-align:middle;border-radius:6px;"></p>
+  <% } %>
   <label>
     Порядок сортировки
     <input type="number" name="sortOrder" value="<%= collection ? collection.sort_order : 0 %>">

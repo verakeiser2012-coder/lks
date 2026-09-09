@@ -138,6 +138,7 @@ app.use('/en/news', createNewsRouter('en'));
 app.use('/diary', diaryRoutes);
 app.use('/music', musicRoutes);
 app.use('/games', require('./routes/games'));
+app.use('/podcast', require('./routes/podcast'));
 app.use('/style', styleRoutes);
 app.use('/brands', brandsRoutes);
 app.use('/gigs', gigsRoutes);

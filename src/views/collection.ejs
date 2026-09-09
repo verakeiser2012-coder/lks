@@ -1,9 +1,12 @@
 <%- include('partials/header') %>
 
 <section class="hero drop-hero">
-  <% if (collection.season_label) { %><p class="drop-season">Дроп · <%= collection.season_label %></p><% } %>
-  <h1><%= collection.name %></h1>
-  <% if (collection.subtitle) { %><p class="hero-tagline"><%= collection.subtitle %></p><% } %>
+  <% if (collection.cover_image) { %><img class="release-hero-cover" src="<%= thumb(collection.cover_image, 480) %>" srcset="<%= srcset(collection.cover_image, [320, 480, 640, 960]) %>" sizes="(max-width: 480px) 92vw, 200px" alt="<%= collection.name %>"><% } %>
+  <div>
+    <% if (collection.season_label) { %><p class="drop-season">Дроп · <%= collection.season_label %></p><% } %>
+    <h1><%= collection.name %></h1>
+    <% if (collection.subtitle) { %><p class="hero-tagline"><%= collection.subtitle %></p><% } %>
+  </div>
 </section>
 
 <% if (collection.description) { %>

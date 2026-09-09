@@ -43,7 +43,6 @@ router.get('/', (req, res) => {
     texts: {
       looks: setting('style_looks_intro'),
       walks: setting('style_walks_intro'),
-      wear: setting('style_wear_intro'),
       redhead: setting('style_redhead_note'),
       film: setting('style_film_intro'),
       portfolio: setting('style_portfolio_intro'),
@@ -52,7 +51,6 @@ router.get('/', (req, res) => {
     looks: loadLooks(),
     walks,
     years,
-    wearItems: db.prepare('SELECT * FROM style_items WHERE is_published = 1 ORDER BY sort_order ASC, created_at ASC').all(),
     filmItems: getGalleryItems('style-film'),
     groups: groupLinks(links),
     banners: getBanners('style'),

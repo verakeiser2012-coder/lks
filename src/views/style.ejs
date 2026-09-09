@@ -114,47 +114,21 @@
   <% } %>
 </section>
 
-<%# 04 Что ношу. Вещи с историей: откуда, почему, сколько лет с ней. %>
-<section class="chapter" id="wear">
-  <header class="chapter-head">
-    <span class="chapter-num">04</span>
-    <h2 class="chapter-title">Что ношу</h2>
-    <a class="chapter-more" href="/drops">Дропы →</a>
-  </header>
-  <p class="chapter-deck"><%= texts.wear || 'Вещи, которые со мной не первый год. Откуда и почему именно они.' %></p>
-  <% if (wearItems.length === 0) { %>
-    <p class="hint">Здесь будут вещи с историей: три-пять для начала.</p>
-  <% } else { %>
-    <div class="wear-list">
-      <% wearItems.forEach(function(item) { %>
-        <article class="wear-item">
-          <% if (item.photo) { %><img class="wear-photo edge-soft" src="<%= thumb(item.photo, 480) %>" alt="<%= item.name %>" loading="lazy"><% } %>
-          <div class="wear-body">
-            <h3 class="wear-name"><%= item.name %></h3>
-            <% if (item.story) { %><p class="wear-story"><%- renderLinkedText(item.story) %></p><% } %>
-            <% if (item.link_url) { %><a class="wear-link" href="<%= item.link_url %>" <% if (item.link_url.startsWith('http')) { %>target="_blank" rel="noopener"<% } %>><%= item.link_label || 'Смотреть' %> →</a><% } %>
-          </div>
-        </article>
-      <% }); %>
-    </div>
-  <% } %>
-</section>
-
-<%# 05 Рыжий. Только дверь в раздел, сам раздел живёт отдельно. %>
+<%# 04 Рыжий. Только дверь в раздел, сам раздел живёт отдельно. %>
 <section class="chapter chapter--tight" id="redhead">
   <header class="chapter-head">
-    <span class="chapter-num">05</span>
+    <span class="chapter-num">04</span>
     <h2 class="chapter-title">Рыжий</h2>
     <a class="chapter-more" href="/redheads">Рыжие, которые вдохновляют →</a>
   </header>
   <p class="chapter-deck"><%- renderLinkedText(texts.redhead || 'Цвет волос у 1–2% людей на планете. Я не крашу и не прячу: это часть стиля, а не особенность. Тут же собираю рыжих, на которых смотрю сам.') %></p>
 </section>
 
-<%# 06 Кино. Бэкстейдж со съёмок кино и рекламы: площадка, свет, дубли. %>
+<%# 05 Кино. Бэкстейдж со съёмок кино и рекламы: площадка, свет, дубли. %>
 <% if (filmItems.length > 0) { %>
 <section class="chapter" id="film">
   <header class="chapter-head">
-    <span class="chapter-num">06</span>
+    <span class="chapter-num">05</span>
     <h2 class="chapter-title">Кино</h2>
   </header>
   <p class="chapter-deck"><%= texts.film || 'Кино и реклама, в которых снимаюсь, и то, что остаётся за кадром: площадка, свет, дубли.' %></p>

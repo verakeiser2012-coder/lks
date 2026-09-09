@@ -12,7 +12,8 @@
 
 <div class="games-grid games-grid-page">
   <% games.forEach(function (g) { %>
-    <a class="game-tile" href="<%= g.url %>">
+    <a class="game-tile game-tile-art" href="<%= g.url %>">
+      <% if (g.art) { %><img class="game-tile-cover" src="<%= thumb(g.art, 640) %>" alt="" loading="lazy"><% } %>
       <span class="game-tile-kicker"><%= g.kicker %></span>
       <span class="game-tile-title"><%= g.title %></span>
       <span class="game-tile-note"><%= g.note %></span>

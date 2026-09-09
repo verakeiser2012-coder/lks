@@ -2498,6 +2498,28 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 .portfolio-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 @media (max-width: 700px) { .portfolio-grid { grid-template-columns: repeat(3, 1fr); } }
 .game-tile-where { font-size: 0.76rem; color: var(--color-muted); margin-top: 2px; }
+.game-tile-art { padding-top: 0; overflow: hidden; }
+.game-tile-cover { width: 100%; aspect-ratio: 8 / 5; object-fit: cover; display: block; margin: 0 0 12px; border-radius: 8px; }
+/* Подкаст: карточка выпуска — обложка слева, текст справа. */
+.episode-list { display: grid; gap: 14px; }
+.episode-card {
+  display: flex; gap: 16px; align-items: flex-start; text-decoration: none; color: inherit;
+  border: 1px solid var(--color-border); border-radius: var(--radius); padding: 14px; background: #fff;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.episode-card:hover { border-color: var(--color-accent); transform: translateY(-2px); }
+.episode-cover { width: 140px; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
+.episode-meta { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; font-size: 0.78rem; color: var(--color-muted); }
+.episode-guest { font-weight: 700; color: var(--color-accent); }
+.episode-soon { border: 1px solid var(--color-border); border-radius: 999px; padding: 1px 8px; }
+.episode-title { margin: 6px 0 4px; font-size: 1.05rem; }
+.episode-note { margin: 0; font-size: 0.88rem; color: var(--color-muted); }
+.episode-soon-line { margin: 8px 0 0; font-size: 0.9rem; color: var(--color-muted); max-width: 52ch; }
+@media (max-width: 560px) { .episode-cover { width: 96px; } }
+
+/* Карточка дропа с обложкой: картинка сверху, текст под ней. */
+.drop-card-art { padding-top: 0; overflow: hidden; }
+.drop-card-cover { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; margin-bottom: 12px; border-radius: 8px; }
 .games-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
 .game-tile {
   display: flex; flex-direction: column; gap: 6px; padding: 18px;

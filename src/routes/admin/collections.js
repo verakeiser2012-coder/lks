@@ -1,6 +1,7 @@
 const express = require('express');
 const db = require('../../db');
 const { slugify } = require('../../utils/slugify');
+const { uploadImage } = require('../../middleware/upload');
 
 const router = express.Router();
 
@@ -13,16 +14,17 @@ router.get('/new', (req, res) => {
   res.render('admin/collection-form', { collection: null, error: null });
 });
 
-router.post('/', (req, res) => {
+router.post('/', uploadImage.single('cover'), (req, res) => {
   const { name, subtitle, description, seasonLabel, sortOrder, isPublished } = req.body;
   if (!name) {
     return res.render('admin/collection-form', { collection: req.body, error: 'Укажите название дропа.' });
   }
 
   db.prepare(`
-    INSERT INTO collections (name, slug, subtitle, description, season_label, is_published, sort_order)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-  `).run(name, slugify(name), subtitle || '', description || '', seasonLabel || '', isPublished ? 1 : 0, Number(sortOrder) || 0);
+    INSERT INTO collections (name, slug, subtitle, description, season_label, is_published, sort_order, cover_image)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(name, slugify(name), subtitle || '', description || '', seasonLabel || '', isPublished ? 1 : 0, Number(sortOrder) || 0,
+    req.file ? `/uploads/${req.file.filename}` : '');
 
   res.redirect('/admin/collections');
 });
@@ -33,7 +35,7 @@ router.get('/:id/edit', (req, res) => {
   res.render('admin/collection-form', { collection, error: null });
 });
 
-router.post('/:id', (req, res) => {
+router.post('/:id', uploadImage.single('cover'), (req, res) => {
   const collection = db.prepare('SELECT * FROM collections WHERE id = ?').get(req.params.id);
   if (!collection) return res.status(404).render('404');
 
@@ -46,9 +48,10 @@ router.post('/:id', (req, res) => {
   }
 
   db.prepare(`
-    UPDATE collections SET name = ?, subtitle = ?, description = ?, season_label = ?, is_published = ?, sort_order = ?
+    UPDATE collections SET name = ?, subtitle = ?, description = ?, season_label = ?, is_published = ?, sort_order = ?, cover_image = ?
     WHERE id = ?
-  `).run(name, subtitle || '', description || '', seasonLabel || '', isPublished ? 1 : 0, Number(sortOrder) || 0, collection.id);
+  `).run(name, subtitle || '', description || '', seasonLabel || '', isPublished ? 1 : 0, Number(sortOrder) || 0,
+    req.file ? `/uploads/${req.file.filename}` : collection.cover_image, collection.id);
 
   res.redirect('/admin/collections');
 });
