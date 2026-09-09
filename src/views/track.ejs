@@ -121,6 +121,9 @@
   </p>
 </section>
 
+<%# Трек только что послушали — самое время предложить игру про треки. %>
+<p class="track-game-line">Узнаёте музыку по первым секундам? <a href="/music/guess">Угадай трек</a> · <a href="/games">все игры</a></p>
+
 <nav class="track-pager">
   <% if (prevTrack) { %>
     <a class="track-pager-link" href="/music/<%= release.slug %>/<%= prevTrack.slug %>">← <%= prevTrack.title %></a>
