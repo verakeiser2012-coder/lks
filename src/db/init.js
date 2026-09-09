@@ -443,6 +443,13 @@ function init() {
     );
   `);
 
+  // Фото знаменитостей берём с Wikimedia Commons под CC — лицензия требует
+  // указать автора и лицензию рядом с фото, для этого своя колонка.
+  const spotlightCols = db.prepare('PRAGMA table_info(redhead_spotlights)').all();
+  if (!spotlightCols.some((c) => c.name === 'photo_credit')) {
+    db.exec("ALTER TABLE redhead_spotlights ADD COLUMN photo_credit TEXT NOT NULL DEFAULT ''");
+  }
+
   const redheadSubmissionCols = db.prepare('PRAGMA table_info(redhead_submissions)').all();
   if (!redheadSubmissionCols.some((c) => c.name === 'age_consent')) {
     db.exec("ALTER TABLE redhead_submissions ADD COLUMN age_consent INTEGER NOT NULL DEFAULT 0");

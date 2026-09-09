@@ -7,12 +7,11 @@ const router = express.Router();
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// Тема определяет ящик: сотрудничество и выступления читают в разных местах,
+// Тема определяет ящик: сотрудничество и предложения по музыке читают в разных местах,
 // и общий info@ для них означал бы лишнюю пересылку руками.
 const TOPICS = [
   { key: 'question', label: 'Вопрос', to: 'info@levkeiser.com' },
   { key: 'brand', label: 'Сотрудничество с брендом', to: 'brand@levkeiser.com' },
-  { key: 'booking', label: 'Выступление', to: 'booking@levkeiser.com' },
   { key: 'vocal', label: 'Предложить вокал или трек', to: 'booking@levkeiser.com' },
   { key: 'order', label: 'Вопрос по заказу', to: 'info@levkeiser.com' },
 ];
