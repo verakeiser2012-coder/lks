@@ -133,6 +133,8 @@
           const shopPath = (typeof currentPath === 'string' ? currentPath : '/').split('?')[0];
           function shopActive(href) { return shopPath === href || shopPath.startsWith(href + '/') ? ' active' : ''; }
         %>
+        <a href="/about" class="shop-link shop-link-about<%= shopActive('/about') %>">Обо мне</a>
+        <span class="shop-nav-divider" aria-hidden="true"></span>
         <a href="/catalog" class="shop-link<%= shopActive('/catalog') %>">Каталог</a>
         <a href="/drops" class="shop-link<%= shopActive('/drops') %>">Дропы</a>
         <a href="/brands" class="shop-link<%= shopActive('/brands') %>">Брендам</a>
@@ -204,9 +206,11 @@
         <a href="/diary" class="<%= navActive('/diary') %>">Дневник</a>
         <a href="/redheads" class="<%= navActive('/redheads') %>">Рыжие</a>
         <a href="/news" class="<%= navActive('/news') %>">Новости</a>
-        <a href="/about" class="<%= navActive('/about') %>">Обо мне</a>
+        <%# DJ Levka — середина меню: слева личные разделы, справа музыкальные.
+            Разделители с обеих сторон, иначе имя читается как обычный пункт. %>
         <span class="nav-divider" aria-hidden="true"></span>
         <a href="/music" class="nav-music-link <%= navActive('/music') %>">DJ Levka</a>
+        <span class="nav-divider" aria-hidden="true"></span>
         <a href="/gigs" class="<%= navActive('/gigs') %>">Выступления</a>
         <a href="/style" class="<%= navActive('/style') %>">Стиль</a>
         <a href="/contest" class="<%= navActive('/contest') %>">Конкурс</a>

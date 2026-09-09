@@ -288,6 +288,11 @@ a:hover { color: var(--color-accent-hover); }
   background: #fff;
   color: var(--color-accent);
 }
+/* «Обо мне» стоит в той же плашке, но это не магазин — отделяем чертой
+   и делаем спокойнее, чтобы не читалось как ещё один торговый раздел. */
+.shop-nav-divider { width: 1px; height: 18px; background: #e6cf8a; margin: 0 2px; }
+.shop-link-about { color: var(--color-muted); font-weight: 500; }
+.shop-link-about:hover { color: var(--color-accent); }
 .cart-btn {
   display: inline-flex;
   align-items: center;
