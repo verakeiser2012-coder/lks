@@ -4,7 +4,12 @@ const { slugify } = require('../../utils/slugify');
 const { uploadImage } = require('../../middleware/upload');
 const { videoFormat } = require('../../utils/videoEmbed');
 
+const { linksToText, textToLinks } = require('../../utils/platforms');
+
 const router = express.Router();
+
+// Ссылки на площадки редактируются текстом, по строке на площадку.
+router.use((req, res, next) => { res.locals.linksToText = linksToText; next(); });
 
 router.get('/', (req, res) => {
   const releases = db.prepare('SELECT * FROM releases ORDER BY sort_order ASC, created_at DESC').all();
@@ -29,11 +34,12 @@ router.post('/', uploadImage.single('cover'), (req, res) => {
   const cover = req.file ? `/uploads/${req.file.filename}` : '';
 
   db.prepare(`
-    INSERT INTO releases (title, slug, release_type, year, description, cover_image, streaming_url, video_url, video_format, sort_order, is_published)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO releases (title, slug, release_type, year, description, cover_image, streaming_url, video_url, video_format, sort_order, is_published, platform_links)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     title, slugify(title), releaseType || 'EP', year || '', description || '', cover, streamingUrl || '',
-    (videoUrl || '').trim(), videoFormat(req.body.videoFormat), Number(sortOrder) || 0, isPublished ? 1 : 0
+    (videoUrl || '').trim(), videoFormat(req.body.videoFormat), Number(sortOrder) || 0, isPublished ? 1 : 0,
+    textToLinks(req.body.platformLinks)
   );
 
   res.redirect('/admin/releases');
@@ -61,11 +67,12 @@ router.post('/:id', uploadImage.single('cover'), (req, res) => {
 
   db.prepare(`
     UPDATE releases SET title = ?, release_type = ?, year = ?, description = ?, cover_image = ?, streaming_url = ?,
-      video_url = ?, video_format = ?, sort_order = ?, is_published = ?
+      video_url = ?, video_format = ?, sort_order = ?, is_published = ?, platform_links = ?
     WHERE id = ?
   `).run(
     title, releaseType || 'EP', year || '', description || '', cover, streamingUrl || '',
-    (videoUrl || '').trim(), videoFormat(req.body.videoFormat), Number(sortOrder) || 0, isPublished ? 1 : 0, release.id
+    (videoUrl || '').trim(), videoFormat(req.body.videoFormat), Number(sortOrder) || 0, isPublished ? 1 : 0,
+    textToLinks(req.body.platformLinks), release.id
   );
 
   res.redirect('/admin/releases');

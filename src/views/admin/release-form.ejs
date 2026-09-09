@@ -40,6 +40,11 @@
     <input type="url" name="streamingUrl" value="<%= release ? release.streaming_url : '' %>" placeholder="https://band.link/...">
   </label>
   <label>
+    Прямые ссылки на площадки — по строке: код площадки, пробел, ссылка
+    <textarea name="platformLinks" rows="6" placeholder="yandex https://music.yandex.ru/album/…&#10;spotify https://open.spotify.com/album/…"><%= release ? linksToText(release.platform_links) : '' %></textarea>
+  </label>
+  <p class="hint">Коды: yandex, vk, zvuk, mts, apple, spotify, youtube, deezer, soundcloud. Кнопки на сайте выстраиваются по языку страницы сами; band.link больше не нужен.</p>
+  <label>
     Видео к релизу — плейлист YouTube (или один ролик)
     <input type="url" name="videoUrl" value="<%= release ? (release.video_url || '') : '' %>" placeholder="https://www.youtube.com/playlist?list=PL...">
   </label>

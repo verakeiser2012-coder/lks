@@ -508,6 +508,14 @@ function init() {
     }
   }
 
+  // Прямые ссылки на площадки по релизу (JSON: yandex, vk, zvuk, apple, spotify…).
+  // Кнопки на сайте ведут сразу туда, без прокладки band.link; порядок кнопок
+  // по языку страницы собирает utils/platforms.
+  const releaseCols = db.prepare('PRAGMA table_info(releases)').all();
+  if (!releaseCols.some((c) => c.name === 'platform_links')) {
+    db.exec("ALTER TABLE releases ADD COLUMN platform_links TEXT NOT NULL DEFAULT '{}'");
+  }
+
   const socialTargetCols = db.prepare('PRAGMA table_info(social_post_targets)').all();
   if (!socialTargetCols.some((c) => c.name === 'stats')) {
     db.exec("ALTER TABLE social_post_targets ADD COLUMN stats TEXT DEFAULT '{}'");

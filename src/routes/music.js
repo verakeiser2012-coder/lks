@@ -4,6 +4,7 @@ const db = require('../db');
 const { groupLinks } = require('../utils/links');
 const { getGalleryItems } = require('../utils/gallery');
 const { parseVideoEmbedUrl } = require('../utils/videoEmbed');
+const { platformButtons } = require('../utils/platforms');
 const { getBgPlaylist } = require('../utils/bgPlaylist');
 const { trackAudio, withAudio } = require('../utils/trackAudio');
 const QUIZ = require('../data/quiz');
@@ -237,6 +238,7 @@ router.get('/:releaseSlug', (req, res, next) => {
     tracks: withAudio(tracks),
     products: productsForRelease(release.id),
     releaseVideo: parseVideoEmbedUrl(release.video_url),
+    platformButtons: platformButtons(release, 'ru'),
     allReleases: listReleases(),
     currentReleaseId: release.id,
     // Превью репоста — обложка релиза. Без неё ссылка в мессенджере
@@ -278,6 +280,7 @@ router.get('/:releaseSlug/:trackSlug', (req, res, next) => {
     trackGalleryItems,
     products: productsForTrack(track.id),
     trackVideo: parseVideoEmbedUrl(track.video_url),
+    platformButtons: platformButtons(release, 'ru'),
     allReleases: listReleases(),
     currentReleaseId: release.id,
     // У трека своя обложка бывает не всегда — тогда берём обложку релиза.

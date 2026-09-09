@@ -1,0 +1,10 @@
+<%# Кнопки «слушать там, где удобно». Ожидает platformButtons — массив
+    {key, label, url} из utils/platforms, уже в порядке под язык страницы.
+    Первая кнопка — главная (заливка), остальные контурные. %>
+<% if (typeof platformButtons !== 'undefined' && platformButtons.length) { %>
+  <div class="platform-links">
+    <% platformButtons.forEach(function (b, i) { %>
+      <a class="btn <%= i ? 'btn-ghost' : '' %> platform-link platform-<%= b.key %>" href="<%= b.url %>" target="_blank" rel="noopener"><%= b.label %></a>
+    <% }); %>
+  </div>
+<% } %>

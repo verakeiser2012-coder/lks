@@ -1,5 +1,10 @@
 <%- include('partials/header') %>
 
+<%# Свои ролики (анимации из public/video) — отдельной сеткой 9:16, остальное
+    (клипы с YouTube/Rutube, кадры со съёмок) — в общей плёнке ниже. %>
+<% var anims = trackGalleryItems.filter(function (i) { return i.type === 'video' && /^\/video\//.test(i.file_path); }); %>
+<% var otherItems = trackGalleryItems.filter(function (i) { return anims.indexOf(i) === -1; }); %>
+
 <section class="hero release-hero">
   <% if (track.cover_image) { %><img class="release-hero-cover" src="<%= thumb(track.cover_image, 480) %>" srcset="<%= srcset(track.cover_image, [320, 480, 640, 960]) %>" sizes="(max-width: 480px) 92vw, 200px" alt="<%= track.title %>"><% } %>
   <div>
@@ -10,23 +15,31 @@
     <% if (track.audio) { %>
       <audio class="track-player" controls preload="none" src="<%= track.audio %>"></audio>
     <% } %>
-    <%# Подпись кнопки зависит от того, куда она ведёт. У части синглов общей
-        ссылки на все площадки нет, только Spotify, и «добавить в плейлист»
-        обещало то, чего кнопка не делала. %>
-    <% var smart = /band\.link/i.test(release.streaming_url || '') ? release.streaming_url : ''; %>
-    <% var spotify = /spotify\.com/i.test(release.streaming_url || '') ? release.streaming_url : (/spotify\.com/i.test(track.url || '') ? track.url : ''); %>
-    <div class="track-links">
-      <% if (smart) { %>
-        <a class="btn" href="<%= smart %>" target="_blank" rel="noopener">Добавить в свой плейлист</a>
-      <% } else { %>
-        <% if (spotify) { %><a class="btn" href="<%= spotify %>" target="_blank" rel="noopener">Открыть в Spotify</a><% } %>
-        <a class="btn btn-ghost" href="https://band.link/djlevka" target="_blank" rel="noopener">Все площадки</a>
-      <% } %>
-    </div>
-    <% if (smart) { %>
-      <p class="track-links-hint">Одна ссылка на все площадки: Яндекс Музыка, ВК, Звук, Spotify, Apple Music. Открывается там, где вы слушаете.</p>
+    <%# Прямые кнопки на площадки. Когда у релиза они заведены, ведём сразу туда,
+        без band.link. Пока не заведены — прежняя пара «Spotify / все площадки». %>
+    <% if (platformButtons.length) { %>
+      <p class="track-links-title">Добавить в свой плейлист</p>
+      <%- include('partials/platform-links') %>
+      <p class="track-links-hint">Откроется страница релиза на площадке — там «Мне нравится» или «В плейлист».</p>
     <% } else { %>
-      <p class="track-links-hint">У этого сингла пока нет общей ссылки на все площадки. «Все площадки» ведёт на каталог артиста: там трек найдётся в Яндекс Музыке, ВК, Звуке и Apple Music.</p>
+      <%# Подпись кнопки зависит от того, куда она ведёт. У части синглов общей
+          ссылки на все площадки нет, только Spotify, и «добавить в плейлист»
+          обещало то, чего кнопка не делала. %>
+      <% var smart = /band\.link/i.test(release.streaming_url || '') ? release.streaming_url : ''; %>
+      <% var spotify = /spotify\.com/i.test(release.streaming_url || '') ? release.streaming_url : (/spotify\.com/i.test(track.url || '') ? track.url : ''); %>
+      <div class="track-links">
+        <% if (smart) { %>
+          <a class="btn" href="<%= smart %>" target="_blank" rel="noopener">Добавить в свой плейлист</a>
+        <% } else { %>
+          <% if (spotify) { %><a class="btn" href="<%= spotify %>" target="_blank" rel="noopener">Открыть в Spotify</a><% } %>
+          <a class="btn btn-ghost" href="https://band.link/djlevka" target="_blank" rel="noopener">Все площадки</a>
+        <% } %>
+      </div>
+      <% if (smart) { %>
+        <p class="track-links-hint">Одна ссылка на все площадки: Яндекс Музыка, ВК, Звук, Spotify, Apple Music. Открывается там, где вы слушаете.</p>
+      <% } else { %>
+        <p class="track-links-hint">У этого сингла пока нет общей ссылки на все площадки. «Все площадки» ведёт на каталог артиста: там трек найдётся в Яндекс Музыке, ВК, Звуке и Apple Music.</p>
+      <% } %>
     <% } %>
   </div>
 </section>
@@ -42,6 +55,17 @@
 
 <% if (track.description) { %>
   <div class="prose drop-description"><%- renderLinkedText(track.description) %></div>
+<% } %>
+
+<% if (anims.length) { %>
+<section class="link-section">
+  <h2>Анимации к треку</h2>
+  <div class="anim-grid">
+    <% anims.forEach(function (a) { %>
+      <video src="<%= a.file_path %>" controls playsinline preload="metadata" title="<%= a.title %>"></video>
+    <% }); %>
+  </div>
+</section>
 <% } %>
 
 <% if (products && products.length) { %>
@@ -65,7 +89,7 @@
 </section>
 <% } %>
 
-<%- include('partials/gallery-section', { galleryItems: trackGalleryItems, galleryTitle: 'Видео и кадры к треку' }) %>
+<%- include('partials/gallery-section', { galleryItems: otherItems, galleryTitle: 'Видео и кадры к треку' }) %>
 
 <nav class="track-pager">
   <% if (prevTrack) { %>
