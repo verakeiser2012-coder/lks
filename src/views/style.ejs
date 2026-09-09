@@ -19,9 +19,22 @@
     <a class="chapter-more" href="/brands/media-kit">Медиакит для брендов →</a>
   </header>
   <p class="chapter-deck"><%= texts.portfolio || 'В кадре с четырёх лет: реклама, кино, показы. Работаем по договору с законным представителем.' %></p>
-  <% if (portfolio.length) { %>
+  <%# Шоурил — первое, что смотрит кастинг: показываем его до кадров. %>
+  <% var showreel = portfolio.filter(function (i) { return i.type === 'video'; }); %>
+  <% var portfolioShots = portfolio.filter(function (i) { return i.type === 'photo'; }); %>
+  <% if (showreel.length) { %>
+    <div class="showreel">
+      <% showreel.forEach(function (item) { %>
+        <figure class="showreel-item">
+          <div class="video-embed"><iframe src="<%= item.file_path %>" loading="lazy" allow="encrypted-media; picture-in-picture" allowfullscreen title="<%= item.title %>"></iframe></div>
+          <% if (item.title) { %><figcaption><%= item.title %></figcaption><% } %>
+        </figure>
+      <% }); %>
+    </div>
+  <% } %>
+  <% if (portfolioShots.length) { %>
     <div class="portfolio-grid">
-      <% portfolio.forEach(function(item) { %>
+      <% portfolioShots.forEach(function(item) { %>
         <img src="<%= thumb(item.file_path, 480) %>" alt="<%= item.title %>" title="<%= item.title %>" loading="lazy">
       <% }); %>
     </div>
