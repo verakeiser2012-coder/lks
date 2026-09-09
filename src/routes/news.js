@@ -33,6 +33,14 @@ function createNewsRouter(lang) {
     if (!post) {
       return res.status(404).render('404');
     }
+    // Перевод ищем по совпадению слага; нет перевода — уводим на список,
+    // а не на несуществующую страницу.
+    const twin = db
+      .prepare('SELECT slug FROM news WHERE slug = ? AND lang <> ? AND is_published = 1')
+      .get(post.slug, lang);
+    const langAlt = lang === 'en'
+      ? { en: `/en/news/${post.slug}`, ru: twin ? `/news/${twin.slug}` : '/news' }
+      : { ru: `/news/${post.slug}`, en: twin ? `/en/news/${twin.slug}` : '/en/news' };
     const media = db
       .prepare('SELECT * FROM news_media WHERE news_id = ? ORDER BY sort_order ASC, created_at ASC')
       .all(post.id);
@@ -51,6 +59,7 @@ function createNewsRouter(lang) {
     const cover = media.find((m) => m.type === 'photo');
     res.render('news-detail', {
       post,
+      langAlt,
       media,
       allPosts,
       coverByNewsId,

@@ -167,15 +167,22 @@
         <%
           // Английская версия пока есть только у новостей — переключатель показываем там,
           // чтобы не уводить на пустой раздел.
+          //
+          // На отдельной новости слаг перевода другой (или перевода нет вовсе), поэтому
+          // маршрут новостей передаёт готовые адреса в langAlt: без этого EN вёл на
+          // /en/news/<русский-слаг> и упирался в 404 — так было на семи новостях.
           const langPath = (typeof currentPath === 'string' ? currentPath : '/').split('?')[0];
           const isEn = langPath.startsWith('/en/');
           const ruPath = isEn ? langPath.replace(/^\/en/, '') : langPath;
+          const alt = typeof langAlt === 'object' && langAlt ? langAlt : null;
+          const ruHref = alt && alt.ru ? alt.ru : ruPath;
+          const enHref = alt && alt.en ? alt.en : '/en' + ruPath;
           const hasEn = ruPath === '/news' || ruPath.startsWith('/news/');
         %>
         <% if (hasEn) { %>
           <div class="lang-switch">
-            <a href="<%= ruPath %>" class="<%= isEn ? '' : 'active' %>" hreflang="ru">RU</a>
-            <a href="/en<%= ruPath %>" class="<%= isEn ? 'active' : '' %>" hreflang="en">EN</a>
+            <a href="<%= ruHref %>" class="<%= isEn ? '' : 'active' %>" hreflang="ru">RU</a>
+            <a href="<%= enHref %>" class="<%= isEn ? 'active' : '' %>" hreflang="en">EN</a>
           </div>
         <% } %>
         <a href="/cart" class="cart-btn">
