@@ -1,0 +1,33 @@
+<%- include('partials/header') %>
+
+<section class="hero">
+  <h1>Поиграть</h1>
+  <p class="hero-tagline">
+    Игры вокруг музыки и архива. Каждая живёт в своём разделе, здесь они собраны вместе —
+    для тех, кто пришёл играть, а не читать.
+  </p>
+</section>
+
+<% (banners || []).forEach(function(banner) { %><%- include('partials/banner', { banner }) %><% }); %>
+
+<div class="games-grid games-grid-page">
+  <% games.forEach(function (g) { %>
+    <a class="game-tile" href="<%= g.url %>">
+      <span class="game-tile-kicker"><%= g.kicker %></span>
+      <span class="game-tile-title"><%= g.title %></span>
+      <span class="game-tile-note"><%= g.note %></span>
+      <span class="game-tile-where">в разделе «<%= g.where %>»</span>
+    </a>
+  <% }); %>
+</div>
+
+<section class="link-section">
+  <h2>Что дальше</h2>
+  <p style="color:var(--color-muted); max-width:62ch;">
+    Игры добавляются по одной, когда набирается материал: архив кадров, новый альбом,
+    ролики конкурса. Если придумали свою — напишите, соберём.
+  </p>
+  <a class="btn btn-ghost" href="/contact?topic=question">Предложить игру</a>
+</section>
+
+<%- include('partials/footer') %>

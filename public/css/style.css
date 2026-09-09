@@ -1540,11 +1540,14 @@ a.music-table-title:hover { color: var(--color-accent); }
 }
 
 /* Рыжие, которые вдохновляют — курируемая витрина, без открытой регистрации */
+/* Компактнее: карточки в четыре-пять колонок, фото квадратом с упором на
+   верх — портреты в 4:3 срезали лбы. */
 .spotlight-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 14px;
 }
+.redhead-reads { margin: 0 0 18px; font-size: 0.9rem; color: var(--color-muted); }
 .spotlight-card {
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
@@ -1559,8 +1562,9 @@ a.music-table-title:hover { color: var(--color-accent); }
 }
 .spotlight-photo {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 1 / 1;
   object-fit: cover;
+  object-position: center 18%;
   display: block;
   background: #f2f2f2;
 }
@@ -1570,7 +1574,7 @@ a.music-table-title:hover { color: var(--color-accent); }
   justify-content: center;
   color: var(--color-muted);
 }
-.spotlight-body { padding: 16px; }
+.spotlight-body { padding: 12px; }
 /* Оценки записей дневника: школьная шкала как игра. */
 .diary-marks { margin: 28px 0 8px; padding: 18px 20px; border: 1px solid var(--color-border); border-radius: 10px; background: #fffdf7; }
 .diary-marks-title { margin: 0 0 4px; font-size: 1.05rem; }
@@ -1597,9 +1601,9 @@ a.music-table-title:hover { color: var(--color-accent); }
   font-family: var(--font-display); font-size: 4rem; color: var(--color-gold-deep);
   background: linear-gradient(160deg, #f6efe0, #e8dcc2);
 }
-.spotlight-name { font-weight: 700; font-size: 1.05rem; }
+.spotlight-name { font-weight: 700; font-size: 0.95rem; }
 .spotlight-role { font-size: 0.82rem; color: var(--color-accent); font-weight: 600; margin-top: 2px; }
-.spotlight-note { font-size: 0.88rem; color: var(--color-muted); margin: 8px 0; }
+.spotlight-note { font-size: 0.8rem; color: var(--color-muted); margin: 6px 0; }
 .spotlight-link { font-weight: 600; font-size: 0.88rem; }
 
 .player-embed-grid {
@@ -2469,6 +2473,15 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 @media (prefers-reduced-motion: reduce) { .fresh-shot img { transition: none; } }
 
 /* ---- Игры на /music ---- */
+.games-grid-page { margin-bottom: 32px; }
+/* Портфолио: комп-карта из шести кадров и полоса с фактами. */
+.portfolio-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin: 14px 0 18px; }
+.portfolio-grid img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; object-position: center 15%; display: block; border-radius: 8px; }
+.portfolio-facts { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 0 0 14px; padding: 0; list-style: none; font-size: 0.9rem; }
+.portfolio-facts strong { display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-muted); }
+.portfolio-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+@media (max-width: 700px) { .portfolio-grid { grid-template-columns: repeat(3, 1fr); } }
+.game-tile-where { font-size: 0.76rem; color: var(--color-muted); margin-top: 2px; }
 .games-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
 .game-tile {
   display: flex; flex-direction: column; gap: 6px; padding: 18px;

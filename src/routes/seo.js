@@ -15,6 +15,7 @@ const STATIC_PAGES = [
   ['/news', 0.8],
   ['/diary', 0.7],
   ['/style', 0.7],
+  ['/games', 0.6],
   ['/drops', 0.7],
   ['/redheads', 0.6],
   ['/brands', 0.6],

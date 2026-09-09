@@ -13,15 +13,16 @@
 <section class="link-section">
   <h2>Треки</h2>
   <div class="track-playlist">
-    <%# Кнопка воспроизведения — часть строки, а не ссылка: послушать можно
-        не уходя со страницы релиза, а по названию по-прежнему открывается трек. %>
+    <%# Кнопка ▶ включает трек на месте, не уходя со страницы. Клик по названию
+        открывает страницу трека и включает его там же (?play=1): человек нажал
+        на трек — трек зазвучал, а не появилась ещё одна кнопка. %>
     <% tracks.forEach(function(track, i) { %>
       <div class="track-row<%= track.audio ? ' has-audio' : '' %>">
         <span class="track-row-index"><%= i + 1 %></span>
         <% if (track.audio) { %>
           <button type="button" class="track-row-play" data-src="<%= track.audio %>" data-title="<%= track.title %>" aria-label="Слушать <%= track.title %>">▶</button>
         <% } %>
-        <a class="track-row-main" href="/music/<%= release.slug %>/<%= track.slug %>">
+        <a class="track-row-main" href="/music/<%= release.slug %>/<%= track.slug %><%= track.audio ? '?play=1' : '' %>">
           <% if (track.cover_image) { %><img class="track-row-cover" src="<%= thumb(track.cover_image, 160) %>" alt=""><% } %>
           <span class="track-row-title"><%= track.title %></span>
           <span class="track-row-arrow">→</span>

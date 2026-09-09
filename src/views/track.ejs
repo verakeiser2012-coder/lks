@@ -10,18 +10,23 @@
     <% if (track.audio) { %>
       <audio class="track-player" controls preload="none" src="<%= track.audio %>"></audio>
     <% } %>
+    <%# Подпись кнопки зависит от того, куда она ведёт. У части синглов общей
+        ссылки на все площадки нет, только Spotify, и «добавить в плейлист»
+        обещало то, чего кнопка не делала. %>
+    <% var smart = /band\.link/i.test(release.streaming_url || '') ? release.streaming_url : ''; %>
+    <% var spotify = /spotify\.com/i.test(release.streaming_url || '') ? release.streaming_url : (/spotify\.com/i.test(track.url || '') ? track.url : ''); %>
     <div class="track-links">
-      <% if (release.streaming_url) { %>
-        <a class="btn" href="<%= release.streaming_url %>" target="_blank" rel="noopener">Добавить в свой плейлист</a>
-      <% } else if (track.url) { %>
-        <a class="btn" href="<%= track.url %>" target="_blank" rel="noopener">Слушать на площадках</a>
-      <% } %>
-      <% if (release.streaming_url && track.url) { %>
-        <a class="btn btn-ghost" href="<%= track.url %>" target="_blank" rel="noopener">Открыть в Spotify</a>
+      <% if (smart) { %>
+        <a class="btn" href="<%= smart %>" target="_blank" rel="noopener">Добавить в свой плейлист</a>
+      <% } else { %>
+        <% if (spotify) { %><a class="btn" href="<%= spotify %>" target="_blank" rel="noopener">Открыть в Spotify</a><% } %>
+        <a class="btn btn-ghost" href="https://band.link/djlevka" target="_blank" rel="noopener">Все площадки</a>
       <% } %>
     </div>
-    <% if (release.streaming_url) { %>
+    <% if (smart) { %>
       <p class="track-links-hint">Одна ссылка на все площадки: Яндекс Музыка, ВК, Звук, Spotify, Apple Music. Открывается там, где вы слушаете.</p>
+    <% } else { %>
+      <p class="track-links-hint">У этого сингла пока нет общей ссылки на все площадки. «Все площадки» ведёт на каталог артиста: там трек найдётся в Яндекс Музыке, ВК, Звуке и Apple Music.</p>
     <% } %>
   </div>
 </section>
@@ -60,7 +65,7 @@
 </section>
 <% } %>
 
-<%- include('partials/gallery-section', { galleryItems: trackGalleryItems, galleryTitle: 'Со съёмок к этому треку' }) %>
+<%- include('partials/gallery-section', { galleryItems: trackGalleryItems, galleryTitle: 'Видео и кадры к треку' }) %>
 
 <nav class="track-pager">
   <% if (prevTrack) { %>
@@ -75,5 +80,24 @@
 <%- include('partials/music-strip') %>
 
 <%- include('partials/share') %>
+
+<% if (track.audio) { %>
+<script>
+  // Пришли по клику на трек из списка релиза (?play=1): включаем сразу, а
+  // фоновую музыку глушим. Если браузер запретил автозапуск, плеер остаётся
+  // на месте и ждёт нажатия — ничего не ломается.
+  (function () {
+    if (!/[?&]play=1/.test(location.search)) return;
+    var player = document.querySelector('.track-player');
+    if (!player) return;
+    var bg = document.getElementById('bg-audio');
+    var toggle = document.getElementById('bg-audio-toggle');
+    if (bg && !bg.paused && toggle) toggle.click();
+    var p = player.play();
+    if (p && p.catch) p.catch(function () {});
+    if (history.replaceState) history.replaceState(null, '', location.pathname);
+  })();
+</script>
+<% } %>
 
 <%- include('partials/footer') %>

@@ -7,6 +7,12 @@
 
 <% (banners || []).forEach(function(banner) { %><%- include('partials/banner', { banner }) %><% }); %>
 
+<% if (typeof reads !== 'undefined' && reads.length) { %>
+  <p class="redhead-reads">Откуда раздел:
+    <% reads.forEach(function(r, i) { %><%= i ? ' · ' : '' %><a href="/diary/<%= r.slug %>"><%= r.title %></a><% }); %>
+  </p>
+<% } %>
+
 <% if (people.length === 0) { %>
   <p>Подборка скоро появится.</p>
 <% } else { %>
