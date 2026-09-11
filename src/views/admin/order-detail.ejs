@@ -6,28 +6,37 @@
 <% if (order.delivery_method === 'pickup') { %>
   <p>Получение: пункт выдачи — <%= order.pickup_point %></p>
 <% } else if (order.address) { %>
-  <p>Адрес: <%= order.address %></p>
+  <p>Адрес: <%= [order.country, order.zip, order.city, order.address].filter(Boolean).join(', ') %></p>
 <% } %>
 <% if (order.comment) { %><p>Комментарий: <%= order.comment %></p><% } %>
 <p>Оплата: <%= order.payment_status %> (<%= order.payment_provider || '—' %>)</p>
 
 <table>
   <thead>
-    <tr><th>Товар</th><th>Цена</th><th>Кол-во</th><th>Сумма</th></tr>
+    <tr><th>Товар</th><th>Цена</th><th>Кол-во</th><th>Сумма</th><th>Печать</th></tr>
   </thead>
   <tbody>
     <% items.forEach(function(item) { %>
       <tr>
-        <td><%= item.product_name %></td>
+        <td><%= item.product_name %><% if (item.variant) { %> · <%= item.variant %><% } %></td>
         <td><%= formatPrice(item.price) %></td>
         <td><%= item.qty %></td>
         <td><%= formatPrice(item.price * item.qty) %></td>
+        <td><%= ({ sent: 'в Printful (черновик ' + item.fulfillment_ref + ')', manual: 'вручную', failed: 'ошибка' })[item.fulfillment_status] || '' %></td>
       </tr>
     <% }); %>
   </tbody>
 </table>
 
 <p><strong>Итого: <%= formatPrice(order.total) %></strong></p>
+
+<% if (printful) { %>
+  <% if (printfulResult) { %><div class="flash flash-success">Printful: <%= printfulResult %></div><% } %>
+  <form action="/admin/orders/<%= order.id %>/printful" method="POST" style="margin-bottom:16px;">
+    <button class="btn" type="submit" <%= order.payment_status !== 'paid' ? 'disabled' : '' %>>Отправить в Printful ещё раз</button>
+    <% if (order.payment_status !== 'paid') { %><span style="color:#666; font-size:0.85rem;"> — только после оплаты</span><% } %>
+  </form>
+<% } %>
 
 <form action="/admin/orders/<%= order.id %>/status" method="POST">
   <label>

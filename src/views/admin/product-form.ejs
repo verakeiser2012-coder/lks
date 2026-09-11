@@ -34,6 +34,22 @@
   <fieldset style="border:1px solid #ddd; border-radius:8px; padding:12px 14px; margin:0 0 16px;">
     <legend style="padding:0 6px;">Цифровой товар</legend>
     <label>
+      Кто изготавливает
+      <select name="fulfillment">
+        <option value="self" <%= !product || product.fulfillment !== 'printful' ? 'selected' : '' %>>Сами (склад, остаток)</option>
+        <option value="printful" <%= product && product.fulfillment === 'printful' ? 'selected' : '' %>>Printful — печать по требованию</option>
+      </select>
+    </label>
+    <label>
+      Варианты Printful — по строке: размер и sync variant id
+      <textarea name="printfulVariants" rows="4" placeholder="S 4012345678&#10;M 4012345679&#10;L 4012345680"><%= product ? (product.printful_variants || '') : '' %></textarea>
+    </label>
+    <p style="color:#666; font-size:0.85rem; margin:-8px 0 12px;">
+      Для печати по требованию: остаток не спрашивается, покупатель выбирает размер, после оплаты
+      заказ уходит в Printful черновиком (печать начнётся после подтверждения в их кабинете).
+      Пока PRINTFUL_TOKEN не задан — приходит письмо, заказ оформляется вручную.
+    </p>
+    <label>
       <input type="checkbox" name="isDigital" value="1" id="is-digital" style="width:auto;display:inline-block;"
         <%= product && product.is_digital ? 'checked' : '' %>>
       Это файл, а не физический товар

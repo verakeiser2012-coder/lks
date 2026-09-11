@@ -104,6 +104,8 @@ app.use((req, res, next) => {
   // priceLabel(product) — ценник для витрины: у вещи под заказ вместо нуля «Под заказ».
   res.locals.priceLabel = priceLabel;
   res.locals.isMadeToOrder = isMadeToOrder;
+  // Размеры вещи печати по требованию — на странице товара из текстового поля
+  res.locals.parseVariants = require('./services/printful').parseVariants;
   // thumb(url, w) и srcset(url, [w…]) — уменьшенные картинки, utils/images.js.
   res.locals.thumb = thumb;
   res.locals.srcset = srcset;

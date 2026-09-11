@@ -24,6 +24,7 @@
           <td>
             <% if (item.product.image) { %><img src="<%= thumb(item.product.image, 160) %>" alt=""><% } %>
             <a href="/catalog/<%= item.product.slug %>"><%= item.product.name %></a>
+            <% if (item.variant) { %><span style="color:var(--color-muted); font-size:0.85rem;"> · <%= item.variant %></span><% } %>
           </td>
           <td><%= formatPrice(item.product.price) %></td>
           <td>
@@ -32,7 +33,8 @@
             <% } else { %>
               <form class="inline" action="/cart/update" method="POST">
                 <input type="hidden" name="productId" value="<%= item.product.id %>">
-                <input type="number" name="qty" value="<%= item.qty %>" min="1" max="<%= item.product.stock %>" style="width:70px" onchange="this.form.submit()">
+                <input type="hidden" name="variant" value="<%= item.variant || '' %>">
+                <input type="number" name="qty" value="<%= item.qty %>" min="1" <% if (item.product.fulfillment !== 'printful') { %>max="<%= item.product.stock %>"<% } %> style="width:70px" onchange="this.form.submit()">
               </form>
             <% } %>
           </td>
@@ -40,6 +42,7 @@
           <td>
             <form class="inline" action="/cart/remove" method="POST">
               <input type="hidden" name="productId" value="<%= item.product.id %>">
+              <input type="hidden" name="variant" value="<%= item.variant || '' %>">
               <button class="btn" type="submit">Удалить</button>
             </form>
           </td>

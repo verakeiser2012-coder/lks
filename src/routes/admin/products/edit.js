@@ -19,7 +19,7 @@ function update(req, res) {
     return res.status(404).render('404');
   }
 
-  const { name, description, price, categoryId, newCategory, collectionId, releaseId, trackId, stock, isActive, isDigital, leadTime, includes, dimensions, weight, material, care } = req.body;
+  const { name, description, price, categoryId, newCategory, collectionId, releaseId, trackId, stock, isActive, isDigital, leadTime, includes, dimensions, weight, material, care, fulfillment, printfulVariants } = req.body;
   if (!name || !price) {
     const categories = db.prepare('SELECT * FROM categories ORDER BY name').all();
     const collections = db.prepare('SELECT * FROM collections ORDER BY name').all();
@@ -43,7 +43,7 @@ function update(req, res) {
   // Новый файл заменяет прежний; если не приложили — оставляем что было,
   // иначе редактирование названия сносило бы товар с уже выданными ссылками.
   db.prepare(`
-    UPDATE products SET name = ?, description = ?, price = ?, category_id = ?, collection_id = ?, release_id = ?, track_id = ?, image = ?, stock = ?, is_active = ?, is_digital = ?, digital_file = ?, digital_filename = ?, digital_size = ?, lead_time = ?, includes = ?, dimensions = ?, weight = ?, material = ?, care = ?
+    UPDATE products SET name = ?, description = ?, price = ?, category_id = ?, collection_id = ?, release_id = ?, track_id = ?, image = ?, stock = ?, is_active = ?, is_digital = ?, digital_file = ?, digital_filename = ?, digital_size = ?, lead_time = ?, includes = ?, dimensions = ?, weight = ?, material = ?, care = ?, fulfillment = ?, printful_variants = ?
     WHERE id = ?
   `).run(
     name,
@@ -66,6 +66,8 @@ function update(req, res) {
     (weight || '').trim(),
     (material || '').trim(),
     (care || '').trim(),
+    fulfillment === 'printful' ? 'printful' : 'self',
+    (printfulVariants || '').trim(),
     product.id
   );
 

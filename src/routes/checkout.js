@@ -3,9 +3,14 @@ const { shopClosedNotice } = require('../utils/shopOpen');
 const db = require('../db');
 const { getCartDetails, getCart } = require('../utils/cart');
 const { createPayment } = require('../services/payments/yookassa');
-const { cartIsDigitalOnly, deliverDigital } = require('../services/digital');
+const { cartIsDigitalOnly } = require('../services/digital');
+const { onOrderPaid } = require('../services/fulfillment');
 
 const router = express.Router();
+
+function hasPrintful(items) {
+  return items.some((item) => item.product.fulfillment === 'printful');
+}
 
 // Пока магазин закрыт, оформление недоступно: настоящий заказ и тестовая
 // страница оплаты вместе выглядели бы как обман.
@@ -19,7 +24,7 @@ router.get('/', (req, res) => {
   if (items.length === 0) {
     return res.redirect('/cart');
   }
-  res.render('checkout', { items, total, error: null, digitalOnly: cartIsDigitalOnly(items) });
+  res.render('checkout', { items, total, error: null, digitalOnly: cartIsDigitalOnly(items), needsPrintful: hasPrintful(items) });
 });
 
 router.post('/', async (req, res, next) => {
@@ -29,9 +34,10 @@ router.post('/', async (req, res, next) => {
   }
 
   const digitalOnly = cartIsDigitalOnly(items);
-  const fail = (error) => res.render('checkout', { items, total, error, digitalOnly });
+  const needsPrintful = hasPrintful(items);
+  const fail = (error) => res.render('checkout', { items, total, error, digitalOnly, needsPrintful });
 
-  const { customerName, phone, email, address, deliveryMethod, pickupPoint, comment, dataConsent, digitalConsent } = req.body;
+  const { customerName, phone, email, address, country, city, zip, deliveryMethod, pickupPoint, comment, dataConsent, digitalConsent } = req.body;
   if (!customerName || !phone) {
     return fail('Заполните имя и телефон.');
   }
@@ -50,20 +56,28 @@ router.post('/', async (req, res, next) => {
     return fail('Подтвердите согласие на получение файлов сразу после оплаты.');
   }
 
-  const method = digitalOnly ? 'digital' : (deliveryMethod === 'pickup' ? 'pickup' : 'courier');
+  // Печать по требованию едет почтой из типографии: пункт выдачи не подходит,
+  // а адрес нужен по полям — Printful не разбирает строку «город, улица, дом».
+  const method = digitalOnly ? 'digital' : (deliveryMethod === 'pickup' && !needsPrintful ? 'pickup' : 'courier');
   if (method === 'pickup' && !pickupPoint) {
     return fail('Укажите город и удобный пункт выдачи.');
   }
+  if (needsPrintful && (!country || !city || !zip || !address)) {
+    return fail('Для вещи, которая печатается под заказ, нужны страна, город, индекс и адрес.');
+  }
 
   const insertOrder = db.prepare(`
-    INSERT INTO orders (customer_name, phone, email, address, delivery_method, pickup_point, comment, total)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO orders (customer_name, phone, email, address, country, city, zip, delivery_method, pickup_point, comment, total)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
   const orderInfo = insertOrder.run(
     customerName,
     phone,
     email || '',
     method === 'courier' ? (address || '') : '',
+    (country || '').trim(),
+    (city || '').trim(),
+    (zip || '').trim(),
     method,
     method === 'pickup' ? pickupPoint : '',
     comment || '',
@@ -72,11 +86,11 @@ router.post('/', async (req, res, next) => {
   const orderId = orderInfo.lastInsertRowid;
 
   const insertItem = db.prepare(`
-    INSERT INTO order_items (order_id, product_id, product_name, price, qty)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO order_items (order_id, product_id, product_name, price, qty, variant)
+    VALUES (?, ?, ?, ?, ?, ?)
   `);
   for (const item of items) {
-    insertItem.run(orderId, item.product.id, item.product.name, item.product.price, item.qty);
+    insertItem.run(orderId, item.product.id, item.product.name, item.product.price, item.qty, item.variant || '');
   }
 
   // Бесплатный заказ платить нечем: платёжные системы нулевую сумму не принимают.
@@ -85,7 +99,7 @@ router.post('/', async (req, res, next) => {
     // помечаем провайдером 'free': в отчётах бесплатная выдача не должна
     // выглядеть как успешный платёж через эквайринг
     db.prepare("UPDATE orders SET payment_status = 'paid', status = 'processing', payment_provider = 'free' WHERE id = ?").run(orderId);
-    await deliverDigital(orderId);
+    await onOrderPaid(orderId);
     req.session.cart = {};
     return res.redirect(`/checkout/success?orderId=${orderId}`);
   }
@@ -123,7 +137,7 @@ router.post('/pay/:orderId/confirm', async (req, res) => {
     return res.status(404).render('404');
   }
   db.prepare("UPDATE orders SET payment_status = 'paid', status = 'processing' WHERE id = ?").run(order.id);
-  await deliverDigital(order.id);
+  await onOrderPaid(order.id);
   res.redirect(`/checkout/success?orderId=${order.id}`);
 });
 
@@ -147,7 +161,7 @@ router.post('/webhook/yookassa', async (req, res) => {
     if (order && payment.status === 'succeeded') {
       db.prepare("UPDATE orders SET payment_status = 'paid', status = 'processing' WHERE id = ?").run(order.id);
       // Повторный вебхук не выдаст вторых ссылок — issueDownloads это учитывает
-      await deliverDigital(order.id);
+      await onOrderPaid(order.id);
     }
   }
   res.sendStatus(200);

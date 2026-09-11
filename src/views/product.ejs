@@ -105,7 +105,7 @@
         Напишите нам — ответим ценой и сроком.
       </p>
       <a class="btn" href="/contact">Спросить цену</a>
-    <% } else if (product.stock > 0) { %>
+    <% } else if (product.stock > 0 || product.fulfillment === 'printful') { %>
       <%# Точный остаток честен только там, где вещь лежит готовой. У нас всё
           отливается под заказ, и остаток в базе — заглушка «сколько угодно»:
           «в наличии 999 шт.» спорит и с шапкой каталога, и с описанием, где
@@ -114,16 +114,28 @@
       <% if (product.lead_time) { %>
         <p class="product-made-to-order">Изготавливается под заказ</p>
       <% } else { %>
-        <p>В наличии: <%= product.stock %> шт.</p>
+        <% if (product.fulfillment !== 'printful') { %><p>В наличии: <%= product.stock %> шт.</p><% } %>
       <% } %>
       <form action="/cart/add" method="POST">
         <input type="hidden" name="productId" value="<%= product.id %>">
+        <% const variants = product.fulfillment === 'printful' ? parseVariants(product.printful_variants) : []; %>
+        <% if (variants.length) { %>
+          <label>
+            Размер:
+            <select name="variant" required>
+              <% variants.forEach(function (v) { %><option value="<%= v.label %>"><%= v.label %></option><% }); %>
+            </select>
+          </label>
+        <% } %>
         <label>
           Количество:
-          <input type="number" name="qty" value="1" min="1" max="<%= product.stock %>">
+          <input type="number" name="qty" value="1" min="1" <% if (product.fulfillment !== 'printful') { %>max="<%= product.stock %>"<% } %>>
         </label>
         <button class="btn" type="submit">Добавить в корзину</button>
       </form>
+      <% if (product.fulfillment === 'printful') { %>
+        <p class="product-digital-note">Печатается под заказ после оплаты и отправляется почтой из типографии; доставка обычно 7–20 дней. Пункт выдачи для такой вещи недоступен.</p>
+      <% } %>
     <% } else { %>
       <p class="out-of-stock">Товара нет в наличии</p>
     <% } %>

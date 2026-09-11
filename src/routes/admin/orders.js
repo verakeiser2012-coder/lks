@@ -1,5 +1,6 @@
 const express = require('express');
 const db = require('../../db');
+const { submitOrder, printfulItems } = require('../../services/printful');
 
 const router = express.Router();
 
@@ -14,7 +15,15 @@ router.get('/:id', (req, res) => {
     return res.status(404).render('404');
   }
   const items = db.prepare('SELECT * FROM order_items WHERE order_id = ?').all(order.id);
-  res.render('admin/order-detail', { order, items });
+  const printful = printfulItems(order.id).length > 0;
+  res.render('admin/order-detail', { order, items, printful, printfulResult: req.query.printful || '' });
+});
+
+// Повторная отправка в Printful: после ошибки, после заполнения адреса или
+// когда токен появился уже после оплаты.
+router.post('/:id/printful', async (req, res) => {
+  const result = await submitOrder(req.params.id);
+  res.redirect(`/admin/orders/${req.params.id}?printful=${encodeURIComponent(`${result.status}: ${result.detail}`)}`);
 });
 
 router.post('/:id/status', (req, res) => {

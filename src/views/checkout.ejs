@@ -25,6 +25,27 @@
       <p style="color:var(--color-muted); font-size:0.85rem; margin:-8px 0 16px;">
         На эту почту придут ссылки на файлы. Доставка не нужна — заказ цифровой.
       </p>
+      <% } else if (needsPrintful) { %>
+      <p style="color:var(--color-muted); font-size:0.85rem; margin:-8px 0 16px;">
+        В заказе вещь, которая печатается под заказ: она отправляется почтой из типографии,
+        поэтому нужен адрес по полям. Доставка обычно 7–20 дней.
+      </p>
+      <label>
+        Страна *
+        <input type="text" name="country" required placeholder="Россия">
+      </label>
+      <label>
+        Город *
+        <input type="text" name="city" required>
+      </label>
+      <label>
+        Индекс *
+        <input type="text" name="zip" required>
+      </label>
+      <label>
+        Улица, дом, квартира *
+        <input type="text" name="address" required>
+      </label>
       <% } else { %>
       <fieldset style="border:1px solid var(--color-border); border-radius:var(--radius); padding:12px 14px; margin:0 0 16px;">
         <legend style="padding:0 6px;">Способ получения</legend>

@@ -516,6 +516,26 @@ function init() {
     db.exec("ALTER TABLE releases ADD COLUMN platform_links TEXT NOT NULL DEFAULT '{}'");
   }
 
+  // Печать по требованию (Printful). У товара — кто изготавливает и варианты
+  // (размеры ↔ sync variant id), у позиции заказа — выбранный вариант и статус
+  // отправки печатнику, у заказа — адрес по полям: Printful не разбирает
+  // строку «город, улица, дом», ему нужны страна, город и индекс отдельно.
+  const podProductCols = db.prepare('PRAGMA table_info(products)').all().map((c) => c.name);
+  if (!podProductCols.includes('fulfillment')) {
+    db.exec("ALTER TABLE products ADD COLUMN fulfillment TEXT NOT NULL DEFAULT 'self'");
+  }
+  if (!podProductCols.includes('printful_variants')) {
+    db.exec("ALTER TABLE products ADD COLUMN printful_variants TEXT NOT NULL DEFAULT ''");
+  }
+  const podItemCols = db.prepare('PRAGMA table_info(order_items)').all().map((c) => c.name);
+  for (const [col, def] of [['variant', "TEXT NOT NULL DEFAULT ''"], ['fulfillment_status', "TEXT NOT NULL DEFAULT ''"], ['fulfillment_ref', "TEXT NOT NULL DEFAULT ''"]]) {
+    if (!podItemCols.includes(col)) db.exec(`ALTER TABLE order_items ADD COLUMN ${col} ${def}`);
+  }
+  const podOrderCols = db.prepare('PRAGMA table_info(orders)').all().map((c) => c.name);
+  for (const col of ['country', 'city', 'zip']) {
+    if (!podOrderCols.includes(col)) db.exec(`ALTER TABLE orders ADD COLUMN ${col} TEXT NOT NULL DEFAULT ''`);
+  }
+
   // Подкаст: раздел заведён до первого выпуска, поэтому запись может жить
   // без файла — тогда карточка показывается как «скоро».
   db.exec(`
