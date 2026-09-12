@@ -10,6 +10,10 @@
   <div>
     <p class="drop-season"><a href="/music/<%= release.slug %>"><%= release.title %></a></p>
     <h1><%= track.title %></h1>
+    <%# Описание — рядом с обложкой, на уровне заголовка, а не под клипом внизу. %>
+    <% if (track.description) { %>
+      <div class="track-lead prose"><%- renderLinkedText(track.description) %></div>
+    <% } %>
     <%# Слушать можно прямо здесь: раньше единственная кнопка уводила на чужую
         площадку, и человек уходил с сайта, не дочитав про трек. %>
     <% if (track.audio) { %>
@@ -53,9 +57,6 @@
 </section>
 <% } %>
 
-<% if (track.description) { %>
-  <div class="prose drop-description"><%- renderLinkedText(track.description) %></div>
-<% } %>
 
 <% if (anims.length) { %>
 <section class="link-section">
@@ -65,7 +66,7 @@
   <div class="filmstrip anim-strip"><div class="filmstrip-track">
     <% anims.forEach(function (a, i) { %>
       <div class="film-cell anim-cell" data-code="DJ LEVKA · <%= track.title.toUpperCase() %>" data-num="КАДР <%= String(i + 1).padStart(2, '0') %>">
-        <div class="anim-frame edge-soft">
+        <div class="gallery-item edge-soft is-video anim-frame">
           <video src="<%= a.file_path %>" muted loop playsinline preload="metadata" title="<%= a.title %>"></video>
           <button type="button" class="anim-sound" aria-pressed="false">🔇 звук</button>
         </div>

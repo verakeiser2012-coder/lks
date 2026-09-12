@@ -2814,3 +2814,11 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 .anim-strip { scrollbar-width: thin; }
 @media (max-width: 700px) { .anim-strip .anim-frame { height: 170px; } }
 h1.mk-cover-name { margin: 0; }
+
+/* Трек: описание на уровне обложки; анимации — кадрами той же киноленты, что и остальные галереи. */
+.release-hero > div { flex: 1 1 320px; min-width: 0; }
+.track-lead { margin: 6px 0 14px; max-width: 60ch; line-height: 1.6; color: var(--color-text); font-size: 0.98rem; white-space: pre-wrap; }
+.track-lead p { margin: 0 0 8px; }
+.anim-strip .anim-frame { height: 160px; width: auto; aspect-ratio: 9 / 16; }
+.anim-strip .anim-frame video { height: 100%; width: 100%; object-fit: cover; }
+@media (max-width: 700px) { .anim-strip .anim-frame { height: 160px; } }
