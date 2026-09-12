@@ -49,6 +49,8 @@ const GLOSSARY = [
   [/\bBrendam\b/g, 'For brands'],
   [/\bspeeches\b/g, 'performances'],
   [/\bSpeeches\b/g, 'Performances'],
+  // Фирменная фраза — «Slow in a fast world», без «fast-paced».
+  [/\bfast-paced world\b/g, 'fast world'],
 ];
 function applyGlossary(s) {
   return GLOSSARY.reduce((acc, [re, to]) => acc.replace(re, to), s);

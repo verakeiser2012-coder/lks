@@ -2274,9 +2274,11 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
   font-family: var(--font-display);
   font-weight: 800;
   font-size: clamp(2.6rem, 8vw, 6.4rem);
-  line-height: 0.98;
+  /* 0.98 сжимало строки так, что хвосты «у» и «р» (и g/y в английской версии)
+     ложились на следующую строку. */
+  line-height: 1.1;
   letter-spacing: -0.02em;
-  margin: 0 auto 14px;
+  margin: 0 auto 16px;
   max-width: 20ch;
   color: #fff8e6;
   text-wrap: balance;
@@ -2287,6 +2289,24 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
   text-transform: uppercase;
   color: var(--color-gold-bright);
   margin: 0 0 22px;
+}
+/* Тезис и его английская строка ведут на страницу «Slow in a fast world». */
+.poster-statement a,
+.poster-en a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.25s ease, text-shadow 0.25s ease;
+}
+.poster-statement a:hover,
+.poster-statement a:focus-visible {
+  color: var(--color-gold-light);
+  text-shadow: 0 0 24px rgba(240, 196, 25, 0.35);
+}
+.poster-en a:hover,
+.poster-en a:focus-visible {
+  color: #fff8e6;
+  text-decoration: underline;
+  text-underline-offset: 5px;
 }
 .poster-lead {
   max-width: 52ch;
