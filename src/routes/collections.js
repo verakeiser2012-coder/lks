@@ -28,8 +28,12 @@ router.get('/:slug', (req, res) => {
   const products = db
     .prepare('SELECT * FROM products WHERE collection_id = ? AND is_active = 1 ORDER BY created_at DESC')
     .all(collection.id);
+  // Записи дневника об этом дропе (привязка в /admin/diary).
+  const diaryPosts = db
+    .prepare('SELECT id, slug, title, excerpt, cover_image, created_at FROM diary_posts WHERE collection_id = ? AND is_published = 1 ORDER BY created_at DESC')
+    .all(collection.id);
 
-  res.render('collection', { collection, products });
+  res.render('collection', { collection, products, diaryPosts });
 });
 
 module.exports = router;

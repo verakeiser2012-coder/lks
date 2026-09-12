@@ -4,32 +4,37 @@
   <div class="news-date"><%= formatDate(post.created_at) %></div>
   <h1><%= post.title %></h1>
 
+  <%# Обложка — кадр, а не полотно во всю высоту: ограничена по высоте и кадрируется. %>
   <% if (post.cover_image) { %>
-    <img src="<%= thumb(post.cover_image, 960) %>" srcset="<%= srcset(post.cover_image, [640, 960, 1280]) %>" sizes="(max-width: 760px) 92vw, 720px" alt="<%= post.title %>" style="width:100%;border-radius:var(--radius);margin-bottom:20px;">
+    <img class="diary-cover" src="<%= thumb(post.cover_image, 960) %>" srcset="<%= srcset(post.cover_image, [640, 960, 1280]) %>" sizes="(max-width: 760px) 92vw, 720px" alt="<%= post.title %>">
   <% } %>
 
   <div class="prose"><%- renderLinkedText(post.content) %></div>
 
-  <% if (media.length > 0) { %>
-    <div class="gallery-grid">
-      <% media.forEach(function(item) { %>
-        <div class="gallery-item <%= item.type === 'video' ? 'is-video' : '' %>">
-          <% if (item.type === 'photo') { %>
-            <img src="<%= thumb(item.file_path, 640) %>" srcset="<%= srcset(item.file_path) %>" sizes="(max-width: 560px) 92vw, (max-width: 900px) 46vw, 30vw" alt="" loading="lazy">
-          <% } else { %>
-            <video src="<%= item.file_path %>" muted loop playsinline preload="metadata"></video>
-          <% } %>
-        </div>
-      <% }); %>
-    </div>
+  <% if (typeof drop !== 'undefined' && drop) { %>
+    <%# Дроп, о котором запись: карточка как в списке дропов, только компактнее. %>
+    <a class="drop-card diary-drop <%= drop.cover_image ? 'drop-card-art' : '' %>" href="/drops/<%= drop.slug %>">
+      <% if (drop.cover_image) { %>
+        <img class="diary-drop-cover" src="<%= thumb(drop.cover_image, 480) %>" srcset="<%= srcset(drop.cover_image, [320, 480, 640]) %>" sizes="(max-width: 560px) 92vw, 200px" alt="<%= drop.name %>" loading="lazy">
+      <% } %>
+      <div class="diary-drop-body">
+        <span class="drop-season">Дроп<%= drop.season_label ? ' · ' + drop.season_label : '' %></span>
+        <span class="drop-name"><%= drop.name %></span>
+        <% if (drop.subtitle) { %><span class="drop-subtitle"><%= drop.subtitle %></span><% } %>
+        <span class="diary-drop-more"><%= drop.productCount ? 'Смотреть вещи дропа →' : 'К странице дропа →' %></span>
+      </div>
+    </a>
   <% } %>
+</article>
+
+<%# Фото и видео к записи — той же киноплёнкой, что на главной и в разделах. %>
+<%- include('partials/gallery-section', { galleryItems: media, galleryTitle: 'Кадры к записи' }) %>
 
   <% if (post.dzen_url) { %>
     <p class="diary-dzen-note">
       Эта запись также опубликована в Дзене: <a href="<%= post.dzen_url %>" target="_blank" rel="noopener">читать там →</a>
     </p>
   <% } %>
-</article>
 
 <% if (otherPosts.length > 0) { %>
   <section style="margin-top:40px;">

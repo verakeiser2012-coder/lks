@@ -33,4 +33,29 @@
   </div>
 <% } %>
 
+<% if (typeof diaryPosts !== 'undefined' && diaryPosts.length > 0) { %>
+  <%# Записи дневника, привязанные к дропу: история капсулы словами Льва. %>
+  <section class="drop-diary">
+    <h2>Об этом дропе в дневнике</h2>
+    <div class="news-list">
+      <% diaryPosts.forEach(function(p) { %>
+        <a class="news-card" href="/diary/<%= p.slug %>">
+          <div class="news-card-image">
+            <% if (p.cover_image) { %>
+              <img src="<%= thumb(p.cover_image, 640) %>" srcset="<%= srcset(p.cover_image) %>" sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 300px" alt="<%= p.title %>" loading="lazy">
+            <% } else { %>
+              <div class="no-image">Нет фото</div>
+            <% } %>
+          </div>
+          <div>
+            <div class="news-date"><%= formatDate(p.created_at) %></div>
+            <div class="news-title"><%= p.title %></div>
+            <% if (p.excerpt) { %><p class="drop-subtitle"><%= p.excerpt %></p><% } %>
+          </div>
+        </a>
+      <% }); %>
+    </div>
+  </section>
+<% } %>
+
 <%- include('partials/footer') %>

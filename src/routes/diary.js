@@ -27,6 +27,13 @@ router.get('/:slug', (req, res) => {
     .prepare('SELECT id, slug, title, cover_image, created_at FROM diary_posts WHERE is_published = 1 AND id != ? ORDER BY created_at DESC LIMIT 3')
     .all(post.id);
   const cover = post.cover_image || (media.find((m) => m.type === 'photo') || {}).file_path || '';
+  // Дроп, к которому привязана запись (выбирается в админке).
+  const drop = post.collection_id
+    ? db.prepare(`
+        SELECT c.*, (SELECT COUNT(*) FROM products p WHERE p.collection_id = c.id AND p.is_active = 1) AS productCount
+        FROM collections c WHERE c.id = ? AND c.is_published = 1
+      `).get(post.collection_id)
+    : null;
   const marks = db
     .prepare('SELECT COUNT(*) AS n, AVG(mark) AS avg FROM diary_marks WHERE post_id = ?')
     .get(post.id);
@@ -35,6 +42,7 @@ router.get('/:slug', (req, res) => {
     marksCount: marks.n || 0,
     marksAvg: marks.n ? Math.round(marks.avg * 10) / 10 : 0,
     media,
+    drop,
     otherPosts,
     title: post.title,
     pageImage: cover,

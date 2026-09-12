@@ -517,6 +517,18 @@ function init() {
     }
   }
 
+  // Запись дневника может быть привязана к дропу: на странице записи — карточка
+  // дропа, на странице дропа — «Из дневника». Выбирается в /admin/diary.
+  const diaryCols = db.prepare('PRAGMA table_info(diary_posts)').all();
+  if (!diaryCols.some((c) => c.name === 'collection_id')) {
+    db.exec('ALTER TABLE diary_posts ADD COLUMN collection_id INTEGER REFERENCES collections(id) ON DELETE SET NULL');
+  }
+  // Первая связка: манифест «Двигаюсь медленно в быстром мире» ↔ дроп Slow in a fast world.
+  db.prepare(`
+    UPDATE diary_posts SET collection_id = (SELECT id FROM collections WHERE slug = 'slow-in-a-fast-world')
+    WHERE slug = 'dvigayus-medlenno-v-bystrom-mire' AND collection_id IS NULL
+  `).run();
+
   // Кэш переводов фраз для английской версии сайта (services/pageTranslate.js).
   // edited = 1 — перевод поправлен руками в админке, автоперевод его не трогает.
   db.exec(`

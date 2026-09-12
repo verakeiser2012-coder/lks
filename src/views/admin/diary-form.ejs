@@ -35,6 +35,15 @@
     <img src="<%= post.cover_image %>" alt="" style="width:160px;border-radius:8px;margin-bottom:14px;">
   <% } %>
   <label>
+    Дроп, о котором эта запись (на странице записи появится карточка дропа, на странице дропа — ссылка на запись)
+    <select name="collectionId">
+      <option value="">— не привязана —</option>
+      <% (typeof collections !== 'undefined' ? collections : []).forEach(function(c) { %>
+        <option value="<%= c.id %>" <%= post && Number(post.collection_id || post.collectionId) === c.id ? 'selected' : '' %>><%= c.name %><%= c.season_label ? ' · ' + c.season_label : '' %></option>
+      <% }); %>
+    </select>
+  </label>
+  <label>
     Ссылка на дубль в Дзене
     <input type="url" name="dzenUrl" value="<%= post ? post.dzen_url : '' %>" placeholder="https://dzen.ru/a/...">
   </label>
