@@ -3,7 +3,7 @@
 <section class="hero release-hero">
   <% if (episode.cover_image) { %><img class="release-hero-cover" src="<%= thumb(episode.cover_image, 480) %>" srcset="<%= srcset(episode.cover_image, [320, 480, 640, 960]) %>" sizes="(max-width: 480px) 92vw, 200px" alt="<%= episode.title %>"><% } %>
   <div>
-    <p class="drop-season"><a href="/podcast">Подкаст</a><% if (episode.episode_date) { %> · <%= formatDateShort(episode.episode_date, 'ru') %><% } %></p>
+    <p class="drop-season"><a href="/podcast">Креативы</a> · Подкаст<% if (episode.episode_date) { %> · <%= formatDateShort(episode.episode_date, 'ru') %><% } %></p>
     <h1><%= episode.title %></h1>
     <% if (episode.guest) { %><p class="hero-tagline">В гостях: <%= episode.guest %></p><% } %>
     <%# Пока выпуск не смонтирован, показываем честную строку вместо мёртвого плеера. %>

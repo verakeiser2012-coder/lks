@@ -1,45 +1,85 @@
 <%- include('partials/header') %>
 
 <section class="hero">
-  <h1>Подкаст</h1>
+  <h1>Креативы</h1>
   <p class="hero-tagline">
-    Разговоры с теми, кто делает вещи руками: мастерские, ателье, маленькие производства.
-    О том, как собирается аромат, ткань или трек — и почему это одно и то же занятие.
+    Всё, что делаю в кадре и у микрофона: подкаст с мастерскими, кино и рекламные съёмки.
+    Одна и та же работа — собрать вещь, трек или разговор так, чтобы их не хотелось торопить.
   </p>
 </section>
 
 <% (banners || []).forEach(function(banner) { %><%- include('partials/banner', { banner }) %><% }); %>
 
-<% if (episodes.length === 0) { %>
-  <p class="hint">Первый выпуск записан и монтируется. Он появится здесь.</p>
-<% } else { %>
-  <div class="episode-list">
-    <% episodes.forEach(function (e) { %>
-      <a class="episode-card" href="/podcast/<%= e.slug %>">
-        <% if (e.cover_image) { %>
-          <img class="episode-cover" src="<%= thumb(e.cover_image, 480) %>" srcset="<%= srcset(e.cover_image) %>" sizes="(max-width: 700px) 92vw, 240px" alt="<%= e.title %>" loading="lazy">
-        <% } %>
-        <div class="episode-body">
-          <div class="episode-meta">
-            <% if (e.guest) { %><span class="episode-guest"><%= e.guest %></span><% } %>
-            <% if (e.episode_date) { %><span class="episode-date"><%= formatDateShort(e.episode_date, 'ru') %></span><% } %>
-            <% if (!e.audio_url && !e.video_url) { %><span class="episode-soon">скоро</span><% } %>
-          </div>
-          <h2 class="episode-title"><%= e.title %></h2>
-          <% if (e.description) { %><p class="episode-note"><%= e.description.split('\n')[0] %></p><% } %>
-        </div>
-      </a>
-    <% }); %>
-  </div>
-<% } %>
-
-<section class="link-section">
-  <h2>Хотите к нам в выпуск?</h2>
-  <p style="color:var(--color-muted); max-width:62ch;">
-    Мы записываем в мастерских: приезжаем со звуком, снимаем процесс, разговариваем час.
-    Из разговора обычно рождается совместная вещь — так было с «Грушей».
+<%# 01 Подкаст: разговоры с теми, кто делает вещи руками. %>
+<section class="chapter" id="podcast">
+  <header class="chapter-head">
+    <span class="chapter-num">01</span>
+    <h2 class="chapter-title">Подкаст</h2>
+  </header>
+  <p class="chapter-deck">
+    Разговоры с теми, кто делает вещи руками: мастерские, ателье, маленькие производства.
+    О том, как собирается аромат, ткань или трек — и почему это одно и то же занятие.
   </p>
-  <a class="btn" href="/contact?topic=brand">Предложить выпуск</a>
+  <% if (episodes.length === 0) { %>
+    <p class="hint">Первый выпуск записан и монтируется. Он появится здесь.</p>
+  <% } else { %>
+    <div class="episode-list">
+      <% episodes.forEach(function (e) { %>
+        <a class="episode-card" href="/podcast/<%= e.slug %>">
+          <% if (e.cover_image) { %>
+            <img class="episode-cover" src="<%= thumb(e.cover_image, 480) %>" srcset="<%= srcset(e.cover_image) %>" sizes="(max-width: 700px) 92vw, 240px" alt="<%= e.title %>" loading="lazy">
+          <% } %>
+          <div class="episode-body">
+            <div class="episode-meta">
+              <% if (e.guest) { %><span class="episode-guest"><%= e.guest %></span><% } %>
+              <% if (e.episode_date) { %><span class="episode-date"><%= formatDateShort(e.episode_date, 'ru') %></span><% } %>
+              <% if (!e.audio_url && !e.video_url) { %><span class="episode-soon">скоро</span><% } %>
+            </div>
+            <h3 class="episode-title"><%= e.title %></h3>
+            <% if (e.description) { %><p class="episode-note"><%= e.description.split('\n')[0] %></p><% } %>
+          </div>
+        </a>
+      <% }); %>
+    </div>
+  <% } %>
+  <p class="creatives-invite">
+    Хотите к нам в выпуск? Записываем в мастерских: приезжаем со звуком, снимаем процесс, разговариваем час.
+    Из разговора обычно рождается совместная вещь — так было с «Грушей».
+    <a class="btn btn-ghost" href="/contact?topic=brand">Предложить выпуск</a>
+  </p>
+</section>
+
+<%# 02 Кино: фильмы и бэкстейдж со съёмок — та же галерея, что в «Стиле». %>
+<section class="chapter" id="film">
+  <header class="chapter-head">
+    <span class="chapter-num">02</span>
+    <h2 class="chapter-title">Кино</h2>
+    <a class="chapter-more" href="/style#film">Кадры со съёмок в «Стиле» →</a>
+  </header>
+  <p class="chapter-deck">Фильмы, в которых снимаюсь, и то, что остаётся за кадром: площадка, свет, дубли.</p>
+  <% if (filmItems.length > 0) { %>
+    <%- include('partials/gallery-section', { galleryItems: filmItems, galleryTitle: '' }) %>
+  <% } else { %>
+    <p class="hint">Кадры и видео со съёмок появятся здесь.</p>
+  <% } %>
+</section>
+
+<%# 03 Реклама: ролики для брендов. Пока их нет на сайте — они лежат в видео ВКонтакте. %>
+<section class="chapter" id="ads">
+  <header class="chapter-head">
+    <span class="chapter-num">03</span>
+    <h2 class="chapter-title">Реклама</h2>
+    <a class="chapter-more" href="/brands">Предложить съёмку →</a>
+  </header>
+  <p class="chapter-deck">Ролики для брендов: одежда, торговые центры, продукты, застройщики — от каталожной съёмки до рекламного ролика и дефиле.</p>
+  <% if (adBrands) { %>
+    <p class="ads-brands"><%- renderLinkedText(adBrands) %></p>
+  <% } %>
+  <% if (adItems.length) { %>
+    <%- include('partials/gallery-section', { galleryItems: adItems, galleryTitle: '' }) %>
+  <% } else { %>
+    <p class="hint">Рекламные ролики добавим сюда — они лежат в видео ВКонтакте.</p>
+  <% } %>
 </section>
 
 <%- include('partials/footer') %>

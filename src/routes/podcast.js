@@ -2,15 +2,17 @@ const express = require('express');
 const db = require('../db');
 const { getBanners } = require('../utils/banners');
 const { parseVideoEmbedUrl } = require('../utils/videoEmbed');
+const { getGalleryItems } = require('../utils/gallery');
 
 const router = express.Router();
 
 /**
- * Подкаст: разговоры с теми, кто делает вещи руками.
+ * Креативы: всё, что Лев делает в кадре и у микрофона, — подкаст с мастерскими,
+ * кино и рекламные съёмки. Адрес остался /podcast, чтобы не ломать ссылки.
  *
- * Раздел заводится до первого выпуска нарочно: анонс уже висит на главной и
- * в дневнике, а человеку, который дочитал, некуда идти. Выпуск без файла
- * показывается карточкой «скоро» — это честнее, чем пустой раздел.
+ * Выпуск подкаста без файла показывается карточкой «скоро» — это честнее,
+ * чем пустой раздел. Кино и реклама — те же галереи, что на странице «Стиль»
+ * (ключи style-film и style-ads в админке → Галерея).
  */
 function episodes() {
   return db
@@ -19,11 +21,15 @@ function episodes() {
 }
 
 router.get('/', (req, res) => {
+  const adBrandsRow = db.prepare("SELECT value FROM settings WHERE key = 'style_ads_brands'").get();
   res.render('podcast', {
     episodes: episodes(),
+    filmItems: getGalleryItems('style-film'),
+    adItems: getGalleryItems('style-ads'),
+    adBrands: adBrandsRow ? adBrandsRow.value : '',
     banners: getBanners('podcast'),
-    title: 'Подкаст',
-    pageDescription: 'Подкаст DJ Levka: разговоры с мастерскими и людьми, которые делают вещи руками.',
+    title: 'Креативы',
+    pageDescription: 'Креативы Льва Кейсера: подкаст с мастерскими, кино и рекламные съёмки — всё, что он делает в кадре и у микрофона.',
   });
 });
 

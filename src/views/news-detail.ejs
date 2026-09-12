@@ -24,7 +24,7 @@
       <div class="filmstrip-track">
         <% allPosts.forEach(function(p, idx) { %>
           <% const d = p.created_at; const mark = d.slice(8, 10) + '.' + d.slice(5, 7) + '.' + d.slice(2, 4); %>
-          <div class="film-cell <%= p.id === post.id ? 'current' : '' %>" data-code="LEVKEYSER · 35 MM" data-num="КАДР <%= String(idx + 1).padStart(2, '0') %> · <%= mark %>">
+          <div class="film-cell <%= p.id === post.id ? 'current' : '' %>" data-code="LEVKEYSER · 35 MM" data-num="<%= post.lang === 'en' ? 'FRAME' : 'КАДР' %> <%= String(idx + 1).padStart(2, '0') %> · <%= mark %>">
           <a class="news-frame" href="<%= post.lang === 'en' ? '/en/news/' : '/news/' %><%= p.slug %>" <%= p.id === post.id ? 'data-current="1"' : '' %>>
             <% if (coverByNewsId[p.id]) { %>
               <img src="<%= thumb(coverByNewsId[p.id], 320) %>" alt="" loading="lazy">

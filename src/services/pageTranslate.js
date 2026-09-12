@@ -51,6 +51,12 @@ const GLOSSARY = [
   [/\bSpeeches\b/g, 'Performances'],
   // Фирменная фраза — «Slow in a fast world», без «fast-paced».
   [/\bfast-paced world\b/g, 'fast world'],
+  // Дзен — площадка, а не дзен-буддизм; «Кадры к записи» — кадры из этой записи.
+  [/\bin Zen\b/g, 'on Dzen'],
+  [/\bZen\b/g, 'Dzen'],
+  [/\bFrames for recording\b/g, 'Frames from this entry'],
+  // Раздел «Кино» — фильмы, а не «Movie».
+  [/^Movie$/, 'Film'],
 ];
 function applyGlossary(s) {
   return GLOSSARY.reduce((acc, [re, to]) => acc.replace(re, to), s);

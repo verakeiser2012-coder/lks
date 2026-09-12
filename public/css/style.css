@@ -2724,3 +2724,7 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 .redheads-home-cta { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; justify-content: space-between; margin-top: 18px; padding: 16px 20px; border: 1px dashed var(--color-accent); border-radius: var(--radius); background: rgba(184, 134, 11, 0.06); }
 .redheads-home-cta p { margin: 0; max-width: 56ch; color: var(--color-text); }
 .redheads-home-cta .btn { white-space: nowrap; }
+
+/* Креативы: приглашение в подкаст под списком выпусков. */
+.creatives-invite { color: var(--color-muted); max-width: 62ch; margin: 18px 0 0; line-height: 1.55; }
+.creatives-invite .btn { display: inline-block; margin-top: 12px; }

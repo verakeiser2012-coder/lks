@@ -42,7 +42,8 @@
       <div class="filmstrip-track">
         <% allPosts.forEach(function(p, idx) { %>
           <% const d = p.created_at; const mark = d.slice(8, 10) + '.' + d.slice(5, 7) + '.' + d.slice(2, 4); %>
-          <div class="film-cell <%= p.id === post.id ? 'current' : '' %>" data-code="LEVKEYSER · 35 MM" data-num="ЗАПИСЬ <%= String(idx + 1).padStart(2, '0') %> · <%= mark %>">
+          <% const entryWord = (typeof lang !== 'undefined' && lang === 'en') ? 'ENTRY' : 'ЗАПИСЬ'; %>
+          <div class="film-cell <%= p.id === post.id ? 'current' : '' %>" data-code="LEVKEYSER · 35 MM" data-num="<%= entryWord %> <%= String(idx + 1).padStart(2, '0') %> · <%= mark %>">
           <a class="news-frame" href="/diary/<%= p.slug %>" <%= p.id === post.id ? 'data-current="1"' : '' %>>
             <% if (p.cover_image) { %>
               <img src="<%= thumb(p.cover_image, 320) %>" alt="" loading="lazy">
