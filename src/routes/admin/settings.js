@@ -6,9 +6,8 @@ const router = express.Router();
 const EDITABLE_KEYS = [
   'site_name', 'site_alt_name', 'site_tagline', 'phone', 'email', 'address',
   'metrika_id', 'meta_description', 'og_image',
-  'vk_url', 'telegram_url', 'whatsapp_url', 'instagram_url',
-  'youtube_url', 'tiktok_url', 'pinterest_url', 'rutube_url', 'ok_url', 'dzen_url',
-  'douyin_url', 'weibo_url', 'wechat_url', 'xiaohongshu_url',
+  // Ссылки на соцсети (vk_url, telegram_url, …) больше не здесь: они лежат
+  // в social_networks.url и подмешиваются в settings через utils/settings.js.
   'legal_ip_name', 'legal_inn', 'legal_ogrnip', 'legal_address', 'legal_doc_date',
   'legal_bank_name', 'legal_bank_account', 'legal_bank_bik', 'legal_bank_corr_account',
 ];

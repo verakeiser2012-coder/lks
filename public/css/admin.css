@@ -452,3 +452,17 @@
 .translations-actions { display: flex; gap: 10px; align-items: center; margin-top: 6px; }
 .translations-table tr.is-edited .translations-src { border-left: 3px solid #b8860b; padding-left: 8px; }
 .translations-pager a, .translations-pager strong { margin-right: 8px; }
+
+/* Соцсети: карточка сети — профиль (название, ссылка) + публикация (коннектор, ключи). */
+.network-card { border: 1px solid var(--color-border); border-radius: 8px; padding: 14px 16px; margin-bottom: 12px; background: #fff; }
+.network-card--nourl { background: #fbfaf7; }
+.network-profile { display: grid; grid-template-columns: minmax(180px, 1fr) minmax(240px, 2fr) auto; gap: 12px; align-items: end; margin-bottom: 10px; }
+.network-profile label { margin: 0; }
+.network-profile input { margin: 0; }
+.network-profile-actions { display: flex; gap: 12px; align-items: center; padding-bottom: 6px; }
+.network-publish { border-top: 1px dashed var(--color-border); padding-top: 10px; display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; }
+.network-publish-label { font-size: 0.85rem; color: var(--color-muted); }
+.network-keys { flex-basis: 100%; }
+.network-keys summary { cursor: pointer; font-size: 0.9rem; color: var(--color-muted); }
+.network-keys .credentials-form { margin-top: 8px; }
+@media (max-width: 760px) { .network-profile { grid-template-columns: 1fr; } }

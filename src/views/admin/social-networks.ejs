@@ -2,6 +2,12 @@
 
 <h1>Соцсети</h1>
 
+<p class="flash">
+  Одна карточка на сеть. <strong>Название и ссылка</strong> — то, что видят посетители: подвал сайта, страницы, письма.
+  <strong>Публикация</strong> — ходит ли туда календарь постов: «включить» плюс ключи коннектора; коннектор «вручную» только напоминает.
+  Списки ссылок на страницах «Обо мне», «Музыка», «Стиль» редактируются в разделе «Страницы».
+</p>
+
 <% if (error) { %>
   <div class="flash flash-error"><%= error %></div>
 <% } %>
@@ -15,62 +21,74 @@
 <% if (groupNets.length > 0) { %>
 <h2 class="network-group-title"><%= group[1] %></h2>
 <% groupNets.forEach(function(n) { %>
-  <div class="network-row">
-    <div class="network-row-main">
-      <strong><%= n.label %></strong>
-      <%
-        // «Подключено» только когда есть и галочка, и ключи. Включённая сеть без
-        // ключей выглядела как рабочая, и легко было решить, что пост ушёл туда.
-        const def = connectors.find(function(c) { return c.key === n.connector; });
-        let creds = {}; try { creds = JSON.parse(n.credentials || '{}'); } catch (e) {}
-        const needsKeys = def && def.fields && def.fields.length > 0;
-        const hasKeys = !needsKeys || def.fields.every(function(f) { return String(creds[f.name] || '').trim() !== ''; });
-        // Коннектор «вручную» ничего не публикует сам: он ставит напоминание.
-        // Для него «подключено» — такая же неправда, как и «нет ключей».
-        const state = !n.enabled ? 'off' : (n.connector === 'manual' ? 'manual' : (hasKeys ? 'ok' : 'nokeys'));
-        const badge = { ok: 'published', nokeys: 'scheduled', manual: 'manual', off: 'disabled' }[state];
-        const caption = { ok: 'публикует сам', nokeys: 'включено, нет ключей', manual: 'напоминание, публикуешь сама', off: 'не подключено' }[state];
-      %>
-      <span class="badge badge-<%= badge %>"><%= caption %></span>
-      <span class="badge">коннектор: <%= n.connector %></span>
-    </div>
-    <div class="network-row-actions">
-      <form class="inline" action="/admin/social-networks/<%= n.id %>/toggle" method="POST">
-        <button class="link-btn" type="submit"><%= n.enabled ? 'Отключить' : 'Включить' %></button>
-      </form>
-      <form class="inline" action="/admin/social-networks/<%= n.id %>/category" method="POST">
-        <select name="category" onchange="this.form.submit()">
-          <option value="music" <%= (n.category || 'general') === 'music' ? 'selected' : '' %>>🎵 Музыка</option>
-          <option value="shorts" <%= (n.category || 'general') === 'shorts' ? 'selected' : '' %>>📱 Видеовертикалки</option>
-          <option value="general" <%= (n.category || 'general') === 'general' ? 'selected' : '' %>>Остальные</option>
-        </select>
-      </form>
-      <form class="inline" action="/admin/social-networks/<%= n.id %>/delete" method="POST" onsubmit="return confirm('Удалить соцсеть?');">
-        <button class="link-btn" type="submit">Удалить</button>
-      </form>
+  <%
+    // «Подключено» только когда есть и галочка, и ключи. Включённая сеть без
+    // ключей выглядела как рабочая, и легко было решить, что пост ушёл туда.
+    const def = connectors.find(function(c) { return c.key === n.connector; });
+    let creds = {}; try { creds = JSON.parse(n.credentials || '{}'); } catch (e) {}
+    const needsKeys = def && def.fields && def.fields.length > 0;
+    const hasKeys = !needsKeys || def.fields.every(function(f) { return String(creds[f.name] || '').trim() !== ''; });
+    // Коннектор «вручную» ничего не публикует сам: он ставит напоминание.
+    const state = !n.enabled ? 'off' : (n.connector === 'manual' ? 'manual' : (hasKeys ? 'ok' : 'nokeys'));
+    const badge = { ok: 'published', nokeys: 'scheduled', manual: 'manual', off: 'disabled' }[state];
+    const caption = { ok: 'публикует сам', nokeys: 'включено, нет ключей', manual: 'напоминание, публикуешь сама', off: 'публикация выключена' }[state];
+  %>
+  <div class="network-card <%= n.url ? '' : 'network-card--nourl' %>">
+    <form class="network-profile" action="/admin/social-networks/<%= n.id %>/profile" method="POST">
+      <label>
+        Название
+        <input type="text" name="label" value="<%= n.label %>" required>
+      </label>
+      <label>
+        Ссылка на профиль
+        <input type="url" name="url" value="<%= n.url || '' %>" placeholder="https://…">
+      </label>
+      <div class="network-profile-actions">
+        <button class="btn btn-small" type="submit">Сохранить</button>
+        <% if (n.url) { %><a href="<%= n.url %>" target="_blank" rel="noopener">открыть ↗</a><% } else { %><span class="hint" style="margin:0;">без ссылки на сайте не показывается</span><% } %>
+      </div>
+    </form>
+    <div class="network-publish">
+      <div class="network-row-main">
+        <span class="network-publish-label">Публикация:</span>
+        <span class="badge badge-<%= badge %>"><%= caption %></span>
+        <span class="badge">коннектор: <%= n.connector %></span>
+        <span class="badge">ключ: <%= n.key %></span>
+      </div>
+      <div class="network-row-actions">
+        <form class="inline" action="/admin/social-networks/<%= n.id %>/toggle" method="POST">
+          <button class="link-btn" type="submit"><%= n.enabled ? 'Выключить публикацию' : 'Включить публикацию' %></button>
+        </form>
+        <form class="inline" action="/admin/social-networks/<%= n.id %>/category" method="POST">
+          <select name="category" onchange="this.form.submit()">
+            <option value="music" <%= (n.category || 'general') === 'music' ? 'selected' : '' %>>🎵 Музыка</option>
+            <option value="shorts" <%= (n.category || 'general') === 'shorts' ? 'selected' : '' %>>📱 Видеовертикалки</option>
+            <option value="general" <%= (n.category || 'general') === 'general' ? 'selected' : '' %>>Остальные</option>
+          </select>
+        </form>
+        <form class="inline" action="/admin/social-networks/<%= n.id %>/delete" method="POST" onsubmit="return confirm('Удалить соцсеть вместе со ссылкой и ключами?');">
+          <button class="link-btn" type="submit">Удалить</button>
+        </form>
+      </div>
+      <% if (def && def.fields.length > 0) { %>
+        <details class="network-keys" <%= state === 'nokeys' ? 'open' : '' %>>
+          <summary>Ключи коннектора<%= hasKeys ? ' (заполнены)' : ' (не заполнены)' %></summary>
+          <% if (n.tokenStatus) { %>
+            <p class="network-token-status"><%= n.tokenStatus %></p>
+          <% } %>
+          <form class="credentials-form" action="/admin/social-networks/<%= n.id %>/credentials" method="POST">
+            <% def.fields.forEach(function(field) { %>
+              <label>
+                <%= field.label %>
+                <input type="<%= field.type %>" name="<%= field.name %>" value="<%= creds[field.name] || '' %>">
+              </label>
+            <% }); %>
+            <button class="btn btn-small" type="submit">Сохранить ключи</button>
+          </form>
+        </details>
+      <% } %>
     </div>
   </div>
-
-  <% const connectorDef = connectors.find(function(c) { return c.key === n.connector; }); %>
-  <% if (connectorDef && connectorDef.fields.length > 0) { %>
-    <% let savedCredentials = {}; try { savedCredentials = JSON.parse(n.credentials || '{}'); } catch (e) {} %>
-    <% if (n.tokenStatus) { %>
-      <p class="network-token-status"><%= n.tokenStatus %></p>
-    <% } %>
-    <form class="credentials-form" action="/admin/social-networks/<%= n.id %>/credentials" method="POST">
-      <% connectorDef.fields.forEach(function(field) { %>
-        <label>
-          <%= field.label %>
-          <input
-            type="<%= field.type %>"
-            name="<%= field.name %>"
-            value="<%= savedCredentials[field.name] || '' %>"
-          >
-        </label>
-      <% }); %>
-      <button class="btn" type="submit">Сохранить данные</button>
-    </form>
-  <% } %>
 <% }); %>
 <% } %>
 <% }); %>
@@ -79,17 +97,21 @@
 <form action="/admin/social-networks" method="POST" class="gallery-upload-form">
   <label>
     Название
-    <input type="text" name="label" placeholder="Например, Личный канал новостей" required>
+    <input type="text" name="label" placeholder="Например, Threads" required>
   </label>
   <label>
     Ключ (уникальный, латиницей)
-    <input type="text" name="key" placeholder="telegram-news" required>
+    <input type="text" name="key" placeholder="threads" required>
   </label>
   <label>
-    Тип коннектора
-    <select name="connector" required>
+    Ссылка на профиль
+    <input type="url" name="url" placeholder="https://…">
+  </label>
+  <label>
+    Публикация
+    <select name="connector">
       <% connectors.forEach(function(c) { %>
-        <option value="<%= c.key %>"><%= c.label %></option>
+        <option value="<%= c.key %>" <%= c.key === 'manual' ? 'selected' : '' %>><%= c.label %></option>
       <% }); %>
     </select>
   </label>

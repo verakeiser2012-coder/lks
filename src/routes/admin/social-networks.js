@@ -20,7 +20,7 @@ function tokenStatus(network, credentials) {
 }
 
 function listNetworks() {
-  return db.prepare('SELECT * FROM social_networks ORDER BY label').all().map((network) => ({
+  return db.prepare('SELECT * FROM social_networks ORDER BY enabled DESC, label').all().map((network) => ({
     ...network,
     tokenStatus: tokenStatus(network, parseCredentials(network)),
   }));
@@ -48,24 +48,41 @@ router.get('/', (req, res) => {
   renderList(res, { notice: req.query.msg || null, error: req.query.warn || null });
 });
 
+function cleanUrl(value) {
+  const url = String(value || '').trim();
+  return /^(https?:\/\/|mailto:|\/)/i.test(url) ? url : '';
+}
+
 router.post('/', (req, res) => {
-  const { label, key, connector, category } = req.body;
-  if (!label || !key || !connector) {
-    return renderList(res, { error: 'Заполните название, ключ и тип коннектора.' });
+  const { label, key, connector, category, url } = req.body;
+  if (!label || !key) {
+    return renderList(res, { error: 'Заполните название и ключ.' });
   }
 
   const normalizedKey = key.trim().toLowerCase().replace(/\s+/g, '-');
 
   try {
     db.prepare(`
-      INSERT INTO social_networks (key, label, connector, credentials, enabled, category)
-      VALUES (?, ?, ?, '{}', 0, ?)
-    `).run(normalizedKey, label.trim(), connector, ['music', 'shorts', 'general'].includes(category) ? category : 'general');
+      INSERT INTO social_networks (key, label, connector, credentials, enabled, category, url)
+      VALUES (?, ?, ?, '{}', 0, ?, ?)
+    `).run(normalizedKey, label.trim(), connector || 'manual', ['music', 'shorts', 'general'].includes(category) ? category : 'general', cleanUrl(url));
   } catch (err) {
     return renderList(res, { error: 'Такой ключ уже используется, выберите другой.' });
   }
 
   res.redirect('/admin/social-networks');
+});
+
+// Название и адрес профиля — то, что показывается на сайте (подвал, страницы,
+// письма). Публикация постов настраивается отдельно, ниже в той же карточке.
+router.post('/:id/profile', (req, res) => {
+  const network = db.prepare('SELECT * FROM social_networks WHERE id = ?').get(req.params.id);
+  if (!network) {
+    return res.status(404).render('404');
+  }
+  const label = String(req.body.label || '').trim() || network.label;
+  db.prepare('UPDATE social_networks SET label = ?, url = ? WHERE id = ?').run(label, cleanUrl(req.body.url), network.id);
+  res.redirect('/admin/social-networks?msg=' + encodeURIComponent(`${label}: сохранено.`));
 });
 
 router.post('/:id/credentials', async (req, res) => {

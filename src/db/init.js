@@ -517,6 +517,41 @@ function init() {
     }
   }
 
+  // Ссылки на соцсети в одном месте — social_networks.url (админка → Соцсети).
+  // Раньше они жили в settings (vk_url, telegram_url, …) и дублировались в
+  // page_links; переносим значения из settings и удаляем старые ключи.
+  const socialCols = db.prepare('PRAGMA table_info(social_networks)').all();
+  if (!socialCols.some((c) => c.name === 'url')) {
+    db.exec("ALTER TABLE social_networks ADD COLUMN url TEXT NOT NULL DEFAULT ''");
+  }
+  if (!db.prepare("SELECT 1 FROM settings WHERE key = 'migration_social_urls'").get()) {
+    const SOCIAL_URL_KEYS = ['vk', 'telegram', 'whatsapp', 'instagram', 'youtube', 'tiktok', 'pinterest', 'rutube', 'ok', 'dzen', 'douyin', 'weibo', 'wechat', 'xiaohongshu'];
+    const LABELS = { whatsapp: 'WhatsApp', wechat: 'WeChat' };
+    const getSetting = db.prepare('SELECT value FROM settings WHERE key = ?');
+    const hasNet = db.prepare('SELECT id, url FROM social_networks WHERE key = ?');
+    const insertNet = db.prepare("INSERT INTO social_networks (key, label, connector, credentials, enabled, category, url) VALUES (?, ?, 'manual', '{}', 0, 'general', ?)");
+    const setUrl = db.prepare("UPDATE social_networks SET url = ? WHERE key = ? AND url = ''");
+    for (const key of SOCIAL_URL_KEYS) {
+      const row = getSetting.get(key + '_url');
+      const url = row ? String(row.value || '').trim() : '';
+      const net = hasNet.get(key);
+      if (!net) insertNet.run(key, LABELS[key] || key, url);
+      else if (url) setUrl.run(url, key);
+    }
+    // Остальным сетям адрес берём из списков ссылок на страницах, если он там есть.
+    const fromLinks = db.prepare('SELECT url FROM page_links WHERE url LIKE ? ORDER BY id LIMIT 1');
+    const GUESS = {
+      'instagram-djlevka': '%instagram.com/djlevka%', facebook: '%facebook.com/%', x: '%x.com/%',
+      soundcloud: '%soundcloud.com/%', yappy: '%yappy.media/%', likee: '%likee.video/%', vimeo: '%vimeo.com/%',
+    };
+    for (const [key, pattern] of Object.entries(GUESS)) {
+      const hit = fromLinks.get(pattern);
+      if (hit) setUrl.run(hit.url, key);
+    }
+    db.prepare("DELETE FROM settings WHERE key IN (" + SOCIAL_URL_KEYS.map((k) => `'${k}_url'`).join(',') + ')').run();
+    db.prepare("INSERT OR REPLACE INTO settings (key, value) VALUES ('migration_social_urls', '1')").run();
+  }
+
   // Запись дневника может быть привязана к дропу: на странице записи — карточка
   // дропа, на странице дропа — «Из дневника». Выбирается в /admin/diary.
   const diaryCols = db.prepare('PRAGMA table_info(diary_posts)').all();

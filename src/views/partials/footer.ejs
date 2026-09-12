@@ -21,17 +21,16 @@
     // В конце — музыкальный инстаграм @djlevka: он про музыку, а не про Льва,
     // и стоять ему тут правильнее, чем в общем ряду. Личный @levkeiser
     // остаётся в «Остальном» — это разные аккаунты, их легко перепутать.
+    // Адреса профилей — из раздела «Соцсети» админки (settings.<ключ>_url).
     const streaming = pick('Площадки', ['Spotify', 'Apple Music', 'YouTube Music', 'Яндекс Музыка', 'VK Музыка', 'Zvuk', 'Deezer', 'SoundCloud', 'Bandcamp', 'TIDAL'])
-      .concat(pick('Соцсети', ['Instagram']).map(function (n) { return { key: 'instagram', label: 'Instagram — музыка', url: n.url }; }));
+      .concat(settings.instagram_djlevka_url ? [{ key: 'instagram', label: 'Instagram — музыка', url: settings.instagram_djlevka_url }] : []);
     const videoSocial = [
       { key: 'youtube', label: 'YouTube', url: settings.youtube_url },
       { key: 'tiktok', label: 'TikTok', url: settings.tiktok_url },
       { key: 'rutube', label: 'Rutube', url: settings.rutube_url },
-    ].concat(
-      // Yappy и Likee живут только в page_links — в настройках их полей нет.
-      links.filter(function (x) { return x.section !== 'x' && /^(Yappy|Likee)/.test(x.label); })
-        .map(function (x) { return { key: x.label.split(' ')[0].toLowerCase(), label: x.label, url: x.url }; })
-    ).filter(function (n) { return n.url; });
+      { key: 'yappy', label: 'Yappy', url: settings.yappy_url },
+      { key: 'likee', label: 'Likee', url: settings.likee_url },
+    ].filter(function (n) { return n.url; });
     const otherSocial = [
       { key: 'vk', label: 'VK', url: settings.vk_url },
       { key: 'telegram', label: 'Telegram', url: settings.telegram_url },
@@ -40,7 +39,9 @@
       { key: 'pinterest', label: 'Pinterest', url: settings.pinterest_url },
       { key: 'ok', label: 'Одноклассники', url: settings.ok_url },
       { key: 'dzen', label: 'Дзен', url: settings.dzen_url },
-    ].concat(pick('Соцсети', ['X (Twitter)', 'Facebook'])).filter(function (n) { return n.url; });
+      { key: 'x', label: 'X (Twitter)', url: settings.x_url },
+      { key: 'facebook', label: 'Facebook', url: settings.facebook_url },
+    ].filter(function (n) { return n.url; });
     const chinaSocial = [
       { key: 'douyin', label: 'Douyin', url: settings.douyin_url },
       { key: 'weibo', label: 'Weibo', url: settings.weibo_url },
