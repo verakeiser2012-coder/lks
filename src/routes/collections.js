@@ -33,7 +33,12 @@ router.get('/:slug', (req, res) => {
     .prepare('SELECT id, slug, title, excerpt, cover_image, created_at FROM diary_posts WHERE collection_id = ? AND is_published = 1 ORDER BY created_at DESC')
     .all(collection.id);
 
-  res.render('collection', { collection, products, diaryPosts });
+  res.render('collection', {
+    collection, products, diaryPosts,
+    title: collection.name,
+    pageImage: collection.cover_image || '',
+    pageDescription: (collection.subtitle || String(collection.description || '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')).slice(0, 200),
+  });
 });
 
 module.exports = router;

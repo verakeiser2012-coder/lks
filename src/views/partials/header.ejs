@@ -33,6 +33,11 @@
   <title><%= docTitle %></title>
   <meta name="description" content="<%= metaDesc %>">
   <link rel="canonical" href="<%= canonicalUrl %>">
+  <%# Служебные страницы (корзина, оформление, поиск, отписка) закрыты в robots.txt;
+      meta noindex — на случай, если поисковик пришёл по внешней ссылке. %>
+  <% if (/^(\/en)?\/(cart|checkout|search|unsubscribe)(\/|$)/.test(cleanPath)) { %>
+  <meta name="robots" content="noindex, follow">
+  <% } %>
   <%
     // Языковые альтернативы: у новостей адреса пары приходят из маршрута (langAlt),
     // у остальных страниц английская версия — тот же путь под /en.
@@ -183,7 +188,9 @@
           // маршрут новостей передаёт готовые адреса в langAlt: без этого EN вёл на
           // /en/news/<русский-слаг> и упирался в 404 — так было на семи новостях.
           const langPath = (typeof currentPath === 'string' ? currentPath : '/').split('?')[0];
-          const isEn = langPath.startsWith('/en/');
+          // Ровно «/en» (английская главная) — тоже английская версия: без этого
+          // переключатель на ней вёл на /en/en.
+          const isEn = langPath === '/en' || langPath.startsWith('/en/');
           const ruPath = isEn ? langPath.replace(/^\/en/, '') : langPath;
           const alt = typeof langAlt === 'object' && langAlt ? langAlt : null;
           const ruHref = alt && alt.ru ? alt.ru : ruPath;
@@ -252,12 +259,15 @@
             <% for (let pass = 0; pass < 2; pass += 1) { %>
               <%# вторая копия нужна, чтобы лента шла без разрыва %>
               <% bgPlaylist.forEach(function (t, i) { %>
-                <button type="button" class="music-ticker__item"
-                        data-src="<%= t.src %>" data-index="<%= i %>"<% if (t.url) { %> data-url="<%= t.url %>"<% } %>
-                        <%= pass ? 'tabindex="-1" aria-hidden="true"' : '' %>>
-                  <%= t.title %>
-                </button>
-                <span class="music-ticker__dot" aria-hidden="true">•</span>
+                <%# Название — ссылка на страницу трека; ▸ рядом — включить этот трек / пауза. %>
+                <% if (t.url) { %>
+                  <a class="music-ticker__item" href="<%= t.url %>" data-src="<%= t.src %>" data-index="<%= i %>"
+                     <%= pass ? 'tabindex="-1" aria-hidden="true"' : '' %>><%= t.title %></a>
+                <% } else { %>
+                  <span class="music-ticker__item" data-src="<%= t.src %>" data-index="<%= i %>"><%= t.title %></span>
+                <% } %>
+                <button type="button" class="music-ticker__play" data-src="<%= t.src %>" aria-pressed="false" aria-label="Включить трек" title="Включить трек"
+                        <%= pass ? 'tabindex="-1" aria-hidden="true"' : '' %>></button>
               <% }); %>
             <% } %>
           </div>

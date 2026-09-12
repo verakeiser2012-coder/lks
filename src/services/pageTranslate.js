@@ -73,11 +73,26 @@ function isNoPrefixPath(path) {
   return NO_PREFIX.some((p) => path === p || path.startsWith(p + '/') || (p.includes('.') && path === p));
 }
 
+// Английские новости — отдельные записи в базе: ссылку на русскую новость под /en
+// переводим в /en/news/<slug> только когда такая английская пара есть, иначе
+// оставляем русский адрес (раньше получались 404 на /en/news/<русский-slug>).
+let enNewsCache = { at: 0, set: new Set() };
+function enNewsSlugs() {
+  if (Date.now() - enNewsCache.at > 60000) {
+    try {
+      enNewsCache = { at: Date.now(), set: new Set(db.prepare("SELECT slug FROM news WHERE lang = 'en' AND is_published = 1").all().map((r) => r.slug)) };
+    } catch (e) { enNewsCache.at = Date.now(); }
+  }
+  return enNewsCache.set;
+}
+
 /** Добавляет /en к внутреннему адресу: '/' → '/en', '/catalog?x' → '/en/catalog?x'. */
 function withEnPrefix(url) {
   if (typeof url !== 'string' || !url.startsWith('/') || url.startsWith('//')) return url;
   const path = url.split(/[?#]/)[0];
   if (isNoPrefixPath(path)) return url;
+  const news = /^\/news\/([^/]+)$/.exec(path);
+  if (news && !enNewsSlugs().has(decodeURIComponent(news[1]))) return url;
   return '/en' + (url === '/' ? '' : url);
 }
 

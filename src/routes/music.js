@@ -245,7 +245,13 @@ router.get('/:releaseSlug', (req, res, next) => {
     // Превью репоста — обложка релиза. Без неё ссылка в мессенджере
     // показывала общую картинку сайта, одинаковую для всех страниц.
     pageImage: release.cover_image || '',
-    pageDescription: release.description || `${release.title} (${release.year}) — ${release.release_type} DJ Levka`,
+    // Короткие описания вроде «Сингл 2024 года.» для поиска дополняем именем и типом.
+    pageDescription: (() => {
+      const kind = release.release_type === 'Single' ? 'сингл' : (release.release_type || 'релиз');
+      const base = `${release.title} — ${kind} DJ Levka${release.year ? ` (${release.year})` : ''}`;
+      const text = String(release.description || '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').replace(/\s+/g, ' ').trim();
+      return (text.length >= 60 ? text : `${base}. ${text}`.trim()).slice(0, 200);
+    })(),
     pageType: 'music.album',
   });
 });
@@ -273,7 +279,8 @@ router.get('/:releaseSlug/:trackSlug', (req, res, next) => {
     .all(track.id);
 
   res.render('track', {
-    title: track.title,
+    // Заголовок трека отличаем от заголовка релиза — у сингла они совпадали слово в слово.
+    title: release && release.title !== track.title ? `${track.title} — трек из ${release.title}` : `${track.title} — трек`,
     release,
     track: { ...track, audio: trackAudio(track.slug) },
     prevTrack,
@@ -288,7 +295,11 @@ router.get('/:releaseSlug/:trackSlug', (req, res, next) => {
     currentReleaseId: release.id,
     // У трека своя обложка бывает не всегда — тогда берём обложку релиза.
     pageImage: track.cover_image || (release && release.cover_image) || '',
-    pageDescription: track.description || (release ? `Трек из релиза ${release.title} (${release.year})` : 'Трек DJ Levka'),
+    pageDescription: (() => {
+      const base = release ? `${track.title} — трек DJ Levka из релиза ${release.title}${release.year ? ` (${release.year})` : ''}. Слушать онлайн и на площадках.` : `${track.title} — трек DJ Levka.`;
+      const text = String(track.description || '').replace(/\s+/g, ' ').trim();
+      return (text.length >= 60 ? text : `${base} ${text}`.trim()).slice(0, 200);
+    })(),
     pageType: 'music.song',
   });
 });

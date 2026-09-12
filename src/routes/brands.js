@@ -170,6 +170,8 @@ router.get('/media-kit', (req, res) => {
   const epCount = releases.filter((r) => r.release_type !== 'Single').length;
   const singleCount = releases.length - epCount;
   res.render('media-kit', {
+    title: 'Медиакит для брендов',
+    pageDescription: 'Медиакит Льва Кейсера для брендов: форматы съёмок и рекламы, аудитория, релизы, пакеты и условия.',
     offers: getOffers(),
     packages: getPackages(),
     mediaSettings: settings,

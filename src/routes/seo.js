@@ -20,6 +20,8 @@ const STATIC_PAGES = [
   ['/drops', 0.7],
   ['/redheads', 0.6],
   ['/brands', 0.6],
+  ['/brands/media-kit', 0.5],
+  ['/aroma', 0.5],
   ['/contest', 0.6],
   ['/b', 0.5],
   ['/en/news', 0.4],
@@ -86,6 +88,9 @@ function collectUrls() {
   }
   for (const c of rows("SELECT slug, created_at FROM collections WHERE is_published = 1")) {
     urls.push({ loc: `/drops/${c.slug}`, priority: 0.6, lastmod: lastmod(c.created_at) });
+  }
+  for (const e of rows("SELECT slug, episode_date, created_at FROM podcast_episodes WHERE is_published = 1")) {
+    urls.push({ loc: `/podcast/${e.slug}`, priority: 0.6, lastmod: lastmod(e.episode_date || e.created_at) });
   }
   for (const n of rows("SELECT slug, lang, created_at FROM news WHERE is_published = 1")) {
     const prefix = n.lang === 'en' ? '/en/news' : '/news';

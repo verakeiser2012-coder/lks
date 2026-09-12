@@ -35,8 +35,12 @@ router.get('/', (req, res) => {
       .all();
   }
 
+  // Страница категории — со своим заголовком, чтобы не дублировать общий «Каталог».
+  const activeCat = category ? (categories.find((c) => c.slug === category) || (category === 'cifrovye-tovary' ? { name: 'Цифровые товары' } : null)) : null;
   res.render('catalog', {
-    banners: getBanners('catalog'), products, categories, activeCategory: category || null });
+    banners: getBanners('catalog'), products, categories, activeCategory: category || null,
+    title: activeCat ? `${activeCat.name} — каталог` : undefined,
+  });
 });
 
 router.get('/:slug', (req, res) => {
@@ -74,7 +78,8 @@ router.get('/:slug', (req, res) => {
     collection,
     pageImage: product.image || '',
     // в meta ссылка не нужна — оставляем только текст из [текст](адрес)
-    pageDescription: (product.description || '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1'),
+    // Описание для поиска — первый абзац, не длиннее 200 знаков: полный текст поисковики обрезают сами и некрасиво.
+    pageDescription: (product.description || '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').split(/\n{2,}/)[0].replace(/\s+/g, ' ').trim().slice(0, 200),
     pageType: 'product',
   });
 });

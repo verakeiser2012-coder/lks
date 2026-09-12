@@ -106,6 +106,14 @@
     items.forEach(function (el) {
       el.classList.toggle('is-current', el.getAttribute('data-src') === src && !audio.paused);
     });
+    var playing = !audio.paused;
+    Array.prototype.slice.call(document.querySelectorAll('.music-ticker__play')).forEach(function (b) {
+      var on = b.getAttribute('data-src') === src && playing;
+      b.classList.toggle('is-playing', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      b.setAttribute('aria-label', on ? 'Пауза' : 'Включить трек');
+      b.title = on ? 'Пауза' : 'Включить трек';
+    });
   }
 
   audio.addEventListener('ended', function () {
@@ -148,26 +156,21 @@
     setState(false);
   }
 
-  // Клик по названию в строке — включить именно этот трек и открыть его страницу.
-  // Музыка не прерывается: позиция сохраняется, и на новой странице тот же трек
-  // продолжает играть с того же места. Повторный клик по уже играющему на его
-  // странице — пауза.
+  // Название в строке — ссылка на страницу трека: перед уходом запоминаем позицию,
+  // чтобы на новой странице тот же трек продолжил играть. Кнопка ▸ рядом с
+  // названием включает именно этот трек, повторное нажатие на играющем — пауза.
   items.forEach(function (el) {
-    el.addEventListener('click', function () {
-      var src = el.getAttribute('data-src');
-      var url = el.getAttribute('data-url') || '';
+    el.addEventListener('click', function () { savePosition(); });
+  });
+  var playBtns = ticker ? Array.prototype.slice.call(ticker.querySelectorAll('.music-ticker__play')) : [];
+  playBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var src = btn.getAttribute('data-src');
       var idx = playlist.indexOf(src);
       if (idx === -1) return;
-      var onItsPage = url && location.pathname === url;
-
       if (idx === trackIndex && !audio.paused) {
-        if (onItsPage || !url) {
-          localStorage.setItem(STORAGE_KEY, '1');
-          pause();
-        } else {
-          savePosition();
-          location.href = url;
-        }
+        localStorage.setItem(STORAGE_KEY, '1');
+        pause();
         return;
       }
       trackIndex = idx;
@@ -175,11 +178,6 @@
       localStorage.removeItem(STORAGE_KEY);
       savePosition();
       play();
-      if (url && !onItsPage) {
-        // Даём звуку стартовать до перехода: клик — действие пользователя,
-        // и на следующей странице автозапуск уже разрешён.
-        setTimeout(function () { savePosition(); location.href = url; }, 250);
-      }
     });
   });
 

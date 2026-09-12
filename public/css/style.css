@@ -2799,3 +2799,18 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 .chapter-index__item:hover { background: linear-gradient(180deg, var(--color-gold-shine), var(--color-gold-bright)); color: var(--color-gold-ink); border-color: #a67c0a; }
 .chapter-index__num { display: inline-flex; align-items: center; justify-content: center; min-width: 30px; height: 30px; padding: 0 6px; border-radius: 999px; background: var(--color-gold-bright); color: var(--color-gold-ink); font-size: 0.82rem; }
 .chapter-index__item:hover .chapter-index__num { background: var(--color-gold-ink); color: var(--color-gold-bright); }
+
+/* Бегущая строка: название — ссылка на страницу трека, ▸ рядом — включить/пауза. */
+.music-ticker__item { text-decoration: none; }
+.music-ticker__play { flex-shrink: 0; width: 18px; height: 18px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--color-gold-bright); cursor: pointer; font-size: 0.7rem; line-height: 18px; display: inline-flex; align-items: center; justify-content: center; opacity: 0.75; }
+.music-ticker__play::before { content: "\25B8"; }
+.music-ticker__play:hover, .music-ticker__play:focus-visible { opacity: 1; background: rgba(240, 196, 25, 0.16); outline: none; }
+.music-ticker__play.is-playing { opacity: 1; background: var(--color-gold-bright); color: #17130D; }
+.music-ticker__play.is-playing::before { content: "\2016"; font-weight: 700; }
+
+/* Анимации к треку компактнее: ниже кадр, теснее лента, прокрутка колесом и пальцем. */
+.anim-strip .anim-frame { height: 200px; }
+.anim-strip .filmstrip-track { gap: 12px; }
+.anim-strip { scrollbar-width: thin; }
+@media (max-width: 700px) { .anim-strip .anim-frame { height: 170px; } }
+h1.mk-cover-name { margin: 0; }
