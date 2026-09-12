@@ -188,10 +188,11 @@
   <p class="style-brands-line">Снимаюсь для брендов, работаем по договору. <a href="/brands/media-kit">Медиакит и форматы →</a></p>
 </section>
 
-<% if (groups.length > 0) { %>
+<% if (groups.some(function(g) { return g.items.length > 0; })) { %>
   <section class="link-section">
-    <h2>Архив</h2>
     <% groups.forEach(function(group) { %>
+      <% if (group.items.length === 0) return; %>
+      <h2><%= group.name || 'Архив' %></h2>
       <div class="link-grid">
         <% group.items.forEach(function(link) { %>
           <a class="link-card" href="<%= link.url %>" target="_blank" rel="noopener"><%= link.label %></a>

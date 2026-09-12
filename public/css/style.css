@@ -2706,3 +2706,16 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 /* Дроп: записи дневника о нём. */
 .drop-diary { margin-top: 44px; }
 .drop-diary h2 { margin-bottom: 14px; }
+
+/* Стоп/пуск бегущей строки (кнопка в шапке, состояние помнит bg-music.js). */
+.music-ticker__pause {
+  flex-shrink: 0; width: 22px; height: 22px; padding: 0; border-radius: 50%;
+  border: 1px solid rgba(143, 198, 92, 0.55); background: transparent; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; color: #8FC65C;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.music-ticker__pause:hover, .music-ticker__pause:focus-visible { background: rgba(143, 198, 92, 0.14); border-color: #8FC65C; outline: none; }
+.music-ticker__pause-icon { display: block; width: 8px; height: 8px; border-left: 3px solid currentColor; border-right: 3px solid currentColor; box-sizing: border-box; }
+.music-ticker.is-paused .music-ticker__pause-icon { width: 0; height: 0; border: 0; border-left: 8px solid currentColor; border-top: 5px solid transparent; border-bottom: 5px solid transparent; margin-left: 2px; }
+.music-ticker.is-paused .music-ticker__track { animation-play-state: paused; }
+@media (max-width: 640px) { .music-ticker__pause { width: 20px; height: 20px; } }

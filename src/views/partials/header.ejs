@@ -241,6 +241,11 @@
     <% if (typeof bgPlaylist !== 'undefined' && bgPlaylist.length) { %>
       <div class="music-ticker" id="music-ticker" aria-label="Музыка Льва">
         <div class="music-ticker__label" aria-hidden="true">DJ Levka</div>
+        <%# Кнопка «стоп/пуск» бегущей строки: наведение останавливает её лишь на время,
+            а кому-то движение мешает читать. Выбор запоминается в браузере (bg-music.js). %>
+        <button type="button" class="music-ticker__pause" id="music-ticker-pause" aria-pressed="false" title="Остановить строку" aria-label="Остановить бегущую строку">
+          <span class="music-ticker__pause-icon" aria-hidden="true"></span>
+        </button>
         <div class="music-ticker__viewport">
           <div class="music-ticker__track" id="music-ticker-track">
             <% for (let pass = 0; pass < 2; pass += 1) { %>

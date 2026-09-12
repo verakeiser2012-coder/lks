@@ -552,6 +552,19 @@ function init() {
     db.prepare("INSERT OR REPLACE INTO settings (key, value) VALUES ('migration_social_urls', '1')").run();
   }
 
+  // Списки соцсетей на страницах «Обо мне», «Музыка», «Стиль» теперь строятся из
+  // social_networks (utils/links.socialLinksGroup); дубли адресов в page_links убираем.
+  if (!db.prepare("SELECT 1 FROM settings WHERE key = 'migration_social_page_links'").get()) {
+    db.prepare(`
+      DELETE FROM page_links WHERE
+        (section = 'about' AND group_name = 'Где читать и смотреть')
+        OR (section = 'music' AND group_name = 'Соцсети')
+        OR (section = 'video' AND group_name = 'Каналы')
+        OR (section = 'style' AND (url LIKE '%pinterest.%' OR url LIKE '%t.me/%'))
+    `).run();
+    db.prepare("INSERT OR REPLACE INTO settings (key, value) VALUES ('migration_social_page_links', '1')").run();
+  }
+
   // Запись дневника может быть привязана к дропу: на странице записи — карточка
   // дропа, на странице дропа — «Из дневника». Выбирается в /admin/diary.
   const diaryCols = db.prepare('PRAGMA table_info(diary_posts)').all();

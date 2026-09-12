@@ -1,7 +1,7 @@
 const express = require('express');
 const { getBanners } = require('../utils/banners');
 const db = require('../db');
-const { groupLinks } = require('../utils/links');
+const { groupLinks, socialLinksGroup } = require('../utils/links');
 const { getGalleryItems } = require('../utils/gallery');
 const { parseVideoEmbedUrl } = require('../utils/videoEmbed');
 const { platformButtons, shootButtons } = require('../utils/platforms');
@@ -109,7 +109,8 @@ router.get('/', (req, res) => {
     banners: getBanners('music'),
     inspired: inspiredBy(),
     intro: introRow ? introRow.value : '',
-    groups: groupLinks(links),
+    // Площадки и релизы — из page_links, соцсети — из раздела «Соцсети» (музыкальные первыми).
+    groups: groupLinks(links).concat([socialLinksGroup('Соцсети', { first: 'music' })]),
     featured: {
       title: featuredMap.music_featured_title || '',
       note: featuredMap.music_featured_note || '',

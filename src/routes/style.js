@@ -1,7 +1,7 @@
 const express = require('express');
 const crypto = require('crypto');
 const db = require('../db');
-const { groupLinks } = require('../utils/links');
+const { groupLinks, socialLinksGroup } = require('../utils/links');
 const { getBanners } = require('../utils/banners');
 const { getGalleryItems } = require('../utils/gallery');
 
@@ -57,7 +57,8 @@ router.get('/', (req, res) => {
     adItems: getGalleryItems('style-ads'),
     inspireItems: getGalleryItems('style-inspires'),
     adBrands: setting('style_ads_brands'),
-    groups: groupLinks(links),
+    // Свои ссылки страницы (если есть) + соцсети из раздела «Соцсети».
+    groups: groupLinks(links).concat([socialLinksGroup('Где ещё смотреть', { first: 'shorts' })]),
     banners: getBanners('style'),
   });
 });

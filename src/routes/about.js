@@ -1,6 +1,6 @@
 const express = require('express');
 const db = require('../db');
-const { groupLinks } = require('../utils/links');
+const { groupLinks, socialLinksGroup } = require('../utils/links');
 
 const router = express.Router();
 
@@ -20,7 +20,10 @@ router.get('/', (req, res) => {
   const links = db
     .prepare("SELECT * FROM page_links WHERE section = 'about' ORDER BY sort_order ASC, id ASC")
     .all();
-  res.render('about', { aboutText, media, mails: MAILS, linkGroups: groupLinks(links) });
+  // Соцсети — из раздела «Соцсети» админки; ставим после «Где слушать».
+  const linkGroups = groupLinks(links);
+  linkGroups.splice(Math.min(1, linkGroups.length), 0, socialLinksGroup('Где читать и смотреть'));
+  res.render('about', { aboutText, media, mails: MAILS, linkGroups });
 });
 
 module.exports = router;
