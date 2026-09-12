@@ -32,8 +32,11 @@
   </label>
   <label>
     Текст на английском — для 🎵 музыкальных сетей (без него возьмётся русский текст без русских хэштегов)
-    <textarea name="textEn" rows="3"><%= post ? (post.text_en || '') : '' %></textarea>
+    <textarea name="textEn" id="post-text-en" rows="3"><%= post ? (post.text_en || '') : '' %></textarea>
   </label>
+  <div class="translate-row">
+    <button type="button" class="btn translate-btn" data-translate-from="#post-text" data-translate-to="#post-text-en">Перевести русский текст на английский</button>
+  </div>
   <label>
     Ссылка (добавится в конец подписи; для VK-истории станет кнопкой)
     <input type="url" name="linkUrl" id="link-url" value="<%= post ? (post.link_url || '') : '' %>" placeholder="https://…">
@@ -157,5 +160,7 @@
     }
   })();
 </script>
+
+<script src="/js/admin-translate.js"></script>
 
 <%- include('partials/footer') %>

@@ -475,6 +475,48 @@ function init() {
     db.exec('ALTER TABLE news ADD COLUMN is_pinned INTEGER NOT NULL DEFAULT 0');
   }
 
+  // Пара RU/EN одной новости живёт под одним slug — по нему переключатель языка
+  // на сайте находит перевод (src/routes/news.js). Поэтому уникальность должна
+  // быть на (slug, lang), а не на одном slug, как в первой версии таблицы.
+  const newsSlugOnlyUnique = db.prepare('PRAGMA index_list(news)').all()
+    .filter((ix) => ix.unique)
+    .some((ix) => {
+      const cols = db.prepare(`PRAGMA index_info("${ix.name}")`).all();
+      return cols.length === 1 && cols[0].name === 'slug';
+    });
+  if (newsSlugOnlyUnique) {
+    // Пересборка таблицы. Внешние ключи выключаем на время: иначе DROP TABLE news
+    // каскадом снесёт все строки news_media.
+    db.exec('PRAGMA foreign_keys = OFF');
+    try {
+      db.exec(`
+        BEGIN;
+        CREATE TABLE news_new (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          title TEXT NOT NULL,
+          slug TEXT NOT NULL,
+          content TEXT DEFAULT '',
+          is_published INTEGER NOT NULL DEFAULT 1,
+          created_at TEXT NOT NULL DEFAULT (datetime('now')),
+          lang TEXT NOT NULL DEFAULT 'ru',
+          newsletter_sent_at TEXT,
+          is_pinned INTEGER NOT NULL DEFAULT 0,
+          UNIQUE (slug, lang)
+        );
+        INSERT INTO news_new (id, title, slug, content, is_published, created_at, lang, newsletter_sent_at, is_pinned)
+          SELECT id, title, slug, content, is_published, created_at, lang, newsletter_sent_at, is_pinned FROM news;
+        DROP TABLE news;
+        ALTER TABLE news_new RENAME TO news;
+        COMMIT;
+      `);
+    } catch (e) {
+      db.exec('ROLLBACK');
+      throw e;
+    } finally {
+      db.exec('PRAGMA foreign_keys = ON');
+    }
+  }
+
   const galleryItemCols = db.prepare('PRAGMA table_info(gallery_items)').all();
   if (!galleryItemCols.some((c) => c.name === 'shot_date')) {
     // Дата съёмки (YYYY-MM-DD) — для маркировки кадров в киноплёнке; created_at остаётся датой загрузки.

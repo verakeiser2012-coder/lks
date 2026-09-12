@@ -24,6 +24,7 @@ const releasesRoutes = require('./releases');
 const subscribersRoutes = require('./subscribers');
 const messagesRoutes = require('./messages');
 const bustsRoutes = require('./busts');
+const { translateMany } = require('../../services/translate');
 
 const router = express.Router();
 
@@ -56,6 +57,28 @@ router.get('/', (req, res) => {
     WHERE day >= date('now', '-14 days') GROUP BY path ORDER BY hits DESC LIMIT 25
   `).all();
   res.render('admin/dashboard', { productsCount, ordersCount, newOrdersCount, playsTotal, plays30, playsByTrack, views14, topPages });
+});
+
+// Автоперевод на английский для кнопок в формах (public/js/admin-translate.js).
+// Тело: { texts: ["…", "…"] } или { text: "…" } — ответ { translations: [...] }.
+const TRANSLATE_MAX_CHARS = 20000;
+router.post('/translate', async (req, res) => {
+  const body = req.body || {};
+  const texts = Array.isArray(body.texts) ? body.texts : [body.text];
+  if (!texts.length || texts.some((t) => typeof t !== 'string')) {
+    return res.status(400).json({ error: 'Нужен text или массив texts.' });
+  }
+  const total = texts.reduce((n, t) => n + t.length, 0);
+  if (total > TRANSLATE_MAX_CHARS) {
+    return res.status(413).json({ error: `Слишком много текста (${total} символов, лимит ${TRANSLATE_MAX_CHARS}).` });
+  }
+  try {
+    const translations = await translateMany(texts);
+    res.json({ translations });
+  } catch (e) {
+    console.error('[translate]', e.message);
+    res.status(502).json({ error: e.message || 'переводчик не ответил' });
+  }
 });
 
 router.use('/products', productsRoutes);

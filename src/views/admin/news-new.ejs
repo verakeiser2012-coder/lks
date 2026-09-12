@@ -12,12 +12,16 @@
 <form action="/admin/news" method="POST">
   <label>
     Заголовок *
-    <input type="text" name="title" required>
+    <input type="text" name="title" id="news-title" required>
   </label>
   <label>
     Текст
-    <textarea name="content" rows="8"></textarea>
+    <textarea name="content" id="news-content" rows="8"></textarea>
   </label>
+  <div class="translate-row">
+    <button type="button" class="btn translate-btn" data-translate-from="#news-title,#news-content" data-translate-to="#news-title,#news-content" data-translate-then-select="select[name=lang]" data-translate-then-value="en">Перевести заголовок и текст на английский (заменит поля, язык станет EN)</button>
+    <span class="hint" style="margin:0;">Для английской версии уже сохранённой русской новости лучше открыть её и нажать «Создать английскую версию» — тогда переключатель RU/EN на сайте свяжет их.</span>
+  </div>
   <p class="flash">Чтобы вставить ссылку в текст, используйте формат: <code>[текст ссылки](https://...)</code> — работает и с внутренними ссылками вида <code>/news/...</code></p>
   <label>
     Язык
@@ -34,5 +38,7 @@
 </form>
 
 <p class="flash">Фото и видео можно будет добавить после сохранения новости.</p>
+
+<script src="/js/admin-translate.js"></script>
 
 <%- include('partials/footer') %>

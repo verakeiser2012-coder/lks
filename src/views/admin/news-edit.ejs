@@ -1,23 +1,44 @@
 <%- include('partials/header') %>
 
+<%
+  const twinPost = typeof twin !== 'undefined' ? twin : null;
+  const flashMsg = typeof msg !== 'undefined' ? msg : '';
+  const otherLangName = post.lang === 'en' ? 'русскую' : 'английскую';
+%>
 <div class="admin-toolbar">
-  <h1>Редактировать новость</h1>
-  <a class="btn" href="/admin/calendar/new?fromNews=<%= post.id %>">Создать пост в календаре</a>
+  <h1>Редактировать новость <span class="badge"><%= post.lang === 'en' ? 'EN' : 'RU' %></span></h1>
+  <div>
+    <% if (twinPost) { %>
+      <a class="btn" href="/admin/news/<%= twinPost.id %>/edit">К <%= post.lang === 'en' ? 'русской' : 'английской' %> версии<%= twinPost.is_published ? '' : ' (черновик)' %></a>
+    <% } else { %>
+      <form class="inline" action="/admin/news/<%= post.id %>/translate" method="POST" onsubmit="this.querySelector('button').disabled = true; this.querySelector('button').textContent = 'Перевожу…';">
+        <button class="btn" type="submit">Создать <%= otherLangName %> версию (автоперевод)</button>
+      </form>
+    <% } %>
+    &nbsp;
+    <a class="btn" href="/admin/calendar/new?fromNews=<%= post.id %>">Создать пост в календаре</a>
+  </div>
 </div>
 
 <% if (error) { %>
   <div class="flash flash-error"><%= error %></div>
 <% } %>
+<% if (flashMsg) { %>
+  <div class="flash"><%= flashMsg %></div>
+<% } %>
 
 <form action="/admin/news/<%= post.id %>" method="POST">
   <label>
     Заголовок *
-    <input type="text" name="title" value="<%= post.title %>" required>
+    <input type="text" name="title" id="news-title" value="<%= post.title %>" required>
   </label>
   <label>
     Текст
-    <textarea name="content" rows="8"><%= post.content %></textarea>
+    <textarea name="content" id="news-content" rows="8"><%= post.content %></textarea>
   </label>
+  <div class="translate-row">
+    <button type="button" class="btn translate-btn" data-translate-from="#news-title,#news-content" data-translate-to="#news-title,#news-content" data-translate-then-select="select[name=lang]" data-translate-then-value="en">Перевести заголовок и текст на английский (заменит поля, язык станет EN)</button>
+  </div>
   <p class="flash">Чтобы вставить ссылку в текст, используйте формат: <code>[текст ссылки](https://...)</code> — работает и с внутренними ссылками вида <code>/news/...</code></p>
   <label>
     Язык
@@ -70,5 +91,7 @@
 </div>
 
 <p><a href="/admin/news">← Ко всем новостям</a></p>
+
+<script src="/js/admin-translate.js"></script>
 
 <%- include('partials/footer') %>
