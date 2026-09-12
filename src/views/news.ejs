@@ -1,12 +1,8 @@
 <%- include('partials/header') %>
 
+<%# Ссылка «English version» здесь больше не нужна: переключатель RU/EN есть в шапке на всех страницах. %>
 <div class="admin-toolbar">
   <h1><%= lang === 'en' ? 'News' : 'Новости' %></h1>
-  <% if (lang === 'en') { %>
-    <a href="/news" hreflang="ru">На русском</a>
-  <% } else { %>
-    <a href="/en/news" hreflang="en">English version</a>
-  <% } %>
 </div>
 
 <% banners.forEach(function(banner) { %>
