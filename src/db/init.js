@@ -517,6 +517,21 @@ function init() {
     }
   }
 
+  // Кэш переводов фраз для английской версии сайта (services/pageTranslate.js).
+  // edited = 1 — перевод поправлен руками в админке, автоперевод его не трогает.
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS page_translations (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      key_hash TEXT UNIQUE NOT NULL,
+      lang TEXT NOT NULL DEFAULT 'en',
+      src TEXT NOT NULL,
+      dst TEXT NOT NULL,
+      edited INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+  `);
+
   const galleryItemCols = db.prepare('PRAGMA table_info(gallery_items)').all();
   if (!galleryItemCols.some((c) => c.name === 'shot_date')) {
     // Дата съёмки (YYYY-MM-DD) — для маркировки кадров в киноплёнке; created_at остаётся датой загрузки.

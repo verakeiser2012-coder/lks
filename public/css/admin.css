@@ -442,3 +442,13 @@
 .translate-btn { padding: 5px 12px; font-size: 0.85rem; }
 .translate-btn:disabled { opacity: 0.6; cursor: wait; transform: none; }
 .translate-status { font-size: 0.85rem; color: var(--color-muted); }
+
+/* Переводы английской версии (/admin/translations) */
+.translations-search { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-bottom: 14px; }
+.translations-search input[type=text] { flex: 1 1 320px; margin: 0; }
+.translations-table td { vertical-align: top; }
+.translations-table .translations-src { width: 40%; font-size: 0.9rem; white-space: pre-wrap; word-break: break-word; }
+.translations-table textarea { width: 100%; margin: 0; font-size: 0.9rem; }
+.translations-actions { display: flex; gap: 10px; align-items: center; margin-top: 6px; }
+.translations-table tr.is-edited .translations-src { border-left: 3px solid #b8860b; padding-left: 8px; }
+.translations-pager a, .translations-pager strong { margin-right: 8px; }

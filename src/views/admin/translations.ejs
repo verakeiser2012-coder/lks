@@ -1,0 +1,79 @@
+<%- include('partials/header') %>
+
+<div class="admin-toolbar">
+  <h1>Переводы английской версии</h1>
+  <a href="/en" target="_blank">Открыть /en ↗</a>
+</div>
+
+<p class="flash">
+  Страницы под <code>/en/…</code> переводятся автоматически: каждая фраза переводится один раз и хранится здесь.
+  Поправь перевод — он закрепится и больше не перезапишется. «Сбросить» — фраза переведётся заново при следующем показе.
+  Теги вида <code>&lt;a data-t="1"&gt;</code> — служебные метки ссылок и выделений, их не трогай.
+  Всего фраз: <%= stats.total %>, поправлено руками: <%= stats.edited || 0 %>.
+</p>
+
+<% if (msg) { %>
+  <div class="flash"><%= msg %></div>
+<% } %>
+
+<form method="GET" action="/admin/translations" class="translations-search">
+  <input type="text" name="q" value="<%= q %>" placeholder="Поиск по русскому или английскому тексту">
+  <label style="display:inline;font-weight:normal;">
+    <input type="checkbox" name="edited" value="1" style="width:auto;display:inline-block;" <%= onlyEdited ? 'checked' : '' %>> только поправленные
+  </label>
+  <button class="btn btn-small" type="submit">Найти</button>
+  <% if (q || onlyEdited) { %><a href="/admin/translations">сбросить фильтр</a><% } %>
+</form>
+
+<% if (rows.length === 0) { %>
+  <p>Пока ничего нет<%= q ? ' по этому запросу' : ' — открой любую страницу под /en, и фразы появятся' %>.</p>
+<% } else { %>
+  <p class="hint">Найдено: <%= total %>, страница <%= page %> из <%= pages %></p>
+  <table class="translations-table">
+    <thead>
+      <tr>
+        <th>Русский</th>
+        <th>Английский</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% rows.forEach(function(row) { %>
+        <tr class="<%= row.edited ? 'is-edited' : '' %>">
+          <td class="translations-src"><%= row.src %></td>
+          <td>
+            <form action="/admin/translations/<%= row.id %>" method="POST">
+              <input type="hidden" name="q" value="<%= q %>">
+              <input type="hidden" name="edited" value="<%= onlyEdited ? '1' : '' %>">
+              <input type="hidden" name="page" value="<%= page %>">
+              <textarea name="dst" rows="<%= Math.min(8, Math.max(2, Math.ceil(row.dst.length / 70))) %>"><%= row.dst %></textarea>
+              <div class="translations-actions">
+                <button class="btn btn-small" type="submit">Сохранить</button>
+                <% if (row.edited) { %><span class="badge badge-published">поправлено</span><% } %>
+              </div>
+            </form>
+          </td>
+          <td>
+            <form action="/admin/translations/<%= row.id %>/reset" method="POST" onsubmit="return confirm('Сбросить перевод? Фраза переведётся заново автоматически.');">
+              <input type="hidden" name="q" value="<%= q %>">
+              <input type="hidden" name="edited" value="<%= onlyEdited ? '1' : '' %>">
+              <input type="hidden" name="page" value="<%= page %>">
+              <button class="link-btn" type="submit">Сбросить</button>
+            </form>
+          </td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+  <% if (pages > 1) { %>
+    <p class="translations-pager">
+      <% for (let p = 1; p <= pages; p++) { %>
+        <% if (p === page) { %><strong><%= p %></strong><% } else { %>
+          <a href="/admin/translations?page=<%= p %><%= q ? '&q=' + encodeURIComponent(q) : '' %><%= onlyEdited ? '&edited=1' : '' %>"><%= p %></a>
+        <% } %>
+      <% } %>
+    </p>
+  <% } %>
+<% } %>
+
+<%- include('partials/footer') %>

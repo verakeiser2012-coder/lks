@@ -1,6 +1,6 @@
 <%- include('partials/header') %>
 
-<article>
+<article<%- post.lang === 'en' ? ' translate="no"' : '' %>>
   <div class="news-date"><%= formatDate(post.created_at, post.lang) %></div>
   <h1><%= post.title %></h1>
 

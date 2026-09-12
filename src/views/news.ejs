@@ -3,9 +3,9 @@
 <div class="admin-toolbar">
   <h1><%= lang === 'en' ? 'News' : 'Новости' %></h1>
   <% if (lang === 'en') { %>
-    <a href="/news">На русском</a>
+    <a href="/news" hreflang="ru">На русском</a>
   <% } else { %>
-    <a href="/en/news">English version</a>
+    <a href="/en/news" hreflang="en">English version</a>
   <% } %>
 </div>
 
@@ -20,14 +20,14 @@
     <button type="button" id="view-grid" class="active"><%= lang === 'en' ? 'Grid' : 'Плитка' %></button>
     <button type="button" id="view-rows"><%= lang === 'en' ? 'List' : 'Список' %></button>
   </div>
-  <div class="news-list" id="news-list">
+  <div class="news-list" id="news-list"<%- lang === 'en' ? ' translate="no"' : '' %>>
     <% posts.forEach(function(post) { %>
       <a class="news-card" href="<%= lang === 'en' ? '/en/news/' : '/news/' %><%= post.slug %>">
         <div class="news-card-image">
           <% if (coverByNewsId[post.id]) { %>
             <img src="<%= thumb(coverByNewsId[post.id], 640) %>" srcset="<%= srcset(coverByNewsId[post.id]) %>" sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 300px" alt="<%= post.title %>">
           <% } else { %>
-            <div class="no-image">Нет фото</div>
+            <div class="no-image"><%= lang === 'en' ? 'No photo' : 'Нет фото' %></div>
           <% } %>
         </div>
         <div>

@@ -99,7 +99,13 @@ function collectUrls() {
   // страницу, которой ещё не время, — верный способ получить её в выдаче
   // раньше срока.
   const today = new Date().toISOString().slice(0, 10);
-  return urls.filter((u) => !u.lastmod || u.lastmod <= today);
+  const ready = urls.filter((u) => !u.lastmod || u.lastmod <= today);
+  // Английская версия: те же страницы под /en (новости-переводы уже в списке
+  // со своими адресами, русские новости под /en не дублируем).
+  const en = ready
+    .filter((u) => !u.loc.startsWith('/en/') && !u.loc.startsWith('/news/'))
+    .map((u) => ({ ...u, loc: '/en' + (u.loc === '/' ? '' : u.loc), priority: Math.max(0.3, (u.priority || 0.5) - 0.2) }));
+  return ready.concat(en);
 }
 
 router.get('/robots.txt', (req, res) => {

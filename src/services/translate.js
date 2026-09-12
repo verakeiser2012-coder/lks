@@ -126,4 +126,4 @@ async function translateMany(texts, opts = {}) {
   return out;
 }
 
-module.exports = { translateText, translateMany };
+module.exports = { translateText, translateMany, translateLines };

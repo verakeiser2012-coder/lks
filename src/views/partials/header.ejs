@@ -33,6 +33,17 @@
   <title><%= docTitle %></title>
   <meta name="description" content="<%= metaDesc %>">
   <link rel="canonical" href="<%= canonicalUrl %>">
+  <%
+    // Языковые альтернативы: у новостей адреса пары приходят из маршрута (langAlt),
+    // у остальных страниц английская версия — тот же путь под /en.
+    const altBase = typeof canonicalBase === 'string' ? canonicalBase : '';
+    const altRuPath = cleanPath.replace(/^\/en(\/|$)/, '/');
+    const altObj = typeof langAlt === 'object' && langAlt ? langAlt : null;
+    const altRu = altObj && altObj.ru ? altObj.ru : altRuPath;
+    const altEn = altObj && altObj.en ? altObj.en : '/en' + (altRuPath === '/' ? '' : altRuPath);
+  %>
+  <link rel="alternate" hreflang="ru" href="<%= altBase + (altRu === '/' ? '' : altRu) %>">
+  <link rel="alternate" hreflang="en" href="<%= altBase + altEn %>">
   <meta property="og:type" content="<%= (typeof pageType !== 'undefined' && pageType) ? pageType : 'website' %>">
   <meta property="og:site_name" content="<%= siteBase %>">
   <meta property="og:title" content="<%= docTitle %>">
@@ -177,7 +188,9 @@
           const alt = typeof langAlt === 'object' && langAlt ? langAlt : null;
           const ruHref = alt && alt.ru ? alt.ru : ruPath;
           const enHref = alt && alt.en ? alt.en : '/en' + ruPath;
-          const hasEn = ruPath === '/news' || ruPath.startsWith('/news/');
+          // Английская версия есть у всего сайта (/en/… — автоперевод с кэшем,
+          // см. middleware/lang.js), поэтому переключатель показываем везде.
+          const hasEn = true;
         %>
         <% if (hasEn) { %>
           <div class="lang-switch">

@@ -15,7 +15,8 @@ const { getSettings } = require('./utils/settings');
 const { getCart } = require('./utils/cart');
 const { renderLinkedText } = require('./utils/text');
 const { thumb, srcset } = require('./utils/images');
-const { toAsciiHost, REDIRECT_LOOKUP, CANONICAL_STORE_ASCII } = require('./config/domains');
+const { toAsciiHost, REDIRECT_LOOKUP, EN_FIRST_LOOKUP, CANONICAL_STORE_ASCII } = require('./config/domains');
+const { isNoPrefixPath } = require('./services/pageTranslate');
 
 const indexRoutes = require('./routes/index');
 const catalogRoutes = require('./routes/catalog');
@@ -52,10 +53,14 @@ app.use((req, res, next) => {
   const host = toAsciiHost(req.hostname.replace(/^www\./, ''));
   const canonicalTarget = REDIRECT_LOOKUP.get(host);
   if (canonicalTarget) {
-    return res.redirect(301, `${req.protocol}://${canonicalTarget}${req.originalUrl}`);
+    // «Английские» домены (djlevka.com и т. п.) ведут на /en/… канонического сайта.
+    const alreadyEn = /^\/en(\/|\?|$)/.test(req.originalUrl);
+    const enFirst = EN_FIRST_LOOKUP.has(host) && !alreadyEn && !isNoPrefixPath(req.path);
+    const target = enFirst ? '/en' + (req.originalUrl === '/' ? '' : req.originalUrl) : req.originalUrl;
+    return res.redirect(301, `${req.protocol}://${canonicalTarget}${target}`);
   }
-  if (host === CANONICAL_STORE_ASCII && req.path === '/') {
-    return res.redirect(302, '/catalog');
+  if (host === CANONICAL_STORE_ASCII && (req.path === '/' || req.path === '/en' || req.path === '/en/')) {
+    return res.redirect(302, req.path === '/' ? '/catalog' : '/en/catalog');
   }
   next();
 });
@@ -127,6 +132,8 @@ app.use((req, res, next) => {
 // robots.txt и sitemap.xml — до остальных маршрутов, чтобы их не перехватил
 // обработчик страниц по адресу.
 app.use('/', require('./routes/seo'));
+// Английская версия: /en/… отдаёт те же страницы с переводом (middleware/lang.js).
+app.use(require('./middleware/lang'));
 // /health — для внешнего монитора: жив ли сервер и открывается ли база.
 app.use('/health', require('./routes/health'));
 app.use('/aroma', aromaRoutes);
