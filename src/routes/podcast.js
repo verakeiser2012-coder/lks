@@ -24,12 +24,13 @@ router.get('/', (req, res) => {
   const adBrandsRow = db.prepare("SELECT value FROM settings WHERE key = 'style_ads_brands'").get();
   res.render('podcast', {
     episodes: episodes(),
-    filmItems: getGalleryItems('style-film'),
-    adItems: getGalleryItems('style-ads'),
+    // Только видео: фото со съёмок остаются в «Стиле».
+    filmItems: getGalleryItems('style-film').filter((i) => i.type === 'video'),
+    adItems: getGalleryItems('style-ads').filter((i) => i.type === 'video'),
     adBrands: adBrandsRow ? adBrandsRow.value : '',
     banners: getBanners('podcast'),
-    title: 'Креативы',
-    pageDescription: 'Креативы Льва Кейсера: подкаст с мастерскими, кино и рекламные съёмки — всё, что он делает в кадре и у микрофона.',
+    title: 'В кадре',
+    pageDescription: 'В кадре: всё видео Льва Кейсера в одном месте — выпуски подкаста, кино и рекламные ролики.',
   });
 });
 

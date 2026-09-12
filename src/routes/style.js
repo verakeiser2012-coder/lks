@@ -53,8 +53,9 @@ router.get('/', (req, res) => {
     looks: loadLooks(),
     walks,
     years,
-    filmItems: getGalleryItems('style-film'),
-    adItems: getGalleryItems('style-ads'),
+    // В «Стиле» — только фото; видео со съёмок и рекламы живут в разделе «В кадре» (/podcast).
+    filmItems: getGalleryItems('style-film').filter((i) => i.type === 'photo'),
+    adItems: getGalleryItems('style-ads').filter((i) => i.type === 'photo'),
     inspireItems: getGalleryItems('style-inspires'),
     adBrands: setting('style_ads_brands'),
     // Свои ссылки страницы (если есть) + соцсети из раздела «Соцсети».
