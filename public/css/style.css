@@ -2746,3 +2746,26 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.7s ease, transform 0.7s ease; }
 .reveal.is-in { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+/* Галерея: заголовок + переключатель «Лента / Плитка»; плитка — те же кадры сеткой. */
+.gallery-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 16px; }
+.gallery-head h2:empty { display: none; }
+.strip-toggle { display: flex; gap: 6px; margin-left: auto; }
+.strip-toggle__btn { border: 1px solid var(--color-border); background: transparent; color: var(--color-muted); padding: 4px 12px; border-radius: 999px; font: inherit; font-size: 0.8rem; cursor: pointer; }
+.strip-toggle__btn.active { border-color: var(--color-accent); color: var(--color-text); font-weight: 600; }
+.filmstrip.filmstrip--grid { overflow: visible; scroll-snap-type: none; }
+.filmstrip.filmstrip--grid .filmstrip-track { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 34px 16px; min-width: 0; width: auto; }
+.filmstrip.filmstrip--grid .film-cell { width: auto; }
+.filmstrip.filmstrip--grid .gallery-item { width: 100%; }
+.filmstrip.filmstrip--grid .gallery-item img, .filmstrip.filmstrip--grid .gallery-item video { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
+
+/* Анонс разделов страницы: номера глав ссылками на якоря. */
+.chapter-index { display: flex; flex-wrap: wrap; gap: 8px 10px; margin: 0 0 32px; }
+.chapter-index__item { display: inline-flex; align-items: baseline; gap: 8px; padding: 6px 14px; border: 1px solid var(--color-border); border-radius: 999px; color: var(--color-text); text-decoration: none; font-size: 0.92rem; transition: border-color 0.2s ease, background 0.2s ease; }
+.chapter-index__item:hover { border-color: var(--color-accent); background: rgba(184, 134, 11, 0.06); color: var(--color-text); }
+.chapter-index__num { font-family: var(--font-display); font-weight: 800; color: var(--color-accent); font-size: 0.8rem; letter-spacing: 0.06em; }
+.poster + .chapter-index, .fresh + .chapter-index { margin-top: -24px; }
+
+/* Подразделы внутри главы («Вдохновительный лев»: образы, что вдохновляет). */
+.chapter-sub { margin-top: 34px; }
+.chapter-subtitle { margin: 0 0 6px; font-size: 1.15rem; font-family: var(--font-display); }

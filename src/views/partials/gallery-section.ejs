@@ -1,6 +1,13 @@
 <% if (typeof galleryItems !== 'undefined' && galleryItems.length > 0) { %>
   <section class="link-section">
-    <h2><%= typeof galleryTitle !== 'undefined' ? galleryTitle : 'Фото и видео' %></h2>
+    <%# Лента или плитка: кнопки переключают все ленты страницы, выбор помнится в браузере. %>
+    <div class="gallery-head">
+      <h2><%= typeof galleryTitle !== 'undefined' ? galleryTitle : 'Фото и видео' %></h2>
+      <div class="strip-toggle" role="group" aria-label="Вид галереи">
+        <button type="button" class="strip-toggle__btn active" data-strip-view="strip">Лента</button>
+        <button type="button" class="strip-toggle__btn" data-strip-view="grid">Плитка</button>
+      </div>
+    </div>
     <div class="filmstrip"><div class="filmstrip-track">
       <% galleryItems.forEach(function(item, idx) {
         var isEmbed = item.type === 'video' && item.file_path.indexOf('http') === 0;
@@ -24,4 +31,27 @@
       <% }); %>
     </div></div>
   </section>
+  <% if (typeof stripToggleScript === 'undefined') { %>
+  <script>
+    // Один обработчик на страницу: переключает все ленты сразу.
+    if (!window.__stripToggle) {
+      window.__stripToggle = true;
+      (function () {
+        var KEY = 'levkaGalleryView';
+        function apply(view) {
+          document.querySelectorAll('.filmstrip').forEach(function (s) { s.classList.toggle('filmstrip--grid', view === 'grid'); });
+          document.querySelectorAll('.strip-toggle__btn').forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-strip-view') === view); });
+          try { localStorage.setItem(KEY, view); } catch (e) {}
+        }
+        document.addEventListener('click', function (e) {
+          var b = e.target.closest('.strip-toggle__btn');
+          if (b) apply(b.getAttribute('data-strip-view'));
+        });
+        var saved = null;
+        try { saved = localStorage.getItem(KEY); } catch (e) {}
+        if (saved === 'grid') apply('grid');
+      })();
+    }
+  </script>
+  <% } %>
 <% } %>

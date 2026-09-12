@@ -1,0 +1,16 @@
+<%#
+  Анонс разделов страницы: номера и названия глав ссылками на якоря, чтобы
+  быстро перейти в нужный подраздел. Ожидает chapterIndex — массив
+  { num: '01', title: 'Подкаст', href: '#podcast' }.
+%>
+<% const chapters = (typeof chapterIndex !== 'undefined' && Array.isArray(chapterIndex)) ? chapterIndex.filter(Boolean) : []; %>
+<% if (chapters.length > 1) { %>
+  <nav class="chapter-index" aria-label="Разделы страницы">
+    <% chapters.forEach(function (c) { %>
+      <a class="chapter-index__item" href="<%= c.href %>">
+        <span class="chapter-index__num"><%= c.num %></span>
+        <span class="chapter-index__title"><%= c.title %></span>
+      </a>
+    <% }); %>
+  </nav>
+<% } %>

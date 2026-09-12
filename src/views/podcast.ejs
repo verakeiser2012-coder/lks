@@ -10,6 +10,12 @@
 
 <% (banners || []).forEach(function(banner) { %><%- include('partials/banner', { banner }) %><% }); %>
 
+<%- include('partials/chapter-index', { chapterIndex: [
+  { num: '01', title: 'Подкаст', href: '#podcast' },
+  { num: '02', title: 'Кино', href: '#film' },
+  { num: '03', title: 'Реклама', href: '#ads' },
+] }) %>
+
 <%# 01 Подкаст: разговоры с теми, кто делает вещи руками. %>
 <section class="chapter" id="podcast">
   <header class="chapter-head">

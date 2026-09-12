@@ -62,6 +62,15 @@
 </section>
 <% } %>
 
+<%# Анонс глав главной: быстро перейти в нужный раздел. %>
+<%- include('partials/chapter-index', { chapterIndex: [
+  podcast.title ? { num: '01', title: 'В кадре: подкаст', href: '#podcast' } : null,
+  { num: '02', title: 'Дневник', href: '#diary' },
+  { num: '03', title: 'Рыжие', href: '#redheads' },
+  { num: '04', title: 'Каталог', href: '#drop' },
+  { num: '05', title: 'Новости', href: '#news' },
+] }) %>
+
 <% if (podcast.title) { %>
 <%# Анонс подкаста и всё, что вокруг него: вещь, родившаяся из разговора,
     и записи дневника. Поля — в /admin/pages/home. %>

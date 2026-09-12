@@ -13,7 +13,6 @@ const TOPICS = [
   { key: 'question', label: 'Вопрос', to: 'info@levkeiser.com' },
   { key: 'brand', label: 'Сотрудничество с брендом', to: 'brand@levkeiser.com' },
   { key: 'vocal', label: 'Предложить вокал или трек', to: 'booking@levkeiser.com' },
-  { key: 'casting', label: 'Кастинг: запросить портфолио', to: 'booking@levkeiser.com' },
   { key: 'order', label: 'Вопрос по заказу', to: 'info@levkeiser.com' },
 ];
 
