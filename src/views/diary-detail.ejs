@@ -33,25 +33,30 @@
     </p>
   <% } %>
 
-<% if (otherPosts.length > 0) { %>
+<%# Лента времени: все записи дневника киноплёнкой, как под новостью. Текущая
+    запись подсвечена и прокручивается в кадр (news-strip.js). %>
+<% if (allPosts.length > 1) { %>
   <section style="margin-top:40px;">
-    <h2>Ещё в дневнике</h2>
-    <div class="news-list">
-      <% otherPosts.forEach(function(p) { %>
-        <a class="news-card" href="/diary/<%= p.slug %>">
-          <div class="news-card-image">
+    <h2>Все записи дневника</h2>
+    <div class="filmstrip filmstrip--timeline" id="news-timeline">
+      <div class="filmstrip-track">
+        <% allPosts.forEach(function(p, idx) { %>
+          <% const d = p.created_at; const mark = d.slice(8, 10) + '.' + d.slice(5, 7) + '.' + d.slice(2, 4); %>
+          <div class="film-cell <%= p.id === post.id ? 'current' : '' %>" data-code="LEVKEYSER · 35 MM" data-num="ЗАПИСЬ <%= String(idx + 1).padStart(2, '0') %> · <%= mark %>">
+          <a class="news-frame" href="/diary/<%= p.slug %>" <%= p.id === post.id ? 'data-current="1"' : '' %>>
             <% if (p.cover_image) { %>
-              <img src="<%= thumb(p.cover_image, 640) %>" srcset="<%= srcset(p.cover_image) %>" sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 300px" alt="<%= p.title %>">
+              <img src="<%= thumb(p.cover_image, 320) %>" alt="" loading="lazy">
             <% } else { %>
               <div class="no-image">Нет фото</div>
             <% } %>
+            <div class="news-frame-caption">
+              <div class="news-frame-date"><%= formatDateShort(p.created_at) %></div>
+              <div class="news-frame-title"><%= p.title %></div>
+            </div>
+          </a>
           </div>
-          <div>
-            <div class="news-date"><%= formatDate(p.created_at) %></div>
-            <div class="news-title"><%= p.title %></div>
-          </div>
-        </a>
-      <% }); %>
+        <% }); %>
+      </div>
     </div>
   </section>
 <% } %>
@@ -79,5 +84,15 @@
 <%- include('partials/share') %>
 
 <script src="/js/diary-marks.js" defer></script>
+<script>
+  // автопрокрутка ленты времени к текущей записи
+  document.addEventListener('DOMContentLoaded', function () {
+    var current = document.querySelector('#news-timeline [data-current]');
+    if (current && current.scrollIntoView) {
+      current.scrollIntoView({ block: 'nearest', inline: 'center' });
+      window.scrollTo(0, 0);
+    }
+  });
+</script>
 
 <%- include('partials/footer') %>

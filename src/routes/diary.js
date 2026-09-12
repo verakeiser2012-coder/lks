@@ -23,9 +23,10 @@ router.get('/:slug', (req, res) => {
   const media = db
     .prepare("SELECT * FROM gallery_items WHERE page_key = ? ORDER BY sort_order ASC, created_at ASC")
     .all('diary-' + post.slug);
-  const otherPosts = db
-    .prepare('SELECT id, slug, title, cover_image, created_at FROM diary_posts WHERE is_published = 1 AND id != ? ORDER BY created_at DESC LIMIT 3')
-    .all(post.id);
+  // Лента времени под записью: все записи дневника, как киноплёнка в новостях.
+  const allPosts = db
+    .prepare('SELECT id, slug, title, cover_image, created_at FROM diary_posts WHERE is_published = 1 ORDER BY created_at ASC')
+    .all();
   const cover = post.cover_image || (media.find((m) => m.type === 'photo') || {}).file_path || '';
   // Обложка на странице — первый кадр ленты, а не полотно над текстом.
   if (post.cover_image && !media.some((m) => m.file_path === post.cover_image)) {
@@ -47,7 +48,7 @@ router.get('/:slug', (req, res) => {
     marksAvg: marks.n ? Math.round(marks.avg * 10) / 10 : 0,
     media,
     drop,
-    otherPosts,
+    allPosts,
     title: post.title,
     pageImage: cover,
     pageDescription: post.excerpt || String(post.content || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 200),

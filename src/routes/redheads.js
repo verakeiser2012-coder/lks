@@ -15,7 +15,7 @@ function teaserModeOn() {
 
 // Записи дневника, из которых вырос раздел: без них подборка выглядит
 // списком без объяснения, зачем он тут.
-const READ_SLUGS = ['poka-v-niderlandah-festival-ryzhih-u-nas-novyy-razdel', 'vdohnovilo-dzhek-vorobey'];
+const READ_SLUGS = ['poka-v-niderlandah-festival-ryzhih-u-nas-novyy-razdel'];
 function redheadReads() {
   const marks = READ_SLUGS.map(() => '?').join(',');
   return db.prepare(`SELECT slug, title FROM diary_posts WHERE is_published = 1 AND slug IN (${marks})`).all(...READ_SLUGS);

@@ -2719,3 +2719,8 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 .music-ticker.is-paused .music-ticker__pause-icon { width: 0; height: 0; border: 0; border-left: 8px solid currentColor; border-top: 5px solid transparent; border-bottom: 5px solid transparent; margin-left: 2px; }
 .music-ticker.is-paused .music-ticker__track { animation-play-state: paused; }
 @media (max-width: 640px) { .music-ticker__pause { width: 20px; height: 20px; } }
+
+/* Главная, глава «Рыжие»: призыв вписаться в подборку. */
+.redheads-home-cta { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; justify-content: space-between; margin-top: 18px; padding: 16px 20px; border: 1px dashed var(--color-accent); border-radius: var(--radius); background: rgba(184, 134, 11, 0.06); }
+.redheads-home-cta p { margin: 0; max-width: 56ch; color: var(--color-text); }
+.redheads-home-cta .btn { white-space: nowrap; }
