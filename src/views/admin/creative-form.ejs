@@ -1,0 +1,61 @@
+<%- include('partials/header') %>
+
+<div class="admin-toolbar">
+  <h1><%= episode && episode.id ? 'Редактировать выпуск' : 'Новый выпуск подкаста' %></h1>
+  <a href="/admin/creatives">← В кадре</a>
+</div>
+
+<% if (error) { %>
+  <div class="flash flash-error"><%= error %></div>
+<% } %>
+
+<form
+  action="<%= episode && episode.id ? `/admin/creatives/${episode.id}` : '/admin/creatives' %>"
+  method="POST"
+  enctype="multipart/form-data"
+>
+  <label>
+    Название *
+    <input type="text" name="title" value="<%= episode ? episode.title : '' %>" required>
+  </label>
+  <label>
+    Гость
+    <input type="text" name="guest" value="<%= episode ? (episode.guest || '') : '' %>" placeholder="Мастерская «Флёр»">
+  </label>
+  <label>
+    Описание
+    <textarea name="description" rows="8"><%= episode ? (episode.description || '') : '' %></textarea>
+  </label>
+  <p class="hint">Первая строка описания показывается в списке выпусков. Ссылка в тексте: <code>[текст](https://…)</code></p>
+  <label>
+    Дата выпуска
+    <input type="date" name="episodeDate" value="<%= episode ? (episode.episode_date || '').slice(0, 10) : '' %>">
+  </label>
+  <label>
+    Видео (ссылка на YouTube, Rutube или VK Видео)
+    <input type="url" name="videoUrl" value="<%= episode ? (episode.video_url || '') : '' %>" placeholder="https://…">
+  </label>
+  <label>
+    Аудио (ссылка на mp3 или площадку)
+    <input type="url" name="audioUrl" value="<%= episode ? (episode.audio_url || '') : '' %>" placeholder="https://…">
+  </label>
+  <p class="hint">Пока нет ни видео, ни аудио, выпуск показывается карточкой «скоро».</p>
+  <label>
+    Обложка
+    <input type="file" name="cover" accept="image/*">
+  </label>
+  <% if (episode && episode.cover_image) { %>
+    <p class="hint">Сейчас: <img src="<%= thumb(episode.cover_image, 160) %>" alt="" style="height:60px;vertical-align:middle;border-radius:6px;"></p>
+  <% } %>
+  <label>
+    Порядок сортировки
+    <input type="number" name="sortOrder" value="<%= episode ? (episode.sort_order || 0) : 0 %>">
+  </label>
+  <label>
+    <input type="checkbox" name="isPublished" value="1" style="width:auto;display:inline-block;" <%= episode && Number(episode.is_published) ? 'checked' : '' %>>
+    Показывать на сайте
+  </label>
+  <button class="btn" type="submit">Сохранить</button>
+</form>
+
+<%- include('partials/footer') %>

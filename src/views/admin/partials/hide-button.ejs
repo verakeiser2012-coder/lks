@@ -1,0 +1,10 @@
+<%#
+  Кнопка «Скрыть с сайта / Показать на сайте» для строки списка.
+  Ожидает: hideKind — ключ из routes/admin/visibility.js, hideId — id записи,
+  hideVisible — виден ли сейчас (1/0).
+%>
+<form class="inline" action="/admin/visibility/<%= hideKind %>/<%= hideId %>" method="POST">
+  <button class="link-btn <%= hideVisible ? '' : 'is-hidden-toggle' %>" type="submit" title="<%= hideVisible ? 'Запись останется, но посетители её не увидят' : 'Снова показать посетителям' %>">
+    <%= hideVisible ? 'Скрыть с сайта' : 'Показать на сайте' %>
+  </button>
+</form>

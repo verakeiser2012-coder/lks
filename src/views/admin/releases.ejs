@@ -29,7 +29,7 @@
         <td>
           <a href="/admin/releases/<%= r.id %>/edit">Изменить</a>
           <a href="/music/<%= r.slug %>" target="_blank">Смотреть ↗</a>
-          <form class="inline" action="/admin/releases/<%= r.id %>/delete" method="POST" onsubmit="return confirm('Удалить релиз? Треки останутся, но потеряют привязку к нему.');">
+<%- include('partials/hide-button', { hideKind: 'releases', hideId: r.id, hideVisible: r.is_published }) %> method="POST" onsubmit="return confirm('Удалить релиз? Треки останутся, но потеряют привязку к нему.');">
             <button class="link-btn" type="submit">Удалить</button>
           </form>
         </td>

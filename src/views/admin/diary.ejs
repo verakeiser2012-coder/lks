@@ -25,7 +25,7 @@
         <td>
           <a href="/admin/diary/<%= p.id %>/edit">Изменить</a>
           <a href="/diary/<%= p.slug %>" target="_blank">Смотреть ↗</a>
-          <form class="inline" action="/admin/diary/<%= p.id %>/delete" method="POST" onsubmit="return confirm('Удалить запись из дневника?');">
+<%- include('partials/hide-button', { hideKind: 'diary', hideId: p.id, hideVisible: p.is_published }) %> method="POST" onsubmit="return confirm('Удалить запись из дневника?');">
             <button class="link-btn" type="submit">Удалить</button>
           </form>
         </td>

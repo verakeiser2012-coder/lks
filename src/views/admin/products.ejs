@@ -28,7 +28,7 @@
         <td><%= product.is_active ? 'Да' : 'Нет' %></td>
         <td>
           <a href="/admin/products/<%= product.id %>/edit">Изменить</a>
-          <form class="inline" action="/admin/products/<%= product.id %>/delete" method="POST" onsubmit="return confirm('Удалить товар?');">
+<%- include('partials/hide-button', { hideKind: 'products', hideId: product.id, hideVisible: product.is_active }) %> method="POST" onsubmit="return confirm('Удалить товар?');">
             <button class="link-btn" type="submit">Удалить</button>
           </form>
         </td>

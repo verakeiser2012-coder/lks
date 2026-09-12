@@ -24,6 +24,8 @@ const subscribersRoutes = require('./subscribers');
 const messagesRoutes = require('./messages');
 const bustsRoutes = require('./busts');
 const translationsRoutes = require('./translations');
+const visibilityRoutes = require('./visibility');
+const creativesRoutes = require('./creatives');
 const { translateMany } = require('../../services/translate');
 
 const router = express.Router();
@@ -102,5 +104,7 @@ router.use('/subscribers', subscribersRoutes);
 router.use('/messages', messagesRoutes);
 router.use('/busts', bustsRoutes);
 router.use('/translations', translationsRoutes);
+router.use('/visibility', visibilityRoutes);
+router.use('/creatives', creativesRoutes);
 
 module.exports = router;

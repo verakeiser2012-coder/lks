@@ -45,7 +45,8 @@ router.get('/:slug', (req, res) => {
   }
   const tail = src.slice(last).trim();
   if (tail) blocks.push({ type: 'text', text: tail });
-  const strip = media.filter((i) => !inlineIds.has(i.id));
+  // В общую плитку под текстом попадают все кадры, включая врезанные в текст.
+  const strip = media.slice();
   // Обложка — первый кадр ленты, а не полотно над текстом.
   if (post.cover_image && !media.some((i) => i.file_path === post.cover_image)) {
     strip.unshift({ type: 'photo', file_path: post.cover_image, title: '', shot_date: '', created_at: post.created_at });

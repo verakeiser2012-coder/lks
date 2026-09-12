@@ -1,0 +1,64 @@
+<%- include('partials/header') %>
+
+<div class="admin-toolbar">
+  <h1>В кадре</h1>
+  <div>
+    <a href="/podcast" target="_blank">Раздел на сайте ↗</a>
+    &nbsp;&nbsp;
+    <a class="btn" href="/admin/creatives/new">+ Выпуск подкаста</a>
+  </div>
+</div>
+
+<p class="flash">
+  Раздел «В кадре» на сайте собирается из трёх частей: выпуски подкаста (ниже), видео и фото со съёмок кино
+  (галерея с ключом <code>style-film</code>) и рекламные ролики (галерея <code>style-ads</code>).
+  Кино и рекламу добавляй в <a href="/admin/gallery">Галерее</a>, выбрав нужный ключ; ролики из VK, YouTube и Rutube — ссылкой.
+</p>
+
+<% if (msg) { %><div class="flash"><%= msg %></div><% } %>
+
+<div class="network-row" style="gap:24px;flex-wrap:wrap;">
+  <div><strong>Кино:</strong> <%= film.videos || 0 %> видео, <%= film.photos || 0 %> фото · <a href="/admin/gallery">добавить</a></div>
+  <div><strong>Реклама:</strong> <%= ads.videos || 0 %> видео, <%= ads.photos || 0 %> фото · <a href="/admin/gallery">добавить</a></div>
+</div>
+
+<h2>Подкаст</h2>
+<% if (episodes.length === 0) { %>
+  <p>Выпусков пока нет.</p>
+<% } else { %>
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th>Название</th>
+        <th>Гость</th>
+        <th>Дата</th>
+        <th>Запись</th>
+        <th>На сайте</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% episodes.forEach(function(e) { %>
+        <tr>
+          <td><% if (e.cover_image) { %><img src="<%= thumb(e.cover_image, 160) %>" alt="" style="height:44px;border-radius:6px;"><% } %></td>
+          <td><%= e.title %></td>
+          <td><%= e.guest %></td>
+          <td><%= e.episode_date %></td>
+          <td><%= (e.audio_url || e.video_url) ? 'есть' : 'нет — «скоро»' %></td>
+          <td><%= e.is_published ? 'Да' : 'Нет' %></td>
+          <td>
+            <a href="/admin/creatives/<%= e.id %>/edit">Изменить</a>
+            <% if (e.is_published) { %><a href="/podcast/<%= e.slug %>" target="_blank">Смотреть ↗</a><% } %>
+            <%- include('partials/hide-button', { hideKind: 'creatives', hideId: e.id, hideVisible: e.is_published }) %>
+            <form class="inline" action="/admin/creatives/<%= e.id %>/delete" method="POST" onsubmit="return confirm('Удалить выпуск?');">
+              <button class="link-btn" type="submit">Удалить</button>
+            </form>
+          </td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+<% } %>
+
+<%- include('partials/footer') %>

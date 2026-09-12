@@ -467,3 +467,5 @@
 .network-keys .credentials-form { margin-top: 8px; }
 @media (max-width: 760px) { .network-profile { grid-template-columns: 1fr; } }
 .network-profile { grid-template-columns: minmax(160px, 1fr) minmax(220px, 2fr) 130px auto; }
+
+.link-btn.is-hidden-toggle { color: #2f7a3a; }

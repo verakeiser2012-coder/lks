@@ -10,7 +10,7 @@
       кадра галереи. Врезки всплывают при прокрутке (reveal, скрипт ниже). %>
   <% (typeof blocks !== 'undefined' ? blocks : [{ type: 'text', text: post.content }]).forEach(function (b) { %>
     <% if (b.type === 'media') { %>
-      <figure class="diary-inline reveal">
+      <figure class="diary-inline reveal" <% if (b.item.title) { %>title="<%= b.item.title %>"<% } %>>
         <% if (b.item.type === 'photo') { %>
           <img src="<%= thumb(b.item.file_path, 960) %>" srcset="<%= srcset(b.item.file_path, [640, 960, 1280]) %>" sizes="(max-width: 760px) 92vw, 720px" alt="<%= b.item.title || post.title %>" loading="lazy">
         <% } else if (b.item.file_path.indexOf('http') === 0) { %>
@@ -41,8 +41,28 @@
   <% } %>
 </article>
 
-<%# Фото и видео к записи — той же киноплёнкой, что на главной и в разделах. %>
-<%- include('partials/gallery-section', { galleryItems: media, galleryTitle: 'Кадры к записи' }) %>
+<%# Фото и видео к записи — обычной плиткой, без киноплёнки: все кадры записи,
+    включая врезанные в текст. Подпись показывается при наведении, клик — лайтбокс. %>
+<% if (media.length > 0) { %>
+  <section class="link-section">
+    <h2>Кадры к записи</h2>
+    <div class="diary-grid">
+      <% media.forEach(function (item) { %>
+        <% var isEmbed = item.type === 'video' && item.file_path.indexOf('http') === 0; %>
+        <figure class="gallery-item diary-grid__item <%= isEmbed ? 'is-embed' : '' %>" <% if (item.title) { %>title="<%= item.title %>"<% } %>>
+          <% if (item.type === 'photo') { %>
+            <img src="<%= thumb(item.file_path, 480) %>" srcset="<%= srcset(item.file_path, [320, 480, 640]) %>" sizes="(max-width: 560px) 46vw, 240px" alt="<%= item.title || post.title %>" loading="lazy">
+          <% } else if (isEmbed) { %>
+            <div class="gallery-embed-frame"><iframe src="<%= item.file_path %>" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen frameborder="0"></iframe></div>
+          <% } else { %>
+            <video src="<%= item.file_path %>" muted loop playsinline preload="metadata"></video>
+          <% } %>
+          <% if (item.title) { %><figcaption class="diary-grid__caption"><%= item.title %></figcaption><% } %>
+        </figure>
+      <% }); %>
+    </div>
+  </section>
+<% } %>
 
   <% if (post.dzen_url) { %>
     <p class="diary-dzen-note">
@@ -97,7 +117,7 @@
 
 <p style="margin-top:24px;"><a href="/diary">← Ко всем записям</a></p>
 
-<%- include('partials/channel-cta', { channelCtaTitle: 'Обсуждаем в канале', channelCtaText: 'Короткие записи между большими — там, четыре раза в неделю.' }) %>
+<%- include('partials/channel-cta', { channelCtaTitle: 'Обсуждаем в канале', channelCtaText: 'Короткие записи между большими — там.' }) %>
 
 <%- include('partials/share') %>
 
