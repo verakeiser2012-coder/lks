@@ -240,7 +240,8 @@
         медленно в быстром мире». Наведение останавливает, чтобы можно было попасть. %>
     <% if (typeof bgPlaylist !== 'undefined' && bgPlaylist.length) { %>
       <div class="music-ticker" id="music-ticker" aria-label="Музыка Льва">
-        <div class="music-ticker__label" aria-hidden="true">DJ Levka</div>
+        <%# Подпись «DJ Levka» перед треками убрана 12.09: строка и так про его музыку,
+            а слово перед первой кнопкой читалось как ещё один трек. %>
         <%# Кнопка «стоп/пуск» бегущей строки: наведение останавливает её лишь на время,
             а кому-то движение мешает читать. Выбор запоминается в браузере (bg-music.js). %>
         <button type="button" class="music-ticker__pause" id="music-ticker-pause" aria-pressed="false" title="Остановить строку" aria-label="Остановить бегущую строку">
