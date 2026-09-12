@@ -4,11 +4,8 @@
   <div class="news-date"><%= formatDate(post.created_at) %></div>
   <h1><%= post.title %></h1>
 
-  <%# Обложка — кадр, а не полотно во всю высоту: ограничена по высоте и кадрируется. %>
-  <% if (post.cover_image) { %>
-    <img class="diary-cover" src="<%= thumb(post.cover_image, 960) %>" srcset="<%= srcset(post.cover_image, [640, 960, 1280]) %>" sizes="(max-width: 760px) 92vw, 720px" alt="<%= post.title %>">
-  <% } %>
-
+  <%# Обложка на странице записи не показывается большим полотном: она нужна
+      карточке в списке и превью ссылок, а здесь идёт первым кадром в ленте. %>
   <div class="prose"><%- renderLinkedText(post.content) %></div>
 
   <% if (typeof drop !== 'undefined' && drop) { %>

@@ -27,6 +27,10 @@ router.get('/:slug', (req, res) => {
     .prepare('SELECT id, slug, title, cover_image, created_at FROM diary_posts WHERE is_published = 1 AND id != ? ORDER BY created_at DESC LIMIT 3')
     .all(post.id);
   const cover = post.cover_image || (media.find((m) => m.type === 'photo') || {}).file_path || '';
+  // Обложка на странице — первый кадр ленты, а не полотно над текстом.
+  if (post.cover_image && !media.some((m) => m.file_path === post.cover_image)) {
+    media.unshift({ type: 'photo', file_path: post.cover_image, title: '', shot_date: '', created_at: post.created_at });
+  }
   // Дроп, к которому привязана запись (выбирается в админке).
   const drop = post.collection_id
     ? db.prepare(`
