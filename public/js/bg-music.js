@@ -218,10 +218,13 @@
 // кому-то движение в шапке мешает читать — кнопка останавливает насовсем,
 // выбор живёт в localStorage и действует на всех страницах.
 (function () {
+  // Пауза живёт только до закрытия вкладки (sessionStorage): нажатая однажды
+  // кнопка не должна останавливать строку навсегда — так она «переставала бежать».
   var KEY = 'levkaTickerPaused';
   var ticker = document.getElementById('music-ticker');
   var btn = document.getElementById('music-ticker-pause');
   if (!ticker || !btn) return;
+  try { localStorage.removeItem(KEY); } catch (e) {}
   function apply(paused) {
     ticker.classList.toggle('is-paused', paused);
     btn.setAttribute('aria-pressed', paused ? 'true' : 'false');
@@ -229,11 +232,11 @@
     btn.setAttribute('aria-label', paused ? 'Запустить бегущую строку' : 'Остановить бегущую строку');
   }
   var saved = false;
-  try { saved = localStorage.getItem(KEY) === '1'; } catch (e) { /* приватный режим */ }
+  try { saved = sessionStorage.getItem(KEY) === '1'; } catch (e) { /* приватный режим */ }
   apply(saved);
   btn.addEventListener('click', function () {
     var paused = !ticker.classList.contains('is-paused');
     apply(paused);
-    try { localStorage.setItem(KEY, paused ? '1' : '0'); } catch (e) { /* не запомнили — не страшно */ }
+    try { sessionStorage.setItem(KEY, paused ? '1' : '0'); } catch (e) { /* не запомнили — не страшно */ }
   });
 })();
