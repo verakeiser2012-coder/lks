@@ -26,7 +26,8 @@
     Текст записи
     <textarea name="content" rows="14"><%= post ? post.content : '' %></textarea>
   </label>
-  <p class="hint">Чтобы вставить ссылку в текст: <code>[текст ссылки](https://example.com)</code></p>
+  <p class="hint">Чтобы вставить ссылку в текст: <code>[текст ссылки](https://example.com)</code>.
+    Чтобы кадр из галереи записи всплыл в нужном месте — отдельной строкой <code>[[кадр 2]]</code> (номер по порядку в галерее записи, ключ <code>diary-&lt;slug&gt;</code>); остальные кадры остаются в ленте под текстом.</p>
   <label>
     Обложка
     <input type="file" name="cover" accept="image/*">

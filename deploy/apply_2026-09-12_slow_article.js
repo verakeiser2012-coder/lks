@@ -24,13 +24,16 @@ db.prepare("UPDATE diary_posts SET content = ?, excerpt = ? WHERE id = ?").run(
 console.log(`текст записи: ${post.content.length} → ${text.length} символов`);
 
 const KEY = 'diary-' + SLUG;
+// Порядок = номера для меток [[кадр N]] в тексте. Карточка с Темпом и Василием
+// убрана (12.09: маскоты пока не доделаны, с сайта сняты).
 const frames = [
   ['/uploads/slow-card-1.jpg', 'Тезис'],
   ['/uploads/style-walks-13y-08.jpg', 'Своим ходом'],
   ['/uploads/slow-card-2.jpg', 'Улитка Slow Food, Рим, 1986'],
   ['/uploads/product-flag-para.jpg', 'Пара флагов из дропа'],
-  ['/uploads/slow-card-3.jpg', 'Темп и Василий'],
 ];
+const keep = frames.map(([file]) => file);
+db.prepare(`DELETE FROM gallery_items WHERE page_key = ? AND file_path NOT IN (${keep.map(() => '?').join(',')})`).run(KEY, ...keep);
 const exists = db.prepare('SELECT id FROM gallery_items WHERE page_key = ? AND file_path = ?');
 const insert = db.prepare("INSERT INTO gallery_items (type, title, file_path, page_key, sort_order) VALUES ('photo', ?, ?, ?, ?)");
 const upd = db.prepare('UPDATE gallery_items SET title = ?, sort_order = ? WHERE id = ?');

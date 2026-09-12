@@ -2728,3 +2728,21 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 /* Креативы: приглашение в подкаст под списком выпусков. */
 .creatives-invite { color: var(--color-muted); max-width: 62ch; margin: 18px 0 0; line-height: 1.55; }
 .creatives-invite .btn { display: inline-block; margin-top: 12px; }
+
+/* Бегущая строка без полосы прокрутки: когда анимация выключена (reduced motion
+   или телефон), строка листается пальцем/колесом, но скроллбар под ней не рисуем —
+   он ломал шапку. Края растворяются, чтобы было видно, что строка продолжается. */
+.music-ticker__viewport { scrollbar-width: none; -ms-overflow-style: none; -webkit-mask-image: linear-gradient(90deg, transparent, #000 24px, #000 calc(100% - 24px), transparent); mask-image: linear-gradient(90deg, transparent, #000 24px, #000 calc(100% - 24px), transparent); }
+.music-ticker__viewport::-webkit-scrollbar { display: none; height: 0; }
+.music-ticker__track { will-change: transform; }
+@media (prefers-reduced-motion: reduce) { .music-ticker__pause { display: none; } }
+@media (max-width: 640px) { .music-ticker__track { animation: none; } .music-ticker__viewport { overflow-x: auto; } .music-ticker__pause { display: none; } }
+
+/* Дневник: врезки кадров внутри текста ([[кадр N]]) и их появление при прокрутке. */
+.diary-inline { margin: 26px 0 30px; }
+.diary-inline img, .diary-inline video { width: 100%; max-height: 560px; object-fit: cover; border-radius: var(--radius); display: block; background: #f2f2f2; }
+.diary-inline .gallery-embed-frame { border-radius: var(--radius); overflow: hidden; }
+.diary-inline figcaption { margin-top: 8px; font-size: 0.85rem; color: var(--color-muted); }
+.reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal.is-in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }

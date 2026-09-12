@@ -6,7 +6,24 @@
 
   <%# Обложка на странице записи не показывается большим полотном: она нужна
       карточке в списке и превью ссылок, а здесь идёт первым кадром в ленте. %>
-  <div class="prose"><%- renderLinkedText(post.content) %></div>
+  <%# Текст с кадрами в нужных местах: строка «[[кадр N]]» в записи → врезка N-го
+      кадра галереи. Врезки всплывают при прокрутке (reveal, скрипт ниже). %>
+  <% (typeof blocks !== 'undefined' ? blocks : [{ type: 'text', text: post.content }]).forEach(function (b) { %>
+    <% if (b.type === 'media') { %>
+      <figure class="diary-inline reveal">
+        <% if (b.item.type === 'photo') { %>
+          <img src="<%= thumb(b.item.file_path, 960) %>" srcset="<%= srcset(b.item.file_path, [640, 960, 1280]) %>" sizes="(max-width: 760px) 92vw, 720px" alt="<%= b.item.title || post.title %>" loading="lazy">
+        <% } else if (b.item.file_path.indexOf('http') === 0) { %>
+          <div class="gallery-embed-frame"><iframe src="<%= b.item.file_path %>" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen frameborder="0"></iframe></div>
+        <% } else { %>
+          <video src="<%= b.item.file_path %>" controls playsinline preload="metadata"></video>
+        <% } %>
+        <% if (b.item.title) { %><figcaption><%= b.item.title %></figcaption><% } %>
+      </figure>
+    <% } else { %>
+      <div class="prose"><%- renderLinkedText(b.text) %></div>
+    <% } %>
+  <% }); %>
 
   <% if (typeof drop !== 'undefined' && drop) { %>
     <%# Дроп, о котором запись: карточка как в списке дропов, только компактнее. %>
@@ -93,6 +110,18 @@
       current.scrollIntoView({ block: 'nearest', inline: 'center' });
       window.scrollTo(0, 0);
     }
+    // врезки всплывают, когда доезжаешь до них
+    var items = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window) || !items.length) {
+      items.forEach(function (el) { el.classList.add('is-in'); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+      });
+    }, { rootMargin: '0px 0px -12% 0px', threshold: 0.15 });
+    items.forEach(function (el) { io.observe(el); });
   });
 </script>
 

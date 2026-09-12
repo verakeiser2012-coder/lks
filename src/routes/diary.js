@@ -28,9 +28,27 @@ router.get('/:slug', (req, res) => {
     .prepare('SELECT id, slug, title, cover_image, created_at FROM diary_posts WHERE is_published = 1 ORDER BY created_at ASC')
     .all();
   const cover = post.cover_image || (media.find((m) => m.type === 'photo') || {}).file_path || '';
-  // Обложка на странице — первый кадр ленты, а не полотно над текстом.
-  if (post.cover_image && !media.some((m) => m.file_path === post.cover_image)) {
-    media.unshift({ type: 'photo', file_path: post.cover_image, title: '', shot_date: '', created_at: post.created_at });
+  // Кадры внутри текста: строка «[[кадр N]]» в записи ставит N-й кадр галереи
+  // (по порядку в админке) прямо в этом месте. Такие кадры в ленту внизу не попадают.
+  const blocks = [];
+  const inlineIds = new Set();
+  const MARK = /^[ \t]*\[\[\s*кадр\s+(\d+)\s*\]\][ \t]*$/gim;
+  let last = 0;
+  let m;
+  const src = String(post.content || '');
+  while ((m = MARK.exec(src))) {
+    const item = media[Number(m[1]) - 1];
+    const text = src.slice(last, m.index).trim();
+    if (text) blocks.push({ type: 'text', text });
+    if (item) { blocks.push({ type: 'media', item }); inlineIds.add(item.id); }
+    last = m.index + m[0].length;
+  }
+  const tail = src.slice(last).trim();
+  if (tail) blocks.push({ type: 'text', text: tail });
+  const strip = media.filter((i) => !inlineIds.has(i.id));
+  // Обложка — первый кадр ленты, а не полотно над текстом.
+  if (post.cover_image && !media.some((i) => i.file_path === post.cover_image)) {
+    strip.unshift({ type: 'photo', file_path: post.cover_image, title: '', shot_date: '', created_at: post.created_at });
   }
   // Дроп, к которому привязана запись (выбирается в админке).
   const drop = post.collection_id
@@ -46,7 +64,8 @@ router.get('/:slug', (req, res) => {
     post,
     marksCount: marks.n || 0,
     marksAvg: marks.n ? Math.round(marks.avg * 10) / 10 : 0,
-    media,
+    media: strip,
+    blocks,
     drop,
     allPosts,
     title: post.title,
