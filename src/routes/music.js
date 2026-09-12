@@ -110,7 +110,7 @@ router.get('/', (req, res) => {
     inspired: inspiredBy(),
     intro: introRow ? introRow.value : '',
     // Площадки и релизы — из page_links, соцсети — из раздела «Соцсети» (музыкальные первыми).
-    groups: groupLinks(links).concat([socialLinksGroup('Соцсети', { first: 'music' })]),
+    groups: groupLinks(links).concat([socialLinksGroup('Соцсети', { first: 'music', lang: req.lang })]),
     featured: {
       title: featuredMap.music_featured_title || '',
       note: featuredMap.music_featured_note || '',

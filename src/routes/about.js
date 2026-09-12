@@ -22,7 +22,7 @@ router.get('/', (req, res) => {
     .all();
   // Соцсети — из раздела «Соцсети» админки; ставим после «Где слушать».
   const linkGroups = groupLinks(links);
-  linkGroups.splice(Math.min(1, linkGroups.length), 0, socialLinksGroup('Где читать и смотреть'));
+  linkGroups.splice(Math.min(1, linkGroups.length), 0, socialLinksGroup('Где читать и смотреть', { lang: req.lang }));
   res.render('about', { aboutText, media, mails: MAILS, linkGroups });
 });
 

@@ -81,7 +81,8 @@ router.post('/:id/profile', (req, res) => {
     return res.status(404).render('404');
   }
   const label = String(req.body.label || '').trim() || network.label;
-  db.prepare('UPDATE social_networks SET label = ?, url = ? WHERE id = ?').run(label, cleanUrl(req.body.url), network.id);
+  const audience = ['all', 'ru', 'en'].includes(req.body.audience) ? req.body.audience : (network.audience || 'all');
+  db.prepare('UPDATE social_networks SET label = ?, url = ?, audience = ? WHERE id = ?').run(label, cleanUrl(req.body.url), audience, network.id);
   res.redirect('/admin/social-networks?msg=' + encodeURIComponent(`${label}: сохранено.`));
 });
 

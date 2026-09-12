@@ -466,3 +466,4 @@
 .network-keys summary { cursor: pointer; font-size: 0.9rem; color: var(--color-muted); }
 .network-keys .credentials-form { margin-top: 8px; }
 @media (max-width: 760px) { .network-profile { grid-template-columns: 1fr; } }
+.network-profile { grid-template-columns: minmax(160px, 1fr) minmax(220px, 2fr) 130px auto; }

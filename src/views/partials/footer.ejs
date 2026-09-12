@@ -22,32 +22,39 @@
     // и стоять ему тут правильнее, чем в общем ряду. Личный @levkeiser
     // остаётся в «Остальном» — это разные аккаунты, их легко перепутать.
     // Адреса профилей — из раздела «Соцсети» админки (settings.<ключ>_url).
+    // Аудитория сети (settings.socialAudience) прячет её в чужой версии сайта:
+    // ВКонтакте не показываем англичанам, Facebook — русской версии.
+    const footerLang = typeof lang !== 'undefined' && lang === 'en' ? 'en' : 'ru';
+    const forLang = function (netKey) {
+      const a = (settings.socialAudience || {})[netKey] || 'all';
+      return a === 'all' || a === footerLang;
+    };
     const streaming = pick('Площадки', ['Spotify', 'Apple Music', 'YouTube Music', 'Яндекс Музыка', 'VK Музыка', 'Zvuk', 'Deezer', 'SoundCloud', 'Bandcamp', 'TIDAL'])
-      .concat(settings.instagram_djlevka_url ? [{ key: 'instagram', label: 'Instagram — музыка', url: settings.instagram_djlevka_url }] : []);
+      .concat(settings.instagram_djlevka_url && forLang('instagram-djlevka') ? [{ key: 'instagram', label: 'Instagram — музыка', url: settings.instagram_djlevka_url }] : []);
     const videoSocial = [
-      { key: 'youtube', label: 'YouTube', url: settings.youtube_url },
-      { key: 'tiktok', label: 'TikTok', url: settings.tiktok_url },
-      { key: 'rutube', label: 'Rutube', url: settings.rutube_url },
-      { key: 'yappy', label: 'Yappy', url: settings.yappy_url },
-      { key: 'likee', label: 'Likee', url: settings.likee_url },
-    ].filter(function (n) { return n.url; });
+      { key: 'youtube', net: 'youtube', label: 'YouTube', url: settings.youtube_url },
+      { key: 'tiktok', net: 'tiktok', label: 'TikTok', url: settings.tiktok_url },
+      { key: 'rutube', net: 'rutube', label: 'Rutube', url: settings.rutube_url },
+      { key: 'yappy', net: 'yappy', label: 'Yappy', url: settings.yappy_url },
+      { key: 'likee', net: 'likee', label: 'Likee', url: settings.likee_url },
+    ].filter(function (n) { return n.url && forLang(n.net); });
     const otherSocial = [
-      { key: 'vk', label: 'VK', url: settings.vk_url },
-      { key: 'telegram', label: 'Telegram', url: settings.telegram_url },
-      { key: 'whatsapp', label: 'WhatsApp', url: settings.whatsapp_url },
-      { key: 'instagram', label: 'Instagram — личный', url: settings.instagram_url },
-      { key: 'pinterest', label: 'Pinterest', url: settings.pinterest_url },
-      { key: 'ok', label: 'Одноклассники', url: settings.ok_url },
-      { key: 'dzen', label: 'Дзен', url: settings.dzen_url },
-      { key: 'x', label: 'X (Twitter)', url: settings.x_url },
-      { key: 'facebook', label: 'Facebook', url: settings.facebook_url },
-    ].filter(function (n) { return n.url; });
+      { key: 'vk', net: 'vk', label: 'VK', url: settings.vk_url },
+      { key: 'telegram', net: 'telegram', label: 'Telegram', url: settings.telegram_url },
+      { key: 'whatsapp', net: 'whatsapp', label: 'WhatsApp', url: settings.whatsapp_url },
+      { key: 'instagram', net: 'instagram', label: 'Instagram — личный', url: settings.instagram_url },
+      { key: 'pinterest', net: 'pinterest', label: 'Pinterest', url: settings.pinterest_url },
+      { key: 'ok', net: 'ok', label: 'Одноклассники', url: settings.ok_url },
+      { key: 'dzen', net: 'dzen', label: 'Дзен', url: settings.dzen_url },
+      { key: 'x', net: 'x', label: 'X (Twitter)', url: settings.x_url },
+      { key: 'facebook', net: 'facebook', label: 'Facebook', url: settings.facebook_url },
+    ].filter(function (n) { return n.url && forLang(n.net); });
     const chinaSocial = [
       { key: 'douyin', label: 'Douyin', url: settings.douyin_url },
       { key: 'weibo', label: 'Weibo', url: settings.weibo_url },
       { key: 'wechat', label: 'WeChat', url: settings.wechat_url },
       { key: 'xiaohongshu', label: 'Xiaohongshu', url: settings.xiaohongshu_url },
-    ].filter(function (n) { return n.url; });
+    ].filter(function (n) { return n.url && forLang(n.key); });
   %>
   <footer class="site-footer">
     <div class="container footer-inner">

@@ -43,6 +43,14 @@
         Ссылка на профиль
         <input type="url" name="url" value="<%= n.url || '' %>" placeholder="https://…">
       </label>
+      <label>
+        Где показывать
+        <select name="audience">
+          <option value="all" <%= (n.audience || 'all') === 'all' ? 'selected' : '' %>>RU и EN</option>
+          <option value="ru" <%= n.audience === 'ru' ? 'selected' : '' %>>только RU</option>
+          <option value="en" <%= n.audience === 'en' ? 'selected' : '' %>>только EN</option>
+        </select>
+      </label>
       <div class="network-profile-actions">
         <button class="btn btn-small" type="submit">Сохранить</button>
         <% if (n.url) { %><a href="<%= n.url %>" target="_blank" rel="noopener">открыть ↗</a><% } else { %><span class="hint" style="margin:0;">без ссылки на сайте не показывается</span><% } %>

@@ -10,8 +10,12 @@ function getSettings() {
   for (const row of rows) {
     settings[row.key] = row.value;
   }
-  for (const n of db.prepare("SELECT key, url FROM social_networks WHERE url <> ''").all()) {
+  // socialAudience: ключ сети → 'all' | 'ru' | 'en' — подвал и блок «в канале»
+  // прячут сеть в чужой версии сайта.
+  settings.socialAudience = {};
+  for (const n of db.prepare("SELECT key, url, audience FROM social_networks WHERE url <> ''").all()) {
     settings[n.key.replace(/-/g, '_') + '_url'] = n.url;
+    settings.socialAudience[n.key] = n.audience || 'all';
   }
   return settings;
 }

@@ -552,6 +552,19 @@ function init() {
     db.prepare("INSERT OR REPLACE INTO settings (key, value) VALUES ('migration_social_urls', '1')").run();
   }
 
+  // Аудитория сети: 'all' — на обеих версиях сайта, 'ru' — только на русской,
+  // 'en' — только на английской (/en/…). Правится в карточке сети в админке.
+  if (!socialCols.some((c) => c.name === 'audience')) {
+    db.exec("ALTER TABLE social_networks ADD COLUMN audience TEXT NOT NULL DEFAULT 'all'");
+  }
+  if (!db.prepare("SELECT 1 FROM settings WHERE key = 'migration_social_audience'").get()) {
+    const setAud = db.prepare('UPDATE social_networks SET audience = ? WHERE key = ?');
+    // Русские площадки — русской версии; заблокированные в РФ и китайские — английской.
+    for (const k of ['vk', 'dzen', 'ok', 'rutube', 'likee', 'yappy']) setAud.run('ru', k);
+    for (const k of ['facebook', 'x', 'douyin', 'weibo', 'wechat', 'xiaohongshu']) setAud.run('en', k);
+    db.prepare("INSERT OR REPLACE INTO settings (key, value) VALUES ('migration_social_audience', '1')").run();
+  }
+
   // Списки соцсетей на страницах «Обо мне», «Музыка», «Стиль» теперь строятся из
   // social_networks (utils/links.socialLinksGroup); дубли адресов в page_links убираем.
   if (!db.prepare("SELECT 1 FROM settings WHERE key = 'migration_social_page_links'").get()) {
@@ -783,22 +796,22 @@ function init() {
     { key: 'telegram', label: 'Telegram', connector: 'telegram', category: 'general' },
     { key: 'vk', label: 'VK', connector: 'vk', category: 'general' },
     { key: 'youtube', label: 'YouTube', connector: 'manual', category: 'music' },
-    { key: 'instagram', label: 'Instagram (@levkeiser, личный)', connector: 'manual', category: 'general' },
-    { key: 'instagram-djlevka', label: 'Instagram (@djlevka, музыка)', connector: 'manual', category: 'music' },
+    { key: 'instagram', label: 'Instagram', connector: 'manual', category: 'general' },
+    { key: 'instagram-djlevka', label: 'Instagram DJ Levka', connector: 'manual', category: 'music' },
     { key: 'tiktok', label: 'TikTok', connector: 'manual', category: 'shorts' },
     { key: 'pinterest', label: 'Pinterest', connector: 'manual', category: 'general' },
     { key: 'rutube', label: 'Rutube', connector: 'manual', category: 'general' },
     { key: 'ok', label: 'Одноклассники', connector: 'manual', category: 'general' },
     { key: 'dzen', label: 'Дзен', connector: 'manual', category: 'general' },
     // Найдены на band.link/levkeiser и band.link/djlevka, но отсутствовали в списке.
-    { key: 'x', label: 'X (Twitter)', connector: 'manual', category: 'general' },
+    { key: 'x', label: 'X', connector: 'manual', category: 'general' },
     { key: 'facebook', label: 'Facebook', connector: 'manual', category: 'general' },
     { key: 'yappy', label: 'Yappy', connector: 'manual', category: 'shorts' },
     { key: 'likee', label: 'Likee', connector: 'manual', category: 'shorts' },
     // Китайские площадки — ссылки на них уже есть в /admin/settings (douyin_url и т.д.).
-    { key: 'douyin', label: 'Douyin (кит. TikTok)', connector: 'manual', category: 'shorts' },
+    { key: 'douyin', label: 'Douyin', connector: 'manual', category: 'shorts' },
     { key: 'weibo', label: 'Weibo', connector: 'manual', category: 'general' },
-    { key: 'xiaohongshu', label: 'Xiaohongshu (RedNote)', connector: 'manual', category: 'general' },
+    { key: 'xiaohongshu', label: 'Xiaohongshu', connector: 'manual', category: 'general' },
     { key: 'vimeo', label: 'Vimeo', connector: 'manual', category: 'music' },
     { key: 'soundcloud', label: 'SoundCloud', connector: 'manual', category: 'music' },
     { key: 'news', label: 'Новости сайта', connector: 'news', category: 'general' },
@@ -812,10 +825,8 @@ function init() {
 
   // Одноразовая раскладка категории «видеовертикалки» для уже существующих строк
   // (флаг в settings, чтобы не перетирать ручные изменения пользователя при каждом старте).
-  // Существующая строка Instagram получила уточнённую подпись (у Льва два аккаунта — личный и музыкальный).
-  db.prepare("UPDATE social_networks SET label = ? WHERE key = 'instagram' AND label = 'Instagram'").run(
-    'Instagram (@levkeiser, личный)'
-  );
+  // Названия сетей — короткие, без скобок (12.09.2026); раньше здесь при каждом
+  // старте Instagram переименовывался обратно в «Instagram (@levkeiser, личный)».
 
   // «Новости сайта» не требуют учётных данных — включаем один раз при появлении.
   const newsNetMigrated = db.prepare("SELECT value FROM settings WHERE key = 'migration_news_network_enabled'").get();

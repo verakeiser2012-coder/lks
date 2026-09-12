@@ -58,7 +58,7 @@ router.get('/', (req, res) => {
     inspireItems: getGalleryItems('style-inspires'),
     adBrands: setting('style_ads_brands'),
     // Свои ссылки страницы (если есть) + соцсети из раздела «Соцсети».
-    groups: groupLinks(links).concat([socialLinksGroup('Где ещё смотреть', { first: 'shorts' })]),
+    groups: groupLinks(links).concat([socialLinksGroup('Где ещё смотреть', { first: 'shorts', lang: req.lang })]),
     banners: getBanners('style'),
   });
 });
