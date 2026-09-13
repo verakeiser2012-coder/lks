@@ -60,7 +60,7 @@ async function createShipment(orderId) {
   if (order.shipping_ref) return { status: 'exists', detail: `уже создана: ${order.shipping_track || order.shipping_ref}` };
   const c = CARRIERS[order.shipping_carrier];
   if (!c || !c.isConfigured || !c.createOrder) return { status: 'manual', detail: 'служба не подключена' };
-  const items = db.prepare('SELECT oi.*, p.weight FROM order_items oi LEFT JOIN products p ON p.id = oi.product_id WHERE oi.order_id = ?').all(orderId);
+  const items = db.prepare('SELECT oi.*, p.weight, p.package_size FROM order_items oi LEFT JOIN products p ON p.id = oi.product_id WHERE oi.order_id = ?').all(orderId);
   const s = {};
   db.prepare("SELECT key, value FROM settings WHERE key IN ('legal_ip_name', 'legal_address', 'phone', 'site_name')").all().forEach((r) => { s[r.key] = r.value; });
   const sender = {

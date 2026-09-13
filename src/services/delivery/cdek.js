@@ -42,6 +42,30 @@ async function api(path, body) {
   return r.json();
 }
 
+/**
+ * Габариты упаковки «30 × 22 × 12» (см) → {length,width,height}; пусто или мусор — null.
+ * Для нескольких вещей в заказе берём место, в которое влезают все: наибольшие длина
+ * и ширина, высоты складываем (вещи кладутся стопкой).
+ */
+function parseSize(text) {
+  const m = String(text || '').replace(/,/g, '.').match(/([\d.]+)\s*[x×хX*]\s*([\d.]+)\s*[x×хX*]\s*([\d.]+)/);
+  if (!m) return null;
+  const [l, w, h] = [m[1], m[2], m[3]].map((v) => Math.max(1, Math.round(parseFloat(v))));
+  return { length: l, width: w, height: h };
+}
+function packageSize(items) {
+  const sizes = items.map((i) => parseSize(i.package_size)).filter(Boolean);
+  if (!sizes.length) return { length: 25, width: 20, height: 15 };
+  const out = { length: 0, width: 0, height: 0 };
+  items.forEach((i) => {
+    const s = parseSize(i.package_size) || { length: 25, width: 20, height: 15 };
+    out.length = Math.max(out.length, s.length);
+    out.width = Math.max(out.width, s.width);
+    out.height += s.height * (i.qty || 1);
+  });
+  return out;
+}
+
 /** Вес из текста карточки («150 г», «1,4 кг», «~25 г») в граммах; пусто — 400 г по умолчанию. */
 function parseWeight(text) {
   const m = String(text || '').replace(',', '.').match(/([\d.]+)\s*(кг|kg|г|g)/i);
@@ -161,8 +185,8 @@ async function createOrder({ order, items, sender }) {
     packages: [{
       number: `site-${order.id}-1`,
       weight,
-      // Габариты обязательны; коробка под бюст/аромакамень/флаг с запасом.
-      length: 25, width: 20, height: 15,
+      // Габариты из карточек товаров (поле «Габариты упаковки»); без них — 25×20×15.
+      ...packageSize(items),
       items: items.map((i, n) => ({
         name: String(i.product_name).slice(0, 255),
         ware_key: String(i.product_id || n + 1),
@@ -189,4 +213,4 @@ async function orderInfo(uuid) {
   return { track: e.cdek_number || '', status: st.name || st.code || '', error };
 }
 
-module.exports = { LABEL, isConfigured, quote, pickupPoints, parseWeight, createOrder, orderInfo };
+module.exports = { LABEL, isConfigured, quote, pickupPoints, parseWeight, parseSize, packageSize, createOrder, orderInfo };

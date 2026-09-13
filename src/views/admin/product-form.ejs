@@ -156,6 +156,10 @@
       <input type="text" name="care" value="<%= product && product.care ? product.care : '' %>" placeholder="например: беречь от влаги, протирать сухой тканью">
     </label>
     <label>
+      Габариты упаковки для доставки, Д × Ш × В в см (по ним считается накладная СДЭК; пусто — 25 × 20 × 15)
+      <input type="text" name="packageSize" value="<%= product && product.package_size ? product.package_size : '' %>" placeholder="например: 30 × 22 × 12">
+    </label>
+    <label>
       Изготовитель и место изготовления (обязательно по правилам дистанционной торговли)
       <input type="text" name="manufacturer" value="<%= product && product.manufacturer ? product.manufacturer : '' %>" placeholder="например: ИП Кейсер, Екатеринбург, Россия">
     </label>

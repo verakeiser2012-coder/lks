@@ -662,6 +662,11 @@ function init() {
   if (!podProductCols.includes('manufacturer')) {
     db.exec("ALTER TABLE products ADD COLUMN manufacturer TEXT NOT NULL DEFAULT ''");
   }
+  // Габариты упаковки «Д × Ш × В см» — для накладной в службе доставки
+  // (dimensions — размер самой вещи, он показывается покупателю).
+  if (!podProductCols.includes('package_size')) {
+    db.exec("ALTER TABLE products ADD COLUMN package_size TEXT NOT NULL DEFAULT ''");
+  }
   const podItemCols = db.prepare('PRAGMA table_info(order_items)').all().map((c) => c.name);
   for (const [col, def] of [['variant', "TEXT NOT NULL DEFAULT ''"], ['fulfillment_status', "TEXT NOT NULL DEFAULT ''"], ['fulfillment_ref', "TEXT NOT NULL DEFAULT ''"]]) {
     if (!podItemCols.includes(col)) db.exec(`ALTER TABLE order_items ADD COLUMN ${col} ${def}`);
