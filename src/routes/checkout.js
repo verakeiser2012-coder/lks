@@ -55,8 +55,9 @@ router.post('/quote', async (req, res) => {
   const { items } = getCartDetails(req);
   const city = String((req.body && req.body.city) || '').trim();
   const postcode = String((req.body && req.body.postcode) || '').replace(/\D/g, '');
+  const phone = String((req.body && req.body.phone) || '').trim();
   if (!items.length || (!city && !postcode)) return res.json({ quotes: [] });
-  const quotes = await delivery.quoteAll({ city, postcode, items: items.map((i) => ({ weight: i.product.weight, qty: i.qty })) });
+  const quotes = await delivery.quoteAll({ city, postcode, phone, items: items.map((i) => ({ weight: i.product.weight, package_size: i.product.package_size, price: i.product.price, qty: i.qty })) });
   res.json({ quotes });
 });
 
@@ -111,7 +112,7 @@ router.post('/', async (req, res, next) => {
   if (method !== 'digital' && shippingChoice && /^[a-z]+:(door|pickup)$/.test(shippingChoice)) {
     const [carrierKey, tariff] = shippingChoice.split(':');
     try {
-      const quotes = await delivery.quoteAll({ city: (city || '').trim(), postcode: String(zip || '').replace(/\D/g, ''), items: items.map((i) => ({ weight: i.product.weight, qty: i.qty })) });
+      const quotes = await delivery.quoteAll({ city: (city || '').trim(), postcode: String(zip || '').replace(/\D/g, ''), phone, items: items.map((i) => ({ weight: i.product.weight, package_size: i.product.package_size, price: i.product.price, qty: i.qty })) });
       const q = quotes.find((x) => x.key === carrierKey);
       if (q && q[tariff]) shipping = { carrier: carrierKey, tariff, cost: q[tariff].price, days: q[tariff].days };
     } catch (e) {

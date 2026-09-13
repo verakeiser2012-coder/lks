@@ -1,13 +1,27 @@
 const express = require('express');
 const db = require('../../db');
 const { submitOrder, printfulItems } = require('../../services/printful');
-const { createShipment, refreshShipment } = require('../../services/delivery');
+const { createShipment, refreshShipment, CARRIERS } = require('../../services/delivery');
 
 const router = express.Router();
 
 router.get('/', (req, res) => {
   const orders = db.prepare('SELECT * FROM orders ORDER BY created_at DESC').all();
   res.render('admin/orders', { orders });
+});
+
+// Этикетка отправления для передачи в ПВЗ (пока только Ozon отдаёт PDF).
+router.get('/:id/label', async (req, res, next) => {
+  const order = db.prepare('SELECT id, shipping_carrier, shipping_ref FROM orders WHERE id = ?').get(req.params.id);
+  if (!order || !order.shipping_ref) return res.status(404).render('404');
+  const c = CARRIERS[order.shipping_carrier];
+  if (!c || !c.label) return res.status(404).render('404');
+  try {
+    const pdf = await c.label(order.shipping_ref);
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `inline; filename="order-${order.id}-label.pdf"`);
+    res.send(pdf);
+  } catch (err) { next(err); }
 });
 
 router.get('/:id', (req, res) => {

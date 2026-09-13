@@ -137,6 +137,7 @@
   // и сроком; выбранный вариант уходит с формой в shippingChoice и пересчитывается сервером.
   (function () {
     var city = document.getElementById('ship-city');
+    var phoneEl = document.querySelector('input[name="phone"]');
     var zip = document.getElementById('ship-zip');
     var box = document.getElementById('shipping-quote');
     var opts = document.getElementById('shipping-options');
@@ -178,6 +179,9 @@
       var isPickup = /:pickup$/.test(r.value);
       var radio = document.querySelector('input[name="deliveryMethod"][value="' + (isPickup ? 'pickup' : 'courier') + '"]');
       if (radio && !radio.checked) { radio.checked = true; radio.dispatchEvent(new Event('change')); }
+      // Список пунктов — той службы, чей вариант выбран: у СДЭК и Ozon они разные.
+      var carrier = r.value.split(':')[0];
+      if (isPickup && carrier !== pointsCarrier) { pointsCarrier = carrier; loadPoints(); }
       var price = Number(r.getAttribute('data-price')) || 0;
       hint.textContent = 'Итого с доставкой: ' + fmt(total + price) + '. Доставка оплачивается вместе с заказом.';
       if (totalEl) totalEl.textContent = fmt(total + price);
@@ -187,12 +191,14 @@
       if (!c && z.length < 6) { box.hidden = true; status.hidden = false; status.textContent = 'Введите индекс или город — посчитаем доставку.'; if (totalEl) totalEl.textContent = fmt(total); return; }
       var my = ++seq;
       status.hidden = false; status.textContent = 'Считаем доставку…';
-      fetch('/checkout/quote', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ city: c, postcode: z }) })
+      fetch('/checkout/quote', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ city: c, postcode: z, phone: phoneEl ? phoneEl.value : '' }) })
         .then(function (r) { return r.json(); })
         .then(function (d) { if (my === seq) render(d.quotes || []); })
         .catch(function () { if (my === seq) { status.textContent = 'Не удалось посчитать доставку — согласуем после оформления.'; } });
     }
     [city, zip].forEach(function (el) { el.addEventListener('input', function () { clearTimeout(timer); timer = setTimeout(refresh, 600); clearTimeout(ptimer); ptimer = setTimeout(loadPoints, 700); }); });
+    // Ozon считает только покупателям с аккаунтом Ozon на этот телефон — пересчёт при смене номера.
+    if (phoneEl) phoneEl.addEventListener('input', function () { clearTimeout(timer); timer = setTimeout(refresh, 800); });
 
     // Пункты выдачи: список по городу/индексу, фильтр по адресу, выбор — в скрытое поле.
     var search = document.getElementById('pickup-search');
@@ -200,7 +206,8 @@
     var pcode = document.getElementById('pickup-code');
     var plist = document.getElementById('pickup-list');
     var pstatus = document.getElementById('pickup-status');
-    var points = [], ptimer = null, pseq = 0;
+    var points = [], ptimer = null, pseq = 0, pointsCarrier = 'cdek';
+    var carrierNames = { cdek: 'СДЭК', ozon: 'Ozon' };
     function renderPoints() {
       var q = search.value.trim().toLowerCase();
       var shown = points.filter(function (p) { return !q || (p.address + ' ' + p.landmark).toLowerCase().indexOf(q) !== -1; }).slice(0, 40);
@@ -226,14 +233,14 @@
       if (!c && z.length < 6) { search.hidden = true; ptext.hidden = false; pstatus.textContent = 'Введите город или индекс выше — покажем пункты выдачи.'; return; }
       var my = ++pseq;
       pstatus.textContent = 'Ищем пункты выдачи…';
-      fetch('/checkout/pickup-points?carrier=cdek&city=' + encodeURIComponent(c) + '&postcode=' + z)
+      fetch('/checkout/pickup-points?carrier=' + pointsCarrier + '&city=' + encodeURIComponent(c) + '&postcode=' + z)
         .then(function (r) { return r.json(); })
         .then(function (d) {
           if (my !== pseq) return;
           points = d.points || [];
           if (!points.length) { search.hidden = true; ptext.hidden = false; pstatus.textContent = 'Список пунктов не нашли — напишите удобный пункт словами, уточним после оформления.'; return; }
           search.hidden = false; ptext.hidden = true; ptext.value = '';
-          pstatus.textContent = 'Пунктов выдачи СДЭК: ' + points.length + '. Выберите из списка или начните вводить улицу.';
+          pstatus.textContent = 'Пунктов выдачи ' + (carrierNames[pointsCarrier] || pointsCarrier) + ': ' + points.length + '. Выберите из списка или начните вводить улицу.';
           renderPoints();
         })
         .catch(function () { if (my === pseq) { search.hidden = true; ptext.hidden = false; pstatus.textContent = 'Список пунктов не загрузился — напишите удобный пункт словами.'; } });

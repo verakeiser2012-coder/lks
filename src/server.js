@@ -176,4 +176,6 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Сайт запущен: http://localhost:${PORT}`);
   require('./services/social/scheduler').start();
+  // Справочник ПВЗ Ozon (86 тысяч точек) обновляется в фоне раз в сутки.
+  require('./services/delivery/ozon').scheduleSync();
 });

@@ -29,17 +29,18 @@
 </table>
 
 <% if (order.shipping_cost) { %>
-  <p>Доставка: <%= order.shipping_carrier === 'cdek' ? 'СДЭК' : order.shipping_carrier %>, <%= order.shipping_tariff === 'pickup' ? 'до пункта выдачи' : 'до двери' %> — <%= formatPrice(order.shipping_cost) %><%= order.shipping_days ? ', ' + order.shipping_days + ' дн.' : '' %></p>
+  <p>Доставка: <%= ({ cdek: 'СДЭК', ozon: 'Ozon' })[order.shipping_carrier] || order.shipping_carrier %>, <%= order.shipping_tariff === 'pickup' ? 'до пункта выдачи' : 'до двери' %> — <%= formatPrice(order.shipping_cost) %><%= order.shipping_days ? ', ' + order.shipping_days + ' дн.' : '' %></p>
 <% } %>
 <p><strong>Итого: <%= formatPrice(order.total) %></strong><% if (order.shipping_cost) { %> <span style="color:var(--color-muted);font-weight:normal;">(вещи <%= formatPrice(order.total - order.shipping_cost) %> + доставка)</span><% } %></p>
 
 <% if (order.shipping_carrier) { %>
   <% if (typeof shipResult !== 'undefined' && shipResult) { %><div class="flash flash-success">Накладная: <%= shipResult %></div><% } %>
   <p>
-    Накладная <%= order.shipping_carrier === 'cdek' ? 'СДЭК' : order.shipping_carrier %>:
+    Накладная <%= ({ cdek: 'СДЭК', ozon: 'Ozon' })[order.shipping_carrier] || order.shipping_carrier %>:
     <% if (order.shipping_track) { %>
       <strong><%= order.shipping_track %></strong>
       <% if (order.shipping_carrier === 'cdek') { %> · <a href="https://www.cdek.ru/ru/tracking?order_id=<%= order.shipping_track %>" target="_blank" rel="noopener">отследить</a><% } %>
+      <% if (order.shipping_carrier === 'ozon') { %> · <a href="/admin/orders/<%= order.id %>/label">этикетка PDF</a> · <a href="https://seller.ozon.ru/app/delivery/orders" target="_blank" rel="noopener">кабинет доставки</a><% } %>
     <% } else if (order.shipping_ref) { %>
       создана, номер ещё не присвоен (uuid <%= order.shipping_ref %>)
     <% } else if (order.shipping_status === 'manual') { %>

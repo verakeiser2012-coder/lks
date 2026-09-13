@@ -21,12 +21,12 @@ function available() {
 }
 
 /** Стоимость и срок по каждой подключённой службе; ошибка одной не валит остальные. */
-async function quoteAll({ city, postcode, items }) {
+async function quoteAll({ city, postcode, items, phone }) {
   const out = [];
   for (const [key, c] of Object.entries(CARRIERS)) {
     if (!c.isConfigured) continue;
     try {
-      const q = await c.quote({ city, postcode, items });
+      const q = await c.quote({ city, postcode, items, phone });
       if (q) out.push({ key, label: c.LABEL, ...q });
     } catch (err) {
       // Курьерка легла — покупатель всё равно должен оформить заказ.
@@ -70,8 +70,11 @@ async function createShipment(orderId) {
     address: s.legal_address || '',
   };
   try {
-    const { uuid } = await c.createOrder({ order, items, sender });
+    const { uuid, warning } = await c.createOrder({ order, items, sender });
     db.prepare("UPDATE orders SET shipping_ref = ?, shipping_status = 'created' WHERE id = ?").run(uuid, orderId);
+    if (warning) {
+      notify(`Заказ №${orderId}: ${c.LABEL} — нужно действие`, `${warning}\n\nЗаказ в админке: /admin/orders/${orderId}`).catch(() => {});
+    }
     let track = '';
     try {
       await new Promise((r) => setTimeout(r, 4000));
