@@ -120,4 +120,73 @@ async function pickupPoints({ city, postcode }) {
   return list;
 }
 
-module.exports = { LABEL, isConfigured, quote, pickupPoints, parseWeight };
+/**
+ * Создать заказ (накладную) в СДЭК по оплаченному заказу сайта.
+ * Тариф из orders.shipping_tariff: pickup → 136 до пункта выдачи (код пункта из
+ * pickup_point «CODE · адрес»), door → 137 до двери (адрес покупателя).
+ * Отправитель — ИП из настроек сайта, склад = CDEK_FROM_CITY (или пункт
+ * сдачи CDEK_SHIPMENT_POINT, если задан). Стоимость вещей — как объявленная
+ * ценность; наложенного платежа нет, заказ уже оплачен.
+ * Возвращает { uuid }; номер накладной СДЭК присваивает чуть позже — orderInfo(uuid).
+ */
+async function createOrder({ order, items, sender }) {
+  if (!isConfigured) throw new Error('СДЭК не подключён');
+  const isPickup = order.shipping_tariff === 'pickup';
+  const pickupCode = isPickup ? (String(order.pickup_point || '').match(/^([A-Za-z0-9_-]+)\s·/) || [])[1] : '';
+  if (isPickup && !pickupCode) throw new Error('пункт выдачи выбран не из списка — накладную оформите вручную');
+  let toLocation;
+  if (!isPickup) {
+    if (order.zip) toLocation = { postal_code: String(order.zip), city: order.city || undefined, address: order.address };
+    else {
+      const code = await cityCode(order.city);
+      if (!code) throw new Error('не определён город получателя');
+      toLocation = { code, address: order.address };
+    }
+  }
+  const weight = Math.max(300, items.reduce((s, i) => s + parseWeight(i.weight) * (i.qty || 1), 0));
+  const shipmentPoint = process.env.CDEK_SHIPMENT_POINT || '';
+  const body = {
+    type: 1,
+    number: `site-${order.id}`,
+    tariff_code: isPickup ? 136 : 137,
+    comment: order.comment ? String(order.comment).slice(0, 250) : undefined,
+    shipment_point: shipmentPoint || undefined,
+    from_location: shipmentPoint ? undefined : { code: FROM_CITY, address: sender.address || 'склад' },
+    delivery_point: isPickup ? pickupCode : undefined,
+    to_location: toLocation,
+    sender: { company: sender.company, name: sender.name, phones: [{ number: sender.phone }] },
+    recipient: { name: order.customer_name, phones: [{ number: String(order.phone).replace(/[^\d+]/g, '') }], email: order.email || undefined },
+    // Доставка уже оплачена на сайте — получателю ничего не доплачивать.
+    delivery_recipient_cost: { value: 0 },
+    packages: [{
+      number: `site-${order.id}-1`,
+      weight,
+      // Габариты обязательны; коробка под бюст/аромакамень/флаг с запасом.
+      length: 25, width: 20, height: 15,
+      items: items.map((i, n) => ({
+        name: String(i.product_name).slice(0, 255),
+        ware_key: String(i.product_id || n + 1),
+        payment: { value: 0 },
+        cost: Number(i.price) || 0,
+        weight: parseWeight(i.weight),
+        amount: i.qty || 1,
+      })),
+    }],
+  };
+  const j = await api('/orders', body);
+  const bad = (j.requests || []).find((r) => r.state === 'INVALID');
+  if (bad) throw new Error('СДЭК: ' + (bad.errors || []).map((e) => e.message).join('; '));
+  if (!j.entity || !j.entity.uuid) throw new Error('СДЭК: ответ без uuid');
+  return { uuid: j.entity.uuid };
+}
+
+/** Номер накладной и текущий статус по uuid заказа СДЭК. */
+async function orderInfo(uuid) {
+  const j = await api(`/orders/${encodeURIComponent(uuid)}`);
+  const e = j.entity || {};
+  const st = (e.statuses || [])[0] || {};
+  const error = (j.requests || []).filter((r) => r.state === 'INVALID').map((r) => (r.errors || []).map((x) => x.message).join('; ')).join('; ');
+  return { track: e.cdek_number || '', status: st.name || st.code || '', error };
+}
+
+module.exports = { LABEL, isConfigured, quote, pickupPoints, parseWeight, createOrder, orderInfo };

@@ -672,7 +672,9 @@ function init() {
   }
   // Доставка, посчитанная при оформлении (СДЭК): служба, тариф, сумма, срок.
   // total заказа включает shipping_cost; вещи считаются отдельно в order_items.
-  for (const [col, def] of [['shipping_carrier', "TEXT NOT NULL DEFAULT ''"], ['shipping_tariff', "TEXT NOT NULL DEFAULT ''"], ['shipping_cost', 'REAL NOT NULL DEFAULT 0'], ['shipping_days', "TEXT NOT NULL DEFAULT ''"]]) {
+  // shipping_ref — uuid заказа в СДЭК, shipping_track — номер накладной (появляется
+  // после обработки заказа СДЭК), shipping_status — 'created' | 'manual' | 'error'.
+  for (const [col, def] of [['shipping_carrier', "TEXT NOT NULL DEFAULT ''"], ['shipping_tariff', "TEXT NOT NULL DEFAULT ''"], ['shipping_cost', 'REAL NOT NULL DEFAULT 0'], ['shipping_days', "TEXT NOT NULL DEFAULT ''"], ['shipping_ref', "TEXT NOT NULL DEFAULT ''"], ['shipping_track', "TEXT NOT NULL DEFAULT ''"], ['shipping_status', "TEXT NOT NULL DEFAULT ''"]]) {
     if (!podOrderCols.includes(col)) db.exec(`ALTER TABLE orders ADD COLUMN ${col} ${def}`);
   }
 
