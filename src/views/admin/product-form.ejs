@@ -155,6 +155,10 @@
       Уход и хранение
       <input type="text" name="care" value="<%= product && product.care ? product.care : '' %>" placeholder="например: беречь от влаги, протирать сухой тканью">
     </label>
+    <label>
+      Изготовитель и место изготовления (обязательно по правилам дистанционной торговли)
+      <input type="text" name="manufacturer" value="<%= product && product.manufacturer ? product.manufacturer : '' %>" placeholder="например: ИП Кейсер, Екатеринбург, Россия">
+    </label>
   </fieldset>
   <label>
     Фото товара

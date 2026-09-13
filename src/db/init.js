@@ -657,6 +657,11 @@ function init() {
   if (!podProductCols.includes('printful_variants')) {
     db.exec("ALTER TABLE products ADD COLUMN printful_variants TEXT NOT NULL DEFAULT ''");
   }
+  // Изготовитель и место изготовления — обязательная информация о товаре по
+  // правилам дистанционной торговли (ст. 26.1 ЗоЗПП, ПП 2463). Показывается в карточке.
+  if (!podProductCols.includes('manufacturer')) {
+    db.exec("ALTER TABLE products ADD COLUMN manufacturer TEXT NOT NULL DEFAULT ''");
+  }
   const podItemCols = db.prepare('PRAGMA table_info(order_items)').all().map((c) => c.name);
   for (const [col, def] of [['variant', "TEXT NOT NULL DEFAULT ''"], ['fulfillment_status', "TEXT NOT NULL DEFAULT ''"], ['fulfillment_ref', "TEXT NOT NULL DEFAULT ''"]]) {
     if (!podItemCols.includes(col)) db.exec(`ALTER TABLE order_items ADD COLUMN ${col} ${def}`);

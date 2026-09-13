@@ -74,6 +74,8 @@
         [specLabels[2], product.weight],
         [specLabels[3], product.material],
         [specLabels[4], product.care],
+        // Изготовитель — обязательное сведение о товаре; у цифровых — правообладатель.
+        [product.is_digital ? 'Правообладатель' : 'Изготовитель', product.manufacturer],
       ].filter(function (row) { return row[1]; });
     %>
     <% if (specs.length) { %>
