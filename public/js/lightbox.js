@@ -1,6 +1,10 @@
 (function () {
   document.addEventListener('DOMContentLoaded', function () {
     var items = Array.prototype.slice.call(document.querySelectorAll('.gallery-item')).filter(function (item) {
+      // Кинолента анимаций на странице трека живёт по своим правилам (anim-strip.js):
+      // ролики крутятся сами, звук — кнопкой; лайтбокс с его «пауза при уходе
+      // курсора» их останавливал, а клик по кнопке звука открывал окно.
+      if (item.closest('.anim-strip')) return false;
       return !item.querySelector('iframe');
     });
     if (items.length === 0) return;

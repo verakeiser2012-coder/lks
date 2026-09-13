@@ -67,7 +67,7 @@
     <% anims.forEach(function (a, i) { %>
       <div class="film-cell anim-cell" data-code="DJ LEVKA · <%= track.title.toUpperCase() %>" data-num="КАДР <%= String(i + 1).padStart(2, '0') %>">
         <div class="gallery-item edge-soft is-video anim-frame">
-          <video src="<%= a.file_path %>" muted loop playsinline preload="metadata" title="<%= a.title %>"></video>
+          <video src="<%= a.file_path %>" autoplay muted loop playsinline preload="metadata" title="<%= a.title %>"></video>
           <button type="button" class="anim-sound" aria-pressed="false">🔇 звук</button>
         </div>
       </div>
