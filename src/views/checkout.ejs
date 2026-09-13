@@ -85,13 +85,16 @@
         </label>
       </div>
       <div id="delivery-pickup-field" style="display:none;">
+        <%# Пункт выдачи из списка СДЭК по городу/индексу (GET /checkout/pickup-points).
+            Пока списка нет или служба не подключена — обычное текстовое поле. %>
         <label>
-          Удобный пункт выдачи
-          <input type="text" name="pickupPoint" placeholder="Например: СДЭК на ул. Ленина, 10">
+          Пункт выдачи
+          <input type="text" id="pickup-search" placeholder="Начните вводить улицу — найдём пункт" autocomplete="off" hidden>
+          <input type="text" name="pickupPoint" id="pickup-text" placeholder="Например: СДЭК на ул. Ленина, 10">
+          <input type="hidden" name="pickupCode" id="pickup-code">
         </label>
-        <p style="color:var(--color-muted); font-size:0.85rem; margin-top:-8px;">
-          Точный адрес пункта выдачи согласуем с вами после оформления заказа.
-        </p>
+        <div id="pickup-list" class="pickup-list" hidden></div>
+        <p class="hint" id="pickup-status" style="margin:-8px 0 14px;">Введите город или индекс выше — покажем пункты выдачи.</p>
       </div>
       <% } %>
       <label>
@@ -189,7 +192,54 @@
         .then(function (d) { if (my === seq) render(d.quotes || []); })
         .catch(function () { if (my === seq) { status.textContent = 'Не удалось посчитать доставку — согласуем после оформления.'; } });
     }
-    [city, zip].forEach(function (el) { el.addEventListener('input', function () { clearTimeout(timer); timer = setTimeout(refresh, 600); }); });
+    [city, zip].forEach(function (el) { el.addEventListener('input', function () { clearTimeout(timer); timer = setTimeout(refresh, 600); clearTimeout(ptimer); ptimer = setTimeout(loadPoints, 700); }); });
+
+    // Пункты выдачи: список по городу/индексу, фильтр по адресу, выбор — в скрытое поле.
+    var search = document.getElementById('pickup-search');
+    var ptext = document.getElementById('pickup-text');
+    var pcode = document.getElementById('pickup-code');
+    var plist = document.getElementById('pickup-list');
+    var pstatus = document.getElementById('pickup-status');
+    var points = [], ptimer = null, pseq = 0;
+    function renderPoints() {
+      var q = search.value.trim().toLowerCase();
+      var shown = points.filter(function (p) { return !q || (p.address + ' ' + p.landmark).toLowerCase().indexOf(q) !== -1; }).slice(0, 40);
+      plist.innerHTML = '';
+      shown.forEach(function (p) {
+        var b = document.createElement('button');
+        b.type = 'button'; b.className = 'pickup-item' + (pcode.value === p.code ? ' is-selected' : '');
+        b.innerHTML = '<span class="pickup-item-address">' + p.address + '</span>'
+          + '<span class="pickup-item-meta">' + p.type + (p.hours ? ' · ' + p.hours : '') + (p.landmark ? ' · ' + p.landmark : '') + (p.fitting ? ' · примерка' : '') + '</span>';
+        b.addEventListener('click', function () {
+          pcode.value = p.code; ptext.value = p.address + (p.city ? ' (' + p.city + ')' : '');
+          search.value = p.address; renderPoints();
+          pstatus.textContent = 'Выбран: ' + p.type + ', ' + p.address + '.';
+        });
+        plist.appendChild(b);
+      });
+      plist.hidden = shown.length === 0;
+      if (points.length && !shown.length) pstatus.textContent = 'По такому адресу пунктов нет — попробуйте другую улицу.';
+    }
+    function loadPoints() {
+      var c = city.value.trim(), z = zip.value.replace(/\D/g, '');
+      points = []; pcode.value = ''; plist.hidden = true;
+      if (!c && z.length < 6) { search.hidden = true; ptext.hidden = false; pstatus.textContent = 'Введите город или индекс выше — покажем пункты выдачи.'; return; }
+      var my = ++pseq;
+      pstatus.textContent = 'Ищем пункты выдачи…';
+      fetch('/checkout/pickup-points?carrier=cdek&city=' + encodeURIComponent(c) + '&postcode=' + z)
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (my !== pseq) return;
+          points = d.points || [];
+          if (!points.length) { search.hidden = true; ptext.hidden = false; pstatus.textContent = 'Список пунктов не нашли — напишите удобный пункт словами, уточним после оформления.'; return; }
+          search.hidden = false; ptext.hidden = true; ptext.value = '';
+          pstatus.textContent = 'Пунктов выдачи СДЭК: ' + points.length + '. Выберите из списка или начните вводить улицу.';
+          renderPoints();
+        })
+        .catch(function () { if (my === pseq) { search.hidden = true; ptext.hidden = false; pstatus.textContent = 'Список пунктов не загрузился — напишите удобный пункт словами.'; } });
+    }
+    search.addEventListener('input', function () { pcode.value = ''; ptext.value = ''; renderPoints(); });
+    search.addEventListener('focus', function () { if (points.length) renderPoints(); });
     document.querySelectorAll('input[name="deliveryMethod"]').forEach(function (r) {
       r.addEventListener('change', function () {
         var want = r.value === 'pickup' ? 'pickup' : 'door';

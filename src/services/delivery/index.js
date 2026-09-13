@@ -36,4 +36,11 @@ async function quoteAll({ city, postcode, items }) {
   return out;
 }
 
-module.exports = { CARRIERS, available, quoteAll };
+/** Пункты выдачи одной службы (пока только СДЭК умеет список). */
+async function pickupPoints(key, where) {
+  const c = CARRIERS[key];
+  if (!c || !c.isConfigured || !c.pickupPoints) return [];
+  return c.pickupPoints(where);
+}
+
+module.exports = { CARRIERS, available, quoteAll, pickupPoints };

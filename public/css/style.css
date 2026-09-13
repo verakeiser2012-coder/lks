@@ -2833,3 +2833,12 @@ h1.mk-cover-name { margin: 0; }
 .shipping-option input { width: auto; margin: 0; }
 .shipping-option-name { flex: 1; }
 .shipping-option-meta { color: var(--color-muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+/* Оформление: список пунктов выдачи СДЭК. */
+.pickup-list { max-height: 260px; overflow-y: auto; border: 1px solid var(--color-border); border-radius: var(--radius); margin: -6px 0 14px; background: #fff; }
+.pickup-item { display: block; width: 100%; text-align: left; background: none; border: 0; border-bottom: 1px solid var(--color-border); padding: 8px 12px; cursor: pointer; font: inherit; color: var(--color-text); }
+.pickup-item:last-child { border-bottom: 0; }
+.pickup-item:hover, .pickup-item.is-selected { background: #fff7dd; }
+.pickup-item.is-selected { box-shadow: inset 3px 0 0 var(--color-accent); }
+.pickup-item-address { display: block; font-weight: 600; }
+.pickup-item-meta { display: block; font-size: 0.82rem; color: var(--color-muted); margin-top: 2px; }

@@ -86,10 +86,38 @@ async function quote({ city, postcode, items }) {
   return out;
 }
 
-/** Пункты выдачи по коду города — для выбора при оформлении. */
-async function pickupPoints(cityCode) {
+/**
+ * Пункты выдачи для выбора при оформлении: по индексу или по названию города.
+ * Отдаём компактный список — код, адрес, часы, ориентир; постаматы тоже
+ * (в них не примерить, но забирать удобнее). Кэш на 6 часов: список меняется редко.
+ */
+const pointsCache = new Map();
+async function pickupPoints({ city, postcode }) {
   if (!isConfigured) return [];
-  return api(`/deliverypoints?city_code=${encodeURIComponent(cityCode)}&type=PVZ`);
+  let query;
+  if (postcode) query = `postal_code=${encodeURIComponent(postcode)}`;
+  else {
+    const code = await cityCode(city);
+    if (!code) return [];
+    query = `city_code=${code}`;
+  }
+  const cached = pointsCache.get(query);
+  if (cached && Date.now() - cached.at < 6 * 3600 * 1000) return cached.list;
+  const raw = await api(`/deliverypoints?${query}&country_code=RU`);
+  const list = (Array.isArray(raw) ? raw : [])
+    .filter((p) => p.type === 'PVZ' || p.type === 'POSTAMAT')
+    .map((p) => ({
+      code: p.code,
+      type: p.type === 'POSTAMAT' ? 'постамат' : 'пункт выдачи',
+      address: (p.location && p.location.address) || '',
+      city: (p.location && p.location.city) || '',
+      hours: p.work_time || '',
+      landmark: p.nearest_station || '',
+      fitting: Boolean(p.is_dressing_room),
+    }))
+    .sort((a, b) => (a.type === b.type ? a.address.localeCompare(b.address, 'ru') : a.type === 'пункт выдачи' ? -1 : 1));
+  pointsCache.set(query, { at: Date.now(), list });
+  return list;
 }
 
 module.exports = { LABEL, isConfigured, quote, pickupPoints, parseWeight };

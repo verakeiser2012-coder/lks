@@ -22,7 +22,7 @@ router.use((req, res, next) => {
   if (req.path.startsWith('/robokassa/')) return next();
   // Расчёт доставки — справочный запрос, заказа не создаёт: пусть работает и до открытия,
   // чтобы проверить тарифы СДЭК на живом сайте.
-  if (req.path === '/quote') return next();
+  if (req.path === '/quote' || req.path === '/pickup-points') return next();
   if (shopClosedNotice()) return res.redirect('/cart');
   next();
 });
@@ -33,6 +33,20 @@ router.get('/', (req, res) => {
     return res.redirect('/cart');
   }
   res.render('checkout', { items, total, error: null, digitalOnly: cartIsDigitalOnly(items), needsPrintful: hasPrintful(items), carriers: delivery.available() });
+});
+
+// Список пунктов выдачи по городу/индексу: GET /checkout/pickup-points?carrier=cdek&city=…&postcode=…
+router.get('/pickup-points', async (req, res) => {
+  const carrier = String(req.query.carrier || 'cdek').replace(/[^a-z]/g, '');
+  const city = String(req.query.city || '').trim();
+  const postcode = String(req.query.postcode || '').replace(/\D/g, '');
+  if (!city && !postcode) return res.json({ points: [] });
+  try {
+    res.json({ points: await delivery.pickupPoints(carrier, { city, postcode }) });
+  } catch (e) {
+    console.error('[delivery] пункты выдачи:', e.message);
+    res.json({ points: [] });
+  }
 });
 
 // Расчёт доставки по городу/индексу для формы оформления (СДЭК и другие подключённые службы).
@@ -56,7 +70,7 @@ router.post('/', async (req, res, next) => {
   const needsPrintful = hasPrintful(items);
   const fail = (error) => res.render('checkout', { items, total, error, digitalOnly, needsPrintful, carriers: delivery.available() });
 
-  const { customerName, phone, email, address, country, city, zip, deliveryMethod, pickupPoint, comment, dataConsent, digitalConsent, shippingChoice } = req.body;
+  const { customerName, phone, email, address, country, city, zip, deliveryMethod, pickupPoint, pickupCode, comment, dataConsent, digitalConsent, shippingChoice } = req.body;
   if (!customerName || !phone) {
     return fail('Заполните имя и телефон.');
   }
@@ -79,8 +93,13 @@ router.post('/', async (req, res, next) => {
   // а адрес нужен по полям — Printful не разбирает строку «город, улица, дом».
   const method = digitalOnly ? 'digital' : (deliveryMethod === 'pickup' && !needsPrintful ? 'pickup' : 'courier');
   if (method === 'pickup' && !pickupPoint) {
-    return fail('Укажите город и удобный пункт выдачи.');
+    return fail('Выберите пункт выдачи.');
   }
+  // Пункт из списка приходит кодом + адресом; в заказ пишем «CDEK YEKB1 · ул. Шаумяна, 93»,
+  // чтобы код был виден при оформлении накладной, а адрес — человеку.
+  const pickupLabel = method === 'pickup'
+    ? (pickupCode ? `${String(pickupCode).replace(/[^A-Za-z0-9_-]/g, '')} · ${pickupPoint}` : pickupPoint)
+    : '';
   if (needsPrintful && (!country || !city || !zip || !address)) {
     return fail('Для вещи, которая печатается под заказ, нужны страна, город, индекс и адрес.');
   }
@@ -114,7 +133,7 @@ router.post('/', async (req, res, next) => {
     (city || '').trim(),
     (zip || '').trim(),
     method,
-    method === 'pickup' ? pickupPoint : '',
+    pickupLabel,
     comment || '',
     grandTotal,
     shipping.carrier,
