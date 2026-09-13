@@ -1,10 +1,12 @@
 const express = require('express');
 const { shopClosedNotice } = require('../utils/shopOpen');
 const db = require('../db');
-const { getCartDetails, getCart } = require('../utils/cart');
-const { createPayment } = require('../services/payments/yookassa');
+const { getCartDetails, getCart, cartKey } = require('../utils/cart');
+const robokassa = require('../services/payments/robokassa');
+const { createPayment } = robokassa;
 const { cartIsDigitalOnly } = require('../services/digital');
 const { onOrderPaid } = require('../services/fulfillment');
+const delivery = require('../services/delivery');
 
 const router = express.Router();
 
@@ -15,6 +17,12 @@ function hasPrintful(items) {
 // Пока магазин закрыт, оформление недоступно: настоящий заказ и тестовая
 // страница оплаты вместе выглядели бы как обман.
 router.use((req, res, next) => {
+  // Уведомления Robokassa о платежах должны доходить и при закрытом магазине:
+  // иначе оплаченный перед закрытием заказ так и останется «ожидает оплаты».
+  if (req.path.startsWith('/robokassa/')) return next();
+  // Расчёт доставки — справочный запрос, заказа не создаёт: пусть работает и до открытия,
+  // чтобы проверить тарифы СДЭК на живом сайте.
+  if (req.path === '/quote') return next();
   if (shopClosedNotice()) return res.redirect('/cart');
   next();
 });
@@ -24,7 +32,18 @@ router.get('/', (req, res) => {
   if (items.length === 0) {
     return res.redirect('/cart');
   }
-  res.render('checkout', { items, total, error: null, digitalOnly: cartIsDigitalOnly(items), needsPrintful: hasPrintful(items) });
+  res.render('checkout', { items, total, error: null, digitalOnly: cartIsDigitalOnly(items), needsPrintful: hasPrintful(items), carriers: delivery.available() });
+});
+
+// Расчёт доставки по городу/индексу для формы оформления (СДЭК и другие подключённые службы).
+// Тело: { city, postcode } → { quotes: [{ key, label, door: {price, days}, pickup: {price, days} }] }.
+router.post('/quote', async (req, res) => {
+  const { items } = getCartDetails(req);
+  const city = String((req.body && req.body.city) || '').trim();
+  const postcode = String((req.body && req.body.postcode) || '').replace(/\D/g, '');
+  if (!items.length || (!city && !postcode)) return res.json({ quotes: [] });
+  const quotes = await delivery.quoteAll({ city, postcode, items: items.map((i) => ({ weight: i.product.weight, qty: i.qty })) });
+  res.json({ quotes });
 });
 
 router.post('/', async (req, res, next) => {
@@ -35,9 +54,9 @@ router.post('/', async (req, res, next) => {
 
   const digitalOnly = cartIsDigitalOnly(items);
   const needsPrintful = hasPrintful(items);
-  const fail = (error) => res.render('checkout', { items, total, error, digitalOnly, needsPrintful });
+  const fail = (error) => res.render('checkout', { items, total, error, digitalOnly, needsPrintful, carriers: delivery.available() });
 
-  const { customerName, phone, email, address, country, city, zip, deliveryMethod, pickupPoint, comment, dataConsent, digitalConsent } = req.body;
+  const { customerName, phone, email, address, country, city, zip, deliveryMethod, pickupPoint, comment, dataConsent, digitalConsent, shippingChoice } = req.body;
   if (!customerName || !phone) {
     return fail('Заполните имя и телефон.');
   }
@@ -66,9 +85,25 @@ router.post('/', async (req, res, next) => {
     return fail('Для вещи, которая печатается под заказ, нужны страна, город, индекс и адрес.');
   }
 
+  // Доставка: выбор из формы «cdek:door» / «cdek:pickup» пересчитывается на сервере
+  // заново — цене из браузера не верим. Не посчиталось — заказ без доставки, как раньше,
+  // стоимость согласуется после оформления.
+  let shipping = { carrier: '', tariff: '', cost: 0, days: '' };
+  if (method !== 'digital' && shippingChoice && /^[a-z]+:(door|pickup)$/.test(shippingChoice)) {
+    const [carrierKey, tariff] = shippingChoice.split(':');
+    try {
+      const quotes = await delivery.quoteAll({ city: (city || '').trim(), postcode: String(zip || '').replace(/\D/g, ''), items: items.map((i) => ({ weight: i.product.weight, qty: i.qty })) });
+      const q = quotes.find((x) => x.key === carrierKey);
+      if (q && q[tariff]) shipping = { carrier: carrierKey, tariff, cost: q[tariff].price, days: q[tariff].days };
+    } catch (e) {
+      console.error('[delivery] расчёт при оформлении:', e.message);
+    }
+  }
+  const grandTotal = total + shipping.cost;
+
   const insertOrder = db.prepare(`
-    INSERT INTO orders (customer_name, phone, email, address, country, city, zip, delivery_method, pickup_point, comment, total)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO orders (customer_name, phone, email, address, country, city, zip, delivery_method, pickup_point, comment, total, shipping_carrier, shipping_tariff, shipping_cost, shipping_days)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
   const orderInfo = insertOrder.run(
     customerName,
@@ -81,7 +116,11 @@ router.post('/', async (req, res, next) => {
     method,
     method === 'pickup' ? pickupPoint : '',
     comment || '',
-    total
+    grandTotal,
+    shipping.carrier,
+    shipping.tariff,
+    shipping.cost,
+    shipping.days
   );
   const orderId = orderInfo.lastInsertRowid;
 
@@ -95,7 +134,7 @@ router.post('/', async (req, res, next) => {
 
   // Бесплатный заказ платить нечем: платёжные системы нулевую сумму не принимают.
   // Отмечаем оплаченным сразу и выдаём файлы — это единственный путь для цены 0.
-  if (total === 0) {
+  if (grandTotal === 0) {
     // помечаем провайдером 'free': в отчётах бесплатная выдача не должна
     // выглядеть как успешный платёж через эквайринг
     db.prepare("UPDATE orders SET payment_status = 'paid', status = 'processing', payment_provider = 'free' WHERE id = ?").run(orderId);
@@ -122,7 +161,7 @@ router.post('/', async (req, res, next) => {
   }
 });
 
-// Тестовая (mock) страница оплаты — используется, пока не подключены реальные ключи ЮKassa
+// Тестовая (mock) страница оплаты — используется, пока не подключены реальные ключи Robokassa
 router.get('/pay/:orderId', (req, res) => {
   const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(req.params.orderId);
   if (!order) {
@@ -149,6 +188,53 @@ router.get('/success', (req, res) => {
     ? db.prepare('SELECT * FROM downloads WHERE order_id = ? ORDER BY id').all(order.id)
     : [];
   res.render('checkout-success', { order: order || null, downloads });
+});
+
+// Вернуть вещи заказа в корзину — покупатель отказался от оплаты
+// или она не прошла, а корзину мы уже очистили при переходе к оплате.
+function restoreCart(req, orderId) {
+  const cart = {};
+  db.prepare('SELECT product_id, qty, variant FROM order_items WHERE order_id = ?').all(orderId)
+    .forEach((row) => { cart[cartKey(row.product_id, row.variant)] = row.qty; });
+  req.session.cart = cart;
+}
+
+async function markPaid(orderId) {
+  db.prepare("UPDATE orders SET payment_status = 'paid', status = 'processing' WHERE id = ?").run(orderId);
+  // Повторное уведомление не выдаст вторых ссылок — issueDownloads это учитывает
+  await onOrderPaid(orderId);
+}
+
+// ResultURL Robokassa: серверное уведомление об оплате, подписано Паролем №2.
+// Адрес прописывается в «Технических настройках» магазина; метод — POST.
+// Ответ обязан быть ровно «OK{InvId}», иначе Robokassa будет слать повторы.
+// Пока сайт под паролем nginx, этот путь надо вывести из-под auth_basic.
+router.post('/robokassa/result', async (req, res) => {
+  const check = robokassa.verifyResultNotification(req.body);
+  if (!check.ok) return res.status(400).send('bad sign');
+  const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(check.orderId);
+  if (!order) return res.status(404).send('no order');
+  // Сумму сверяем числом: в бою OutSum приходит с шестью знаками после запятой
+  if (Math.abs(Number(order.total) - check.outSum) > 0.005) return res.status(400).send('bad sum');
+  if (order.payment_status !== 'paid') await markPaid(order.id);
+  res.type('text/plain').send(`OK${order.id}`);
+});
+
+// SuccessURL: покупатель вернулся после оплаты (подпись Паролем №1).
+// Статус ставит ResultURL; здесь только показываем страницу «спасибо».
+router.get('/robokassa/success', (req, res) => {
+  const check = robokassa.verifySuccessRedirect(req.query);
+  if (!check.ok) return res.redirect('/cart');
+  req.session.cart = {};
+  res.redirect(`/checkout/success?orderId=${check.orderId}`);
+});
+
+// FailURL: оплата не прошла или покупатель передумал — возвращаем корзину.
+router.get('/robokassa/fail', (req, res) => {
+  const orderId = Number(req.query.InvId);
+  const order = orderId ? db.prepare('SELECT * FROM orders WHERE id = ?').get(orderId) : null;
+  if (order && order.payment_status !== 'paid') restoreCart(req, order.id);
+  res.render('payment-failed', { order: order || null });
 });
 
 // Вебхук для реальных уведомлений от ЮKassa об изменении статуса платежа.

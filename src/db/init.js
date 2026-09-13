@@ -670,6 +670,11 @@ function init() {
   for (const col of ['country', 'city', 'zip']) {
     if (!podOrderCols.includes(col)) db.exec(`ALTER TABLE orders ADD COLUMN ${col} TEXT NOT NULL DEFAULT ''`);
   }
+  // Доставка, посчитанная при оформлении (СДЭК): служба, тариф, сумма, срок.
+  // total заказа включает shipping_cost; вещи считаются отдельно в order_items.
+  for (const [col, def] of [['shipping_carrier', "TEXT NOT NULL DEFAULT ''"], ['shipping_tariff', "TEXT NOT NULL DEFAULT ''"], ['shipping_cost', 'REAL NOT NULL DEFAULT 0'], ['shipping_days', "TEXT NOT NULL DEFAULT ''"]]) {
+    if (!podOrderCols.includes(col)) db.exec(`ALTER TABLE orders ADD COLUMN ${col} ${def}`);
+  }
 
   // Подкаст: раздел заведён до первого выпуска, поэтому запись может жить
   // без файла — тогда карточка показывается как «скоро».

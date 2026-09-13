@@ -58,19 +58,39 @@
           <span>Пункт выдачи (СДЭК, Boxberry, 5Post и т.п.)</span>
         </label>
       </fieldset>
+      <%# Город и индекс нужны обоим способам: по ним считается доставка (СДЭК). %>
+      <div class="checkout-city-row">
+        <label>
+          Город
+          <input type="text" name="city" id="ship-city" placeholder="Екатеринбург">
+        </label>
+        <label>
+          Индекс
+          <input type="text" name="zip" id="ship-zip" inputmode="numeric" placeholder="620000">
+        </label>
+      </div>
+      <% if (carriers && carriers.length) { %>
+        <%# Живой расчёт: варианты «до двери» / «до пункта выдачи» подставляются скриптом ниже. %>
+        <div id="shipping-quote" class="shipping-quote" hidden>
+          <div class="shipping-quote-title">Доставка</div>
+          <div id="shipping-options"></div>
+          <p class="hint" id="shipping-hint" style="margin:6px 0 0;"></p>
+        </div>
+        <p class="hint" id="shipping-status" style="margin:-6px 0 14px;">Введите индекс или город — посчитаем доставку.</p>
+      <% } %>
       <div id="delivery-address-field">
         <label>
-          Адрес доставки
+          Адрес доставки (улица, дом, квартира)
           <input type="text" name="address">
         </label>
       </div>
       <div id="delivery-pickup-field" style="display:none;">
         <label>
-          Город и удобный пункт выдачи
-          <input type="text" name="pickupPoint" placeholder="Например: Москва, СДЭК на ул. Ленина, 10">
+          Удобный пункт выдачи
+          <input type="text" name="pickupPoint" placeholder="Например: СДЭК на ул. Ленина, 10">
         </label>
         <p style="color:var(--color-muted); font-size:0.85rem; margin-top:-8px;">
-          Точный адрес пункта выдачи и стоимость доставки согласуем с вами после оформления заказа.
+          Точный адрес пункта выдачи согласуем с вами после оформления заказа.
         </p>
       </div>
       <% } %>
@@ -104,8 +124,81 @@
         <li><%= item.product.name %> × <%= item.qty %> — <%= formatPrice(item.subtotal) %></li>
       <% }); %>
     </ul>
-    <p><strong>Итого: <%= formatPrice(total) %></strong></p>
+    <p><strong>Итого: <span id="checkout-total"><%= formatPrice(total) %></span></strong></p>
   </aside>
 </div>
+
+<% if (!digitalOnly && !needsPrintful && carriers && carriers.length) { %>
+<script>
+  // Расчёт доставки при вводе индекса/города: POST /checkout/quote → варианты с ценой
+  // и сроком; выбранный вариант уходит с формой в shippingChoice и пересчитывается сервером.
+  (function () {
+    var city = document.getElementById('ship-city');
+    var zip = document.getElementById('ship-zip');
+    var box = document.getElementById('shipping-quote');
+    var opts = document.getElementById('shipping-options');
+    var status = document.getElementById('shipping-status');
+    var hint = document.getElementById('shipping-hint');
+    var total = <%= Number(total) %>;
+    var totalEl = document.getElementById('checkout-total');
+    var timer = null, seq = 0;
+    function methodRadio() { return document.querySelector('input[name="deliveryMethod"]:checked'); }
+    function fmt(n) { return new Intl.NumberFormat('ru-RU').format(n) + ' ₽'; }
+    function render(quotes) {
+      opts.innerHTML = '';
+      var any = false;
+      quotes.forEach(function (q) {
+        if (q.error) return;
+        [['door', 'до двери'], ['pickup', 'до пункта выдачи']].forEach(function (pair) {
+          var t = q[pair[0]]; if (!t) return;
+          any = true;
+          var id = 'ship-' + q.key + '-' + pair[0];
+          var label = document.createElement('label');
+          label.className = 'shipping-option';
+          label.innerHTML = '<input type="radio" name="shippingChoice" value="' + q.key + ':' + pair[0] + '" id="' + id + '" data-price="' + Number(t.price) + '">'
+            + '<span class="shipping-option-name">' + q.label + ' — ' + pair[1] + '</span>'
+            + '<span class="shipping-option-meta">' + fmt(t.price) + ' · ' + t.days + ' дн.</span>';
+          opts.appendChild(label);
+        });
+      });
+      box.hidden = !any;
+      status.hidden = any;
+      if (!any) { status.textContent = 'Доставку в этот город посчитать не удалось — стоимость согласуем после оформления.'; return; }
+      var preferred = (methodRadio() && methodRadio().value === 'pickup') ? 'pickup' : 'door';
+      var first = opts.querySelector('input[value$=":' + preferred + '"]') || opts.querySelector('input');
+      if (first) { first.checked = true; sync(); }
+      opts.addEventListener('change', sync);
+    }
+    function sync() {
+      var r = opts.querySelector('input[name="shippingChoice"]:checked');
+      if (!r) return;
+      var isPickup = /:pickup$/.test(r.value);
+      var radio = document.querySelector('input[name="deliveryMethod"][value="' + (isPickup ? 'pickup' : 'courier') + '"]');
+      if (radio && !radio.checked) { radio.checked = true; radio.dispatchEvent(new Event('change')); }
+      var price = Number(r.getAttribute('data-price')) || 0;
+      hint.textContent = 'Итого с доставкой: ' + fmt(total + price) + '. Доставка оплачивается вместе с заказом.';
+      if (totalEl) totalEl.textContent = fmt(total + price);
+    }
+    function refresh() {
+      var c = city.value.trim(), z = zip.value.replace(/\D/g, '');
+      if (!c && z.length < 6) { box.hidden = true; status.hidden = false; status.textContent = 'Введите индекс или город — посчитаем доставку.'; if (totalEl) totalEl.textContent = fmt(total); return; }
+      var my = ++seq;
+      status.hidden = false; status.textContent = 'Считаем доставку…';
+      fetch('/checkout/quote', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ city: c, postcode: z }) })
+        .then(function (r) { return r.json(); })
+        .then(function (d) { if (my === seq) render(d.quotes || []); })
+        .catch(function () { if (my === seq) { status.textContent = 'Не удалось посчитать доставку — согласуем после оформления.'; } });
+    }
+    [city, zip].forEach(function (el) { el.addEventListener('input', function () { clearTimeout(timer); timer = setTimeout(refresh, 600); }); });
+    document.querySelectorAll('input[name="deliveryMethod"]').forEach(function (r) {
+      r.addEventListener('change', function () {
+        var want = r.value === 'pickup' ? 'pickup' : 'door';
+        var o = opts.querySelector('input[value$=":' + want + '"]');
+        if (o && !o.checked) { o.checked = true; sync(); }
+      });
+    });
+  })();
+</script>
+<% } %>
 
 <%- include('partials/footer') %>

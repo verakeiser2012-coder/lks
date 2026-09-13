@@ -2822,3 +2822,14 @@ h1.mk-cover-name { margin: 0; }
 .anim-strip .anim-frame { height: 160px; width: auto; aspect-ratio: 9 / 16; }
 .anim-strip .anim-frame video { height: 100%; width: 100%; object-fit: cover; }
 @media (max-width: 700px) { .anim-strip .anim-frame { height: 160px; } }
+
+/* Оформление: город+индекс в ряд, варианты доставки от СДЭК. */
+.checkout-city-row { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; }
+.checkout-city-row label { min-width: 0; }
+@media (max-width: 520px) { .checkout-city-row { grid-template-columns: 1fr; } }
+.shipping-quote { border: 1px solid var(--color-border); border-radius: var(--radius); padding: 12px 14px; margin: 0 0 16px; background: #fffaf0; }
+.shipping-quote-title { font-weight: 700; margin-bottom: 8px; }
+.shipping-option { display: flex; align-items: center; gap: 10px; padding: 6px 0; cursor: pointer; }
+.shipping-option input { width: auto; margin: 0; }
+.shipping-option-name { flex: 1; }
+.shipping-option-meta { color: var(--color-muted); white-space: nowrap; font-variant-numeric: tabular-nums; }

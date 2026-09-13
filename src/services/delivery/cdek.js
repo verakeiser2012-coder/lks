@@ -3,8 +3,9 @@
  * (Интеграция → API), не логин от кабинета. Пока их нет, isConfigured=false
  * и модуль ничего не делает.
  *
- * Тарифы: 136 — посылка склад–дверь, 137 — склад–склад (ПВЗ). Наш склад —
- * город отправителя из CDEK_FROM_CITY (код города СДЭК, Екатеринбург = 250).
+ * Тарифы (проверено по /calculator/tarifflist 13.09.2026): 136 — посылка
+ * склад–склад (до пункта выдачи), 137 — склад–дверь. Наш склад — город
+ * отправителя из CDEK_FROM_CITY (код города СДЭК, Екатеринбург = 250).
  */
 const ACCOUNT = process.env.CDEK_ACCOUNT;
 const SECURE = process.env.CDEK_SECURE_PASSWORD;
@@ -41,13 +42,42 @@ async function api(path, body) {
   return r.json();
 }
 
+/** Вес из текста карточки («150 г», «1,4 кг», «~25 г») в граммах; пусто — 400 г по умолчанию. */
+function parseWeight(text) {
+  const m = String(text || '').replace(',', '.').match(/([\d.]+)\s*(кг|kg|г|g)/i);
+  if (!m) return 400;
+  const n = parseFloat(m[1]);
+  return Math.round(/кг|kg/i.test(m[2]) ? n * 1000 : n);
+}
+
+// Код города СДЭК по названию: калькулятор не понимает строку «Санкт-Петербург»,
+// только code или индекс. Кэш на процесс — справочник городов не меняется.
+const cityCodes = new Map();
+async function cityCode(name) {
+  const key = String(name || '').trim().toLowerCase();
+  if (!key) return null;
+  if (cityCodes.has(key)) return cityCodes.get(key);
+  const list = await api(`/location/suggest/cities?name=${encodeURIComponent(key)}&country_code=RU`);
+  // Подсказка возвращает ближайшее совпадение даже для чепухи — берём только точное по названию.
+  const exact = Array.isArray(list) ? list.find((c) => String(c.full_name || '').split(',')[0].trim().toLowerCase() === key) : null;
+  const hit = exact ? exact.code : null;
+  cityCodes.set(key, hit);
+  return hit;
+}
+
 /** Стоимость и срок до двери и до ПВЗ по городу/индексу. */
 async function quote({ city, postcode, items }) {
   if (!isConfigured) return null;
-  const packages = [{ weight: Math.max(300, (items || []).reduce((s, i) => s + (i.weight || 400) * (i.qty || 1), 0)) }];
-  const to = postcode ? { postal_code: String(postcode) } : { city: String(city || '') };
+  const packages = [{ weight: Math.max(300, (items || []).reduce((s, i) => s + parseWeight(i.weight) * (i.qty || 1), 0)) }];
+  let to;
+  if (postcode) to = { postal_code: String(postcode) };
+  else {
+    const code = await cityCode(city);
+    if (!code) return null;
+    to = { code };
+  }
   const out = {};
-  for (const [name, code] of [['door', 136], ['pickup', 137]]) {
+  for (const [name, code] of [['door', 137], ['pickup', 136]]) {
     const j = await api('/calculator/tariff', {
       tariff_code: code, from_location: { code: FROM_CITY }, to_location: to, packages,
     });
@@ -62,4 +92,4 @@ async function pickupPoints(cityCode) {
   return api(`/deliverypoints?city_code=${encodeURIComponent(cityCode)}&type=PVZ`);
 }
 
-module.exports = { LABEL, isConfigured, quote, pickupPoints };
+module.exports = { LABEL, isConfigured, quote, pickupPoints, parseWeight };

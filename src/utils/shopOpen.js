@@ -7,7 +7,10 @@ const db = require('../db');
 function shopClosedNotice() {
   const row = db.prepare("SELECT value FROM settings WHERE key = 'shop_prelaunch_notice'").get();
   const notice = row ? String(row.value || '').trim() : '';
-  const hasKeys = Boolean(process.env.YOOKASSA_SHOP_ID && process.env.YOOKASSA_SECRET_KEY);
+  const hasKeys = Boolean(
+    (process.env.ROBOKASSA_MERCHANT_LOGIN && process.env.ROBOKASSA_PASSWORD1 && process.env.ROBOKASSA_PASSWORD2)
+    || (process.env.YOOKASSA_SHOP_ID && process.env.YOOKASSA_SECRET_KEY)
+  );
   if (!notice && hasKeys) return '';
   return notice || 'Приём заказов откроется после подключения оплаты.';
 }

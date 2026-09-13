@@ -1,0 +1,13 @@
+<%- include('partials/header') %>
+
+<div class="not-found">
+  <h1>Оплата не прошла</h1>
+  <% if (order) { %>
+    <p>Заказ №<%= order.id %> на сумму <strong><%= formatPrice(order.total) %></strong> не оплачен.</p>
+  <% } %>
+  <p>Деньги не списаны. Вещи вернулись в корзину — можно попробовать ещё раз или выбрать другой способ оплаты.</p>
+  <a class="btn" href="/cart">Вернуться в корзину</a>
+  <p class="hint">Если оплата не проходит повторно — <a href="/contact">напишите нам</a>, разберёмся.</p>
+</div>
+
+<%- include('partials/footer') %>
