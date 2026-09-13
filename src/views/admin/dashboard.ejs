@@ -2,6 +2,19 @@
 
 <h1>Дашборд</h1>
 
+<%# Сегодняшний срез того же отчёта, что приходит утром письмом. %>
+<p class="report-today">
+  <strong>Сегодня:</strong>
+  подписок <%= todayReport.subscribers.length %> ·
+  обращений <%= todayReport.messages.length %> ·
+  заявок <%= todayReport.brands.length + todayReport.redheads.length + todayReport.contest.length %> ·
+  заказов <%= todayReport.orders.length %> ·
+  просмотров <%= todayReport.reactions.views %> ·
+  в соцсетях вышло <%= todayReport.social.published.length %><%= todayReport.social.failed.length ? ', не вышло ' + todayReport.social.failed.length : '' %> ·
+  ждут галочки <%= todayReport.social.awaitingApproval %>
+  — <a href="/admin/reports">подробный отчёт →</a>
+</p>
+
 <div class="stat-grid">
   <div class="stat-card">
     <div class="stat-value"><%= productsCount %></div>

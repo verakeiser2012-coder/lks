@@ -1,0 +1,113 @@
+<%- include('partials/header') %>
+
+<%
+  const d = report.day.split('-').reverse().join('.');
+  const prev = new Date(report.day + 'T12:00:00Z'); prev.setUTCDate(prev.getUTCDate() - 1);
+  const next = new Date(report.day + 'T12:00:00Z'); next.setUTCDate(next.getUTCDate() + 1);
+  const iso = (x) => x.toISOString().slice(0, 10);
+%>
+<h1>Отчёт за <%= d %></h1>
+
+<%# Навигация по дням: письмо приходит утром за вчера, но любой день можно открыть здесь. %>
+<form method="GET" action="/admin/reports" class="report-nav">
+  <a class="btn btn-secondary" href="/admin/reports?day=<%= iso(prev) %>">← <%= iso(prev).split('-').reverse().join('.') %></a>
+  <input type="date" name="day" value="<%= report.day %>" max="<%= today %>" onchange="this.form.submit()">
+  <% if (report.day < today) { %><a class="btn btn-secondary" href="/admin/reports?day=<%= iso(next) %>"><%= iso(next).split('-').reverse().join('.') %> →</a><% } %>
+  <% if (report.day !== today) { %><a class="btn btn-secondary" href="/admin/reports">Сегодня</a><% } %>
+  <span class="hint" style="margin-left:auto;">
+    Письмо уходит каждое утро в <%= sendHour %>:00 за вчерашний день на почту администратора<%= lastSent ? ', последнее — за ' + lastSent.split('-').reverse().join('.') : '' %>.
+  </span>
+</form>
+
+<% if (report.quiet) { %>
+  <p class="flash flash-success">Тихий день: ни подписок, ни заявок, ни заказов, ни публикаций. Просмотров — 0.</p>
+<% } %>
+
+<div class="stat-grid">
+  <div class="stat-card"><div class="stat-value"><%= report.subscribers.length %></div><div class="stat-label">Подписок</div></div>
+  <div class="stat-card"><div class="stat-value"><%= report.messages.length %></div><div class="stat-label">Обращений</div></div>
+  <div class="stat-card"><div class="stat-value"><%= report.brands.length + report.redheads.length + report.contest.length %></div><div class="stat-label">Заявок (бренды, рыжие, конкурс)</div></div>
+  <div class="stat-card"><div class="stat-value"><%= report.orders.length %></div><div class="stat-label">Заказов<%= report.ordersPaid.length ? ', оплачено на ' + formatPrice(report.ordersSum) : '' %></div></div>
+  <div class="stat-card"><div class="stat-value"><%= report.reactions.views %></div><div class="stat-label">Просмотров страниц</div></div>
+  <div class="stat-card"><div class="stat-value"><%= report.social.published.length %></div><div class="stat-label">Публикаций в соцсетях</div></div>
+</div>
+
+<h2>Подписки и заявки</h2>
+<% if (!report.subscribers.length && !report.messages.length && !report.brands.length && !report.redheads.length && !report.contest.length && !report.orders.length) { %>
+  <p class="hint">За этот день ничего не пришло.</p>
+<% } %>
+<% if (report.subscribers.length) { %>
+  <h3>Подписки на новости — <%= report.subscribers.length %> <a class="hint" href="/admin/subscribers">все подписчики →</a></h3>
+  <ul><% report.subscribers.forEach(function (s) { %><li><%= s.email %> <span class="hint"><%= s.created_at.slice(11, 16) %></span></li><% }); %></ul>
+<% } %>
+<% if (report.messages.length) { %>
+  <h3>Обращения — <%= report.messages.length %> <a class="hint" href="/admin/messages">все обращения →</a></h3>
+  <table><thead><tr><th>Тема</th><th>От кого</th><th>Текст</th><th></th></tr></thead><tbody>
+  <% report.messages.forEach(function (m) { %>
+    <tr><td><%= m.topic %></td><td><%= m.name %><br><span class="hint"><%= m.email %></span></td><td><%= m.body %>…</td><td><%= m.is_read ? 'прочитано' : '<strong>новое</strong>' %></td></tr>
+  <% }); %></tbody></table>
+<% } %>
+<% if (report.brands.length) { %>
+  <h3>Заявки брендов — <%= report.brands.length %> <a class="hint" href="/admin/brands">все →</a></h3>
+  <ul><% report.brands.forEach(function (b) { %><li><strong><%= b.company_name %></strong>, <%= b.contact_name %> — <%= b.status %></li><% }); %></ul>
+<% } %>
+<% if (report.redheads.length) { %>
+  <h3>Заявки рыжих — <%= report.redheads.length %> <a class="hint" href="/admin/redheads/submissions">все →</a></h3>
+  <ul><% report.redheads.forEach(function (x) { %><li><%= x.name %><%= x.role ? ', ' + x.role : '' %> — <%= x.status %></li><% }); %></ul>
+<% } %>
+<% if (report.contest.length) { %>
+  <h3>Заявки на конкурс — <%= report.contest.length %> <a class="hint" href="/admin/contest/submissions">все →</a></h3>
+  <ul><% report.contest.forEach(function (x) { %><li><%= x.name %> — <a href="<%= x.video_url %>" target="_blank" rel="noopener">видео</a> — <%= x.status %></li><% }); %></ul>
+<% } %>
+<% if (report.orders.length) { %>
+  <h3>Заказы — <%= report.orders.length %> <a class="hint" href="/admin/orders">все заказы →</a></h3>
+  <table><thead><tr><th>№</th><th>Покупатель</th><th>Сумма</th><th>Оплата</th><th>Доставка</th></tr></thead><tbody>
+  <% report.orders.forEach(function (o) { %>
+    <tr><td><a href="/admin/orders/<%= o.id %>"><%= o.id %></a></td><td><%= o.customer_name %></td><td><%= formatPrice(o.total) %></td><td><%= o.payment_status === 'paid' ? 'оплачен' : 'не оплачен' %></td><td><%= o.delivery_method %></td></tr>
+  <% }); %></tbody></table>
+<% } %>
+
+<h2>Реакции на сайте</h2>
+<p>
+  Просмотров страниц — <strong><%= report.reactions.views %></strong>,
+  прослушиваний в плеере — <strong><%= report.reactions.plays %></strong>,
+  оценок в дневнике — <strong><%= report.reactions.diaryMarks %></strong>,
+  голосов за образы — <strong><%= report.reactions.lookVotes %></strong>.
+</p>
+<% if (report.reactions.topPages.length) { %>
+  <p class="hint">Самое посещаемое: <% report.reactions.topPages.forEach(function (p, i) { %><%= i ? ' · ' : '' %><a href="<%= p.path %>" target="_blank" rel="noopener"><%= p.path %></a> (<%= p.hits %>)<% }); %></p>
+<% } %>
+
+<h2>Соцсети</h2>
+<p>
+  Вышло за день: <strong><%= report.social.published.length %></strong>
+  (своих <%= report.social.own.length %>, импорт с площадок <%= report.social.imported.length %>)<% if (Object.keys(report.social.byNetwork).length) { %> —
+  <% Object.entries(report.social.byNetwork).forEach(function (e, i) { %><%= i ? ', ' : '' %><%= report.networkName(e[0]) %> <%= e[1] %><% }); %><% } %>.
+</p>
+<% if (report.social.published.length) { %>
+  <ul>
+  <% report.social.published.forEach(function (p) { %>
+    <li><span class="hint"><%= p.updated_at.slice(11, 16) %> · <%= report.networkName(p.network_key) %><%= p.sources === 'импорт с площадки' ? ' · импорт' : '' %></span>
+      <%= p.text %><% if (p.published_url) { %> — <a href="<%= p.published_url %>" target="_blank" rel="noopener">открыть</a><% } %></li>
+  <% }); %>
+  </ul>
+<% } %>
+<% if (report.social.failed.length) { %>
+  <h3 style="color:#a33;">Не вышло — <%= report.social.failed.length %></h3>
+  <ul><% report.social.failed.forEach(function (f) { %><li><strong><%= report.networkName(f.network_key) %></strong>: <%= f.text %> — <span class="hint"><%= f.error %></span> <a href="/admin/calendar/<%= f.post_id %>">открыть пост</a></li><% }); %></ul>
+<% } %>
+<h3>В календаре на этот день — <%= report.social.plannedToday.length %></h3>
+<% if (!report.social.plannedToday.length) { %><p class="hint">Ничего не запланировано.</p><% } else { %>
+  <ul><% report.social.plannedToday.forEach(function (p) { %>
+    <li><%= p.scheduled_at.slice(11, 16) %> <%= p.approved ? '✓' : '⏳ без галочки' %> — <a href="/admin/calendar/<%= p.id %>"><%= p.text %></a> <span class="hint"><%= (p.networks || '').split(', ').map(report.networkName).join(', ') %></span></li>
+  <% }); %></ul>
+<% } %>
+<p>Ждут галочки в календаре: <strong><%= report.social.awaitingApproval %></strong><% if (report.social.overdue) { %>, из них <strong style="color:#a33;">просрочено <%= report.social.overdue %></strong> — дата прошла, а пост не одобрен<% } %>. <a href="/admin/calendar">Открыть календарь →</a></p>
+
+<form method="POST" action="/admin/reports/send" style="margin-top:24px;">
+  <input type="hidden" name="day" value="<%= report.day %>">
+  <button class="btn btn-secondary" type="submit">Отправить этот отчёт на почту</button>
+  <span class="hint">Письмо уйдёт на адрес администратора из настроек почты.</span>
+</form>
+
+<%- include('partials/footer') %>

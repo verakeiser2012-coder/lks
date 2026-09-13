@@ -26,7 +26,9 @@ const bustsRoutes = require('./busts');
 const translationsRoutes = require('./translations');
 const visibilityRoutes = require('./visibility');
 const creativesRoutes = require('./creatives');
+const reportsRoutes = require('./reports');
 const { translateMany } = require('../../services/translate');
+const dailyReport = require('../../services/dailyReport');
 
 const router = express.Router();
 
@@ -58,7 +60,8 @@ router.get('/', (req, res) => {
     SELECT path, SUM(hits) AS hits FROM page_views
     WHERE day >= date('now', '-14 days') GROUP BY path ORDER BY hits DESC LIMIT 25
   `).all();
-  res.render('admin/dashboard', { productsCount, ordersCount, newOrdersCount, playsTotal, plays30, playsByTrack, views14, topPages });
+  const todayReport = dailyReport.collect(dailyReport.localDay());
+  res.render('admin/dashboard', { productsCount, ordersCount, newOrdersCount, playsTotal, plays30, playsByTrack, views14, topPages, todayReport });
 });
 
 // Автоперевод на английский для кнопок в формах (public/js/admin-translate.js).
@@ -85,6 +88,7 @@ router.post('/translate', async (req, res) => {
 
 router.use('/products', productsRoutes);
 router.use('/orders', ordersRoutes);
+router.use('/reports', reportsRoutes);
 router.use('/gallery', galleryRoutes);
 router.use('/about', aboutRoutes);
 router.use('/news', newsRoutes);

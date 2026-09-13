@@ -178,4 +178,6 @@ app.listen(PORT, () => {
   require('./services/social/scheduler').start();
   // Справочник ПВЗ Ozon (86 тысяч точек) обновляется в фоне раз в сутки.
   require('./services/delivery/ozon').scheduleSync();
+  // Утреннее письмо «что нового за вчера»: подписки, заявки, заказы, соцсети.
+  require('./services/dailyReport').schedule();
 });

@@ -469,3 +469,8 @@
 .network-profile { grid-template-columns: minmax(160px, 1fr) minmax(220px, 2fr) 130px auto; }
 
 .link-btn.is-hidden-toggle { color: #2f7a3a; }
+
+/* Отчёт дня: навигация по датам и сводка на дашборде. */
+.report-nav { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 18px; }
+.report-nav input[type="date"] { width: auto; margin: 0; }
+.report-today { padding: 12px 14px; border: 1px solid var(--color-border, #ddd); border-radius: 8px; background: #fff; line-height: 1.6; }
