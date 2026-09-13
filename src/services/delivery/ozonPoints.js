@@ -104,7 +104,7 @@ function hasPoints() {
 }
 
 /** Пункты по названию города — форма оформления. Индекс Ozon не знает, только город. */
-function searchPoints({ city, limit = 300 }) {
+function searchPoints({ city, limit = 1000 }) {
   const c = String(city || '').trim();
   if (!c) return [];
   return db.prepare(`SELECT * FROM ozon_points WHERE city = ? COLLATE NOCASE OR city LIKE ? COLLATE NOCASE
