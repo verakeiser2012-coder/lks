@@ -7,27 +7,26 @@
 
 ## Главное
 
-**Ни один трек DJ Levka Shazam не знает.** Ни Bubblegum, ни Soundstates, ни Glitch — ничего
-из 10 релизов. Sundesire, судя по всему, не поставляет в Shazam (у DistroKid/TuneCore/Amuse
-Shazam стоит отдельной витриной). Для игр это прямо больно: игрок услышал трек в уровне
-Geometry Dash или в кафе, шазамнул — пусто. Проверить у Our Angels, отдают ли они в Shazam;
-если да — ещё один довод за перевыпуск.
+Через API ни один трек DJ Levka не распознался — ни с mp3 сайта, ни с WAV-мастеров (Bubblegum,
+Soundstates, Memory, отрезки 20 и 45 с). **Вера говорит, что в приложении Shazam треки есть
+(каталог из Apple Music).** Развести просто: включить Bubblegum из колонок и шазамнуть с телефона.
+Если узнаёт — неофициальный API не видит малопопулярные треки, и графа «без совпадений» ниже
+ничего не значит. Если не узнаёт — пробел настоящий (Sundesire не отдаёт в Shazam), спросить Our Angels.
 
 ## Что Shazam «узнал» вместо нас
 
-Shazam сверяет запись, не мелодию. Совпадение с чужим треком в нескольких местах = один и тот же
-звуковой материал: общий луп/сэмпл (Splice) или прямой сэмпл. Льву проверить по каждому, откуда взят
-фрагмент.
+Shazam сверяет запись, не мелодию. Совпадение с чужим треком = один и тот же звуковой материал.
+**Лев подтвердил: все лупы из Splice** — значит, это просто чужие треки на тех же лупах, юридически чисто.
 
 | Трек | Отрезок | Shazam выдал | Что думать |
 |---|---|---|---|
-| **u** | 41 с, 105 с, 137 с | DJ_RAGE — FIRST KISS | три попадания — общий луп почти наверняка |
-| **BERSERK** | 4, 26, 47, 69 с | бразильские DJ-сеты (DJ GA MIX, DJ GABIRU, DJ TRALHA) | тот же brazilian-phonk-луп во всех сетах; сам луп, видимо, из паки |
-| **Flowers** | 71 с, 102 с | kdemusic — Simulation | общий сэмпл |
-| **Memory** | 194 с | Pryda — Sequence One | **проверить обязательно**: Pryda = Eric Prydz, если это сэмпл из его трека, а не общий луп — в игры и на IPEX не отдавать |
-| **2am** | 8 / 67 / 96 с | Josef Lupo — Lumiere; Faben DBPU — MIEDO; Mondragon — Doh | три разных чужих трека в трёх местах — типичные Splice-лупы |
-| **Bubblegum** | 8 с | la carte — bleu de nuit | одно попадание, скорее общий сэмпл |
-| **Back to the Future** | 143 с | flames music — To Night | одно попадание |
+| **u** | 41 с, 105 с, 137 с | DJ_RAGE — FIRST KISS | общий Splice-луп |
+| **BERSERK** | 4, 26, 47, 69 с | бразильские DJ-сеты (DJ GA MIX, DJ GABIRU, DJ TRALHA) | тот же Splice-луп |
+| **Flowers** | 71 с, 102 с | kdemusic — Simulation | общий Splice-луп |
+| **Memory** | 194 с | Pryda — Sequence One | Pryda (Eric Prydz) на том же Splice-лупе |
+| **2am** | 8 / 67 / 96 с | Josef Lupo — Lumiere; Faben DBPU — MIEDO; Mondragon — Doh | три Splice-лупа |
+| **Bubblegum** | 8 с | la carte — bleu de nuit | общий луп |
+| **Back to the Future** | 143 с | flames music — To Night | общий луп |
 
 Без совпадений: At The Jazz Club, Bill Cipher, Cloudflute, Cozy Place, Deep Sleep, Dream, Fog, Game Over,
 Glitch, Hotline, Ikigai, Lullaby, Mystery Shack, Rif Raf, Ruins, Soundstates, Spooky Month.
@@ -38,9 +37,6 @@ Glitch, Hotline, Ikigai, Lullaby, Mystery Shack, Rif Raf, Ruins, Soundstates, Sp
 
 ## Что делать
 
-1. Лев смотрит u, BERSERK, Flowers, Memory, 2am: из какой паки лупы. Splice/Loopmasters — можно,
-   вырезано из чужого трека — нельзя.
-2. Memory (Pryda) — в приоритете.
-3. Общие лупы легальны, но чужие треки с тем же лупом могут сидеть в Content ID и вешать заявки на наши
-   видео — держать под рукой ссылку на паку/лицензию Splice для оспаривания.
-4. Спросить Our Angels про Shazam.
+1. Тест с телефоном (см. выше) — 30 секунд.
+2. Лупы Splice легальны, но чужие треки на тех же лупах могут сидеть в Content ID и вешать заявки на наши
+   видео — держать под рукой название паки и лицензию Splice для оспаривания. Для игр и IPEX препятствий нет.
