@@ -38,3 +38,16 @@ Glitch, Hotline, Ikigai, Lullaby, Mystery Shack, Rif Raf, Ruins, Soundstates, Sp
 1. AudD-бот в Telegram с 2026 только платный ($5/мес) — не вариант.
 2. Лупы Splice легальны, но чужие треки на тех же лупах могут сидеть в Content ID и вешать заявки на наши
    видео — держать под рукой название паки и лицензию Splice для оспаривания. Для игр и IPEX препятствий нет.
+
+## Проверка приложением (Вера, 14.09)
+
+Shazam на телефоне: Bubblegum, Ruins, Mystery Shack → DJ Levka; **Bill Cipher → Taxicab Racers «Angel Eyes»**
+(инди-песня 2010, звучала в Teen Wolf). Совпадение по записи, не по мелодии — значит, в Bill Cipher есть
+чужой звуковой материал.
+
+В проекте `Ikigai (EP)/Работа/Ableton LOFIALBUM/bill/BillCipher.als` кроме библиотечных ударных Ableton и
+Splice-баса один посторонний файл: **`2-Audio 0001 [2023-08-21 190227].wav`** — 52 с, моно, 48 кГц, записано
+через аудиовход (лежит в `Неизданное/2023 - Pepe album/Ableton Projects/Samples/Recorded/`). Через API его
+начало распознаётся как Push «Universal Nation» — второе чужое совпадение на одном и том же материале.
+Спросить Льва, что это за запись (микрофон, ресемплинг синта, запись с YouTube). Если запись чужого трека —
+Bill Cipher не только не лицензируется, но и на стримингах под риском заявки Content ID.
