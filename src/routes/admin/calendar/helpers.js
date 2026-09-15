@@ -144,12 +144,12 @@ function listFeedsByNetwork(limit = 12) {
   const settings = require('../../../utils/settings').getSettings();
   const networks = db
     .prepare(`
-      SELECT * FROM social_networks WHERE enabled = 1
+      SELECT * FROM social_networks WHERE enabled = 1 AND key <> 'news'
       ORDER BY CASE category WHEN 'music' THEN 0 WHEN 'shorts' THEN 1 ELSE 2 END, label
     `)
     .all();
   const items = db.prepare(`
-    SELECT p.id, p.text, p.scheduled_at, p.media_type, p.thumb_url, p.media_path, p.sources,
+    SELECT p.id, p.text, p.scheduled_at, p.media_type, p.thumb_url, p.media_path, p.media_items, p.sources,
            t.published_url, t.story_status
     FROM social_post_targets t
     JOIN social_posts p ON p.id = t.post_id
@@ -169,16 +169,21 @@ function listFeedsByNetwork(limit = 12) {
 
   // Откуда читаем ленту без входа. Остальные площадки из России не отдают
   // ничего — их ленту ведём руками, а здесь показываем, что записано.
-  const IMPORTED = { telegram: 'превью канала', youtube: 'RSS канала', rutube: 'открытый API', vk: 'API, нужен сервисный ключ' };
+  const IMPORTED = { telegram: 'превью канала', youtube: 'RSS канала', rutube: 'открытый API', pinterest: 'RSS профиля', vk: 'API, нужен сервисный ключ' };
   // Прямая ссылка на живую ленту: чтобы рядом с тем, что знает календарь,
   // в один клик открыть саму площадку и сверить.
   const LIVE = { 'instagram-djlevka': 'https://instagram.com/djlevka', news: '/news' };
 
   return networks.map((n) => {
     const c = counts.get(n.key) || {};
+    const rows = items.all(n.key, limit).map((p) => {
+      let frames = 0;
+      try { frames = JSON.parse(p.media_items || '[]').length; } catch (e) { frames = 0; }
+      return { ...p, frames };
+    });
     return {
       ...n,
-      items: items.all(n.key, limit),
+      items: rows,
       published: c.published || 0,
       queued: c.queued || 0,
       lastAt: c.last_at || '',

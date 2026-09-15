@@ -474,3 +474,7 @@
 .report-nav { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 18px; }
 .report-nav input[type="date"] { width: auto; margin: 0; }
 .report-today { padding: 12px 14px; border: 1px solid var(--color-border, #ddd); border-radius: 8px; background: #fff; line-height: 1.6; }
+
+.inline-form { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
+.inline-form input[type=text], .inline-form select { padding: 6px 8px; }
+.admin-list { padding-left: 18px; }

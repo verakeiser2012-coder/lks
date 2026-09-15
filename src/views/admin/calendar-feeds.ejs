@@ -22,7 +22,12 @@
   через «Уже в ленте». Кнопка справа у каждой полосы открывает живую ленту на самой площадке.
 </p>
 
-<% feeds.forEach(function (f) { %>
+<%# Полосы без публикаций и без источника импорта — одной строкой:
+    девять пустых секций подряд прячут те, где есть что смотреть. %>
+<% const quiet = feeds.filter((f) => f.items.length === 0 && !f.importedVia);
+   const active = feeds.filter((f) => !(f.items.length === 0 && !f.importedVia)); %>
+
+<% active.forEach(function (f) { %>
   <section class="feed-lane">
     <div class="feed-lane-head">
       <div class="feed-lane-title">
@@ -43,7 +48,7 @@
     </div>
 
     <% if (f.items.length === 0) { %>
-      <p class="feed-empty">Пока пусто: календарь сюда ничего не публиковал, и записей руками нет.</p>
+      <p class="feed-empty">Пока пусто: импорт ничего не нашёл, календарь сюда не публиковал, записей руками нет.</p>
     <% } else { %>
       <div class="feed-strip">
         <% f.items.forEach(function (p) { %>
@@ -59,6 +64,7 @@
                 <span class="feed-thumb-empty"><%= p.media_type === 'video' ? '▶' : '✎' %></span>
               <% } %>
               <% if (p.media_type === 'video') { %><span class="feed-play">▶</span><% } %>
+              <% if (p.frames > 1) { %><span class="feed-frames"><%= p.frames %> кадр<%= p.frames < 5 ? 'а' : 'ов' %></span><% } %>
             </a>
             <div class="feed-card-body">
               <div class="feed-when"><%= String(p.scheduled_at).slice(0, 16) %></div>
@@ -73,5 +79,25 @@
     <% } %>
   </section>
 <% }); %>
+
+<% if (quiet.length > 0) { %>
+  <section class="feed-lane feed-lane--quiet">
+    <div class="feed-lane-head">
+      <div class="feed-lane-title">
+        <h2>Ленту не отдают</h2>
+        <span class="feed-lane-src">эти площадки из России читать нельзя — публикации туда записывайте руками через «Уже в ленте»</span>
+      </div>
+    </div>
+    <ul class="feed-quiet-list">
+      <% quiet.forEach(function (f) { %>
+        <li>
+          <span><%= f.label %></span>
+          <% if (f.queued) { %><span class="badge badge-scheduled"><%= f.queued %> в очереди</span><% } %>
+          <% if (f.liveUrl) { %><a href="<%= f.liveUrl %>" target="_blank" rel="noopener">открыть ↗</a><% } %>
+        </li>
+      <% }); %>
+    </ul>
+  </section>
+<% } %>
 
 <%- include('partials/footer') %>

@@ -13,8 +13,13 @@
 const db = require('../../db');
 const { getSettings } = require('../../utils/settings');
 
+// На сервере IPv6 не ходит наружу, а node по умолчанию пробует его первым —
+// Telegram на этом висел до таймаута («fetch failed»), хотя curl отвечал сразу.
+require('dns').setDefaultResultOrder('ipv4first');
+
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/128 Safari/537.36';
-const LOOKBACK_DAYS = 30; // при первом запуске не тащим всю историю
+const LOOKBACK_DAYS = 365; // год назад: полосы лент должны показывать историю, а не последний месяц
+const TG_MAX_PAGES = 15;    // страниц превью Telegram за один проход (по ~20 постов)
 const TZ = 'Asia/Yekaterinburg';
 
 function credentials(key) {
@@ -57,8 +62,26 @@ function alreadyKnown(url) {
  * Дописать публикацию в календарь как уже вышедшую.
  * Пост и его площадка появляются вместе или не появляются вовсе.
  */
-function record({ key, url, when, body, mediaType, thumb }) {
-  if (!url || alreadyKnown(url)) return false;
+function record({ key, url, when, body, mediaType, thumb, items }) {
+  if (!url) return false;
+  const itemsJson = Array.isArray(items) && items.length ? JSON.stringify(items.slice(0, 10)) : '';
+  if (alreadyKnown(url)) {
+    // Пост уже записан, но раньше импорт мог не достать превью или альбом —
+    // дописываем только пустое, руками введённое не трогаем.
+    const row = db.prepare(`
+      SELECT p.id, p.thumb_url, p.media_items FROM social_posts p
+      JOIN social_post_targets t ON t.post_id = p.id WHERE t.published_url = ?
+    `).get(url);
+    if (row) {
+      const setThumb = !row.thumb_url && thumb;
+      const setItems = itemsJson && (!row.media_items || row.media_items === '[]');
+      if (setThumb || setItems) {
+        db.prepare("UPDATE social_posts SET thumb_url = CASE WHEN thumb_url = '' THEN ? ELSE thumb_url END, media_items = CASE WHEN media_items IS NULL OR media_items = '' OR media_items = '[]' THEN ? ELSE media_items END WHERE id = ?")
+          .run(thumb || '', itemsJson || row.media_items || '[]', row.id);
+      }
+    }
+    return false;
+  }
   const localWhen = toLocal(when);
   if (!localWhen) return false;
   const cutoff = toLocal(Date.now() - LOOKBACK_DAYS * 86400000);
@@ -67,9 +90,9 @@ function record({ key, url, when, body, mediaType, thumb }) {
   db.exec('BEGIN');
   try {
     const info = db
-      .prepare(`INSERT INTO social_posts (text, scheduled_at, status, approved, link_url, media_type, thumb_url, sources)
-                VALUES (?, ?, 'published', 1, ?, ?, ?, 'импорт с площадки')`)
-      .run((body || '').slice(0, 2000) || 'Публикация на площадке', localWhen, url, mediaType || '', thumb || '');
+      .prepare(`INSERT INTO social_posts (text, scheduled_at, status, approved, link_url, media_type, thumb_url, media_items, sources)
+                VALUES (?, ?, 'published', 1, ?, ?, ?, ?, 'импорт с площадки')`)
+      .run((body || '').slice(0, 2000) || 'Публикация на площадке', localWhen, url, mediaType || '', thumb || '', itemsJson || '[]');
     db.prepare("INSERT INTO social_post_targets (post_id, network_key, status, published_url) VALUES (?, ?, 'published', ?)")
       .run(info.lastInsertRowid, key, url);
     db.exec('COMMIT');
@@ -81,37 +104,59 @@ function record({ key, url, when, body, mediaType, thumb }) {
 }
 
 // ── Telegram: публичное превью канала t.me/s/<канал> ──
+// Одна страница превью — это ~20 последних постов. Чтобы полоса показывала
+// историю, а не хвост, листаем назад через ?before=<id>, пока не упрёмся
+// в срок LOOKBACK_DAYS или в TG_MAX_PAGES страниц.
 async function importTelegram() {
   const c = credentials('telegram');
   const channel = String((c && c.chatId) || '').replace(/^@/, '');
   if (!channel) return { key: 'telegram', skipped: 'канал не задан' };
 
-  const html = await text(`https://t.me/s/${channel}`);
-  const blocks = html.split('tgme_widget_message_wrap').slice(1);
+  const cutoff = toLocal(Date.now() - LOOKBACK_DAYS * 86400000);
   let added = 0;
-  for (const block of blocks) {
-    const id = (block.match(/data-post="([^"]+)"/) || [])[1];
-    const when = (block.match(/<time[^>]+datetime="([^"]+)"/) || [])[1];
-    const body = (block.match(/tgme_widget_message_text[^>]*>([\s\S]*?)<\/div>/) || [])[1];
-    const hasVideo = /tgme_widget_message_video|message_video_player/.test(block);
-    const hasPhoto = /tgme_widget_message_photo/.test(block);
-    // Превью лежит фоном в стиле — и у фото, и у видео. Первое совпадение брать
-    // нельзя: эмодзи в тексте поста тоже нарисованы фоном, и в календарь
-    // вместо кадра попадала иконка огонька с telegram.org.
-    const thumb = [...block.matchAll(/background-image:\s*url\('([^']+)'\)/g)]
-      .map((m) => m[1])
-      .find((u) => !/\/img\/emoji\//.test(u));
-    if (!id || !when) continue;
-    if (record({
-      key: 'telegram',
-      url: `https://t.me/${id}`,
-      when,
-      body: decode(body || ''),
-      mediaType: hasVideo ? 'video' : hasPhoto ? 'photo' : '',
-      thumb,
-    })) added += 1;
+  let seen = 0;
+  let before = '';
+  for (let page = 0; page < TG_MAX_PAGES; page += 1) {
+    const html = await text(`https://t.me/s/${channel}${before ? '?before=' + before : ''}`);
+    const blocks = html.split('tgme_widget_message_wrap').slice(1);
+    if (blocks.length === 0) break;
+    let oldest = '';
+    for (const block of blocks) {
+      seen += 1;
+      const id = (block.match(/data-post="([^"]+)"/) || [])[1];
+      const when = (block.match(/<time[^>]+datetime="([^"]+)"/) || [])[1];
+      if (!id || !when) continue;
+      const localWhen = toLocal(when);
+      if (localWhen && (!oldest || localWhen < oldest)) oldest = localWhen;
+      // Служебные записи («закрепил сообщение») — не публикации.
+      if (/tgme_widget_message_service/.test(block)) continue;
+      const body = (block.match(/tgme_widget_message_text[^>]*>([\s\S]*?)<\/div>/) || [])[1];
+      const hasVideo = /tgme_widget_message_video|message_video_player/.test(block);
+      const hasPhoto = /tgme_widget_message_photo/.test(block);
+      // Фото и кадры видео лежат фоном в стиле. Эмодзи в тексте тоже нарисованы
+      // фоном — их отсеиваем. Альбом даёт несколько фонов подряд: берём все,
+      // чтобы карточка знала, сколько в посте кадров.
+      const items = [...block.matchAll(/background-image:\s*url\('([^']+)'\)/g)]
+        .map((m) => m[1])
+        .filter((u) => !/\/img\/emoji\//.test(u) && !/\/img\//.test(u))
+        .map((u, i) => ({ url: u, type: hasVideo && i === 0 && !hasPhoto ? 'video' : 'photo' }));
+      const thumb = items.length ? items[0].url : '';
+      if (record({
+        key: 'telegram',
+        url: `https://t.me/${id}`,
+        when,
+        body: decode(body || ''),
+        mediaType: hasVideo ? 'video' : hasPhoto ? 'photo' : '',
+        thumb,
+        items: items.length > 1 ? items : [],
+      })) added += 1;
+    }
+    const next = (html.match(/data-before="(\d+)"/) || [])[1];
+    if (!next || next === before) break;
+    if (oldest && oldest < cutoff) break;
+    before = next;
   }
-  return { key: 'telegram', added, seen: blocks.length };
+  return { key: 'telegram', added, seen };
 }
 
 // ── YouTube: RSS канала, без ключей ──
@@ -217,6 +262,38 @@ async function importRutube() {
   return { key: 'rutube', added, seen: items.length };
 }
 
+// ── Pinterest: RSS профиля, без ключей ──
+// pinterest.com/<имя>/feed.rss отдаёт последние пины с картинкой в описании.
+async function importPinterest() {
+  const url = String(getSettings().pinterest_url || '');
+  const user = (url.match(/pinterest\.[a-z.]+\/([^/?#]+)/i) || [])[1];
+  if (!user) return { key: 'pinterest', skipped: 'в настройках нет ссылки на профиль Pinterest' };
+  const xml = await text(`https://www.pinterest.com/${user}/feed.rss`);
+  const items = xml.split('<item>').slice(1);
+  let added = 0;
+  for (const it of items) {
+    const link = (it.match(/<link>([^<]+)<\/link>/) || [])[1];
+    const when = (it.match(/<pubDate>([^<]+)<\/pubDate>/) || [])[1];
+    const desc = (it.match(/<description>([\s\S]*?)<\/description>/) || [])[1] || '';
+    const title = (it.match(/<title>([^<]*)<\/title>/) || [])[1] || '';
+    // Описание в RSS лежит с экранированной разметкой: &lt;a href=&quot;…&quot;&gt;&lt;img src=&quot;…&quot;&gt;
+    const raw = desc.replace(/^<!\[CDATA\[/, '').replace(/\]\]>$/, '')
+      .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&amp;/g, '&');
+    const img = (raw.match(/<img[^>]+src="([^"]+)"/) || [])[1] || '';
+    const caption = decode(raw.replace(/<img[^>]*>/g, ''));
+    if (!link || !when) continue;
+    if (record({
+      key: 'pinterest',
+      url: link.trim(),
+      when,
+      body: (decode(title).trim() || caption || 'Пин').slice(0, 500),
+      mediaType: img ? 'photo' : '',
+      thumb: img,
+    })) added += 1;
+  }
+  return { key: 'pinterest', added, seen: items.length };
+}
+
 // Из вложений VK берём картинку среднего размера: для превью хватает,
 // а самая большая тянула бы мегабайты ради плитки в сто пикселей.
 function vkThumb(post) {
@@ -269,7 +346,7 @@ async function importVK() {
  */
 async function importFeeds() {
   const results = [];
-  for (const fn of [importTelegram, importYouTube, importRutube, importVK]) {
+  for (const fn of [importTelegram, importYouTube, importRutube, importPinterest, importVK]) {
     try {
       results.push(await fn());
     } catch (err) {
