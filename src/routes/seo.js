@@ -21,6 +21,8 @@ const STATIC_PAGES = [
   ['/redheads', 0.6],
   ['/brands', 0.6],
   ['/brands/media-kit', 0.5],
+  ['/services', 0.6],
+  ['/reviews', 0.5],
   ['/aroma', 0.5],
   ['/contest', 0.6],
   ['/b', 0.5],
@@ -39,6 +41,8 @@ const DISALLOW = [
   '/admin',
   '/cart',
   '/checkout',
+  '/order/',
+  '/orders',
   '/downloads',
   '/search',
   '/unsubscribe',
@@ -71,7 +75,9 @@ function rows(sql, params = []) {
 }
 
 function collectUrls() {
-  const urls = STATIC_PAGES.map(([loc, priority]) => ({ loc, priority }));
+  // Услуга «Коллегам» попадает в карту только когда включена в настройках.
+  const servicesPublic = (db.prepare("SELECT value FROM settings WHERE key = 'services_public'").get() || {}).value === '1';
+  const urls = STATIC_PAGES.filter(([loc]) => loc !== '/services' || servicesPublic).map(([loc, priority]) => ({ loc, priority }));
 
   for (const r of rows("SELECT slug, created_at FROM releases WHERE is_published = 1")) {
     urls.push({ loc: `/music/${r.slug}`, priority: 0.8, lastmod: lastmod(r.created_at) });

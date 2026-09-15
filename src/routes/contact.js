@@ -14,6 +14,7 @@ const TOPICS = [
   { key: 'brand', label: 'Сотрудничество с брендом', to: 'brand@levkeiser.com' },
   { key: 'vocal', label: 'Предложить вокал или трек', to: 'booking@levkeiser.com' },
   { key: 'order', label: 'Вопрос по заказу', to: 'info@levkeiser.com' },
+  { key: 'service', label: 'Оформление прав: РАО, ВОИС, дистрибьютор', to: 'info@levkeiser.com' },
 ];
 
 function view(res, extra = {}) {

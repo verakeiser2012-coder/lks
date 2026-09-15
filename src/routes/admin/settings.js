@@ -6,6 +6,8 @@ const router = express.Router();
 const EDITABLE_KEYS = [
   'site_name', 'site_alt_name', 'site_tagline', 'phone', 'email', 'address',
   'metrika_id', 'meta_description', 'og_image',
+  'ipex_showcase_url',
+  'services_public', // «1» — услуга «Коллегам» видна посетителям; пусто — только по прямой ссылке для админа
   // Ссылки на соцсети (vk_url, telegram_url, …) больше не здесь: они лежат
   // в social_networks.url и подмешиваются в settings через utils/settings.js.
   'legal_ip_name', 'legal_inn', 'legal_ogrnip', 'legal_address', 'legal_doc_date',

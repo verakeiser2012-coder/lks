@@ -28,6 +28,14 @@
     <input type="text" name="og_image" value="<%= settingsMap.og_image || '' %>">
   </label>
   <label>
+    Витрина на бирже лицензий IPEX (ссылка; показывается в «Музыке», у стемов и в услуге «Коллегам»)
+    <input type="url" name="ipex_showcase_url" value="<%= settingsMap.ipex_showcase_url || '' %>" placeholder="https://ipex.ru/showcase/...">
+  </label>
+  <label class="checkbox-label">
+    <input type="checkbox" name="services_public" value="1" <%= settingsMap.services_public === '1' ? 'checked' : '' %>>
+    Показывать услугу «Коллегам за копеечку» посетителям (пункт меню, /services, карта сайта). Пока выключено — страница открыта только вам, когда вы вошли в админку.
+  </label>
+  <label>
     Номер счётчика Яндекс.Метрики (только цифры; пусто — счётчик не подключён)
     <input type="text" name="metrika_id" value="<%= settingsMap.metrika_id || '' %>">
   </label>

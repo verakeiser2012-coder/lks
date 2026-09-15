@@ -45,6 +45,12 @@
         <p class="track-links-hint">У этого сингла пока нет общей ссылки на все площадки. «Все площадки» ведёт на каталог артиста: там трек найдётся в Яндекс Музыке, ВК, Звуке и Apple Music.</p>
       <% } %>
     <% } %>
+    <% if (track.ipex_url) { %>
+      <div class="track-license">
+        <a class="btn btn-ghost" href="<%= track.ipex_url %>" target="_blank" rel="noopener">Лицензия для видео, рекламы и кино</a>
+        <p class="track-links-hint">Трек на бирже IPEX: лицензия оформляется онлайн, от 1 500 ₽, права остаются у автора.</p>
+      </div>
+    <% } %>
   </div>
 </section>
 

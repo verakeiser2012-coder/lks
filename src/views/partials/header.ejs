@@ -7,7 +7,7 @@
     const SECTION_TITLES = {
       news: 'Новости', diary: 'Дневник', about: 'Обо мне', music: 'Музыка DJ Levka', gigs: 'Выступления',
       style: 'Стиль', redheads: 'Рыжие, которые вдохновляют', contest: 'Конкурс',
-      catalog: 'Каталог', drops: 'Дропы', brands: 'Брендам', cart: 'Корзина', checkout: 'Оформление заказа',
+      catalog: 'Каталог', drops: 'Дропы', brands: 'Брендам', services: 'Коллегам за копеечку', cart: 'Корзина', checkout: 'Оформление заказа',
     };
     const siteBase = [settings.site_name, settings.site_alt_name].filter(Boolean).join(' — ') || 'Лев Кейсер';
     let docTitle;
@@ -35,7 +35,7 @@
   <link rel="canonical" href="<%= canonicalUrl %>">
   <%# Служебные страницы (корзина, оформление, поиск, отписка) закрыты в robots.txt;
       meta noindex — на случай, если поисковик пришёл по внешней ссылке. %>
-  <% if (/^(\/en)?\/(cart|checkout|search|unsubscribe)(\/|$)/.test(cleanPath)) { %>
+  <% if (/^(\/en)?\/(cart|checkout|search|unsubscribe|order|orders|downloads)(\/|$)/.test(cleanPath)) { %>
   <meta name="robots" content="noindex, follow">
   <% } %>
   <%
@@ -154,6 +154,7 @@
         <a href="/catalog" class="shop-link<%= shopActive('/catalog') %>">Каталог</a>
         <a href="/drops" class="shop-link<%= shopActive('/drops') %>">Дропы</a>
         <a href="/brands" class="shop-link<%= shopActive('/brands') %>">Брендам</a>
+        <% if (settings.services_public === '1' || (typeof isAdmin !== 'undefined' && isAdmin)) { %><a href="/services" class="shop-link<%= shopActive('/services') %>">Коллегам</a><% } %>
         <audio id="bg-audio" preload="none"></audio>
         <div class="bg-audio-widget">
           <a href="/music" class="bg-audio-link" aria-label="Перейти к музыке">

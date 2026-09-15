@@ -1,0 +1,65 @@
+<%- include('partials/header') %>
+
+<h1>Коллегам за копеечку</h1>
+
+<p class="prose">Я прошёл этот тернистый путь сам: кабинет правообладателя, РАО, ВОИС, РСП, смена дистрибьютора, биржа лицензий. Бумаг много, объяснений мало, и на каждом шаге легко сделать что-то не так. Если вы музыкант и хотите, чтобы ваша музыка была оформлена как положено, а не «как получилось» — помогу. За символическую копеечку, потому что коллегам.</p>
+
+<div class="link-section offer-section">
+  <h2>Пакеты</h2>
+  <div class="offer-grid">
+    <% packages.forEach(function(pk) { %>
+      <div class="offer-card" id="package-<%= pk.key %>">
+        <h3><%= pk.title %> — <%= pk.price %></h3>
+        <p><%= pk.lead %></p>
+        <ul class="services-list">
+          <% pk.items.forEach(function(it) { %><li><%= it %></li><% }); %>
+        </ul>
+      </div>
+    <% }); %>
+  </div>
+  <p class="services-note">Цена за каталог целиком, а не за трек. Оплата после аудита, когда понятно, что именно нужно.<% if (settings.ipex_showcase_url) { %> Как это выглядит в итоге — <a href="<%= settings.ipex_showcase_url %>" target="_blank" rel="noopener">наш каталог на IPEX</a>: 22 трека, все прошли модерацию.<% } %></p>
+</div>
+
+<div class="link-section">
+  <h2>Как пойдёт работа</h2>
+  <div class="table-scroll">
+    <table class="music-table services-table">
+      <thead><tr><th>Этап</th><th>Что происходит</th></tr></thead>
+      <tbody>
+        <% stages.forEach(function(st, i) { %>
+          <tr><td><%= i + 1 %>. <%= st[0] %></td><td><%= st[1] %></td></tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="link-section">
+  <h2>Что важно знать</h2>
+  <ul class="services-list services-list-wide">
+    <li><strong>Без созвонов.</strong> Вся работа — перепиской и документами. Так быстрее, и всё остаётся на бумаге.</li>
+    <li><strong>Паспортные данные вводите только вы.</strong> Мы не просим сканы и не заполняем их за вас.</li>
+    <li><strong>Чужое не оформляем.</strong> Треки с чужими цитатами, сэмплами из чужих песен и ремиксы без разрешения в аудите отмечаем отдельно — их регистрировать нельзя.</li>
+    <li><strong>Проекты треков сохраните.</strong> Биржа лицензий может запросить на модерации скриншот открытого проекта в вашей программе — FL Studio, Ableton, Logic — как подтверждение авторства. Если проекта нет, шансы пройти модерацию ниже. Лучше знать об этом до начала.</li>
+    <li><strong>Это не юридическая услуга.</strong> Это опыт коллеги, который уже прошёл всё это, плюс готовые шаблоны и порядок действий. Договоры с обществами подписываете вы сами.</li>
+    <li><strong>Исполнитель — ИП Кейсер Л. М.</strong> Чек и закрывающие документы — как на любой заказ в магазине.</li>
+  </ul>
+</div>
+
+<% if (reviews.length) { %>
+<div class="link-section">
+  <h2>Отзывы коллег</h2>
+  <%- include('partials/review-list', { list: reviews, showSubject: false }) %>
+</div>
+<% } %>
+
+<div class="link-section">
+  <h2>С чего начать</h2>
+  <p class="prose">Удобнее всего — через Telegram-бота: он задаст шесть вопросов, примет файлы по трекам и покажет, на каком этапе дело, в любое время суток. Или напишите через форму: кто вы, ссылки на релизы, что уже оформлено.</p>
+  <p class="services-cta">
+    <a class="btn" href="https://t.me/levkeiser_kollegam_bot" target="_blank" rel="noopener">Открыть бота в Telegram</a>
+    <a class="btn btn-secondary" href="/contact?topic=service">Написать через форму</a>
+  </p>
+</div>
+
+<%- include('partials/footer') %>

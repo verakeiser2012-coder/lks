@@ -37,6 +37,10 @@
     <input type="url" name="url" value="<%= track ? track.url : '' %>" placeholder="https://...">
   </label>
   <label>
+    Лицензия на IPEX — ссылка на страницу трека на бирже (пусто — кнопки не будет)
+    <input type="url" name="ipexUrl" value="<%= track ? (track.ipex_url || '') : '' %>" placeholder="https://ipex.ru/catalog/music/...">
+  </label>
+  <label>
     Клип — ссылка на видео (YouTube, Rutube, VK Видео, Vimeo)
     <input type="url" name="videoUrl" value="<%= track ? (track.video_url || '') : '' %>" placeholder="https://www.youtube.com/watch?v=...">
   </label>

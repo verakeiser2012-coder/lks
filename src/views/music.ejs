@@ -98,6 +98,14 @@
   </section>
 <% } %>
 
+<% if (settings.ipex_showcase_url) { %>
+<section class="link-section music-license">
+  <h2>Музыка для видео, рекламы и кино</h2>
+  <p>Треки можно взять под ролик, рекламу, подкаст или фильм — легально и без переписки: каталог лежит на российской бирже лицензий IPEX, договор подписывается онлайн, права остаются у автора. У каждого трека на его странице есть кнопка «Лицензия».</p>
+  <a class="btn" href="<%= settings.ipex_showcase_url %>" target="_blank" rel="noopener">Каталог на IPEX</a>
+</section>
+<% } %>
+
 <section class="link-section">
   <h2>Слушать</h2>
   <div class="player-embed-grid">

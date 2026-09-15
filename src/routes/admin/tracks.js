@@ -27,7 +27,7 @@ router.get('/new', (req, res) => {
 });
 
 router.post('/', uploadImage.single('cover'), (req, res) => {
-  const { title, description, url, videoUrl, releaseId, sortOrder, isPublished } = req.body;
+  const { title, description, url, videoUrl, ipexUrl, releaseId, sortOrder, isPublished } = req.body;
   if (!title) {
     return res.render('admin/track-form', { track: req.body, releases: loadReleases(), error: 'Укажите название трека.' });
   }
@@ -35,10 +35,10 @@ router.post('/', uploadImage.single('cover'), (req, res) => {
   const cover = req.file ? `/uploads/${req.file.filename}` : '';
 
   db.prepare(`
-    INSERT INTO tracks (title, slug, description, url, video_url, video_format, cover_image, release_id, sort_order, is_published)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO tracks (title, slug, description, url, video_url, ipex_url, video_format, cover_image, release_id, sort_order, is_published)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
-    title, slugify(title), description || '', url || '', (videoUrl || '').trim(), videoFormat(req.body.videoFormat), cover,
+    title, slugify(title), description || '', url || '', (videoUrl || '').trim(), (ipexUrl || '').trim(), videoFormat(req.body.videoFormat), cover,
     releaseId ? Number(releaseId) : null, Number(sortOrder) || 0, isPublished ? 1 : 0
   );
 
@@ -55,7 +55,7 @@ router.post('/:id', uploadImage.single('cover'), (req, res) => {
   const track = db.prepare('SELECT * FROM tracks WHERE id = ?').get(req.params.id);
   if (!track) return res.status(404).render('404');
 
-  const { title, description, url, videoUrl, releaseId, sortOrder, isPublished } = req.body;
+  const { title, description, url, videoUrl, ipexUrl, releaseId, sortOrder, isPublished } = req.body;
   if (!title) {
     return res.render('admin/track-form', {
       track: { ...track, ...req.body }, releases: loadReleases(), error: 'Укажите название трека.',
@@ -66,10 +66,10 @@ router.post('/:id', uploadImage.single('cover'), (req, res) => {
   const slug = track.slug || slugify(title);
 
   db.prepare(`
-    UPDATE tracks SET title = ?, slug = ?, description = ?, url = ?, video_url = ?, video_format = ?, cover_image = ?, release_id = ?, sort_order = ?, is_published = ?
+    UPDATE tracks SET title = ?, slug = ?, description = ?, url = ?, video_url = ?, ipex_url = ?, video_format = ?, cover_image = ?, release_id = ?, sort_order = ?, is_published = ?
     WHERE id = ?
   `).run(
-    title, slug, description || '', url || '', (videoUrl || '').trim(), videoFormat(req.body.videoFormat), cover,
+    title, slug, description || '', url || '', (videoUrl || '').trim(), (ipexUrl || '').trim(), videoFormat(req.body.videoFormat), cover,
     releaseId ? Number(releaseId) : null, Number(sortOrder) || 0, isPublished ? 1 : 0, track.id
   );
 
