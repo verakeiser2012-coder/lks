@@ -49,8 +49,9 @@ router.post('/login', (req, res) => {
     });
   }
 
-  const { username, password, remember } = req.body;
-  const user = db.prepare('SELECT * FROM users WHERE username = ?').get(username);
+  const { username, password, remember } = req.body || {};
+  // Сканеры шлют POST без полей — без приведения к строке SQLite падает с 500.
+  const user = db.prepare('SELECT * FROM users WHERE username = ?').get(String(username || ''));
 
   if (!user || !bcrypt.compareSync(password || '', user.password_hash)) {
     registerFailure(ip);

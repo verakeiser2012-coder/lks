@@ -150,6 +150,7 @@ app.use('/games', require('./routes/games'));
 app.use('/podcast', require('./routes/podcast'));
 app.use('/style', styleRoutes);
 app.use('/brands', brandsRoutes);
+app.use('/services', require('./routes/services'));
 app.use('/gigs', gigsRoutes);
 app.use('/drops', collectionsRoutes);
 app.use('/redheads', redheadsRoutes);
@@ -161,6 +162,8 @@ app.use('/search', require('./routes/search'));
 app.use('/legal', legalRoutes);
 app.use('/b', require('./routes/busts'));
 app.use('/downloads', require('./routes/downloads'));
+app.use('/', require('./routes/order')); // /order/<токен> и /orders — заказ без кабинета
+app.use('/', require('./routes/reviews').router); // /reviews, отзыв по заказу и по приглашению
 app.use('/admin', adminRoutes);
 
 app.use((req, res) => {

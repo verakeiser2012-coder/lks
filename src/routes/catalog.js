@@ -81,6 +81,7 @@ router.get('/:slug', (req, res) => {
     // Описание для поиска — первый абзац, не длиннее 200 знаков: полный текст поисковики обрезают сами и некрасиво.
     pageDescription: (product.description || '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').split(/\n{2,}/)[0].replace(/\s+/g, ' ').trim().slice(0, 200),
     pageType: 'product',
+    reviews: require('./reviews').approved('AND product_id = ?', [product.id]),
   });
 });
 

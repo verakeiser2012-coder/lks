@@ -17,3 +17,5 @@ storage/digital/*
 storage/thumbs/
 !storage/digital/.gitkeep
 deploy/data/
+bot/.env
+data-kollegam/

@@ -6,6 +6,7 @@ const robokassa = require('../services/payments/robokassa');
 const { createPayment } = robokassa;
 const { cartIsDigitalOnly } = require('../services/digital');
 const { onOrderPaid } = require('../services/fulfillment');
+const { ensureToken, sendOrderCreated } = require('../services/orderPage');
 const delivery = require('../services/delivery');
 
 const router = express.Router();
@@ -143,6 +144,9 @@ router.post('/', async (req, res, next) => {
     shipping.days
   );
   const orderId = orderInfo.lastInsertRowid;
+  ensureToken(orderId);
+  // Заказы этого браузера: только им показываем «спасибо» по номеру, остальным — 404
+  req.session.myOrders = [...(req.session.myOrders || []), Number(orderId)].slice(-20);
 
   const insertItem = db.prepare(`
     INSERT INTO order_items (order_id, product_id, product_name, price, qty, variant)
@@ -160,6 +164,7 @@ router.post('/', async (req, res, next) => {
     db.prepare("UPDATE orders SET payment_status = 'paid', status = 'processing', payment_provider = 'free' WHERE id = ?").run(orderId);
     await onOrderPaid(orderId);
     req.session.cart = {};
+    sendOrderCreated(orderId).catch((err) => console.error('[order] письмо о заказе:', err.message));
     return res.redirect(`/checkout/success?orderId=${orderId}`);
   }
 
@@ -175,6 +180,7 @@ router.post('/', async (req, res, next) => {
     );
 
     req.session.cart = {};
+    sendOrderCreated(orderId).catch((err) => console.error('[order] письмо о заказе:', err.message));
     res.redirect(payment.confirmationUrl);
   } catch (err) {
     next(err);
@@ -200,14 +206,14 @@ router.post('/pay/:orderId/confirm', async (req, res) => {
   res.redirect(`/checkout/success?orderId=${order.id}`);
 });
 
+// «Спасибо» — это страница заказа по личному токену. По одному номеру заказ
+// не отдаём: раньше любой мог открыть чужой success?orderId= и увидеть файлы.
 router.get('/success', (req, res) => {
-  const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(req.query.orderId);
-  // Ссылки показываем прямо на странице: письмо может дойти не сразу
-  // или уехать в спам, а человек уже заплатил.
-  const downloads = order
-    ? db.prepare('SELECT * FROM downloads WHERE order_id = ? ORDER BY id').all(order.id)
-    : [];
-  res.render('checkout-success', { order: order || null, downloads });
+  const orderId = Number(req.query.orderId);
+  const mine = (req.session.myOrders || []).includes(orderId);
+  const order = mine ? db.prepare('SELECT * FROM orders WHERE id = ?').get(orderId) : null;
+  if (!order) return res.render('checkout-success', { order: null, downloads: [] });
+  res.redirect(`/order/${ensureToken(order.id)}?thanks=1`);
 });
 
 // Вернуть вещи заказа в корзину — покупатель отказался от оплаты
