@@ -2793,12 +2793,16 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 .filmstrip.filmstrip--grid .gallery-item { border-radius: 8px; box-shadow: none; }
 .filmstrip.filmstrip--grid .gallery-item img, .filmstrip.filmstrip--grid .gallery-item video { aspect-ratio: 1 / 1; border-radius: 8px; }
 
-/* Анонс глав — поярче: тёмные плашки с золотым номером. */
-.chapter-index { gap: 10px 12px; margin-bottom: 36px; }
-.chapter-index__item { padding: 9px 18px 9px 10px; border: 1px solid #a67c0a; background: linear-gradient(180deg, #2d2418, #211a12); color: #fff8e6; font-size: 0.98rem; font-weight: 600; box-shadow: 0 2px 8px rgba(33, 26, 18, 0.25); }
-.chapter-index__item:hover { background: linear-gradient(180deg, var(--color-gold-shine), var(--color-gold-bright)); color: var(--color-gold-ink); border-color: #a67c0a; }
-.chapter-index__num { display: inline-flex; align-items: center; justify-content: center; min-width: 30px; height: 30px; padding: 0 6px; border-radius: 999px; background: var(--color-gold-bright); color: var(--color-gold-ink); font-size: 0.82rem; }
-.chapter-index__item:hover .chapter-index__num { background: var(--color-gold-ink); color: var(--color-gold-bright); }
+/* Анонс глав — тонкие контурные плашки: золотой номер, спокойная подпись.
+   Полоса стоит между «Что нового» и первой главой, поэтому ей нужен воздух
+   с обеих сторон, а не тень и тёмная заливка, которые спорят с кадрами. */
+.chapter-index { gap: 8px 10px; margin: 0 0 40px; }
+.chapter-index__item { padding: 7px 16px 7px 8px; border: 1px solid rgba(166, 124, 10, 0.45); background: transparent; color: var(--color-text); font-size: 0.92rem; font-weight: 500; letter-spacing: 0.01em; box-shadow: none; }
+.chapter-index__item:hover { background: rgba(184, 134, 11, 0.08); border-color: var(--color-accent); color: var(--color-text); }
+.chapter-index__num { display: inline-flex; align-items: center; justify-content: center; min-width: 26px; height: 26px; padding: 0 5px; border-radius: 999px; background: transparent; border: 1px solid rgba(166, 124, 10, 0.55); color: var(--color-accent); font-size: 0.74rem; }
+.chapter-index__item:hover .chapter-index__num { background: var(--color-accent); border-color: var(--color-accent); color: #fff8e6; }
+.fresh + .chapter-index { margin-top: 28px; }
+.poster + .chapter-index { margin-top: 8px; }
 
 /* Бегущая строка: название — ссылка на страницу трека, ▸ рядом — включить/пауза. */
 .music-ticker__item { text-decoration: none; }
@@ -2842,3 +2846,46 @@ h1.mk-cover-name { margin: 0; }
 .pickup-item.is-selected { box-shadow: inset 3px 0 0 var(--color-accent); }
 .pickup-item-address { display: block; font-weight: 600; }
 .pickup-item-meta { display: block; font-size: 0.82rem; color: var(--color-muted); margin-top: 2px; }
+
+/* Страница услуги «Коллегам за копеечку» */
+.services-list { margin: 0; padding-left: 18px; color: var(--color-muted); font-size: 0.9rem; line-height: 1.5; }
+.services-list li { margin-bottom: 6px; }
+.services-list-wide { font-size: 1rem; color: inherit; line-height: 1.6; }
+.services-list-wide li { margin-bottom: 10px; }
+.services-note { color: var(--color-muted); font-size: 0.9rem; margin-top: 4px; }
+.services-table td:first-child { white-space: nowrap; font-weight: 600; }
+.services-cta { display: flex; flex-wrap: wrap; gap: 12px; }
+
+/* Страница заказа по ссылке (/order/<токен>) */
+.order-meta { color: var(--color-muted); margin-top: -8px; margin-bottom: 20px; }
+.order-steps { list-style: none; margin: 0 0 32px; padding: 0; display: flex; flex-wrap: wrap; gap: 0; counter-reset: step; }
+.order-step { flex: 1 1 0; min-width: 88px; padding: 10px 8px 10px 0; font-size: 0.9rem; color: var(--color-muted); border-top: 3px solid var(--color-border); }
+.order-step.is-done { border-top-color: var(--color-accent); color: inherit; }
+.order-step.is-current span { font-weight: 700; }
+.order-step::before { counter-increment: step; content: counter(step) ". "; }
+.order-table { min-width: 0; table-layout: auto; }
+.order-table td { padding: 8px 4px; }
+.order-table td:first-child { width: 100%; }
+.order-qty { color: var(--color-muted); white-space: nowrap; }
+.order-sum { text-align: right; white-space: nowrap; }
+.order-total td { font-weight: 700; border-bottom: 0; }
+
+/* Отзывы */
+.review-list { display: flex; flex-direction: column; gap: 14px; }
+.review { border: 1px solid var(--color-border); border-radius: var(--radius); padding: 14px 16px; background: #fffefb; }
+.review-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; font-size: 0.92rem; }
+.review-stars { color: var(--color-accent); letter-spacing: 1px; }
+.review-stars-off { color: var(--color-border); }
+.review-subject, .review-date { color: var(--color-muted); }
+.review-date { margin-left: auto; font-size: 0.85rem; }
+.review-body { margin: 8px 0 0; white-space: pre-wrap; line-height: 1.55; }
+.rating-field { border: 0; padding: 0; margin: 0; }
+.rating-field legend { font-size: 0.92rem; margin-bottom: 6px; }
+.rating-stars { display: inline-flex; flex-direction: row-reverse; gap: 2px; }
+.rating-stars input { position: absolute; opacity: 0; width: 0; height: 0; }
+.rating-stars label { font-size: 1.9rem; line-height: 1; color: var(--color-border); cursor: pointer; }
+.rating-stars input:checked ~ label, .rating-stars label:hover, .rating-stars label:hover ~ label { color: var(--color-accent); }
+
+/* Лицензии IPEX */
+.track-license { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--color-border); }
+.music-license p { max-width: 640px; line-height: 1.6; margin-bottom: 14px; }
