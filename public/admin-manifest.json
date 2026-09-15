@@ -1,0 +1,14 @@
+{
+  "name": "Админка LEVKEISER",
+  "short_name": "Админка",
+  "start_url": "/admin/calendar",
+  "scope": "/admin/",
+  "display": "standalone",
+  "background_color": "#2A1F33",
+  "theme_color": "#2A1F33",
+  "lang": "ru",
+  "icons": [
+    { "src": "/admin-icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/admin-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
