@@ -49,7 +49,8 @@
             <button class="link-btn" type="submit"><%= post.is_pinned ? 'Открепить' : 'Закрепить' %></button>
           </form>
           <a href="/admin/news/<%= post.id %>/edit">Изменить</a>
-<%- include('partials/hide-button', { hideKind: 'news', hideId: post.id, hideVisible: post.is_published }) %> method="POST" onsubmit="return confirm('Удалить новость?');">
+          <%- include('partials/hide-button', { hideKind: 'news', hideId: post.id, hideVisible: post.is_published }) %>
+          <form class="inline" action="/admin/news/<%= post.id %>/delete" method="POST" onsubmit="return confirm('Удалить новость?');">
             <button class="link-btn" type="submit">Удалить</button>
           </form>
         </td>

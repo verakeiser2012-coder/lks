@@ -26,7 +26,8 @@
         <td><%= track.is_published ? 'Да' : 'Нет' %></td>
         <td>
           <a href="/admin/tracks/<%= track.id %>/edit">Изменить</a>
-<%- include('partials/hide-button', { hideKind: 'tracks', hideId: track.id, hideVisible: track.is_published }) %> method="POST" onsubmit="return confirm('Удалить трек?');">
+          <%- include('partials/hide-button', { hideKind: 'tracks', hideId: track.id, hideVisible: track.is_published }) %>
+          <form class="inline" action="/admin/tracks/<%= track.id %>/delete" method="POST" onsubmit="return confirm('Удалить трек?');">
             <button class="link-btn" type="submit">Удалить</button>
           </form>
         </td>

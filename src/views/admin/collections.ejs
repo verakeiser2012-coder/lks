@@ -23,7 +23,8 @@
         <td>
           <a href="/admin/collections/<%= c.id %>/edit">Изменить</a>
           <a href="/drops/<%= c.slug %>" target="_blank">Смотреть ↗</a>
-<%- include('partials/hide-button', { hideKind: 'collections', hideId: c.id, hideVisible: c.is_published }) %> method="POST" onsubmit="return confirm('Удалить дроп? Товары останутся, но потеряют привязку к нему.');">
+          <%- include('partials/hide-button', { hideKind: 'collections', hideId: c.id, hideVisible: c.is_published }) %>
+          <form class="inline" action="/admin/collections/<%= c.id %>/delete" method="POST" onsubmit="return confirm('Удалить дроп? Товары останутся, но потеряют привязку к нему.');">
             <button class="link-btn" type="submit">Удалить</button>
           </form>
         </td>
