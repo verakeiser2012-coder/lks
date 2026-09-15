@@ -95,7 +95,7 @@ Pixel — в «Ещё». Если режима нет, снимай обычно
 4. Опубликовать шаблон в CapCut с описанием «Твой выход под трек — конкурс на levkeiser.com/contest»
    и обновить ссылку кнопки «Открыть шаблон» на /contest.
 
-**Драфт собран 09.09.2026.** `python tools/build_contest_template.py` создаёт проект
+**Драфт собран 09.09.2026, пересобран 11.09.** `python tools/build_templates_v2.py contest` создаёт проект
 `contest_vyhod_pod_trek_TEMPLATE` в папке проектов CapCut: 1080×1920, 25 секунд,
 клип-заглушка со скоростью 0.5×, трек soundstates с первой сильной доли (8.0 с)
 с fade-out 1.5 с, подпись «soundstates · DJ Levka» в первые 2 секунды внизу.
