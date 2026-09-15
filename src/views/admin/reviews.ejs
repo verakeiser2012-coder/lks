@@ -1,0 +1,73 @@
+<%- include('partials/header') %>
+
+<% const pending = reviews.filter(function (r) { return r.status === 'pending'; }).length; %>
+<% const LABEL = { pending: 'на проверке', approved: 'опубликован', rejected: 'скрыт' }; %>
+
+<div class="admin-toolbar">
+  <h1>Отзывы</h1>
+  <div>
+    <% if (pending) { %><span class="badge badge-scheduled">на проверке: <%= pending %></span>&nbsp;<% } %>
+    <span class="badge">всего: <%= reviews.length %></span>
+  </div>
+</div>
+
+<p class="admin-hint">
+  Покупатели пишут отзыв со страницы своего заказа (кнопка появляется после оплаты).
+  Для клиентов услуги и тех, кто купил не через сайт, — приглашение ниже: одна ссылка, один отзыв.
+  На сайт попадает только то, что вы одобрили: <a href="/reviews">/reviews</a> и страница товара.
+</p>
+
+<div class="message-card">
+  <strong>Приглашение на отзыв</strong>
+  <form class="inline-form" action="/admin/reviews/invite" method="POST">
+    <select name="kind">
+      <option value="service">услуга «Коллегам за копеечку»</option>
+      <option value="product">вещь (куплена не через сайт)</option>
+    </select>
+    <input type="text" name="subject" placeholder="о чём (для вещи — название)" maxlength="120">
+    <input type="text" name="client_name" placeholder="имя клиента (подставится в форму)" maxlength="80">
+    <button class="btn btn-small" type="submit">Создать ссылку</button>
+  </form>
+  <% if (created) { %>
+    <p>Ссылка для клиента: <code><%= site %>/review/<%= created %></code></p>
+  <% } %>
+  <% const open = invites.filter(function (i) { return !i.used; }); %>
+  <% if (open.length) { %>
+    <p class="admin-hint">Неиспользованные приглашения:</p>
+    <ul class="admin-list">
+      <% open.forEach(function (i) { %>
+        <li><code><%= site %>/review/<%= i.token %></code> — <%= i.subject %><%= i.client_name ? ', ' + i.client_name : '' %> · <%= i.created_at.slice(0, 10) %>
+          <form class="inline" action="/admin/reviews/invite/<%= i.id %>/delete" method="POST"><button class="link-btn" type="submit">удалить</button></form></li>
+      <% }); %>
+    </ul>
+  <% } %>
+</div>
+
+<% if (reviews.length === 0) { %>
+  <p>Отзывов пока нет.</p>
+<% } else { %>
+  <% reviews.forEach(function (r) { %>
+    <div class="message-card<%= r.status === 'pending' ? '' : ' is-read' %>">
+      <div class="message-head">
+        <span><%= '★'.repeat(r.rating) %><span style="opacity:.3"><%= '★'.repeat(5 - r.rating) %></span></span>
+        <strong><%= r.author_name %></strong>
+        <span class="badge"><%= r.kind === 'service' ? 'услуга' : 'вещь' %>: <%= r.subject %></span>
+        <% if (r.order_id) { %><a class="badge" href="/admin/orders/<%= r.order_id %>">заказ №<%= r.order_id %></a><% } %>
+        <span class="badge <%= r.status === 'approved' ? 'badge-published' : r.status === 'rejected' ? 'badge-failed' : 'badge-scheduled' %>"><%= LABEL[r.status] %></span>
+        <span class="message-date"><%= r.created_at %></span>
+      </div>
+      <p class="message-body"><%= r.body %></p>
+      <div class="message-actions">
+        <% if (r.status !== 'approved') { %>
+          <form class="inline" action="/admin/reviews/<%= r.id %>/status" method="POST"><input type="hidden" name="status" value="approved"><button class="link-btn" type="submit">Опубликовать</button></form>
+        <% } %>
+        <% if (r.status !== 'rejected') { %>
+          <form class="inline" action="/admin/reviews/<%= r.id %>/status" method="POST"><input type="hidden" name="status" value="rejected"><button class="link-btn" type="submit">Скрыть</button></form>
+        <% } %>
+        <form class="inline" action="/admin/reviews/<%= r.id %>/delete" method="POST" onsubmit="return confirm('Удалить отзыв навсегда?');"><button class="link-btn" type="submit">Удалить</button></form>
+      </div>
+    </div>
+  <% }); %>
+<% } %>
+
+<%- include('partials/footer') %>

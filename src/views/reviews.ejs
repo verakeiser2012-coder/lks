@@ -1,0 +1,26 @@
+<%- include('partials/header') %>
+
+<h1>Отзывы</h1>
+
+<p class="prose">Здесь только отзывы от людей, которые действительно купили вещь или прошли оформление прав: ссылка на форму приходит вместе с заказом или от нас лично. Ничего не покупали — написать нельзя, зато читать можно всё.</p>
+
+<div class="link-section">
+  <h2>О вещах и музыке</h2>
+  <% if (products.length) { %>
+    <%- include('partials/review-list', { list: products, showSubject: true }) %>
+  <% } else { %>
+    <p class="hint">Пока пусто: первые отзывы появятся после первых заказов.</p>
+  <% } %>
+</div>
+
+<div class="link-section">
+  <h2>Об оформлении прав — «Коллегам за копеечку»</h2>
+  <% if (services.length) { %>
+    <%- include('partials/review-list', { list: services, showSubject: false }) %>
+  <% } else { %>
+    <p class="hint">Первый клиент в работе — отзыв появится, когда закончим.</p>
+  <% } %>
+  <p><a href="/services">Что за услуга →</a></p>
+</div>
+
+<%- include('partials/footer') %>

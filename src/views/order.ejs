@@ -1,0 +1,88 @@
+<%- include('partials/header') %>
+
+<%
+  const DELIVERY = { courier: 'Курьером', pickup: 'Пункт выдачи', digital: 'Без доставки (файлы)', post: 'Почтой' };
+  const CARRIER = { cdek: 'СДЭК', ozon: 'Ozon', printful: 'Printful' };
+  const money = (n) => Math.round(Number(n)).toLocaleString('ru-RU') + ' ₽';
+%>
+
+<% if (thanks) { %>
+  <div class="flash flash-success contact-sent">
+    <strong>Спасибо за заказ!</strong>
+    Эта страница — ваш заказ. Ссылка на неё <%= order.email ? 'ушла на ' + order.email : 'личная' %>; сохраните её, чтобы следить за статусом.
+  </div>
+<% } %>
+
+<h1>Заказ №<%= order.id %></h1>
+<p class="order-meta">от <%= order.created_at.slice(0, 10).split('-').reverse().join('.') %> · <%= order.payment_status === 'paid' ? 'оплачен' : 'ожидает оплаты' %></p>
+
+<% if (cancelled) { %>
+  <div class="flash flash-error">Заказ отменён. Если это ошибка — <a href="/contact?topic=order">напишите нам</a>.</div>
+<% } else { %>
+  <ol class="order-steps">
+    <% steps.forEach(function (s) { %>
+      <li class="order-step<%= s.done ? ' is-done' : '' %><%= s.current ? ' is-current' : '' %>"><span><%= s.label %></span></li>
+    <% }); %>
+  </ol>
+<% } %>
+
+<div class="link-section">
+  <h2>Состав</h2>
+  <table class="music-table order-table">
+    <tbody>
+      <% items.forEach(function (i) { %>
+        <tr>
+          <td><%= i.product_name %><%= i.variant ? ' · ' + i.variant : '' %></td>
+          <td class="order-qty">× <%= i.qty %></td>
+          <td class="order-sum"><%= money(i.price * i.qty) %></td>
+        </tr>
+      <% }); %>
+      <% if (order.shipping_cost > 0) { %>
+        <tr><td>Доставка<%= order.shipping_days ? ' · ' + order.shipping_days : '' %></td><td></td><td class="order-sum"><%= money(order.shipping_cost) %></td></tr>
+      <% } %>
+      <tr class="order-total"><td>Итого</td><td></td><td class="order-sum"><%= money(order.total) %></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<% if (order.delivery_method !== 'digital' && !downloads.length) { %>
+<div class="link-section">
+  <h2>Доставка</h2>
+  <p><%= DELIVERY[order.delivery_method] || order.delivery_method %><%= order.shipping_carrier ? ' · ' + (CARRIER[order.shipping_carrier] || order.shipping_carrier) : '' %></p>
+  <% if (order.pickup_point) { %><p><%= order.pickup_point %></p><% } %>
+  <% if (order.address) { %><p><%= [order.zip, order.city, order.address].filter(Boolean).join(', ') %></p><% } %>
+  <% if (order.shipping_track) { %>
+    <p>Трек-номер: <strong><%= order.shipping_track %></strong><% if (trackingUrl) { %> · <a href="<%= trackingUrl %>" target="_blank" rel="noopener">отследить</a><% } %></p>
+  <% } else if (order.status === 'shipped') { %>
+    <p class="hint">Трек-номер появится здесь, как только служба доставки его выдаст.</p>
+  <% } %>
+</div>
+<% } %>
+
+<% if (downloads.length) { %>
+<div class="link-section">
+  <h2>Файлы</h2>
+  <div class="download-list">
+    <% downloads.forEach(function (d) { %>
+      <div class="download-item">
+        <div class="download-item__name"><%= d.product_name %></div>
+        <a class="btn" href="/downloads/<%= d.token %>">Скачать</a>
+      </div>
+    <% }); %>
+  </div>
+</div>
+<% } else if (order.payment_status !== 'paid' && order.delivery_method === 'digital') { %>
+  <p class="hint">Файлы появятся здесь после оплаты.</p>
+<% } %>
+
+<% if (order.payment_status === 'paid' && !cancelled && items.length) { %>
+<div class="link-section">
+  <a class="btn btn-secondary" href="/order/<%= order.access_token %>/review">Оставить отзыв</a>
+</div>
+<% } %>
+
+<div class="link-section">
+  <p class="hint">Вопрос по заказу — <a href="/contact?topic=order">напишите</a>, укажите номер №<%= order.id %>. Все ваши заказы одним письмом — <a href="/orders">Мои заказы</a>.</p>
+</div>
+
+<%- include('partials/footer') %>

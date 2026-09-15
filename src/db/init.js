@@ -624,6 +624,10 @@ function init() {
   if (!trackCols.some((c) => c.name === 'slug')) {
     db.exec("ALTER TABLE tracks ADD COLUMN slug TEXT DEFAULT ''");
   }
+  // Страница трека на бирже лицензий IPEX — кнопка «лицензия для видео и рекламы».
+  if (!trackCols.some((c) => c.name === 'ipex_url')) {
+    db.exec("ALTER TABLE tracks ADD COLUMN ipex_url TEXT NOT NULL DEFAULT ''");
+  }
   // Видео к треку и релизу: клип или плейлист YouTube (или любая ссылка,
   // которую понимает utils/videoEmbed). Хранится ссылка, не файл.
   // Формат — горизонтальный 16:9 или вертикальный 9:16 (shorts, вертикалки):
@@ -682,6 +686,47 @@ function init() {
   for (const [col, def] of [['shipping_carrier', "TEXT NOT NULL DEFAULT ''"], ['shipping_tariff', "TEXT NOT NULL DEFAULT ''"], ['shipping_cost', 'REAL NOT NULL DEFAULT 0'], ['shipping_days', "TEXT NOT NULL DEFAULT ''"], ['shipping_ref', "TEXT NOT NULL DEFAULT ''"], ['shipping_track', "TEXT NOT NULL DEFAULT ''"], ['shipping_status', "TEXT NOT NULL DEFAULT ''"]]) {
     if (!podOrderCols.includes(col)) db.exec(`ALTER TABLE orders ADD COLUMN ${col} ${def}`);
   }
+  // Страница заказа без личного кабинета: длинный случайный токен в ссылке из письма.
+  // Старым заказам токен выдаём здесь же, чтобы /orders (поиск по почте) находил и их.
+  if (!podOrderCols.includes('access_token')) {
+    db.exec("ALTER TABLE orders ADD COLUMN access_token TEXT NOT NULL DEFAULT ''");
+  }
+  {
+    const { randomBytes } = require('crypto');
+    const fill = db.prepare('UPDATE orders SET access_token = ? WHERE id = ?');
+    for (const row of db.prepare("SELECT id FROM orders WHERE access_token = ''").all()) {
+      fill.run(randomBytes(16).toString('hex'), row.id);
+    }
+    db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_orders_access_token ON orders(access_token)');
+  }
+
+  // Отзывы только от подтверждённых покупателей: пишутся со страницы заказа
+  // (kind = product) или по приглашению, которое выдаёт админка (kind = service —
+  // клиенты услуги «Коллегам», заказа в магазине у них нет). Показываются после модерации.
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS reviews (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      kind TEXT NOT NULL DEFAULT 'product',
+      product_id INTEGER REFERENCES products(id) ON DELETE SET NULL,
+      subject TEXT NOT NULL DEFAULT '',
+      order_id INTEGER REFERENCES orders(id) ON DELETE SET NULL,
+      invite_id INTEGER,
+      author_name TEXT NOT NULL,
+      rating INTEGER NOT NULL DEFAULT 5,
+      body TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'pending',
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE TABLE IF NOT EXISTS review_invites (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      token TEXT UNIQUE NOT NULL,
+      kind TEXT NOT NULL DEFAULT 'service',
+      subject TEXT NOT NULL DEFAULT '',
+      client_name TEXT NOT NULL DEFAULT '',
+      used INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+  `);
 
   // Подкаст: раздел заведён до первого выпуска, поэтому запись может жить
   // без файла — тогда карточка показывается как «скоро».

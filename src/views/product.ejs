@@ -94,6 +94,9 @@
           Цифровой товар. После оплаты придёт ссылка на скачивание — на почту и сразу на экран.
         <% } %>
       </p>
+      <% if (settings.ipex_showcase_url && /стемы|dj-верси/i.test(product.name)) { %>
+        <p class="product-digital-note">Файлы — для личного использования, ремиксов и сетов. Для видео, рекламы и кино нужна лицензия — <a href="<%= settings.ipex_showcase_url %>" target="_blank" rel="noopener">каталог на IPEX</a>.</p>
+      <% } %>
       <form action="/cart/add" method="POST">
         <input type="hidden" name="productId" value="<%= product.id %>">
         <button class="btn" type="submit"><%= Number(product.price) === 0 ? 'Забрать бесплатно' : 'Купить и скачать' %></button>
@@ -143,6 +146,14 @@
     <% } %>
   </div>
 </div>
+
+<% if (typeof reviews !== 'undefined' && reviews.length) { %>
+<div class="link-section product-reviews">
+  <h2>Отзывы</h2>
+  <%- include('partials/review-list', { list: reviews, showSubject: false }) %>
+  <p class="hint">Отзывы — только от покупателей: ссылка на форму приходит вместе с заказом. <a href="/reviews">Все отзывы →</a></p>
+</div>
+<% } %>
 
 <%- include('partials/share') %>
 

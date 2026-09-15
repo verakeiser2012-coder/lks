@@ -1,4 +1,5 @@
 const express = require('express');
+const { sendStatusChanged } = require('../../services/orderPage');
 const db = require('../../db');
 const { submitOrder, printfulItems } = require('../../services/printful');
 const { createShipment, refreshShipment, CARRIERS } = require('../../services/delivery');
@@ -56,7 +57,12 @@ router.post('/:id/shipment', async (req, res) => {
 
 router.post('/:id/status', (req, res) => {
   const { status } = req.body;
+  const before = db.prepare('SELECT status FROM orders WHERE id = ?').get(req.params.id);
   db.prepare('UPDATE orders SET status = ? WHERE id = ?').run(status, req.params.id);
+  // Покупателю — письмо со ссылкой на страницу заказа, если статус действительно сменился
+  if (before && before.status !== status) {
+    sendStatusChanged(req.params.id).catch((err) => console.error('[order] письмо о статусе:', err.message));
+  }
   res.redirect(`/admin/orders/${req.params.id}`);
 });
 

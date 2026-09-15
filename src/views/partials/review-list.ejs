@@ -1,0 +1,16 @@
+<%# Список одобренных отзывов. Ждёт переменную list (массив reviews) и showSubject (bool). %>
+<% if (list.length) { %>
+  <div class="review-list">
+    <% list.forEach(function (r) { %>
+      <article class="review">
+        <div class="review-head">
+          <span class="review-stars" aria-label="<%= r.rating %> из 5"><%= '★'.repeat(r.rating) %><span class="review-stars-off"><%= '★'.repeat(5 - r.rating) %></span></span>
+          <strong><%= r.author_name %></strong>
+          <% if (showSubject && r.subject) { %><span class="review-subject">· <%= r.subject %></span><% } %>
+          <span class="review-date"><%= r.created_at.slice(0, 10).split('-').reverse().join('.') %></span>
+        </div>
+        <p class="review-body"><%= r.body %></p>
+      </article>
+    <% }); %>
+  </div>
+<% } %>

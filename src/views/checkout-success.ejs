@@ -2,10 +2,7 @@
 
 <div class="not-found">
   <h1>Спасибо за заказ!</h1>
-  <% if (order) { %>
-    <p>Номер заказа: №<%= order.id %></p>
-    <p>Статус оплаты: <%= order.payment_status === 'paid' ? 'оплачен' : 'ожидает оплаты' %></p>
-  <% } %>
+  <p>Ссылка на страницу заказа ушла на вашу почту. Все свои заказы можно запросить на <a href="/orders">Мои заказы</a>.</p>
 
   <% if (typeof downloads !== 'undefined' && downloads.length > 0) { %>
     <h2>Ваши файлы</h2>
