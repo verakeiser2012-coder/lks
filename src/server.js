@@ -161,6 +161,7 @@ app.use('/unsubscribe', require('./routes/unsubscribe'));
 app.use('/search', require('./routes/search'));
 app.use('/legal', legalRoutes);
 app.use('/b', require('./routes/busts'));
+app.use('/n', require('./routes/tags'));
 app.use('/downloads', require('./routes/downloads'));
 app.use('/', require('./routes/order')); // /order/<токен> и /orders — заказ без кабинета
 app.use('/', require('./routes/reviews').router); // /reviews, отзыв по заказу и по приглашению

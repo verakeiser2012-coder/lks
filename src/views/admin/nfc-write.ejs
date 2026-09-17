@@ -1,0 +1,124 @@
+<%- include('partials/header') %>
+
+<h1>Записать метки с телефона</h1>
+
+<p style="max-width:720px;">
+  Открой эту страницу в <strong>Chrome на Android</strong> — запись идёт прямо из браузера,
+  приложение не нужно. На iPhone браузер метки писать не умеет: там приложение
+  <a href="https://apps.apple.com/app/nfc-tools/id1252962749" target="_blank" rel="noopener">NFC Tools</a>
+  и порядок из <code>notes/nfc-tags-howto.md</code>.
+</p>
+
+<div id="nfc-support" class="flash flash-error" hidden>В этом браузере нет Web NFC. Нужен Chrome на Android с включённым NFC.</div>
+
+<label>
+  Что записываем
+  <select id="nfc-item" style="max-width:520px;">
+    <optgroup label="Бюсты (/b/…)">
+      <% busts.forEach(function(b) { %>
+        <option value="busts:<%= b.id %>:<%= b.code %>:b">№<%= String(b.number).padStart(3, '0') %> · <%= b.code %><%= b.kind ? ' · ' + b.kind : '' %><%= b.nfc_uid ? ' ✓ UID есть' : '' %></option>
+      <% }); %>
+    </optgroup>
+    <optgroup label="Пластинки, флаги, чехлы (/n/…)">
+      <% tags.forEach(function(t) { %>
+        <option value="nfc_tags:<%= t.id %>:<%= t.code %>:n"><%= kinds[t.kind] ? kinds[t.kind].label : t.kind %> №<%= String(t.number).padStart(3, '0') %> · <%= t.code %><%= t.label ? ' · ' + t.label : (t.product_name ? ' · ' + t.product_name : '') %><%= t.nfc_uid ? ' ✓ UID есть' : '' %></option>
+      <% }); %>
+    </optgroup>
+  </select>
+</label>
+
+<p>Ссылка, которая будет на метке: <code id="nfc-url"></code></p>
+
+<p style="display:flex; gap:10px; flex-wrap:wrap;">
+  <button class="btn" type="button" id="nfc-write">1. Записать и сохранить UID</button>
+  <button class="btn" type="button" id="nfc-read">Только прочитать</button>
+  <button class="btn" type="button" id="nfc-lock" style="background:#7A2E1B;">2. Заблокировать метку</button>
+</p>
+
+<div id="nfc-log" style="font-family:monospace; white-space:pre-wrap; background:var(--color-surface,#f4f1ea); padding:12px; border-radius:8px; min-height:80px;"></div>
+
+<p style="color:var(--color-muted); font-size:0.9rem; max-width:720px;">
+  Порядок на одну метку: выбрать экземпляр → «Записать» → приложить метку к спинке телефона и держать,
+  пока не появится «готово» (UID сохранится сам) → убрать телефон, приложить снова: должна открыться
+  страница → «Заблокировать» (после этого ссылку на метке не изменить никому). Дальше — следующий экземпляр.
+</p>
+
+<script>
+(function () {
+  var sel = document.getElementById('nfc-item');
+  var urlEl = document.getElementById('nfc-url');
+  var log = document.getElementById('nfc-log');
+  function say(t) { log.textContent += t + '\n'; log.scrollTop = log.scrollHeight; }
+  function cur() {
+    var p = sel.value.split(':');
+    return { table: p[0], id: p[1], code: p[2], url: 'https://levkeiser.shop/' + p[3] + '/' + p[2] };
+  }
+  function refresh() { urlEl.textContent = cur().url; }
+  sel.addEventListener('change', refresh); refresh();
+  if (!('NDEFReader' in window)) { document.getElementById('nfc-support').hidden = false; return; }
+
+  function uidOf(ev) { return (ev.serialNumber || '').toUpperCase().replace(/[^0-9A-F]/g, ''); }
+
+  async function saveUid(item, uid) {
+    var r = await fetch('/admin/nfc/uid', { method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ table: item.table, id: item.id, uid: uid }) });
+    var j = await r.json();
+    if (j.ok) {
+      say('UID ' + uid + ' сохранён для ' + item.code + ' ✓');
+      var o = sel.options[sel.selectedIndex];
+      if (o.text.indexOf('✓') < 0) o.text += ' ✓ UID есть';
+    } else {
+      say('UID не сохранён: ' + (j.error || 'ошибка'));
+    }
+  }
+
+  // Web NFC отдаёт серийный номер только при чтении, поэтому сначала читаем, потом пишем
+  document.getElementById('nfc-write').addEventListener('click', async function () {
+    var item = cur();
+    try {
+      var reader = new NDEFReader();
+      say('Приложи метку… (' + item.code + ')');
+      var got = await new Promise(function (resolve, reject) {
+        var ctrl = new AbortController();
+        reader.addEventListener('reading', function (ev) { ctrl.abort(); resolve(ev); }, { once: true });
+        reader.scan({ signal: ctrl.signal }).catch(reject);
+      });
+      var uid = uidOf(got);
+      say('Метка найдена, UID ' + uid);
+      await new NDEFReader().write({ records: [{ recordType: 'url', data: item.url }] });
+      say('Записано: ' + item.url + ' — готово, метку можно убирать');
+      if (uid) await saveUid(item, uid);
+    } catch (e) { say('Ошибка: ' + e.message); }
+  });
+
+  document.getElementById('nfc-read').addEventListener('click', async function () {
+    try {
+      var reader = new NDEFReader();
+      say('Приложи метку для чтения…');
+      var ctrl = new AbortController();
+      reader.addEventListener('reading', function (ev) {
+        ctrl.abort();
+        say('UID ' + uidOf(ev));
+        var dec = new TextDecoder();
+        var recs = (ev.message && ev.message.records) || [];
+        recs.forEach(function (r) { say('запись ' + r.recordType + ': ' + (r.data ? dec.decode(r.data) : '')); });
+        if (!recs.length) say('метка пустая');
+      }, { once: true });
+      await reader.scan({ signal: ctrl.signal });
+    } catch (e) { say('Ошибка: ' + e.message); }
+  });
+
+  document.getElementById('nfc-lock').addEventListener('click', async function () {
+    if (!confirm('Заблокировать метку навсегда? Сначала проверь, что ссылка открывается.')) return;
+    try {
+      var reader = new NDEFReader();
+      if (!reader.makeReadOnly) { say('Этот Chrome не умеет блокировать — обнови Chrome или заблокируй в NFC Tools'); return; }
+      say('Приложи метку для блокировки…');
+      await reader.makeReadOnly();
+      say('Метка заблокирована ✓');
+    } catch (e) { say('Ошибка: ' + e.message); }
+  });
+})();
+</script>
+
+<%- include('partials/footer') %>

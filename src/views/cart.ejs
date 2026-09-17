@@ -34,7 +34,7 @@
               <form class="inline" action="/cart/update" method="POST">
                 <input type="hidden" name="productId" value="<%= item.product.id %>">
                 <input type="hidden" name="variant" value="<%= item.variant || '' %>">
-                <input type="number" name="qty" value="<%= item.qty %>" min="1" <% if (item.product.fulfillment !== 'printful') { %>max="<%= item.product.stock %>"<% } %> style="width:70px" onchange="this.form.submit()">
+                <input type="number" name="qty" value="<%= item.qty %>" min="1" <% if (item.product.fulfillment !== 'printful') { %>max="<%= Math.min(item.product.stock, 10) %>"<% } %> style="width:70px" onchange="this.form.submit()">
               </form>
             <% } %>
           </td>

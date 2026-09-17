@@ -75,6 +75,31 @@ function init() {
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
 
+    -- Метки на вещах, которые не бюсты: пластинки, флаги, чехлы. Та же логика,
+    -- что у busts: на метку пишется ссылка /n/<код>, код случайный и подтверждает
+    -- подлинность, UID метки записывается для сверки. Куда ведёт страница,
+    -- меняется в админке — саму метку переписывать не нужно.
+    CREATE TABLE IF NOT EXISTS nfc_tags (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      number INTEGER NOT NULL,
+      code TEXT NOT NULL UNIQUE,
+      nfc_uid TEXT NOT NULL DEFAULT '',
+      kind TEXT NOT NULL DEFAULT 'other',
+      label TEXT NOT NULL DEFAULT '',
+      product_id INTEGER REFERENCES products(id) ON DELETE SET NULL,
+      target_url TEXT NOT NULL DEFAULT '',
+      bonus_file TEXT NOT NULL DEFAULT '',
+      bonus_label TEXT NOT NULL DEFAULT '',
+      public_note TEXT NOT NULL DEFAULT '',
+      note TEXT NOT NULL DEFAULT '',
+      scans INTEGER NOT NULL DEFAULT 0,
+      last_scan_at TEXT,
+      owner_name TEXT NOT NULL DEFAULT '',
+      owner_email TEXT NOT NULL DEFAULT '',
+      registered_at TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
     -- Выдача цифровых товаров: одна строка на каждый купленный цифровой товар.
     -- Ссылка на скачивание работает по токену, ограничена сроком и числом попыток,
     -- чтобы её нельзя было просто переслать дальше.

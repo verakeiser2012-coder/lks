@@ -1,0 +1,80 @@
+<%- include('partials/header') %>
+
+<%
+  const num = String(tag.number).padStart(3, '0');
+  function ruDate(value) {
+    if (!value) return '';
+    const d = String(value).slice(0, 10).split('-');
+    return d.length === 3 ? `${d[2]}.${d[1]}.${d[0]}` : String(value);
+  }
+%>
+
+<div class="bust-page">
+
+  <% if (verified) { %>
+    <div class="bust-badge">
+      <span class="bust-badge__check">✓</span>
+      <span>Подлинный экземпляр</span>
+    </div>
+  <% } %>
+
+  <h1 class="bust-number"><%= kindLabel %> №<%= num %></h1>
+  <% if (tag.label) { %><p class="lead"><%= tag.label %></p><% } %>
+
+  <% if (error) { %><div class="flash flash-error"><%= error %></div><% } %>
+  <% if (justRegistered) { %>
+    <div class="flash flash-success">
+      Готово, экземпляр закреплён за вами. Спасибо — теперь мы знаем, у кого он живёт.
+    </div>
+  <% } %>
+
+  <% if (tag.public_note) { %>
+    <div class="product-description"><%- tag.public_note.split(/\n{2,}/).map(p => '<p>' + p.replace(/\n/g, '<br>') + '</p>').join('') %></div>
+  <% } %>
+
+  <table class="bust-facts">
+    <% if (product) { %>
+      <tr><th>Вещь</th><td><a href="/catalog/<%= product.slug %>"><%= product.name %></a></td></tr>
+    <% } %>
+    <tr><th>Код</th><td><code><%= tag.code %></code></td></tr>
+    <tr>
+      <th>Статус</th>
+      <td>
+        <% if (tag.registered_at) { %>Закреплён за владельцем <%= ruDate(tag.registered_at) %>
+        <% } else { %>Ещё не закреплён<% } %>
+      </td>
+    </tr>
+  </table>
+
+  <% if (tag.bonus_file) { %>
+    <div class="bust-links">
+      <a class="btn" href="/n/<%= encodeURIComponent(tag.code) %>/file">
+        <%= tag.bonus_label || 'Скачать бонус владельца' %>
+      </a>
+    </div>
+  <% } %>
+
+  <% if (tag.target_url) { %>
+    <p><a href="<%= tag.target_url %>">Перейти к истории вещи →</a></p>
+  <% } %>
+
+  <% if (verified && !tag.registered_at) { %>
+    <div class="bust-register">
+      <h2>Закрепить за собой</h2>
+      <p>Так мы будем знать, у кого экземпляр, и сможем написать, если по нему что-то появится. Закрепить можно один раз.</p>
+      <form action="/n/<%= encodeURIComponent(tag.code) %>/register" method="POST">
+        <label>Как вас зовут *<input type="text" name="ownerName" required></label>
+        <label>Почта *<input type="email" name="ownerEmail" required></label>
+        <label style="display:flex; align-items:flex-start; gap:8px;">
+          <input type="checkbox" name="dataConsent" value="1" style="width:auto; margin-top:4px;" required>
+          <span>Согласен на обработку персональных данных в соответствии с
+          <a href="/legal/privacy" target="_blank" rel="noopener">политикой конфиденциальности</a> *</span>
+        </label>
+        <button class="btn" type="submit">Закрепить</button>
+      </form>
+    </div>
+  <% } %>
+
+</div>
+
+<%- include('partials/footer') %>

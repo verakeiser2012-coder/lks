@@ -1,0 +1,115 @@
+<%- include('partials/header') %>
+
+<h1>Метки — пластинки, флаги, чехлы</h1>
+
+<p style="color:var(--color-muted); font-size:0.9rem; max-width:720px;">
+  На метку пишется ссылка <code>https://levkeiser.shop/n/&lt;код&gt;</code>, тот же код печатается на
+  карточке. Куда ведёт страница и какой файл отдаёт — меняется здесь, метку переписывать не нужно.
+  Бюсты живут отдельно, в <a href="/admin/busts">своём учёте</a>. Как записывать метки —
+  <code>notes/nfc-tags-howto.md</code>.
+</p>
+
+<p><a class="btn" href="/admin/nfc/write">Записать метки с телефона →</a></p>
+
+<% if (error) { %><div class="flash flash-error"><%= error %></div><% } %>
+<% if (saved) { %><div class="flash flash-success">Сохранено.</div><% } %>
+
+<% if (created && created.length) { %>
+  <div class="flash flash-success">Заведено меток: <%= created.length %>. Коды — на карточки и в ссылку на метке.</div>
+  <table class="admin-table">
+    <thead><tr><th>№</th><th>Код</th><th>Ссылка для записи на метку</th></tr></thead>
+    <tbody>
+      <% created.forEach(function(t) { %>
+        <tr>
+          <td><strong><%= String(t.number).padStart(3, '0') %></strong></td>
+          <td><code><%= t.code %></code></td>
+          <td><code>https://levkeiser.shop/n/<%= t.code %></code></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+<% } %>
+
+<h2>Завести партию</h2>
+<form action="/admin/nfc/batch" method="POST">
+  <label>
+    Что за вещь *
+    <select name="kind">
+      <% Object.keys(kinds).forEach(function(k) { %>
+        <option value="<%= k %>"><%= kinds[k].label %> (следующий № <%= nextNumbers[k] %>)</option>
+      <% }); %>
+    </select>
+  </label>
+  <label>Сколько меток *<input type="number" name="count" min="1" max="500" value="1" required></label>
+  <label>Подпись на странице (например «Пластинка Soundstates, прозрачный винил»)<input type="text" name="label"></label>
+  <label>
+    Товар в каталоге
+    <select name="productId">
+      <option value="">— не привязывать —</option>
+      <% products.forEach(function(p) { %><option value="<%= p.id %>"><%= p.name %></option><% }); %>
+    </select>
+  </label>
+  <label>
+    Файл-бонус для владельца
+    <select name="bonusFile">
+      <option value="">— без файла —</option>
+      <% files.forEach(function(f) { %><option value="<%= f %>"><%= f %></option><% }); %>
+    </select>
+  </label>
+  <label>Подпись кнопки скачивания<input type="text" name="bonusLabel" placeholder="Скачать альбом в цифре"></label>
+  <label>Куда ещё ведёт (ссылка на историю вещи; если файла нет — метка сразу перенаправит сюда)<input type="text" name="targetUrl" placeholder="https://levkeiser.com/..."></label>
+  <label>Текст на странице (виден владельцу)<textarea name="publicNote" rows="3"></textarea></label>
+  <label>Заметка для себя<input type="text" name="note"></label>
+  <button class="btn" type="submit">Завести</button>
+</form>
+
+<h2>Все метки (<%= tags.length %>)</h2>
+<% if (!tags.length) { %>
+  <p>Пока ни одной.</p>
+<% } else { %>
+  <table class="admin-table">
+    <thead>
+      <tr><th>Код</th><th>UID метки</th><th>Подпись / товар</th><th>Файл и ссылка</th><th>Текст</th><th>Сканов</th><th>Владелец</th><th></th></tr>
+    </thead>
+    <tbody>
+      <% tags.forEach(function(t) { %>
+        <tr>
+          <form action="/admin/nfc/<%= t.id %>" method="POST" id="tag-<%= t.id %>">
+            <td><strong><%= kinds[t.kind] ? kinds[t.kind].label : t.kind %></strong><br><code style="font-size:0.8rem;"><%= t.code %></code></td>
+            <td><input type="text" name="nfcUid" value="<%= t.nfc_uid %>" placeholder="04A3…" style="width:140px;"></td>
+            <td>
+              <input type="text" name="label" value="<%= t.label %>" style="width:180px;"><br>
+              <select name="productId" style="width:180px;">
+                <option value="">— без товара —</option>
+                <% products.forEach(function(p) { %><option value="<%= p.id %>" <%= t.product_id === p.id ? 'selected' : '' %>><%= p.name %></option><% }); %>
+              </select>
+            </td>
+            <td>
+              <select name="bonusFile" style="width:180px;">
+                <option value="">— без файла —</option>
+                <% files.forEach(function(f) { %><option value="<%= f %>" <%= t.bonus_file === f ? 'selected' : '' %>><%= f %></option><% }); %>
+              </select><br>
+              <input type="text" name="bonusLabel" value="<%= t.bonus_label %>" placeholder="подпись кнопки" style="width:180px;"><br>
+              <input type="text" name="targetUrl" value="<%= t.target_url %>" placeholder="https://…" style="width:180px;">
+            </td>
+            <td>
+              <textarea name="publicNote" rows="3" style="width:200px;"><%= t.public_note %></textarea>
+              <input type="text" name="note" value="<%= t.note %>" placeholder="для себя" style="width:200px;">
+            </td>
+            <td><%= t.scans %><% if (t.last_scan_at) { %><br><span style="color:var(--color-muted); font-size:0.8rem;"><%= t.last_scan_at.slice(0, 10) %></span><% } %></td>
+            <td>
+              <% if (t.registered_at) { %><%= t.owner_name %><br><span style="color:var(--color-muted); font-size:0.8rem;"><%= t.owner_email %></span>
+              <% } else { %><span style="color:var(--color-muted);">—</span><% } %>
+            </td>
+            <td>
+              <button class="btn" type="submit">Сохранить</button>
+              <a class="btn" href="/n/<%= encodeURIComponent(t.code) %>" target="_blank" rel="noopener">Открыть</a>
+            </td>
+          </form>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+<% } %>
+
+<%- include('partials/footer') %>

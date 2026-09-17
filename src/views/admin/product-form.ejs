@@ -29,6 +29,7 @@
   <label>
     Остаток на складе
     <input type="number" name="stock" value="<%= product ? product.stock : 0 %>">
+    <small style="color:var(--color-muted);">Готовых штук на полке. Для вещей под заказ ставьте 100 и больше — покупателю число не показывается, он видит «Изготавливается под заказ» и срок.</small>
   </label>
 
   <fieldset style="border:1px solid #ddd; border-radius:8px; padding:12px 14px; margin:0 0 16px;">

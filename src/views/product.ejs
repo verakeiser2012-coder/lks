@@ -134,7 +134,7 @@
         <% } %>
         <label>
           Количество:
-          <input type="number" name="qty" value="1" min="1" <% if (product.fulfillment !== 'printful') { %>max="<%= product.stock %>"<% } %>>
+          <input type="number" name="qty" value="1" min="1" <% if (product.fulfillment !== 'printful') { %>max="<%= Math.min(product.stock, 10) %>"<% } %>>
         </label>
         <button class="btn" type="submit">Добавить в корзину</button>
       </form>

@@ -17,6 +17,10 @@
       </div>
     <% }); %>
   </div>
+  <h3 style="margin-top:24px;">Дополнительно</h3>
+  <ul class="services-list services-list-wide">
+    <% extras.forEach(function(ex) { %><li><strong><%= ex[0] %> — <%= ex[1] %>.</strong> <%= ex[2] %></li><% }); %>
+  </ul>
   <p class="services-note">Цена за каталог целиком, а не за трек. Оплата после аудита, когда понятно, что именно нужно.<% if (settings.ipex_showcase_url) { %> Как это выглядит в итоге — <a href="<%= settings.ipex_showcase_url %>" target="_blank" rel="noopener">наш каталог на IPEX</a>: 22 трека, все прошли модерацию.<% } %></p>
 </div>
 
@@ -55,9 +59,10 @@
 
 <div class="link-section">
   <h2>С чего начать</h2>
-  <p class="prose">Удобнее всего — через Telegram-бота: он задаст шесть вопросов, примет файлы по трекам и покажет, на каком этапе дело, в любое время суток. Или напишите через форму: кто вы, ссылки на релизы, что уже оформлено.</p>
+  <p class="prose">Удобнее всего — через бота, в Telegram или в MAX: он задаст шесть вопросов, примет файлы по трекам и покажет, на каком этапе дело, в любое время суток. Или напишите через форму: кто вы, ссылки на релизы, что уже оформлено.</p>
   <p class="services-cta">
-    <a class="btn" href="https://t.me/levkeiser_kollegam_bot" target="_blank" rel="noopener">Открыть бота в Telegram</a>
+    <a class="btn" href="https://t.me/levkeiser_kollegam_bot" target="_blank" rel="noopener">Бот в Telegram</a>
+    <a class="btn" href="https://max.ru/id667900879141_bot" target="_blank" rel="noopener">Бот в MAX</a>
     <a class="btn btn-secondary" href="/contact?topic=service">Написать через форму</a>
   </p>
 </div>
