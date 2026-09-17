@@ -78,7 +78,7 @@
         const h = HUBS[i], mx = (n.x + h[0]) / 2, my = (n.y + h[1]) / 2;
         gArcs.appendChild(el('path', {
           d: 'M' + n.x + ',' + n.y + ' Q' + (mx + (DATA.cx - mx) * 0.22).toFixed(1) + ',' + (my + (DATA.cy - my) * 0.22).toFixed(1) + ' ' + h[0] + ',' + h[1],
-          class: 'ar-arc', stroke: FAM[i].c, 'stroke-width': (0.6 + 2.4 * v).toFixed(2), 'stroke-opacity': (0.35 + 0.45 * v).toFixed(2) }));
+          class: 'ar-arc', stroke: FAM[i].c, 'stroke-width': (0.45 + 1.05 * v).toFixed(2), 'stroke-opacity': (0.4 + 0.45 * v).toFixed(2) }));
       }
     }
     HUBS.forEach((h, i) => {
@@ -190,7 +190,7 @@
   const putToken = (id, t) => { try { const m = tokens(); m[id] = t; localStorage.setItem(LS_TOK, JSON.stringify(m)); } catch (e) {} };
 
   function hideExample() { const e = $('ar-example'); if (e) e.hidden = true; }
-  const add = (i, p) => { hideExample(); blend.set(i, (blend.get(i) || 0) + (p || 1)); render(); };
+  const add = (i, p) => { hideExample(); blend.set(i, (blend.get(i) || 0) + (p || 1)); render(); root.dispatchEvent(new Event('aroma:add')); };
   const setParts = (i, v) => { hideExample(); if (v <= 0) blend.delete(i); else blend.set(i, v); render(); };
 
   function blendVector() {
@@ -258,9 +258,9 @@
       const h = HUBS[i], mx = (x + h[0]) / 2, my = (y + h[1]) / 2;
       gBlend.appendChild(el('path', {
         d: 'M' + x + ',' + y + ' Q' + (mx + (DATA.cx - mx) * 0.22) + ',' + (my + (DATA.cy - my) * 0.22) + ' ' + h[0] + ',' + h[1],
-        class: 'ar-arc', stroke: FAM[i].c, 'stroke-width': (1.4 + 3 * v).toFixed(2), 'stroke-opacity': 0.9, 'stroke-dasharray': '7 6' }));
+        class: 'ar-arc', stroke: FAM[i].c, 'stroke-width': (0.9 + 1.4 * v).toFixed(2), 'stroke-opacity': 0.95, 'stroke-dasharray': '5 5' }));
     }
-    gBlend.appendChild(el('circle', { cx: x, cy: y, r: 17, fill: 'none', stroke: 'var(--ar-ink)', 'stroke-width': 1.6, 'stroke-opacity': 0.55 }));
+    gBlend.appendChild(el('circle', { cx: x, cy: y, r: 17, fill: 'none', stroke: 'var(--ar-ink)', 'stroke-width': 1.1, 'stroke-opacity': 0.6 }));
     gBlend.appendChild(el('circle', { cx: x, cy: y, r: 11.5, fill: 'var(--ar-paper)' }));
     const p = pie(vec, 10); p.setAttribute('transform', 'translate(' + x + ',' + y + ')'); gBlend.appendChild(p);
     const t = el('text', { x: x, y: y + 30, class: 'ar-hubname', 'text-anchor': 'middle', 'font-size': 15 });
@@ -310,6 +310,7 @@
   $('ar-who').addEventListener('input', (e) => {
     author = e.target.value.trim();
     try { localStorage.setItem(LS_WHO, author); } catch (err) {}
+    syncShare();
   });
   $('ar-save').addEventListener('click', () => {
     if (!blend.size) return;
@@ -370,7 +371,7 @@
 
     g.fillStyle = '#231B12';
     g.font = '600 34px "Roboto Slab", Georgia, serif';
-    g.fillText('МОЙ СОСТАВ', 72, 108);
+    g.fillText(author ? (lang === 'ru' ? 'СОСТАВ ОТ ' : 'BLEND BY ') + author.toUpperCase().slice(0, 18) : (lang === 'ru' ? 'МОЙ СОСТАВ' : 'MY BLEND'), 72, 108);
     g.fillStyle = '#6B5B45';
     g.font = '26px "IBM Plex Sans", system-ui, sans-serif';
     const parts = [...blend.values()].reduce((a, b) => a + b, 0);
@@ -417,6 +418,11 @@
     g.fillStyle = '#B4601C';
     g.font = '600 26px "Roboto Slab", Georgia, serif';
     g.textAlign = 'right'; g.fillText('levkeiser.com/aroma', W - 72, by + 62); g.textAlign = 'left';
+    if (author) {
+      g.fillStyle = '#231B12';
+      g.font = 'italic 26px "IBM Plex Sans", system-ui, sans-serif';
+      g.fillText((lang === 'ru' ? 'собрал(а) ' : 'made by ') + author.slice(0, 24), 72, by + 106);
+    }
     return c.toDataURL('image/png');
   }
 
@@ -429,6 +435,18 @@
       .then(() => { btn.textContent = T().saved; setTimeout(() => { btn.textContent = was; }, 1300); })
       .catch(() => {});
   });
+
+  /* ---------- полный экран: верстак выезжает по кнопке ---------- */
+  const benchToggle = $('ar-bench-toggle'), benchClose = $('ar-bench-close'), bench = root.querySelector('.aroma-bench');
+  if (benchToggle && bench) {
+    benchClose.hidden = false;
+    const open = (on) => { bench.classList.toggle('is-open', on); benchToggle.hidden = on; };
+    benchToggle.addEventListener('click', () => open(true));
+    benchClose.addEventListener('click', () => open(false));
+    // положили аромат — показать, что он лёг в состав
+    root.addEventListener('aroma:add', () => { if (!bench.classList.contains('is-open')) { benchToggle.textContent = (lang === 'ru' ? 'Мой состав · ' : 'My blend · ') + blend.size; } });
+    const full = $('ar-full'); if (full) full.hidden = true;
+  }
 
   /* ---------- язык ---------- */
   $('ar-lang').addEventListener('click', () => {
@@ -475,9 +493,12 @@
     return blend.size ? base + '?s=' + encodeBlend() : base;
   }
   function blendTitle() {
-    if (!blend.size) return 'Карта натуральных ароматов';
+    if (!blend.size) return lang === 'ru' ? 'Карта натуральных ароматов' : 'Map of natural aromas';
     const top = [...blend.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([i]) => nm(NODES[i]));
-    return 'Мой состав: ' + top.join(', ') + (blend.size > 3 ? ' и ещё ' + (blend.size - 3) : '');
+    const more = blend.size > 3 ? (lang === 'ru' ? ' и ещё ' : ' and ') + (blend.size - 3) + (lang === 'ru' ? '' : ' more') : '';
+    // подпись автора уходит в заголовок ссылки — то, ради чего её просят
+    const who = author ? (lang === 'ru' ? 'Состав от ' + author : author + "'s blend") : (lang === 'ru' ? 'Мой состав' : 'My blend');
+    return who + ': ' + top.join(', ') + more;
   }
   function syncShare() {
     const box = $('ar-share');

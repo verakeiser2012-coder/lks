@@ -20,6 +20,11 @@ router.get('/', (req, res) => {
   });
 });
 
+// Карта во весь экран — без шапки и подвала; сюда же ведёт поддомен aroma.levkeiser.com
+router.get('/full', (req, res) => {
+  res.render('aroma-full', { title: 'Карта натуральных ароматов', layout: false });
+});
+
 router.get('/blends', (req, res) => {
   const rows = db
     .prepare('SELECT id, name, author, items, created_at FROM aroma_blends ORDER BY id DESC LIMIT 80')

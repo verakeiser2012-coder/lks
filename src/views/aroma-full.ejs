@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Карта натуральных ароматов — Лев Кейсер</title>
+  <meta name="description" content="166 натуральных ароматов на двенадцати семействах. Соберите свой состав и посмотрите, где он встанет на карте.">
+  <link rel="canonical" href="https://levkeiser.com/aroma">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>html,body{margin:0;height:100%;overflow:hidden;background:#E4D8BE}</style>
+</head>
+<body class="aroma-full-page">
+<a class="ar-home" href="https://levkeiser.com/aroma">LEVKEISER · карта ароматов</a>
+<%- include('partials/aroma-widget') %>
+<button type="button" class="ar-bench-toggle" id="ar-bench-toggle">Мой состав</button>
+<script>document.getElementById('aroma').classList.add('aroma-full');</script>
+<script src="/js/aroma.js" defer></script>
+</body>
+</html>
