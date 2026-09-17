@@ -73,11 +73,16 @@ function record({ key, url, when, body, mediaType, thumb, items }) {
       JOIN social_post_targets t ON t.post_id = p.id WHERE t.published_url = ?
     `).get(url);
     if (row) {
-      const setThumb = !row.thumb_url && thumb;
-      const setItems = itemsJson && (!row.media_items || row.media_items === '[]');
+      // Превью Telegram живут на cdn.telesco.pe по ссылкам с истекающей подписью:
+      // через несколько дней старая ссылка отвечает 404, и в «Лентах» вместо
+      // картинок — пустые плашки. Такие ссылки перезаписываем свежими при каждом
+      // проходе; всё остальное (свои файлы, руками введённое) не трогаем.
+      const rotating = (u) => /telesco\.pe\//.test(String(u || ''));
+      const setThumb = thumb && (!row.thumb_url || (rotating(row.thumb_url) && thumb !== row.thumb_url));
+      const setItems = itemsJson && (!row.media_items || row.media_items === '[]' || (rotating(row.media_items) && itemsJson !== row.media_items));
       if (setThumb || setItems) {
-        db.prepare("UPDATE social_posts SET thumb_url = CASE WHEN thumb_url = '' THEN ? ELSE thumb_url END, media_items = CASE WHEN media_items IS NULL OR media_items = '' OR media_items = '[]' THEN ? ELSE media_items END WHERE id = ?")
-          .run(thumb || '', itemsJson || row.media_items || '[]', row.id);
+        db.prepare('UPDATE social_posts SET thumb_url = ?, media_items = ? WHERE id = ?')
+          .run(setThumb ? thumb : row.thumb_url, setItems ? itemsJson : (row.media_items || '[]'), row.id);
       }
     }
     return false;
