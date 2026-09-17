@@ -90,6 +90,14 @@
         <a href="/games">Поиграть</a>
         <a href="/podcast">В кадре</a>
         <a href="/contact">Написать</a>
+        <form class="footer-search" action="/search" method="GET" role="search">
+          <input type="search" name="q" placeholder="Поиск по сайту" aria-label="Поиск по сайту" value="<%= typeof query !== 'undefined' ? query : '' %>">
+          <button type="submit" aria-label="Найти">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>
+            </svg>
+          </button>
+        </form>
       </nav>
 
       <div class="footer-subscribe">

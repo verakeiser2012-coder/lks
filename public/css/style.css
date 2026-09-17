@@ -1766,26 +1766,21 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
   .mk-offer, .mk-release, .mk-fact, .mk-package { break-inside: avoid; }
 }
 
-/* Поиск в шапке */
-.header-search { display: flex; align-items: center; gap: 4px; }
-.header-search input[type="search"] {
-  width: 120px; padding: 6px 10px; margin: 0;
+/* Поиск — в подвале, под списком разделов (из шапки убран 18.09) */
+.footer-search { display: flex; align-items: center; gap: 4px; margin-top: 10px; }
+.footer-search input[type="search"] {
+  width: 100%; max-width: 200px; padding: 6px 10px; margin: 0;
   border: 1px solid var(--color-border); border-radius: 999px;
   background: #fff; font-size: 0.85rem;
-  transition: width 0.25s ease;
 }
-.header-search input[type="search"]:focus { width: 180px; outline: none; border-color: var(--color-accent); }
-.header-search button {
-  display: flex; align-items: center; justify-content: center;
+.footer-search input[type="search"]:focus { outline: none; border-color: var(--color-accent); }
+.footer-search button {
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   width: 30px; height: 30px; padding: 0;
   background: transparent; border: none; cursor: pointer; color: var(--color-muted);
 }
-.header-search button:hover { color: var(--color-accent); }
-.header-search svg { width: 17px; height: 17px; }
-@media (max-width: 720px) {
-  .header-search input[type="search"] { width: 88px; }
-  .header-search input[type="search"]:focus { width: 130px; }
-}
+.footer-search button:hover { color: var(--color-accent); }
+.footer-search svg { width: 17px; height: 17px; }
 
 /* Переключатель языка */
 .lang-switch { display: flex; gap: 2px; font-size: 0.78rem; letter-spacing: 0.05em; }
@@ -1913,10 +1908,14 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 .music-ticker__track {
   display: flex;
   align-items: center;
-  gap: 10px;
   width: max-content;
   animation: music-ticker-scroll 90s linear infinite;
 }
+/* Зазоры — полями элементов, а не gap: лента из двух копий сдвигается ровно на
+   половину, и при gap стык прыгал на ползазора каждый круг. Кнопка ▸ прижата к
+   названию своего трека, между парами — шире. */
+.music-ticker__play { margin-right: 2px; }
+.music-ticker__item { margin-right: 18px; }
 .music-ticker:hover .music-ticker__track,
 .music-ticker:focus-within .music-ticker__track { animation-play-state: paused; }
 
@@ -1945,15 +1944,15 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
   font-weight: 700;
   text-shadow: 0 0 6px rgba(143, 198, 92, 0.9), 0 0 14px rgba(111, 168, 60, 0.6);
 }
-.music-ticker__item.is-current::before { content: '▸ '; }
+/* Играющий трек показывает кнопка перед названием (‖), стрелку в текст не добавляем:
+   она меняла ширину ленты на ходу. */
 /* Точки золотые, а не зелёные в тон подсветки: на чёрной ленте они
    держат ритм между названиями, и в цвете сайта это читается как своё. */
 .music-ticker__dot { color: var(--color-gold-bright); font-size: 0.7rem; }
 
-@media (prefers-reduced-motion: reduce) {
-  .music-ticker__track { animation: none; }
-  .music-ticker__viewport { overflow-x: auto; }
-}
+/* При «уменьшить движение» строка всё равно идёт: она медленная и у неё своя
+   кнопка «стоп». Иначе на компьютерах с выключенной анимацией Windows она
+   стояла намертво и выглядела сломанной. */
 @media (max-width: 640px) {
   .music-ticker__label { display: none; }
   .music-ticker { padding: 0 12px; }
@@ -2735,7 +2734,6 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 .music-ticker__viewport { scrollbar-width: none; -ms-overflow-style: none; -webkit-mask-image: linear-gradient(90deg, transparent, #000 24px, #000 calc(100% - 24px), transparent); mask-image: linear-gradient(90deg, transparent, #000 24px, #000 calc(100% - 24px), transparent); }
 .music-ticker__viewport::-webkit-scrollbar { display: none; height: 0; }
 .music-ticker__track { will-change: transform; }
-@media (prefers-reduced-motion: reduce) { .music-ticker__pause { display: none; } }
 @media (max-width: 640px) { .music-ticker__track { animation: none; } .music-ticker__viewport { overflow-x: auto; } .music-ticker__pause { display: none; } }
 
 /* Дневник: врезки кадров внутри текста ([[кадр N]]) и их появление при прокрутке. */
