@@ -39,6 +39,9 @@ const STATIC_PAGES = [
 // Ссылки на скачивание закрыты отдельно — они одноразовые и именные.
 const DISALLOW = [
   '/admin',
+  '/aroma/data',
+  '/aroma/full',
+  '/data/aroma-map.json',
   '/cart',
   '/checkout',
   '/order/',

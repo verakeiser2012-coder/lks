@@ -20,9 +20,21 @@ router.get('/', (req, res) => {
   });
 });
 
-// Карта во весь экран — без шапки и подвала; сюда же ведёт поддомен aroma.levkeiser.com
+// Карта во весь экран — без шапки и подвала
 router.get('/full', (req, res) => {
   res.render('aroma-full', { title: 'Карта натуральных ароматов', layout: false });
+});
+
+// Данные карты отдаём только своей странице: чужой сайт или прямая ссылка получают 403.
+// Это не защита от скриншота (её не бывает) — это чтобы карту нельзя было взять целиком одним запросом.
+router.get('/data', (req, res) => {
+  const site = req.get('Sec-Fetch-Site');
+  const ref = req.get('Referer') || '';
+  const own = site === 'same-origin' || (!site && /^https?:\/\/([^/]+\.)?(levkeiser\.(com|shop)|localhost(:\d+)?)\//.test(ref));
+  if (!own || req.get('X-Requested-With') !== 'aroma-map') return res.status(403).send('');
+  res.set('Cache-Control', 'private, max-age=3600');
+  res.set('X-Robots-Tag', 'noindex');
+  res.sendFile(require('path').join(__dirname, '..', '..', 'public', 'data', 'aroma-map.json'));
 });
 
 router.get('/blends', (req, res) => {

@@ -67,11 +67,26 @@
   let gRoot, gArcs, gHubs, gNodes, gBlend, nodeEls = [], hubLabels = [];
   let vx = 0, vy = 0, vz = 1, allLabels = false;
 
+  /* Водяной знак: сетка LEVKEYSER поверх всего поля карты, не зумится вместе с картой,
+     попадает в любой скриншот. Прозрачность малая — на экране почти не мешает. */
+  function watermark() {
+    const defs = el('defs');
+    const pat = el('pattern', { id: 'ar-wm', patternUnits: 'userSpaceOnUse', width: 260, height: 160, patternTransform: 'rotate(-22)' });
+    const t = el('text', { x: 0, y: 40, class: 'ar-wm-text' }); t.textContent = 'LEVKEYSER';
+    const t2 = el('text', { x: 130, y: 120, class: 'ar-wm-text' }); t2.textContent = 'LEVKEYSER';
+    pat.appendChild(t); pat.appendChild(t2); defs.appendChild(pat); svg.appendChild(defs);
+    const r = el('rect', { x: -2000, y: -2000, width: 6000, height: 6000, fill: 'url(#ar-wm)', class: 'ar-wm', 'pointer-events': 'none' });
+    svg.appendChild(r);
+    const title = el('title'); title.textContent = 'Карта натуральных ароматов © LEVKEYSER / ИП Кейсер Л. М. Копирование карты и данных без разрешения запрещено.';
+    svg.insertBefore(title, svg.firstChild);
+  }
+
   function buildMap() {
     svg.setAttribute('viewBox', '0 0 ' + DATA.w + ' ' + DATA.h);
     gRoot = el('g'); gArcs = el('g'); gHubs = el('g'); gNodes = el('g'); gBlend = el('g');
     gRoot.appendChild(gArcs); gRoot.appendChild(gHubs); gRoot.appendChild(gNodes); gRoot.appendChild(gBlend);
     svg.appendChild(gRoot);
+    watermark();
 
     for (const n of NODES) {
       for (const { i, v } of secondary(n.w)) {
@@ -415,6 +430,11 @@
     g.fillText(sh.filter((s) => s.v >= 0.08).map((s) => famName(FAM[s.i]).toLowerCase()
       + ' ' + Math.round(s.v * 100) + '%').join(' · ').slice(0, 60), 72, by + 62);
 
+    g.save();
+    g.globalAlpha = 0.07; g.fillStyle = '#231B12'; g.font = '700 54px "Roboto Slab", Georgia, serif';
+    g.translate(W / 2, H / 2); g.rotate(-0.38);
+    for (let yy = -900; yy <= 900; yy += 150) for (let xx = -900; xx <= 900; xx += 380) g.fillText('LEVKEYSER', xx + (yy / 150 % 2 ? 190 : 0), yy);
+    g.restore();
     g.fillStyle = '#B4601C';
     g.font = '600 26px "Roboto Slab", Georgia, serif';
     g.textAlign = 'right'; g.fillText('levkeiser.com/aroma', W - 72, by + 62); g.textAlign = 'left';
@@ -447,6 +467,13 @@
     root.addEventListener('aroma:add', () => { if (!bench.classList.contains('is-open')) { benchToggle.textContent = (lang === 'ru' ? 'Мой состав · ' : 'My blend · ') + blend.size; } });
     const full = $('ar-full'); if (full) full.hidden = true;
   }
+
+  /* ---------- от копирования: контекстное меню, выделение, Ctrl+S/U/C над картой ---------- */
+  const pane = root.querySelector('.aroma-map-pane');
+  ['contextmenu', 'dragstart', 'selectstart', 'copy'].forEach((ev) => pane.addEventListener(ev, (e) => e.preventDefault()));
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && ['s', 'u', 'p'].includes(e.key.toLowerCase())) e.preventDefault();
+  });
 
   /* ---------- язык ---------- */
   $('ar-lang').addEventListener('click', () => {
@@ -559,7 +586,7 @@
     ['бобы тонка', 2], ['мускатный орех', 1], ['нероли', 1],
   ];
 
-  fetch('/data/aroma-map.json').then((r) => r.json()).then((d) => {
+  fetch('/aroma/data', { headers: { 'X-Requested-With': 'aroma-map' } }).then((r) => r.json()).then((d) => {
     DATA = d; FAM = d.families; NODES = d.nodes; HUBS = d.hubs;
     buildMap(); drawLegend();
     // Состав таблетки «Груша × Лев» — материалы из карточки товара.

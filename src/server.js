@@ -59,12 +59,6 @@ app.use((req, res, next) => {
     const target = enFirst ? '/en' + (req.originalUrl === '/' ? '' : req.originalUrl) : req.originalUrl;
     return res.redirect(301, `${req.protocol}://${canonicalTarget}${target}`);
   }
-  // Поддомен карты ароматов: корень — карта во весь экран, всё остальное — на основной сайт
-  if (host === 'aroma.' + require('./config/domains').CANONICAL_MAIN) {
-    if (req.path === '/') { req.url = '/aroma/full'; return next(); }
-    if (/^\/(aroma|js|css|data|uploads|favicon)/.test(req.path)) return next();
-    return res.redirect(301, 'https://' + require('./config/domains').CANONICAL_MAIN + req.originalUrl);
-  }
   if (host === CANONICAL_STORE_ASCII && (req.path === '/' || req.path === '/en' || req.path === '/en/')) {
     return res.redirect(302, req.path === '/' ? '/catalog' : '/en/catalog');
   }
