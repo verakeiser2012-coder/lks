@@ -71,8 +71,13 @@
     <% }); %>
   </div>
 </div>
+<% } else if (hasService && order.payment_status === 'paid') { %>
+<div class="link-section">
+  <h2>Работа</h2>
+  <p>Заказ оплачен, начинаем по вашим ссылкам. Результат придёт письмом на <%= order.email %><%= order.comment ? '' : ' — если ссылки на релизы не вписали, пришлите их ответом на письмо о заказе' %>.</p>
+</div>
 <% } else if (order.payment_status !== 'paid' && order.delivery_method === 'digital') { %>
-  <p class="hint">Файлы появятся здесь после оплаты.</p>
+  <p class="hint"><%= hasService ? 'Работу начнём после оплаты.' : 'Файлы появятся здесь после оплаты.' %></p>
 <% } %>
 
 <% if (order.payment_status === 'paid' && !cancelled && items.length) { %>

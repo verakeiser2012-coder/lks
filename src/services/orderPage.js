@@ -38,8 +38,13 @@ function orderView(order) {
     ? db.prepare('SELECT * FROM downloads WHERE order_id = ? ORDER BY id').all(order.id)
     : [];
   const stepIndex = STATUS_STEPS.findIndex(([s]) => s === order.status);
+  // Услуга в заказе: файлов не будет, результат приходит письмом — страница должна это сказать.
+  const hasService = items.some((i) => {
+    const p = db.prepare('SELECT is_service FROM products WHERE id = ?').get(i.product_id);
+    return p && Number(p.is_service) === 1;
+  });
   return {
-    order, items, downloads,
+    order, items, downloads, hasService,
     steps: STATUS_STEPS.map(([key, label], i) => ({ key, label, done: stepIndex >= i, current: stepIndex === i })),
     cancelled: order.status === 'cancelled',
     statusLabel: STATUS_LABELS[order.status] || order.status,

@@ -29,7 +29,7 @@
           <td><%= formatPrice(item.product.price) %></td>
           <td>
             <% if (item.product.is_digital) { %>
-              1 <span style="color:var(--color-muted); font-size:0.85rem;">файл</span>
+              1 <span style="color:var(--color-muted); font-size:0.85rem;"><%= item.product.is_service ? 'услуга' : 'файл' %></span>
             <% } else { %>
               <form class="inline" action="/cart/update" method="POST">
                 <input type="hidden" name="productId" value="<%= item.product.id %>">

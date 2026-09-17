@@ -4,7 +4,7 @@ const db = require('../db');
 const { getCartDetails, getCart, cartKey } = require('../utils/cart');
 const robokassa = require('../services/payments/robokassa');
 const { createPayment } = robokassa;
-const { cartIsDigitalOnly } = require('../services/digital');
+const { cartIsDigitalOnly, cartHasService } = require('../services/digital');
 const { onOrderPaid } = require('../services/fulfillment');
 const { ensureToken, sendOrderCreated } = require('../services/orderPage');
 const delivery = require('../services/delivery');
@@ -33,7 +33,7 @@ router.get('/', (req, res) => {
   if (items.length === 0) {
     return res.redirect('/cart');
   }
-  res.render('checkout', { items, total, error: null, digitalOnly: cartIsDigitalOnly(items), needsPrintful: hasPrintful(items), carriers: delivery.available() });
+  res.render('checkout', { items, total, error: null, digitalOnly: cartIsDigitalOnly(items), hasService: cartHasService(items), needsPrintful: hasPrintful(items), carriers: delivery.available() });
 });
 
 // Список пунктов выдачи по городу/индексу: GET /checkout/pickup-points?carrier=cdek&city=…&postcode=…
@@ -69,8 +69,9 @@ router.post('/', async (req, res, next) => {
   }
 
   const digitalOnly = cartIsDigitalOnly(items);
+  const hasService = cartHasService(items);
   const needsPrintful = hasPrintful(items);
-  const fail = (error) => res.render('checkout', { items, total, error, digitalOnly, needsPrintful, carriers: delivery.available() });
+  const fail = (error) => res.render('checkout', { items, total, error, digitalOnly, hasService, needsPrintful, carriers: delivery.available() });
 
   const { customerName, phone, email, address, country, city, zip, deliveryMethod, pickupPoint, pickupCode, comment, dataConsent, digitalConsent, shippingChoice } = req.body;
   if (!customerName || !phone) {
@@ -88,7 +89,11 @@ router.post('/', async (req, res, next) => {
   // Без явного согласия на немедленный доступ оговорка в оферте не работает:
   // покупатель сохраняет право отказаться уже после скачивания файла
   if (digitalOnly && !digitalConsent) {
-    return fail('Подтвердите согласие на получение файлов сразу после оплаты.');
+    return fail(hasService ? 'Подтвердите, что работа начинается сразу после оплаты.' : 'Подтвердите согласие на получение файлов сразу после оплаты.');
+  }
+  // Услугу делаем по ссылкам покупателя: пустой комментарий — это заказ, с которым нечего делать.
+  if (hasService && !(comment || '').trim()) {
+    return fail('Впишите ссылки на свои релизы и соцсети — с них начнём аудит.');
   }
 
   // Печать по требованию едет почтой из типографии: пункт выдачи не подходит,

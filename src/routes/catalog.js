@@ -16,7 +16,7 @@ router.get('/', (req, res) => {
       .prepare(`
         SELECT p.* FROM products p
         LEFT JOIN categories c ON c.id = p.category_id
-        WHERE p.is_active = 1 AND (p.is_digital = 1 OR c.slug = ?)
+        WHERE p.is_active = 1 AND ((p.is_digital = 1 AND p.is_service = 0) OR c.slug = ?)
         ORDER BY p.created_at DESC
       `)
       .all(category);

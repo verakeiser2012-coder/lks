@@ -65,9 +65,11 @@
       // Поля в базе общие для всех товаров, а подписи — нет. У файла нет
       // ни веса, ни материала, ни ухода: «Вес: 54 МБ» и «Материал:
       // цифровой архив» превращают карточку в недоразумение.
-      const specLabels = product.is_digital
-        ? ['Когда придёт', 'Размер', 'Объём файлов', 'Формат', 'Важно знать']
-        : ['Срок изготовления', 'Размер', 'Вес', 'Материал', 'Уход'];
+      const specLabels = product.is_service
+        ? ['Срок', 'Объём', 'Что нужно от вас', 'Что получите', 'Важно знать']
+        : product.is_digital
+          ? ['Когда придёт', 'Размер', 'Объём файлов', 'Формат', 'Важно знать']
+          : ['Срок изготовления', 'Размер', 'Вес', 'Материал', 'Уход'];
       const specs = [
         [specLabels[0], product.lead_time],
         [specLabels[1], product.dimensions],
@@ -75,7 +77,7 @@
         [specLabels[3], product.material],
         [specLabels[4], product.care],
         // Изготовитель — обязательное сведение о товаре; у цифровых — правообладатель.
-        [product.is_digital ? 'Правообладатель' : 'Изготовитель', product.manufacturer],
+        [product.is_service ? 'Исполнитель' : product.is_digital ? 'Правообладатель' : 'Изготовитель', product.manufacturer],
       ].filter(function (row) { return row[1]; });
     %>
     <% if (specs.length) { %>
@@ -85,7 +87,18 @@
         <% }); %>
       </table>
     <% } %>
-    <% if (product.is_digital) { %>
+    <% if (product.is_service) { %>
+      <%# Услуга: адреса и файла нет. Ссылки на релизы покупатель вписывает на оформлении —
+          без них работу не начать, поэтому просим их там, а не письмом после оплаты. %>
+      <p class="product-digital-note">
+        Услуга. При оформлении впишите ссылки на свои релизы и соцсети — с них и начнём.
+        После оплаты придёт подтверждение на почту, результат — туда же.
+      </p>
+      <form action="/cart/add" method="POST">
+        <input type="hidden" name="productId" value="<%= product.id %>">
+        <button class="btn" type="submit">Заказать за <%= formatPrice(product.price) %></button>
+      </form>
+    <% } else if (product.is_digital) { %>
       <p class="product-digital-note">
         <% if (Number(product.price) === 0) { %>
           Цифровой товар, бесплатно. Ссылка на скачивание придёт на почту

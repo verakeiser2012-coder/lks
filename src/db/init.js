@@ -375,6 +375,11 @@ function init() {
   if (!productCols.some((c) => c.name === 'digital_size')) {
     db.exec('ALTER TABLE products ADD COLUMN digital_size INTEGER NOT NULL DEFAULT 0');
   }
+  // Услуга: оформляется как цифровой товар (без адреса и остатка), но файла нет —
+  // результат делаем руками и присылаем письмом. Пример — аудит каталога за 1 000 ₽.
+  if (!productCols.some((c) => c.name === 'is_service')) {
+    db.exec('ALTER TABLE products ADD COLUMN is_service INTEGER NOT NULL DEFAULT 0');
+  }
   // Параметры для карточки: покупатель должен видеть, что именно получит,
   // до оформления заказа, а не писать нам с вопросами
   if (!productCols.some((c) => c.name === 'lead_time')) {

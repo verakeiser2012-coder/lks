@@ -11,7 +11,7 @@ function newForm(req, res) {
 }
 
 function create(req, res) {
-  const { name, description, price, categoryId, newCategory, collectionId, releaseId, trackId, stock, isActive, isDigital, leadTime, includes, dimensions, weight, material, care, manufacturer, packageSize, fulfillment, printfulVariants } = req.body;
+  const { name, description, price, categoryId, newCategory, collectionId, releaseId, trackId, stock, isActive, isDigital, isService, leadTime, includes, dimensions, weight, material, care, manufacturer, packageSize, fulfillment, printfulVariants } = req.body;
   if (!name || !price) {
     const categories = db.prepare('SELECT * FROM categories ORDER BY name').all();
     const collections = db.prepare('SELECT * FROM collections ORDER BY name').all();
@@ -34,8 +34,8 @@ function create(req, res) {
   const resolvedCategoryId = resolveCategoryId(categoryId, newCategory);
 
   db.prepare(`
-    INSERT INTO products (name, slug, description, price, category_id, collection_id, release_id, track_id, image, stock, is_active, is_digital, digital_file, digital_filename, digital_size, lead_time, includes, dimensions, weight, material, care, manufacturer, package_size, fulfillment, printful_variants)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO products (name, slug, description, price, category_id, collection_id, release_id, track_id, image, stock, is_active, is_digital, is_service, digital_file, digital_filename, digital_size, lead_time, includes, dimensions, weight, material, care, manufacturer, package_size, fulfillment, printful_variants)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     name,
     slug,
@@ -49,6 +49,7 @@ function create(req, res) {
     Number(stock) || 0,
     isActive ? 1 : 0,
     isDigital ? 1 : 0,
+    isService ? 1 : 0,
     digitalFile ? digitalFile.filename : '',
     digitalFile ? digitalFile.originalname : '',
     digitalFile ? digitalFile.size : 0,

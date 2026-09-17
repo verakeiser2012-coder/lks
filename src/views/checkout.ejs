@@ -23,7 +23,7 @@
       </label>
       <% if (digitalOnly) { %>
       <p style="color:var(--color-muted); font-size:0.85rem; margin:-8px 0 16px;">
-        На эту почту придут ссылки на файлы. Доставка не нужна — заказ цифровой.
+        <%= hasService ? 'На эту почту придут подтверждение заказа и результат работы. Доставка не нужна.' : 'На эту почту придут ссылки на файлы. Доставка не нужна — заказ цифровой.' %>
       </p>
       <% } else if (needsPrintful) { %>
       <p style="color:var(--color-muted); font-size:0.85rem; margin:-8px 0 16px;">
@@ -97,11 +97,23 @@
         <p class="hint" id="pickup-status" style="margin:-8px 0 14px;">Введите город или индекс выше — покажем пункты выдачи.</p>
       </div>
       <% } %>
+      <% if (hasService) { %>
+      <%# Услуга делается по ссылкам покупателя, поэтому комментарий здесь — не «пожелания», а задание. %>
+      <label>
+        Ссылки на ваши релизы и соцсети, что уже оформлено *
+        <textarea name="comment" rows="5" required placeholder="Ссылки на стриминги или band.link, ВК/Telegram, есть ли кабинет правообладателя, РАО, дистрибьютор"></textarea>
+      </label>
+      <label style="display:flex; align-items:flex-start; gap:8px;">
+        <input type="checkbox" name="digitalConsent" value="1" style="width:auto; margin-top:4px;" required>
+        <span>Согласен, что работа начинается сразу после оплаты. Отказаться можно, пока она не начата — напишите нам; результат приходит письмом *</span>
+      </label>
+      <% } else { %>
       <label>
         Комментарий к заказу
         <textarea name="comment" rows="3"></textarea>
       </label>
-      <% if (digitalOnly) { %>
+      <% } %>
+      <% if (digitalOnly && !hasService) { %>
       <label style="display:flex; align-items:flex-start; gap:8px;">
         <input type="checkbox" name="digitalConsent" value="1" style="width:auto; margin-top:4px;" required>
         <span>Согласен получить доступ к файлам сразу после <%= total === 0 ? 'оформления' : 'оплаты' %> и понимаю, что после

@@ -60,6 +60,15 @@
       После оплаты покупателю уходит ссылка на скачивание — она живёт 30 дней и работает 5 раз.
     </p>
     <label>
+      <input type="checkbox" name="isService" value="1" style="width:auto;display:inline-block;"
+        <%= product && product.is_service ? 'checked' : '' %>>
+      Это услуга: файла нет, результат присылаем письмом
+    </label>
+    <p style="color:#666; font-size:0.85rem; margin:4px 0 12px;">
+      Аудит каталога и подобное. Ставьте вместе с галочкой «файл»: адрес и остаток не спрашиваются,
+      на оформлении покупатель обязан вписать ссылки на релизы, после оплаты приходит письмо нам и ему.
+    </p>
+    <label>
       Файл товара
       <input type="file" name="digitalFile" accept=".mp3,.wav,.flac,.aiff,.aif,.zip">
     </label>

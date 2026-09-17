@@ -2855,6 +2855,8 @@ h1.mk-cover-name { margin: 0; }
 .services-note { color: var(--color-muted); font-size: 0.9rem; margin-top: 4px; }
 .services-table td:first-child { white-space: nowrap; font-weight: 600; }
 .services-cta { display: flex; flex-wrap: wrap; gap: 12px; }
+.services-order { margin-top: 14px; }
+.offer-card .hint { margin: 10px 0 0; }
 
 /* Страница заказа по ссылке (/order/<токен>) */
 .order-meta { color: var(--color-muted); margin-top: -8px; margin-bottom: 20px; }

@@ -34,6 +34,14 @@ function cartIsDigitalOnly(items) {
 }
 
 /**
+ * Есть ли в корзине услуга (аудит каталога и подобное): тогда на оформлении
+ * обязательны ссылки на релизы — без них работу не с чего начинать.
+ */
+function cartHasService(items) {
+  return items.some((item) => Number(item.product.is_service) === 1);
+}
+
+/**
  * Выдать ссылки на скачивание по оплаченному заказу.
  * Вызывается после подтверждения оплаты. Повторный вызов ничего не дублирует —
  * вебхук ЮKassa может прийти дважды, и это нормально.
@@ -140,6 +148,7 @@ async function deliverDigital(orderId) {
 module.exports = {
   orderHasDigital,
   cartIsDigitalOnly,
+  cartHasService,
   issueDownloads,
   sendDownloadEmail,
   deliverDigital,
