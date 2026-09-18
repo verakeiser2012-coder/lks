@@ -67,7 +67,7 @@
   <link rel="canonical" href="<%= canonicalUrl %>">
   <%# Служебные страницы (корзина, оформление, поиск, отписка) закрыты в robots.txt;
       meta noindex — на случай, если поисковик пришёл по внешней ссылке. %>
-  <% if (/^(\/en)?\/(cart|checkout|search|unsubscribe|order|orders|downloads)(\/|$)/.test(cleanPath)) { %>
+  <% if (/^(\/en)?\/(cart|checkout|search|unsubscribe|order|orders|my|downloads)(\/|$)/.test(cleanPath)) { %>
   <meta name="robots" content="noindex, follow">
   <% } %>
   <%

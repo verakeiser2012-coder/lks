@@ -345,6 +345,47 @@
       } else { note = (j && j.error) || T().failSave; btn.textContent = was; btn.disabled = false; renderSaved(); }
     }).catch(() => { note = T().failSave; btn.textContent = was; btn.disabled = false; renderSaved(); });
   });
+  /* ---------- «В мои рецепты»: кабинет без пароля ---------- */
+  // С входом — сохраняем сразу. Без входа — спрашиваем почту, отправляем ссылку,
+  // а состав кладём в адрес (?s=…&keep=1): после входа страница откроется здесь же
+  // и сохранит его сама.
+  const keepBtn = $('ar-keep'), keepBox = $('ar-keep-box');
+  function keepMsg(html) { if (!keepBox) return; keepBox.hidden = false; keepBox.innerHTML = html; }
+  function recipeName() {
+    const top = [...blend.entries()].sort((a, b) => b[1] - a[1]).slice(0, 2).map(([i]) => nm(NODES[i]));
+    return top.join(' + ') + (blend.size > 2 ? ' +' + (blend.size - 2) : '');
+  }
+  function keepRecipe() {
+    return fetch('/my/recipes', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ name: recipeName(), code: encodeBlend() }),
+    }).then((r) => r.json()).then((j) => {
+      if (j && j.ok) keepMsg((j.existed ? 'Этот рецепт уже в кабинете' : 'Рецепт сохранён') + ' — <a href="/my">открыть кабинет</a>');
+      else if (j && j.login) askEmail();
+      else keepMsg('<span class="ar-keep-msg">' + ((j && j.error) || 'Не удалось сохранить') + '</span>');
+    }).catch(() => keepMsg('<span class="ar-keep-msg">Не удалось сохранить</span>'));
+  }
+  function askEmail() {
+    const to = location.pathname + '?s=' + encodeBlend() + '&keep=1';
+    keepMsg('<span class="ar-keep-msg">Рецепты хранятся в кабинете без пароля: введите почту — пришлём ссылку, и состав сохранится сам.</span>' +
+      '<form data-keep-login><input type="email" required placeholder="you@email.com" autocomplete="email">' +
+      '<button type="submit" class="ar-btn">Прислать ссылку</button></form>');
+    const f = keepBox.querySelector('[data-keep-login]');
+    f.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = f.querySelector('input').value.trim();
+      fetch('/my', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ email: email, to: to }) })
+        .then((r) => r.json())
+        .then((j) => keepMsg('<span class="ar-keep-msg">' + (j && j.ok ? 'Письмо ушло на ' + esc(email) + '. Откройте ссылку из него — состав сохранится в кабинет.' : (j && j.error) || 'Не удалось отправить') + '</span>'))
+        .catch(() => keepMsg('<span class="ar-keep-msg">Не удалось отправить</span>'));
+    });
+  }
+  if (keepBtn) {
+    keepBtn.addEventListener('click', () => {
+      if (!blend.size) return;
+      if (keepBtn.dataset.account) keepRecipe(); else askEmail();
+    });
+  }
   const shareBox = $('ar-share');
   if (shareBox) {
     const flash = (msg) => {
@@ -595,6 +636,10 @@
     const shared = fromUrl ? decodeBlend(fromUrl) : null;
     if (shared && shared.size) {
       blend = shared;
+      if (new URLSearchParams(location.search).get('keep') === '1' && keepBtn && keepBtn.dataset.account) {
+        setTimeout(keepRecipe, 300);
+        try { history.replaceState(null, '', location.pathname + '?s=' + new URLSearchParams(location.search).get('s')); } catch (e) {}
+      }
       const ex = $('ar-example');
       if (ex) { ex.textContent = 'Открыт состав по ссылке. Меняйте части или нажмите «очистить», чтобы собрать своё.'; }
     } else {

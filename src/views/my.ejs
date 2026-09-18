@@ -1,0 +1,100 @@
+<%- include('partials/header') %>
+
+<div class="my-head">
+  <div>
+    <h1>Мой кабинет</h1>
+    <p class="my-email"><%= email %></p>
+  </div>
+  <form action="/my/logout" method="POST"><button class="link-btn" type="submit">Выйти</button></form>
+</div>
+<% if (flash) { %><div class="flash flash-success"><%= flash %></div><% } %>
+
+<section class="my-section">
+  <h2>Заказы</h2>
+  <% if (!orders.length) { %>
+    <p class="hint">Заказов на эту почту пока нет. <a href="/catalog">В каталог →</a></p>
+  <% } else { %>
+    <div class="my-orders">
+      <% orders.forEach(function (o) { %>
+        <a class="my-order" href="<%= o.url %>">
+          <div class="my-order-top">
+            <strong>Заказ №<%= o.id %></strong>
+            <span class="my-order-date"><%= o.created_at.slice(0, 10).split('-').reverse().join('.') %></span>
+          </div>
+          <div class="my-order-items"><%= o.items.map(function (i) { return i.product_name + (i.qty > 1 ? ' × ' + i.qty : ''); }).join(', ') %></div>
+          <div class="my-order-meta">
+            <span class="my-status my-status-<%= o.status %>"><%= o.statusLabel %></span>
+            <span><%= o.payment_status === 'paid' ? 'оплачен' : 'ждёт оплаты' %></span>
+            <span><%= formatPrice(o.total) %></span>
+            <% if (o.shipping_track) { %><span>трек <%= o.shipping_track %></span><% } %>
+          </div>
+        </a>
+      <% }); %>
+    </div>
+  <% } %>
+</section>
+
+<% if (files.length) { %>
+<section class="my-section">
+  <h2>Файлы</h2>
+  <ul class="my-list">
+    <% files.forEach(function (f) { %>
+      <li>
+        <span><%= f.product_name %> <small class="hint">заказ №<%= f.orderId %></small></span>
+        <a class="btn btn-secondary btn-small" href="/downloads/<%= f.token %>">Скачать</a>
+      </li>
+    <% }); %>
+  </ul>
+</section>
+<% } %>
+
+<section class="my-section">
+  <h2>Мои экземпляры</h2>
+  <% if (!busts.length && !tags.length) { %>
+    <p class="hint">Здесь появятся нумерованные вещи, которые вы закрепите за собой по метке — бюсты, платки и другие.</p>
+  <% } else { %>
+    <ul class="my-list">
+      <% busts.forEach(function (b) { %>
+        <li><span>Бюст №<%= b.number %><% if (b.kind) { %> — <%= b.kind %><% } %><% if (b.material) { %>, <%= b.material %><% } %></span><a class="link-btn" href="/b/<%= b.code %>">Открыть →</a></li>
+      <% }); %>
+      <% tags.forEach(function (t) { %>
+        <li><span><%= t.label || t.kind || 'Экземпляр' %> №<%= t.number %><% if (t.bonus_label) { %> <small class="hint">бонус: <%= t.bonus_label %></small><% } %></span><a class="link-btn" href="/n/<%= t.code %>">Открыть →</a></li>
+      <% }); %>
+    </ul>
+  <% } %>
+</section>
+
+<section class="my-section">
+  <h2>Рецепты ароматов</h2>
+  <% if (!recipes.length) { %>
+    <p class="hint">Соберите состав на <a href="/aroma">карте ароматов</a> и нажмите «В мои рецепты» — он останется здесь.</p>
+  <% } else { %>
+    <ul class="my-list">
+      <% recipes.forEach(function (r) { %>
+        <li>
+          <span><%= r.name %> <small class="hint"><%= r.code.split('_').length %> <%= r.code.split('_').length === 1 ? 'аромат' : 'ароматов' %></small></span>
+          <span class="my-actions">
+            <a class="btn btn-secondary btn-small" href="/aroma?s=<%= encodeURIComponent(r.code) %>">На карте</a>
+            <form action="/my/recipes/<%= r.id %>/delete" method="POST" class="inline"><button class="link-btn" type="submit" aria-label="Удалить рецепт">удалить</button></form>
+          </span>
+        </li>
+      <% }); %>
+    </ul>
+    <p class="hint">Ещё рецепт — на <a href="/aroma">карте ароматов</a>.</p>
+  <% } %>
+</section>
+
+<section class="my-section">
+  <h2>Рассылка</h2>
+  <% if (subscribed) { %>
+    <p>Новости о релизах и дропах приходят на <%= email %>.</p>
+    <form action="/my/unsubscribe" method="POST"><button class="btn btn-secondary btn-small" type="submit">Отписаться</button></form>
+  <% } else { %>
+    <p>Новые треки, релизы и дропы — на почту, без спама.</p>
+    <form action="/my/subscribe" method="POST"><button class="btn btn-small" type="submit">Подписаться</button></form>
+  <% } %>
+</section>
+
+<p class="hint" style="margin-top:28px;">Вопрос по заказу или данным — <a href="/contact">напишите нам</a>. Удалить свои данные можно тем же письмом.</p>
+
+<%- include('partials/footer') %>

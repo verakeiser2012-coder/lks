@@ -119,6 +119,11 @@ app.use((req, res, next) => {
   // Канонический адрес: все 20 доменов отдают один сайт — поисковикам и соцсетям
   // показываем единственный основной, иначе получаются дубли и разнобой в превью.
   res.locals.canonicalBase = 'https://' + require('./config/domains').CANONICAL_MAIN;
+  next();
+});
+// Кабинет без пароля: по cookie — почта, res.locals.account (services/account.js).
+app.use(require('./services/account').middleware);
+app.use((req, res, next) => {
   res.locals.bgPlaylist = require('./utils/bgPlaylist').getBgPlaylist();
   res.locals.formatDate = formatDate;
   res.locals.formatDateShort = formatDateShort;
@@ -180,7 +185,8 @@ app.use('/legal', legalRoutes);
 app.use('/b', require('./routes/busts'));
 app.use('/n', require('./routes/tags'));
 app.use('/downloads', require('./routes/downloads'));
-app.use('/', require('./routes/order')); // /order/<токен> и /orders — заказ без кабинета
+app.use('/my', require('./routes/my')); // кабинет без пароля: заказы, файлы, экземпляры, рецепты, рассылка
+app.use('/', require('./routes/order')); // /order/<токен>; /orders ведёт в кабинет
 app.use('/', require('./routes/reviews').router); // /reviews, отзыв по заказу и по приглашению
 app.use('/admin', adminRoutes);
 

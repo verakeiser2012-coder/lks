@@ -1,7 +1,6 @@
 const express = require('express');
 const db = require('../db');
-const { isBot, overLimit } = require('../middleware/antispam');
-const { orderView, sendOrdersDigest } = require('../services/orderPage');
+const { orderView } = require('../services/orderPage');
 
 const router = express.Router();
 
@@ -14,22 +13,8 @@ router.get('/order/:token', (req, res) => {
   res.render('order', { ...orderView(order), thanks: req.query.thanks === '1', title: `Заказ №${order.id}` });
 });
 
-// «Мои покупки»: вводишь почту — на неё уходят ссылки на все заказы.
-// Ответ одинаковый независимо от того, есть ли такая почта в базе.
-router.get('/orders', (req, res) => {
-  res.render('orders-lookup', { sent: false, email: '', error: null, title: 'Мои заказы' });
-});
-
-router.post('/orders', async (req, res) => {
-  const email = String((req.body && req.body.email) || '').trim();
-  if (isBot(req) || overLimit('orders', req, 5, 60 * 60 * 1000)) {
-    return res.render('orders-lookup', { sent: true, email, error: null, title: 'Мои заказы' });
-  }
-  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
-    return res.status(400).render('orders-lookup', { sent: false, email, error: 'Введите почту, на которую оформляли заказ.', title: 'Мои заказы' });
-  }
-  sendOrdersDigest(email).catch((err) => console.error('[orders] письмо со ссылками:', err.message));
-  res.render('orders-lookup', { sent: true, email, error: null, title: 'Мои заказы' });
-});
+// «Мои заказы» переехали в кабинет (/my): старые ссылки и формы ведут туда.
+router.get('/orders', (req, res) => res.redirect(301, '/my'));
+router.post('/orders', (req, res) => res.redirect(307, '/my'));
 
 module.exports = router;

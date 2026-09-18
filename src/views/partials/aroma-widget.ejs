@@ -36,6 +36,9 @@
       <div class="ar-acts" id="ar-acts" hidden>
         <button type="button" class="ar-primary" id="ar-save">Сохранить состав</button>
         <button type="button" id="ar-copy">Скопировать текстом</button>
+        <%# «В мои рецепты» — в кабинет без пароля (18.09): без входа спросим почту и вернём сюда с сохранением. %>
+        <button type="button" id="ar-keep" data-account="<%= (typeof account !== 'undefined' && account) ? account.email : '' %>">В мои рецепты</button>
+        <div class="ar-keep-box" id="ar-keep-box" hidden></div>
       </div>
 
       <div class="ar-share" id="ar-share" hidden>
@@ -151,7 +154,9 @@
 .ar-near{display:flex;flex-wrap:wrap;gap:6px}
 .ar-near button{font:inherit;font-size:12.5px;background:#fff;border:1px dashed var(--ar-rule);border-radius:4px;padding:4px 9px;cursor:pointer;color:var(--ar-ink)}
 .ar-near button:hover{border-color:var(--ar-warm);border-style:solid;color:var(--ar-warm)}
-.ar-acts{display:flex;gap:8px;margin-top:14px}
+.ar-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.ar-acts .ar-keep-box{flex:1 0 100%;margin-top:0}
+.ar-acts .ar-keep-box button{flex:0 0 auto}
 .ar-acts button{flex:1;border:1px solid var(--ar-rule);background:#fff;border-radius:4px;padding:9px;font:inherit;font-size:13px;cursor:pointer;color:var(--ar-ink)}
 .ar-acts .ar-primary{background:var(--ar-warm);border-color:var(--ar-warm);color:#fff;font-weight:500}
 .ar-acts button:disabled{opacity:.6;cursor:default}

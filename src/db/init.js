@@ -508,6 +508,27 @@ function init() {
   if (!spotlightCols.some((c) => c.name === 'is_minor')) {
     db.exec("ALTER TABLE redhead_spotlights ADD COLUMN is_minor INTEGER NOT NULL DEFAULT 0");
   }
+  // Кабинет без пароля (18.09.2026): ссылки входа и рецепты с карты ароматов.
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS account_links (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      email TEXT NOT NULL,
+      token TEXT NOT NULL UNIQUE,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      expires_at TEXT NOT NULL,
+      last_seen_at TEXT
+    );
+    CREATE INDEX IF NOT EXISTS idx_account_links_email ON account_links(email);
+    CREATE TABLE IF NOT EXISTS aroma_recipes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      email TEXT NOT NULL,
+      name TEXT NOT NULL,
+      code TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_aroma_recipes_email ON aroma_recipes(email);
+  `);
+
   // Конкурс «Твой выход под трек» — та же схема согласия родителя (18.09.2026).
   const contestCols = db.prepare('PRAGMA table_info(contest_submissions)').all();
   for (const [col, ddl] of [
