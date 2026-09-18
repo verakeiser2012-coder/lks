@@ -751,6 +751,14 @@ function init() {
   if (!releaseCols.some((c) => c.name === 'platform_links')) {
     db.exec("ALTER TABLE releases ADD COLUMN platform_links TEXT NOT NULL DEFAULT '{}'");
   }
+  // Лейбл релиза — как в поле label у дистрибьютора (Яндекс/VK/Spotify показывают его на странице
+  // альбома). Решение владельца 18.09.2026: новые релизы — «LEVKEYSER», старые остаются «DJ Levka»
+  // до смены дистрибьютора. В JSON-LD уходит как recordLabel.
+  if (!releaseCols.some((c) => c.name === 'label')) {
+    db.exec("ALTER TABLE releases ADD COLUMN label TEXT NOT NULL DEFAULT ''");
+    db.exec("UPDATE releases SET label = 'DJ Levka' WHERE label = ''");
+    db.exec("UPDATE releases SET label = 'openedruf' WHERE slug IN ('at-the-jazz-club', 'welcome')");
+  }
 
   // Печать по требованию (Printful). У товара — кто изготавливает и варианты
   // (размеры ↔ sync variant id), у позиции заказа — выбранный вариант и статус

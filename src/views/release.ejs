@@ -3,7 +3,7 @@
 <section class="hero release-hero">
   <% if (release.cover_image) { %><img class="release-hero-cover" src="<%= thumb(release.cover_image, 480) %>" srcset="<%= srcset(release.cover_image, [320, 480, 640, 960]) %>" sizes="(max-width: 480px) 92vw, 200px" alt="<%= release.title %>"><% } %>
   <div>
-    <p class="drop-season"><%= release.release_type %><% if (release.year) { %> · <%= release.year %><% } %></p>
+    <p class="drop-season"><%= release.release_type %><% if (release.year) { %> · <%= release.year %><% } %><% if (release.label) { %> · <span translate="no"><%= release.label %></span><% } %></p>
     <h1><%= release.title %></h1>
     <% if (release.description) { %><p class="hero-tagline"><%- renderLinkedText(release.description) %></p><% } %>
     <% if (platformButtons.length) { %>

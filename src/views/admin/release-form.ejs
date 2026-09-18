@@ -31,6 +31,14 @@
     <input type="text" name="year" value="<%= release ? release.year : '' %>" placeholder="2026">
   </label>
   <label>
+    Лейбл — как в поле «label» у дистрибьютора
+    <input type="text" name="label" value="<%= release ? (release.label || '') : 'LEVKEYSER' %>" placeholder="LEVKEYSER">
+  </label>
+  <p style="color:#666; font-size:0.85rem; margin:-8px 0 12px;">
+    Новые релизы выпускаем под лейблом LEVKEYSER (решение 18.09.2026). Старые остаются «DJ Levka», пока при смене
+    дистрибьютора их не переотдадим — тогда поменять и здесь. Показывается на странице релиза и уходит в разметку.
+  </p>
+  <label>
     Описание
     <textarea name="description" rows="5"><%= release ? release.description : '' %></textarea>
   </label>

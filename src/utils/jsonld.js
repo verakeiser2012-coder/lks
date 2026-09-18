@@ -189,6 +189,7 @@ function musicAlbum(base, release, tracks = []) {
       : /ep/i.test(release.release_type || '') ? 'https://schema.org/EPRelease'
       : 'https://schema.org/AlbumRelease',
     byArtist: { '@id': base + '/#artist' },
+    recordLabel: release.label ? { '@type': 'Organization', name: release.label } : undefined,
     numTracks: tracks.length || undefined,
     track: tracks.length ? {
       '@type': 'ItemList',
