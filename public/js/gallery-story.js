@@ -8,9 +8,9 @@
   var KEY_SEC = 'levkaStorySeconds';
   var DEF_SEC = 1, MIN_SEC = 1, MAX_SEC = 15;
   var LAST_EXTRA = 1000;   // мс сверху на последнем кадре перед кругом
-  var SCALE_MIN = 0.72;    // соседи в самом малом виде — 72 % от кадра в центре
-  var FADE_MIN = 0.4;      // и на 40 % прозрачности
-  var REACH = 1.1;         // на каком расстоянии (в ширинах кадра) сосед доходит до минимума
+  var SCALE_MIN = 0.86;    // соседи в самом малом виде — 86 % от кадра в центре
+  var FADE_MIN = 0.55;     // и на 55 % непрозрачности
+  var REACH = 1.0;         // на каком расстоянии (в ширинах кадра) сосед доходит до минимума
 
   var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 

@@ -2892,7 +2892,8 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 .story__viewport::-webkit-scrollbar { display: none; }
 .story__viewport.is-dragging { cursor: grabbing; scroll-snap-type: none; scroll-behavior: auto; }
 .story__viewport:focus-visible { box-shadow: inset 0 0 0 2px var(--color-accent); }
-.story__track { display: flex; align-items: flex-start; gap: 6px; padding: 12px 0 6px; }
+/* зазор маленький: соседи и так отступают от центрального за счёт уменьшения */
+.story__track { display: flex; align-items: flex-start; gap: 2px; padding: 12px 0 6px; }
 .story__spacer { flex: 0 0 calc(50vw - 160px); }
 .story__cell { flex: 0 0 auto; scroll-snap-align: center; }
 .story__inner { display: flex; flex-direction: column; align-items: center; transform-origin: 50% 40%; will-change: transform, opacity; }
