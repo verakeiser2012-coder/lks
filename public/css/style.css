@@ -51,23 +51,10 @@ body {
 a { color: var(--color-accent); text-decoration: none; }
 a:hover { color: var(--color-accent-hover); }
 
+/* Верхняя строка шапки уходит при прокрутке; липкое только меню разделов
+   (.site-nav ниже) — 18.09, до этого липла вся шапка вместе с бегущей строкой. */
 .site-header {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 1px 0 var(--color-border);
-}
-
-.site-header::after {
-  content: '';
-  display: block;
-  height: 2px;
-  background: linear-gradient(90deg, var(--color-gold-deep) 0%, var(--color-accent) 20%, var(--color-gold-bright) 40%, var(--color-gold-shine) 50%, var(--color-gold-bright) 60%, var(--color-accent) 80%, var(--color-gold-deep) 100%);
-  background-size: 250% auto;
-  animation: gold-shine 6s linear infinite;
+  background: #fff;
 }
 
 .header-top {
@@ -75,8 +62,11 @@ a:hover { color: var(--color-accent-hover); }
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 20px;
-  padding: 16px 0;
+  gap: 16px;
+  /* Только верх/низ: шорткат padding обнулял боковые поля .container,
+     и логотип стоял на 20 px левее остального содержимого (на телефоне — вплотную к краю). */
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .logo {
@@ -136,10 +126,25 @@ a:hover { color: var(--color-accent-hover); }
 
 .hero-tagline { font-size: 1.1rem; color: var(--color-muted); margin-top: -8px; }
 
-/* Единая центрированная навигация под верхней строкой */
+/* Единая центрированная навигация под верхней строкой. Липкая: меню всегда
+   под рукой, а верхняя строка и бегущая строка при прокрутке уходят. Золотая
+   полоска-блик, раньше подчёркивавшая всю шапку, теперь под меню — и едет с ним. */
 .site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
   border-top: 1px solid var(--color-border);
-  background: #fffaf0;
+  background: rgba(255, 250, 240, 0.94);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.site-nav::after {
+  content: '';
+  display: block;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-gold-deep) 0%, var(--color-accent) 20%, var(--color-gold-bright) 40%, var(--color-gold-shine) 50%, var(--color-gold-bright) 60%, var(--color-accent) 80%, var(--color-gold-deep) 100%);
+  background-size: 250% auto;
+  animation: gold-shine 6s linear infinite;
 }
 .nav-inner {
   display: flex;
@@ -147,7 +152,8 @@ a:hover { color: var(--color-accent-hover); }
   align-items: center;
   flex-wrap: wrap;
   gap: 26px;
-  padding: 11px 0;
+  padding-top: 7px;
+  padding-bottom: 7px;
 }
 .nav-inner a {
   position: relative;
@@ -286,6 +292,12 @@ a:hover { color: var(--color-accent-hover); }
   border-radius: 999px;
   padding: 5px;
 }
+/* Внутри плашки две группы: ссылки магазина и инструменты (звук, язык, корзина,
+   кнопка меню). На широком экране они неотличимы от одного ряда; на узком
+   плашка распадается на две строки — см. медиазапросы ниже. */
+.shop-links, .header-tools { display: flex; align-items: center; gap: 4px; }
+/* .lang-switch ниже задаёт display: flex — без второго селектора он бы победил. */
+.nav-mobile-only, .lang-switch.nav-mobile-only { display: none; }
 .shop-link {
   padding: 8px 14px;
   border-radius: 999px;
@@ -362,21 +374,83 @@ a:hover { color: var(--color-accent-hover); }
 .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(2) { opacity: 0; }
 .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
 
+/* До 1100 px логотип и плашка ещё в одной строке, но впритык — ужимаем плашку. */
+@media (max-width: 1100px) {
+  .header-top { gap: 12px; }
+  .shop-link { padding: 7px 10px; font-size: 0.84rem; }
+  .cart-btn { padding: 7px 13px 7px 10px; font-size: 0.88rem; }
+}
+
+/* До 1010 px плашка целиком рядом с логотипом уже не помещается и падала под
+   него одним куском, влево, с пустотой справа (18.09: так было при 860–1010,
+   то есть в окне на пол-экрана). Теперь она распадается (display: contents):
+   инструменты — звук, язык, корзина — остаются в первой строке справа от
+   логотипа, ссылки магазина уходят второй строкой в свою плашку по центру.
+   Меню разделов при этом ещё видно целиком — за кнопку оно прячется с 860. */
+@media (max-width: 1010px) {
+  .header-top { justify-content: space-between; gap: 10px 12px; }
+  .shop-nav { display: contents; }
+  .header-tools { order: 1; margin-left: auto; }
+  /* Плашка по ширине ссылок и по центру: рядом с логотипом и инструментами она
+     не помещается, поэтому переносится на свою строку сама. */
+  .shop-links {
+    order: 2; flex: 0 0 auto; margin: 0 auto; justify-content: center; flex-wrap: wrap;
+    background: #fdf6e0; border: 1px solid #e6cf8a; border-radius: 999px; padding: 4px;
+  }
+}
+
+/* Узкий экран: меню разделов прячется за кнопку. Раньше кнопка меню сидела
+   внутри плашки и на телефоне занимала отдельную строку. */
 @media (max-width: 860px) {
-  .header-top { justify-content: space-between; }
   .nav-toggle { display: flex; }
-  .site-nav { overflow: hidden; }
+  /* Меню за кнопкой в верхней строке, липнуть нечему — иначе у верха экрана
+     висела бы одна золотая полоска. */
+  .site-nav { overflow: hidden; position: static; }
   .nav-inner {
     display: none;
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
-    padding: 10px 0;
+    padding-top: 10px;
+    padding-bottom: 10px;
   }
   .nav-inner.open { display: flex; }
   .nav-inner a { padding: 8px 4px; width: 100%; }
   .nav-divider { display: none; }
-  .shop-nav { flex-wrap: wrap; justify-content: center; }
+}
+
+/* До 640 px логотип и инструменты не умещались в одну строку — инструменты
+   падали на вторую, плашка магазина на третью, шапка росла до 217 px (18.09).
+   Корзина остаётся значком со счётчиком, RU/EN уходит в меню — и первая
+   строка снова общая. */
+@media (max-width: 640px) {
+  .cart-btn { padding: 7px 10px; gap: 5px; }
+  .header-tools .lang-switch, .cart-label { display: none; }
+  .nav-inner .lang-switch.nav-mobile-only { display: flex; gap: 6px; padding: 6px 4px; }
+  .nav-inner .lang-switch a { width: auto; padding: 4px 9px; font-size: 0.8rem; font-family: inherit; }
+  .nav-inner .lang-switch a::after { display: none; }
+}
+
+/* Телефон: три строки. 1 — имена и кнопка меню; 2 — слоган с девизом на всю
+   ширину (внутри логотипа он делал блок шире половины экрана, и рядом ничего
+   не помещалось); 3 — плашка магазина, звук и корзина. Корзина стоит в ряду
+   магазина, а не в первой строке: с именами и кнопкой меню она на 360 px не
+   умещалась, и кнопка меню съезжала на отдельную строку (18.09). «Обо мне»
+   уходит в меню. Логотип и инструменты раскрыты через display: contents,
+   чтобы их части раскладывались по строкам независимо. */
+@media (max-width: 480px) {
+  .header-top { gap: 6px; padding-top: 10px; padding-bottom: 10px; }
+  .logo, .header-tools { display: contents; }
+  .logo-names { order: 0; gap: 10px; font-size: 1.15rem; }
+  .nav-toggle { order: 1; margin-left: auto; }
+  .logo-tagline { order: 2; flex-basis: 100%; }
+  .shop-links { order: 3; margin: 0; padding: 3px; }
+  .shop-links .shop-link { padding: 6px 7px; font-size: 0.8rem; }
+  .bg-audio-widget { order: 4; margin-left: auto; }
+  /* На 360 px плашке, звуку и корзине хватает места впритык — поля у́же. */
+  .cart-btn { order: 5; padding: 7px 8px; }
+  .shop-link-about, .shop-nav-divider { display: none; }
+  .nav-mobile-only { display: block; }
 }
 
 h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.01em; }
@@ -1764,7 +1838,7 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 .mk-actions { margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap; }
 
 @media print {
-  .site-header, .site-footer, .no-print, .banner, .nav-toggle { display: none !important; }
+  .site-header, .site-nav, .music-ticker, .site-footer, .no-print, .banner, .nav-toggle { display: none !important; }
   body { background: #fff; }
   .media-kit { max-width: none; }
   .mk-cover { -webkit-print-color-adjust: exact; print-color-adjust: exact; }

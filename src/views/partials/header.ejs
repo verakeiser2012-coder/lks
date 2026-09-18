@@ -144,17 +144,24 @@
         <% } %>
       </div>
       <%# Маскоты Темп и Василий временно скрыты — вернуть, когда будут доделаны. %>
+      <%# Плашка магазина: слева ссылки (.shop-links), справа инструменты (.header-tools):
+          звук, язык, корзина, кнопка меню. На узких экранах (≤860) плашка распадается —
+          инструменты встают в первую строку к логотипу, ссылки магазина второй строкой,
+          а на телефоне (≤480) «Обо мне» и RU/EN уходят в раскрывающееся меню. %>
       <div class="shop-nav">
         <%
           const shopPath = (typeof currentPath === 'string' ? currentPath : '/').split('?')[0];
           function shopActive(href) { return shopPath === href || shopPath.startsWith(href + '/') ? ' active' : ''; }
         %>
-        <a href="/about" class="shop-link shop-link-about<%= shopActive('/about') %>">Обо мне</a>
-        <span class="shop-nav-divider" aria-hidden="true"></span>
-        <a href="/catalog" class="shop-link<%= shopActive('/catalog') %>">Каталог</a>
-        <a href="/drops" class="shop-link<%= shopActive('/drops') %>">Дропы</a>
-        <a href="/brands" class="shop-link<%= shopActive('/brands') %>">Брендам</a>
-        <% if (settings.services_public === '1' || (typeof isAdmin !== 'undefined' && isAdmin)) { %><a href="/services" class="shop-link<%= shopActive('/services') %>">Коллегам</a><% } %>
+        <div class="shop-links">
+          <a href="/about" class="shop-link shop-link-about<%= shopActive('/about') %>">Обо мне</a>
+          <span class="shop-nav-divider" aria-hidden="true"></span>
+          <a href="/catalog" class="shop-link<%= shopActive('/catalog') %>">Каталог</a>
+          <a href="/drops" class="shop-link<%= shopActive('/drops') %>">Дропы</a>
+          <a href="/brands" class="shop-link<%= shopActive('/brands') %>">Брендам</a>
+          <% if (settings.services_public === '1' || (typeof isAdmin !== 'undefined' && isAdmin)) { %><a href="/services" class="shop-link<%= shopActive('/services') %>">Коллегам</a><% } %>
+        </div>
+        <div class="header-tools">
         <audio id="bg-audio" preload="none"></audio>
         <div class="bg-audio-widget">
           <a href="/music" class="bg-audio-link" aria-label="Перейти к музыке">
@@ -205,15 +212,23 @@
             <path d="M3 6h18"/>
             <path d="M16 10a4 4 0 0 1-8 0"/>
           </svg>
-          Корзина<% if (cartCount > 0) { %><span class="cart-badge"><%= cartCount %></span><% } %>
+          <span class="cart-label">Корзина</span><% if (cartCount > 0) { %><span class="cart-badge"><%= cartCount %></span><% } %>
         </a>
         <button type="button" class="nav-toggle" aria-label="Меню" aria-expanded="false" aria-controls="site-nav-inner">
           <span class="nav-toggle-bar"></span>
           <span class="nav-toggle-bar"></span>
           <span class="nav-toggle-bar"></span>
         </button>
+        </div>
       </div>
     </div>
+  </header>
+  <%# Липкое только меню разделов (18.09): раньше липла вся шапка вместе с верхней
+      строкой и бегущей строкой — 160 px, на ноутбуке пятая часть экрана. Теперь
+      верхняя строка и бегущая строка уходят при прокрутке, меню остаётся. Для этого
+      меню и строка вынесены из <header>: липкий элемент не может выйти за границы
+      родителя, а <header> заканчивается вместе с ним. На телефоне (≤860) меню спрятано
+      за кнопку в верхней строке, липнуть нечему — там оно обычное. %>
     <%
       const navPath = (typeof currentPath === 'string' ? currentPath : '/').split('?')[0].replace(/^\/en(\/|$)/, '/');
       function navActive(href) {
@@ -235,6 +250,12 @@
         <a href="/style" class="<%= navActive('/style') %>">Стиль</a>
         <a href="/podcast" class="<%= navActive('/podcast') %>">В кадре</a>
         <a href="/contest" class="<%= navActive('/contest') %>">Конкурс</a>
+        <%# Только для телефона (≤480): в плашке им не хватает места, см. .nav-mobile-only. %>
+        <a href="/about" class="nav-mobile-only <%= navActive('/about') %>">Обо мне</a>
+        <div class="lang-switch nav-mobile-only">
+          <a href="<%= ruHref %>" class="<%= isEn ? '' : 'active' %>" hreflang="ru">RU</a>
+          <a href="<%= enHref %>" class="<%= isEn ? 'active' : '' %>" hreflang="en">EN</a>
+        </div>
       </div>
     </nav>
     <%# Бегущая строка с музыкой Льва. Темп нарочно медленный — под «двигаюсь
@@ -269,5 +290,4 @@
         </div>
       </div>
     <% } %>
-  </header>
   <main class="container" id="main">
