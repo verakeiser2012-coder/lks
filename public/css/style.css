@@ -381,7 +381,7 @@ a:hover { color: var(--color-accent-hover); }
 
 h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.01em; }
 
-main.container { padding-top: 32px; padding-bottom: 60px; min-height: 60vh; }
+main.container { padding-top: 32px; padding-bottom: 44px; min-height: 60vh; }
 
 .hero {
   padding: 48px 0;
@@ -1020,45 +1020,50 @@ form.inline { display: inline; }
 .flash-error { background: #fee2e2; color: #991b1b; }
 .flash-success { background: #dcfce7; color: #166534; }
 
+/* Подвал ужат 18.09: отступы меньше, разделы в две колонки, документы и
+   реквизиты — одной полосой без второй линии. Колонка разделов — по ширине
+   списка (max-content), иначе справа от него оставался пустой хвост и просвет
+   до подписки выходил втрое шире остальных; поиск и форма подписки тянутся
+   на всю свою колонку, чтобы просветы между столбцами были одинаковыми. */
 .site-footer {
   border-top: 1px solid var(--color-border);
-  padding: 40px 0;
-  margin-top: 40px;
+  padding: 28px 0 24px;
+  margin-top: 24px;
   color: var(--color-muted);
   background: #fffaf0;
 }
 .footer-inner {
   display: grid;
-  grid-template-columns: 1.1fr 0.7fr 1fr 0.9fr;
-  gap: 24px 28px;
+  grid-template-columns: 1fr max-content 1.4fr 1fr;
+  gap: 20px 24px;
 }
-@media (max-width: 1000px) { .footer-inner { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 900px) { .footer-inner { grid-template-columns: 1fr 1fr; } }
 .footer-inner h4 {
-  margin: 0 0 8px;
+  margin: 0 0 6px;
   color: var(--color-text);
   font-family: var(--font-display);
   font-size: 0.92rem;
 }
-.footer-brand p { margin: 4px 0; font-size: 0.9rem; }
+.footer-brand p { margin: 3px 0; font-size: 0.88rem; }
 .footer-alt {
-  display: block; margin: 2px 0 8px;
+  display: block; margin: 2px 0 6px;
   font-size: 0.78rem; letter-spacing: 0.22em; text-transform: uppercase;
   color: var(--color-accent);
 }
-.footer-contacts { line-height: 1.7; }
+.footer-contacts { line-height: 1.6; }
 .footer-contacts a { color: var(--color-text); }
-.footer-mediakit { display: inline-block; margin-top: 10px; font-size: 0.88rem; font-weight: 600; }
+.footer-mediakit { display: inline-block; margin-top: 6px; font-size: 0.86rem; font-weight: 600; }
 
-.footer-nav { display: flex; flex-direction: column; gap: 6px; }
-.footer-nav a { color: var(--color-muted); font-size: 0.9rem; }
+.footer-nav-cols { display: grid; grid-template-columns: max-content max-content; gap: 0 20px; }
+.footer-nav-cols > div { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.footer-nav a { color: var(--color-muted); font-size: 0.86rem; white-space: nowrap; }
 .footer-nav a:hover { color: var(--color-accent); }
 
 .footer-bottom {
   grid-column: 1 / -1;
-  margin-top: 18px; padding-top: 14px;
-  border-top: 1px solid var(--color-border);
-  display: flex; flex-wrap: wrap; gap: 6px 20px;
-  font-size: 0.78rem; color: var(--color-muted);
+  margin-top: -8px;
+  display: flex; flex-wrap: wrap; gap: 4px 18px;
+  font-size: 0.76rem; color: var(--color-muted);
 }
 
 /* Ссылка «К содержанию» — видна только при переходе с клавиатуры */
@@ -1069,14 +1074,15 @@ form.inline { display: inline; }
 }
 .skip-link:focus { left: 0; color: #fff; }
 
-.footer-subscribe p { margin: 0 0 12px; font-size: 0.88rem; }
-.subscribe-form { display: flex; gap: 8px; flex-wrap: wrap; }
-.subscribe-form input[type="email"] { flex: 1; min-width: 160px; width: auto; }
-.subscribe-form .btn { padding: 8px 16px; white-space: nowrap; }
+.footer-subscribe p { margin: 0 0 8px; font-size: 0.86rem; }
+.subscribe-form { display: flex; gap: 6px; flex-wrap: wrap; }
+.subscribe-form input[type="email"] { flex: 1; min-width: 140px; width: auto; padding: 7px 10px; font-size: 0.9rem; }
+.subscribe-form .btn { padding: 7px 14px; white-space: nowrap; }
+.subscribe-form label { line-height: 1.35; }
 .footer-subscribe .flash { padding: 8px 12px; font-size: 0.85rem; margin-bottom: 10px; }
 
-.footer-social-groups { display: flex; flex-direction: column; gap: 12px; }
-.social-group h4 { margin-bottom: 5px; font-size: 0.8rem; }
+.footer-social-groups { display: flex; flex-direction: column; gap: 8px; }
+.social-group h4 { margin-bottom: 4px; font-size: 0.8rem; }
 .social-group { min-width: 0; }
 .social-icons { display: flex; flex-wrap: wrap; gap: 5px; }
 .social-icon {
@@ -1198,13 +1204,13 @@ form.inline { display: inline; }
 .legal-prose p { margin: 0 0 14px; }
 .footer-legal {
   grid-column: 1 / -1;
-  margin-top: 28px;
-  padding-top: 16px;
+  margin-top: 4px;
+  padding-top: 14px;
   border-top: 1px solid var(--color-border);
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 18px;
-  font-size: 0.85rem;
+  gap: 4px 16px;
+  font-size: 0.84rem;
 }
 .footer-legal a { color: var(--color-muted); }
 
@@ -1766,10 +1772,10 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
   .mk-offer, .mk-release, .mk-fact, .mk-package { break-inside: avoid; }
 }
 
-/* Поиск — в подвале, под списком разделов (из шапки убран 18.09) */
+/* Поиск — в подвале, в первой колонке под медиа-китом (из шапки убран 18.09) */
 .footer-search { display: flex; align-items: center; gap: 4px; margin-top: 10px; }
 .footer-search input[type="search"] {
-  width: 100%; max-width: 200px; padding: 6px 10px; margin: 0;
+  width: 100%; padding: 5px 10px; margin: 0;
   border: 1px solid var(--color-border); border-radius: 999px;
   background: #fff; font-size: 0.85rem;
 }
@@ -1792,9 +1798,9 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 .lang-switch a:hover { color: var(--color-accent); }
 
 /* Почта в подвале — сворачиваемый блок */
-.footer-mail { margin-top: 6px; }
+.footer-mail { margin-top: 4px; }
 .footer-mail summary {
-  cursor: pointer; font-size: 0.9rem; font-weight: 600;
+  cursor: pointer; font-size: 0.88rem; font-weight: 600;
   color: var(--color-text); list-style: none; display: inline-flex; align-items: center; gap: 6px;
 }
 .footer-mail summary::-webkit-details-marker { display: none; }

@@ -76,20 +76,7 @@
           </p>
         </details>
         <a class="footer-mediakit" href="/brands/media-kit">Медиа-кит для брендов →</a>
-      </div>
-
-      <nav class="footer-nav" aria-label="Разделы сайта">
-        <h4>Разделы</h4>
-        <a href="/news">Новости</a>
-        <a href="/music">Музыка DJ Levka</a>
-        <a href="/about">Обо мне</a>
-        <a href="/style">Стиль</a>
-        <a href="/redheads">Рыжие</a>
-        <a href="/catalog">Каталог</a>
-        <a href="/drops">Дропы</a>
-        <a href="/games">Поиграть</a>
-        <a href="/podcast">В кадре</a>
-        <a href="/contact">Написать</a>
+        <%# Поиск — под медиа-китом (18.09): в первой колонке ему просторнее, чем под списком разделов. %>
         <form class="footer-search" action="/search" method="GET" role="search">
           <input type="search" name="q" placeholder="Поиск по сайту" aria-label="Поиск по сайту" value="<%= typeof query !== 'undefined' ? query : '' %>">
           <button type="submit" aria-label="Найти">
@@ -98,6 +85,34 @@
             </svg>
           </button>
         </form>
+      </div>
+
+      <%# Разделы в две колонки (18.09): слева — что читать и слушать, справа — магазин
+          и дела. Так список вдвое короче, а подвал не тянется вниз одним столбиком.
+          «Написать» здесь нет — ссылка «Написать нам →» стоит рядом, в первой колонке. %>
+      <nav class="footer-nav" aria-label="Разделы сайта">
+        <h4>Разделы</h4>
+        <div class="footer-nav-cols">
+          <div>
+            <a href="/diary">Дневник</a>
+            <a href="/news">Новости</a>
+            <a href="/music">Музыка DJ Levka</a>
+            <a href="/redheads">Рыжие</a>
+            <a href="/style">Стиль</a>
+            <a href="/podcast">В кадре</a>
+            <a href="/contest">Конкурс</a>
+            <a href="/games">Поиграть</a>
+          </div>
+          <div>
+            <a href="/about">Обо мне</a>
+            <a href="/catalog">Каталог</a>
+            <a href="/drops">Дропы</a>
+            <a href="/brands">Брендам</a>
+            <% if (settings.services_public === '1' || (typeof isAdmin !== 'undefined' && isAdmin)) { %><a href="/services">Коллегам</a><% } %>
+            <a href="/reviews">Отзывы</a>
+            <a href="/orders">Мои заказы</a>
+          </div>
+        </div>
       </nav>
 
       <div class="footer-subscribe">
@@ -140,7 +155,7 @@
         <% } %>
         <% if (otherSocial.length) { %>
           <div class="social-group">
-            <h4>Остальное</h4>
+            <h4>Соцсети</h4>
             <div class="social-icons">
               <% otherSocial.forEach(function (net) { %>
                 <a href="<%= net.url %>" target="_blank" rel="noopener" title="<%= net.label %>" aria-label="<%= net.label %>" class="social-icon"><%- icons[net.key] %></a>
@@ -160,20 +175,20 @@
         <% } %>
       </div>
 
+      <%# Нижняя часть — одной полосой: документы, под ними строка с реквизитами.
+          «Мои заказы» и «Отзывы» переехали в «Разделы» — это не документы. %>
       <div class="footer-legal">
         <a href="/legal/oferta">Публичная оферта</a>
         <a href="/legal/privacy">Персональные данные</a>
         <a href="/legal/payment">Оплата</a>
         <a href="/legal/delivery">Доставка</a>
         <a href="/legal/returns">Возврат и обмен</a>
-        <a href="/orders">Мои заказы</a>
-        <a href="/reviews">Отзывы</a>
       </div>
 
       <div class="footer-bottom">
         <span>© <%= new Date().getFullYear() %> <%= settings.site_name %></span>
         <% if (settings.legal_ip_name) { %>
-          <span><%= settings.legal_ip_name %><% if (settings.legal_ogrnip) { %>, ОГРНИП <%= settings.legal_ogrnip %><% } %></span>
+          <span><%= settings.legal_ip_name %><% if (settings.legal_inn) { %>, ИНН <%= settings.legal_inn %><% } %><% if (settings.legal_ogrnip) { %>, ОГРНИП <%= settings.legal_ogrnip %><% } %></span>
         <% } %>
         <span>Музыка и материалы сайта защищены авторским правом</span>
       </div>
