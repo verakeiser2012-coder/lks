@@ -1,8 +1,10 @@
 <% if (typeof galleryItems !== 'undefined' && galleryItems.length > 0) { %>
-  <%# storyMode: третья кнопка «История» — кадр в точке увеличения растёт, подпись
-      раскрывается, лента едет сама (public/js/gallery-story.js). Включается только
-      там, где партиал вызван с { storyMode: true }; остальные ленты сайта не трогает. %>
+  <%# storyMode: третья кнопка «История» — та же лента без плёнки: кадр в центре в полный
+      рост и с подписью, соседи меньше, кадры едут сами (public/js/gallery-story.js).
+      Включается только там, где партиал вызван с { storyMode: true }; остальные ленты
+      сайта не трогает. %>
   <% var story = typeof storyMode !== 'undefined' && storyMode; %>
+  <% var gLang = (typeof lang !== 'undefined' && lang === 'en') ? 'en' : 'ru'; %>
   <section class="link-section">
     <%# Лента или плитка: кнопки переключают все ленты страницы, выбор помнится в браузере. %>
     <div class="gallery-head">
@@ -13,13 +15,12 @@
         <button type="button" class="strip-toggle__btn" data-strip-view="grid">Плитка</button>
       </div>
     </div>
-    <div class="filmstrip<%= story ? ' filmstrip--story-capable' : '' %>"<%= story ? ' data-story="1"' : '' %>><div class="filmstrip-track">
+    <div class="filmstrip"<%= story ? ' data-story="1"' : '' %>><div class="filmstrip-track">
       <% galleryItems.forEach(function(item, idx) {
         var isEmbed = item.type === 'video' && item.file_path.indexOf('http') === 0;
       %>
-        <% var gLang = (typeof lang !== 'undefined' && lang === 'en') ? 'en' : 'ru'; %>
         <% var dG = item.shot_date || item.created_at || ''; var markG = dG ? ' · ' + formatDateShort(dG, gLang).toUpperCase() : ''; %>
-        <div class="film-cell" data-code="LEVKEYSER · 35 MM" data-num="<%= gLang === 'en' ? 'FRAME' : 'КАДР' %> <%= String(idx + 1).padStart(2, '0') %><%= markG %>"<%= story ? ' data-year="' + (dG ? String(dG).slice(0, 4) : '') + '"' : '' %>>
+        <div class="film-cell" data-code="LEVKEYSER · 35 MM" data-num="<%= gLang === 'en' ? 'FRAME' : 'КАДР' %> <%= String(idx + 1).padStart(2, '0') %><%= markG %>">
         <div class="gallery-item edge-soft <%= item.type === 'video' && !isEmbed ? 'is-video' : '' %> <%= isEmbed ? 'is-embed' : '' %>">
           <% if (item.type === 'photo') { %>
             <img src="<%= thumb(item.file_path, 640) %>" alt="<%= item.title %>" loading="lazy">
@@ -32,19 +33,59 @@
           <% } %>
           <% if (item.title) { %><div class="gallery-caption"><%= item.title %></div><% } %>
         </div>
-        <% if (story && item.title) { %><div class="story-caption"><% if (dG) { %><span class="story-caption__year"><%= String(dG).slice(0, 4) %></span><% } %><span class="story-caption__text"><%= item.title %></span></div><% } %>
         </div>
       <% }); %>
     </div></div>
     <% if (story) { %>
-    <div class="story-bar" hidden>
-      <button type="button" class="story-bar__btn story-bar__prev" aria-label="Предыдущий кадр">‹</button>
-      <button type="button" class="story-bar__btn story-bar__play" aria-label="Пауза" data-playing="1">❚❚</button>
-      <button type="button" class="story-bar__btn story-bar__next" aria-label="Следующий кадр">›</button>
-      <span class="story-bar__count"><span class="story-bar__cur">1</span> / <span class="story-bar__total"><%= galleryItems.length %></span></span>
-      <span class="story-bar__progress"><span class="story-bar__fill"></span></span>
+    <%# «История» — та же лента, но без плёнки (образец — Embla Carousel, пример «Scale»
+        + плагин Autoplay): кадры в ряд на чистом фоне, тот, что в центре, в полный рост
+        и с подписью, соседи плавно меньше и бледнее — по мере прокрутки, а не рывком.
+        Просмотрщик идёт сразу за лентой: скрипт находит ленту через previousElementSibling. %>
+    <div class="story" data-story-viewer hidden>
+      <div class="story__viewport" tabindex="0" role="region" aria-roledescription="<%= gLang === 'en' ? 'carousel' : 'карусель' %>" aria-label="<%= gLang === 'en' ? 'Story: frames move on their own; drag or use the arrows' : 'История: кадры едут сами; тяните или листайте стрелками' %>">
+        <div class="story__track">
+          <span class="story__spacer" aria-hidden="true"></span>
+          <% galleryItems.forEach(function(item, idx) {
+            var isEmbed = item.type === 'video' && item.file_path.indexOf('http') === 0;
+            var dS = item.shot_date || item.created_at || '';
+          %>
+            <div class="story__cell" role="group" aria-label="<%= (gLang === 'en' ? 'Frame ' : 'Кадр ') + (idx + 1) + ' / ' + galleryItems.length %>">
+              <div class="story__inner">
+                <div class="story__media">
+                  <% if (item.type === 'photo') { %>
+                    <img src="<%= thumb(item.file_path, 960) %>" alt="<%= item.title %>" loading="<%= idx < 3 ? 'eager' : 'lazy' %>" draggable="false">
+                  <% } else if (isEmbed) { %>
+                    <div class="story__embed"><iframe src="<%= item.file_path %>" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen frameborder="0"></iframe></div>
+                  <% } else { %>
+                    <video src="<%= item.file_path %>" muted loop playsinline preload="metadata"></video>
+                  <% } %>
+                </div>
+                <p class="story__caption"><% if (dS) { %><span class="story__year"><%= String(dS).slice(0, 4) %></span><% } %><span class="story__text"><%= item.title || '' %></span></p>
+              </div>
+            </div>
+          <% }); %>
+          <span class="story__spacer" aria-hidden="true"></span>
+        </div>
+      </div>
+      <%# Дорожка сегментов — по одному на кадр, текущий заполняется за отведённые секунды. %>
+      <div class="story__progress" aria-hidden="true">
+        <% galleryItems.forEach(function() { %><span class="story__seg"><i></i></span><% }); %>
+      </div>
+      <div class="story__bar">
+        <button type="button" class="story__btn story__prev" aria-label="<%= gLang === 'en' ? 'Previous frame' : 'Предыдущий кадр' %>">‹</button>
+        <button type="button" class="story__btn story__play" aria-label="<%= gLang === 'en' ? 'Pause' : 'Пауза' %>" data-playing="1">❚❚</button>
+        <button type="button" class="story__btn story__next" aria-label="<%= gLang === 'en' ? 'Next frame' : 'Следующий кадр' %>">›</button>
+        <span class="story__count"><span class="story__cur">1</span> / <span class="story__total"><%= galleryItems.length %></span></span>
+        <%# Секунды на кадр — вручную, шаг 1 с, по умолчанию 1 с; выбор помнится в браузере. %>
+        <span class="story__speed" role="group" aria-label="<%= gLang === 'en' ? 'Seconds per frame' : 'Секунд на кадр' %>">
+          <span class="story__speed-label"><%= gLang === 'en' ? 'Per frame' : 'На кадр' %></span>
+          <button type="button" class="story__btn story__speed-btn" data-delta="-1" aria-label="<%= gLang === 'en' ? 'One second less' : 'На секунду меньше' %>">−</button>
+          <span class="story__speed-val">1</span><span class="story__speed-unit"><%= gLang === 'en' ? 's' : 'с' %></span>
+          <button type="button" class="story__btn story__speed-btn" data-delta="1" aria-label="<%= gLang === 'en' ? 'One second more' : 'На секунду больше' %>">+</button>
+        </span>
+      </div>
     </div>
-    <script src="/js/gallery-story.js" defer></script>
+    <script src="/js/gallery-story.js?v=<%= assetVer %>" defer></script>
     <% } %>
   </section>
   <% if (typeof stripToggleScript === 'undefined') { %>

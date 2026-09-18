@@ -2468,6 +2468,9 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 .chapter-title a:hover { color: var(--color-accent); text-decoration: underline; text-underline-offset: 4px; }
 .chapter-head--dark .chapter-title a:hover { color: var(--color-gold-bright); }
 .chapter-more { font-size: 0.9rem; font-weight: 600; white-space: nowrap; }
+/* на узком экране длинная ссылка «все →» не умещается рядом с заголовком и распирала
+   страницу вбок — пусть переносится на свою строку */
+@media (max-width: 700px) { .chapter-head { flex-wrap: wrap; } .chapter-more { white-space: normal; } }
 .chapter-deck { color: var(--color-muted); max-width: 60ch; margin: -8px 0 18px; }
 .redheads-home-intro { margin-top: -8px; }
 .chapter-head--dark { border-top-color: rgba(255, 255, 255, 0.14); }
@@ -2871,55 +2874,64 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 .diary-inline:hover figcaption, .diary-inline:focus-within figcaption { opacity: 1; }
 @media (hover: none) { .diary-inline figcaption { opacity: 1; } }
 
-/* «История» у кинолент: кадр в точке увеличения (центр) растёт и оживает,
-   под ним раскрывается подпись, лента едет сама (js/gallery-story.js).
-   Соседние кадры остаются маленькими и в сепии — как плёнка на просмотровом столе. */
-.filmstrip.filmstrip--story { scroll-snap-type: none; scrollbar-width: none; outline: none; }
-.filmstrip.filmstrip--story::-webkit-scrollbar { display: none; }
-.filmstrip.filmstrip--story .filmstrip-track { padding-top: 40px; padding-bottom: 118px; align-items: flex-start; }
-/* пустые края, чтобы первый и последний кадр могли встать в центр */
-.filmstrip.filmstrip--story .filmstrip-track::before,
-.filmstrip.filmstrip--story .filmstrip-track::after { content: ''; flex: 0 0 calc(50vw - 170px); max-width: 420px; }
-.filmstrip.filmstrip--story .film-cell { cursor: pointer; transition: opacity 0.5s ease; }
-.filmstrip.filmstrip--story .film-cell:not(.is-focus) { opacity: 0.55; }
-.filmstrip.filmstrip--story .gallery-item { height: 160px; transition: height 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); }
-.filmstrip.filmstrip--story .gallery-item img,
-.filmstrip.filmstrip--story .gallery-item video { max-width: 460px; transition: filter 0.7s ease, max-width 0.7s ease; }
-.filmstrip.filmstrip--story .film-cell.is-focus .gallery-item { height: 300px; box-shadow: 0 0 0 1px rgba(247, 243, 234, 0.2), 0 18px 40px rgba(0, 0, 0, 0.55); }
-.filmstrip.filmstrip--story .film-cell.is-focus .gallery-item img,
-.filmstrip.filmstrip--story .film-cell.is-focus .gallery-item video { filter: none; }
-.filmstrip.filmstrip--story .film-cell.is-focus::before,
-.filmstrip.filmstrip--story .film-cell.is-focus::after { color: #F7F3EA; opacity: 1; }
-.filmstrip.filmstrip--story .gallery-caption { display: none; }
-/* подпись истории: под кадром, раскрывается только у кадра в фокусе */
-.story-caption {
-  position: absolute; left: 0; right: 0; top: calc(100% + 26px);
-  max-height: 0; overflow: hidden; opacity: 0; transform: translateY(6px);
-  color: #F7F3EA; font-size: 0.92rem; line-height: 1.35;
-  transition: opacity 0.45s ease 0.25s, transform 0.45s ease 0.25s, max-height 0.45s ease;
-  pointer-events: none;
+/* «История» — та же лента без плёнки, по образцу Embla Carousel («Scale» + Autoplay,
+   js/gallery-story.js): кадры в ряд на чистом фоне, тот, что в центре, в полный рост
+   и с подписью под ним, соседи меньше и бледнее — размер и прозрачность ставит скрипт
+   от расстояния до центра. Под лентой дорожка сегментов по числу кадров и панель:
+   ‹ ❚❚ › 3/12 и секунды на кадр. Плёночная лента при включённой истории спрятана. */
+.filmstrip.filmstrip--story { display: none; }
+.story { margin: 0 0 28px; }
+.story__viewport {
+  overflow-x: auto; overflow-y: hidden; scrollbar-width: none; outline: none;
+  scroll-snap-type: x mandatory; overscroll-behavior-x: contain;
+  cursor: grab; user-select: none; -webkit-user-select: none;
+  /* края растворяются, чтобы ряд не обрывался жёстко */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
 }
-.filmstrip:not(.filmstrip--story) .story-caption { display: none; }
-.filmstrip.filmstrip--story .film-cell.is-focus .story-caption { max-height: 96px; opacity: 1; transform: none; }
-.story-caption__year { display: block; font-family: 'Courier New', monospace; font-size: 0.7rem; letter-spacing: 0.16em; color: #D99A2B; margin-bottom: 3px; }
-.story-caption__text { display: block; }
-/* панель: ‹ ❚❚ › 3/12 и полоска, сколько осталось до следующего кадра */
-.story-bar { display: flex; align-items: center; gap: 8px; margin: -8px 0 18px; padding: 0 4px; font-size: 0.8rem; color: var(--color-muted); }
-.story-bar__btn { border: 1px solid var(--color-border); background: transparent; color: var(--color-text); width: 32px; height: 32px; border-radius: 50%; font: inherit; font-size: 0.85rem; line-height: 1; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
-.story-bar__btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
-.story-bar__play { font-size: 0.7rem; }
-.story-bar__count { font-variant-numeric: tabular-nums; margin-left: 4px; }
-.story-bar__progress { flex: 1; height: 2px; background: var(--color-border); border-radius: 2px; overflow: hidden; margin-left: 8px; }
-.story-bar__fill { display: block; height: 100%; width: 100%; background: var(--color-accent); transform: scaleX(0); transform-origin: left; }
+.story__viewport::-webkit-scrollbar { display: none; }
+.story__viewport.is-dragging { cursor: grabbing; scroll-snap-type: none; scroll-behavior: auto; }
+.story__viewport:focus-visible { box-shadow: inset 0 0 0 2px var(--color-accent); }
+.story__track { display: flex; align-items: flex-start; gap: 6px; padding: 12px 0 6px; }
+.story__spacer { flex: 0 0 calc(50vw - 160px); }
+.story__cell { flex: 0 0 auto; scroll-snap-align: center; }
+.story__inner { display: flex; flex-direction: column; align-items: center; transform-origin: 50% 40%; will-change: transform, opacity; }
+.story__media { height: min(52vh, 420px); border-radius: 6px; overflow: hidden; background: #f1ece2; box-shadow: 0 12px 34px rgba(40, 28, 8, 0.22), 0 1px 4px rgba(40, 28, 8, 0.1); }
+.story__media img, .story__media video { display: block; height: 100%; width: auto; max-width: min(80vw, 640px); object-fit: cover; }
+.story__embed { height: 100%; aspect-ratio: 16 / 9; }
+.story__embed iframe { width: 100%; height: 100%; border: 0; }
+/* подпись под кадром: год мелким моноширинным золотом, текст крупно; ширина — как у кадра,
+   но не уже 200 px, чтобы фраза не ломалась столбиком у узких портретов.
+/* width: 0 + min-width: 100% — подпись не раздвигает кадр под длину фразы, а ложится по его ширине */
+.story__caption { margin: 14px 0 0; padding: 0 2px; width: 0; min-width: max(100%, 200px); min-height: 84px; text-align: center; opacity: 0; }
+.story__year { display: block; font-family: 'Courier New', monospace; font-size: 0.72rem; letter-spacing: 0.18em; color: var(--color-accent); margin-bottom: 4px; }
+.story__text { display: block; font-family: var(--font-display); font-size: 1.12rem; line-height: 1.35; color: var(--color-text); }
+/* дорожка сегментов — по одному на кадр, текущий заполняется за отведённые секунды */
+.story__progress { display: flex; gap: 4px; margin: 10px 2px 0; }
+.story__seg { flex: 1; height: 3px; border-radius: 2px; background: var(--color-border); overflow: hidden; }
+.story__seg i { display: block; height: 100%; width: 100%; background: var(--color-accent); transform: scaleX(0); transform-origin: left; }
+.story__seg.is-done i { transform: none; }
+/* панель: ‹ ❚❚ › 3/12 и справа секунды на кадр (−/+, шаг 1 с) */
+.story__bar { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 10px; margin: 12px 0 0; font-size: 0.82rem; color: var(--color-muted); }
+.story__btn { border: 1px solid var(--color-border); background: transparent; color: var(--color-text); width: 34px; height: 34px; border-radius: 50%; font: inherit; font-size: 0.95rem; line-height: 1; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+.story__btn:hover:not(:disabled) { border-color: var(--color-accent); color: var(--color-accent); }
+.story__btn:disabled { opacity: 0.35; cursor: default; }
+.story__play { font-size: 0.72rem; }
+.story__count { font-variant-numeric: tabular-nums; margin-left: 4px; }
+.story__speed { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; }
+.story__speed-label { margin-right: 2px; }
+.story__speed-val { font-variant-numeric: tabular-nums; min-width: 1.4em; text-align: right; color: var(--color-text); font-weight: 600; }
+.story__speed-unit { margin-left: -2px; }
 @media (max-width: 700px) {
-  .filmstrip.filmstrip--story .filmstrip-track::before,
-  .filmstrip.filmstrip--story .filmstrip-track::after { flex-basis: calc(50vw - 120px); }
-  .filmstrip.filmstrip--story .film-cell.is-focus .gallery-item { height: 240px; }
-  .filmstrip.filmstrip--story .gallery-item img, .filmstrip.filmstrip--story .gallery-item video { max-width: calc(100vw - 48px); }
-  .story-caption { font-size: 0.85rem; }
+  .story__spacer { flex-basis: calc(50vw - 110px); }
+  .story__media { height: min(46vh, 340px); }
+  .story__media img, .story__media video { max-width: calc(100vw - 56px); }
+  .story__caption { min-height: 92px; }
+  .story__text { font-size: 1rem; }
+  .story__speed { margin-left: 0; width: 100%; justify-content: flex-start; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .filmstrip.filmstrip--story .gallery-item, .filmstrip.filmstrip--story .film-cell, .story-caption { transition: none; }
+  .story__viewport { scroll-behavior: auto; }
 }
 
 /* «Плитка» у кинолент — обычная сетка без перфорации и подписей плёнки. */

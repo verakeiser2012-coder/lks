@@ -121,7 +121,7 @@
 
 <%- include('partials/share') %>
 
-<script src="/js/diary-marks.js" defer></script>
+<script src="/js/diary-marks.js?v=<%= assetVer %>" defer></script>
 <script>
   // автопрокрутка ленты времени к текущей записи
   document.addEventListener('DOMContentLoaded', function () {
