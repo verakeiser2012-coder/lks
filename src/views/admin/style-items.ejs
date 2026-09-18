@@ -59,20 +59,4 @@
   </tbody>
 </table>
 
-<h2>Голоса за образы</h2>
-<p class="hint">Посетители отмечают образ, который хотят увидеть на следующей съёмке. Один голос с устройства на образ.</p>
-<table>
-  <thead><tr><th>Образ</th><th>Подпись</th><th>Голосов</th></tr></thead>
-  <tbody>
-    <% votes.forEach(function(v) { %>
-      <tr>
-        <td><img src="<%= v.file_path %>" alt="" style="width:48px;height:48px;object-fit:cover;border-radius:4px;"></td>
-        <td><%= v.title || '(без подписи)' %></td>
-        <td><%= v.votes %></td>
-      </tr>
-    <% }); %>
-    <% if (votes.length === 0) { %><tr><td colspan="3">В галерее нет кадров со страницей «Стиль — образы».</td></tr><% } %>
-  </tbody>
-</table>
-
 <%- include('partials/footer') %>

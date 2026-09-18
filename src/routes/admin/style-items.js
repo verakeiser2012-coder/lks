@@ -6,7 +6,7 @@ const router = express.Router();
 
 // Тексты блоков раздела «Стиль», кроме вводного (он в /admin/pages/style).
 const TEXT_KEYS = {
-  style_looks_intro: 'Образы — подпись под заголовком',
+  style_inspires_intro: 'Первые разы — подпись под заголовком',
   style_walks_intro: 'Проходка — подпись под заголовком',
   style_wear_intro: 'Что ношу — подпись под заголовком',
   style_redhead_note: 'Рыжий — абзац',
@@ -26,23 +26,14 @@ function loadTexts() {
   return texts;
 }
 
-function loadVotes() {
-  return db.prepare(`
-    SELECT gallery_items.id, gallery_items.title, gallery_items.file_path, COUNT(look_votes.id) AS votes
-    FROM gallery_items LEFT JOIN look_votes ON look_votes.item_id = gallery_items.id
-    WHERE gallery_items.page_key = 'style'
-    GROUP BY gallery_items.id ORDER BY votes DESC, gallery_items.sort_order ASC
-  `).all();
-}
-
 router.get('/', (req, res) => {
-  res.render('admin/style-items', { items: loadItems(), texts: loadTexts(), textLabels: TEXT_KEYS, votes: loadVotes(), saved: false });
+  res.render('admin/style-items', { items: loadItems(), texts: loadTexts(), textLabels: TEXT_KEYS, saved: false });
 });
 
 router.post('/texts', (req, res) => {
   const upsert = db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value');
   for (const key of Object.keys(TEXT_KEYS)) upsert.run(key, req.body[key] || '');
-  res.render('admin/style-items', { items: loadItems(), texts: loadTexts(), textLabels: TEXT_KEYS, votes: loadVotes(), saved: true });
+  res.render('admin/style-items', { items: loadItems(), texts: loadTexts(), textLabels: TEXT_KEYS, saved: true });
 });
 
 router.get('/new', (req, res) => {

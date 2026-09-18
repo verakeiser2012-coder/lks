@@ -1,156 +1,129 @@
-# Pinterest: подписи к пинам
+# Pinterest levkeiser — новые названия и описания (v2, 18.09.2026)
 
-Обновлено 07.09.2026 по правкам: подписи только на английском; доска про подиум
-заменена на «проходки» (подиум + конкурс «Твой выход под трек»); мудборд бренда —
-после согласования состава; архив не перевыкладываем, а правим на месте.
+Принципы (согласованы с владельцем):
+- **Имя в каждом заголовке** — Pinterest у Льва ещё и портфолио; «Lev Keiser» — сам по себе запрос (кастинг, агентства).
+- Заголовок: `Lev Keiser — <ключевой запрос EN>` ≤100 знаков. Ключевой запрос — то, что реально ищут: redhead boy model, kids editorial, behind the scenes, lo-fi house cover art.
+- Описание: RU + EN, 2–3 естественных запроса. **Год съёмки остаётся** (портфолио). Возраст — только там, где он часть истории (день рождения, первый съёмочный день), не «11 лет, модель, актёр» в каждом описании.
+- Без хэштегов (Pinterest их не индексирует с 2021), без почты и списков ссылок.
+- Alt-текст — что на кадре, для поиска по картинкам.
+- Ссылка — раздел сайта: /redheads, /contest (проходки), /podcast («В кадре»), /music.
 
-Файлы — из `Рабочий стол\Стикеры Лев Кейсер\5-фотобанк-Pinterest` (имя = возраст-номер)
-и из кадров «Состояний» (`3-стикеры-арт-треков`).
+Формат: `ID (последние 6) | Новое название | Описание | Alt`
 
-## Описание профиля
+## Фотосессия Олеси Уразбахтиной, 2023 (12) → Redhead boy · Lev Keiser; копия остаётся в 11 y.o.
 
-    Lev Keiser — redhead model & producer. I make custom things and music without AI.
+Ссылка: https://levkeiser.com/redheads
+Описание-основа (у всех): «Лев Кейсер — рыжий модель и актёр из Екатеринбурга. Фотосессия Олеси Уразбахтиной, 2023. Lev Keiser, redhead boy model, editorial portrait by Olesya Urazbakhtina, Yekaterinburg 2023.» + одна строка про кадр.
 
-Сайт в профиле: levkeiser.com (вместо djlevka.com), домен подтвердить.
+| ID | Новое название | Строка про кадр | Alt |
+|---|---|---|---|
+| 249049 | Lev Keiser — redhead boy model, smiling portrait in black | Улыбка, чёрный свитер, нейтральный фон. | Smiling redhead boy with curly hair in a black sweater |
+| 249052 | Lev Keiser — ginger curly hair, studio headshot | Крупный портрет, кудри. | Close-up of a boy with red curly hair, dark top |
+| 249053 | Lev Keiser — kid model in UNREAL sweater, black and white | Свитер UNREAL, ч/б. | Black and white photo of a redhead boy in UNREAL sweater |
+| 249055 | Lev Keiser — redhead boy in beige beanie, winter portrait | Бежевая шапка, тёплый портрет. | Redhead boy in a knit beanie, close-up |
+| 249059 | Lev Keiser — boy model in UNREAL sweater on a chair, b&w | Кресло, ч/б, стритвир. | Boy in UNREAL sweater lounging in a chair, black and white |
+| 249061 | Lev Keiser — black and white close-up, redhead boy model | Ч/б портрет. | Black and white close-up of a redhead boy |
+| 249067 | Lev Keiser — curly-haired boy in black hoodie, studio | Чёрное худи, расслабленная поза. | Boy with curly hair in black hoodie, seated |
+| 249068 | Lev Keiser — redhead boy in oversized hoodie on a stool | Оверсайз-худи, табурет. | Redhead boy in oversized black hoodie sitting on a stool |
+| 249071 | Lev Keiser — boy model portrait, ginger curls | Студийный портрет на нейтральном фоне. | Portrait of a boy with ginger curls on a neutral backdrop |
+| 249072 | Lev Keiser — redhead boy laughing, candid studio moment | Живой кадр, смех. | Redhead boy laughing during a photoshoot |
+| 249075 | Lev Keiser — profile portrait, soft light | Профиль, мягкий свет. | Profile portrait of a ginger boy in soft light |
+| 249076 | Lev Keiser — full-length studio shot in black | В полный рост, монохром. | Full-length photo of a redhead boy in black clothes |
+
+## Другие «рыжие» кадры → Redhead boy
+
+| ID | Новое название | Описание | Alt | Ссылка |
+|---|---|---|---|---|
+| 249112 | Lev Keiser — 12th birthday, cake with a DJ figurine | Лев Кейсер, 12 лет: торт с фигуркой диджея и колонками — уже тогда DJ Levka. Redhead boy 12th birthday, DJ-themed cake, 2024. | Redhead boy with a birthday cake decorated with a DJ figurine and speakers | /redheads |
+| 845931 | Lev Keiser's Halloween shoot — Dracula on set, 2022 | Дракула на площадке хэллоуинской съёмки Льва Кейсера, 2022. Halloween photoshoot behind the scenes, Dracula costume. | Man in Dracula costume holding a tray, backstage | /redheads |
+| 845859 | Lev Keiser — Halloween street photo with a skeleton, 2022 | Лев Кейсер и «скелет» на Хэллоуин, уличный кадр, 2022. Redhead boy, Halloween street photo. | Redhead boy next to a man in skeleton makeup on the street | /redheads |
+| 845971 | Lev Keiser — autumn walk on a pier, film look | Лев Кейсер идёт по пирсу, осень, плёночный вид. Redhead boy on a pier, autumn, film photography look. | Redhead boy walking along a wooden pier by a lake | /contest |
+| 846651 | Lev Keiser — mustard suit, taxidermy fish backdrop | Лев Кейсер в горчичном костюме на фоне чучел рыб. Redhead boy model, mustard suit, quirky interior portrait. | Redhead boy in a mustard suit with taxidermy fish above | /redheads |
+| 249135 | Lev Keiser — shocked face, candid portrait | Удивлённый Лев, живой портрет. Candid portrait, surprised expression. | Boy with a shocked expression | /redheads |
+
+## Бэкстейдж / съёмки → Film photography · behind the scenes
+
+| ID | Новое название | Описание | Alt | Ссылка |
+|---|---|---|---|---|
+| 965094 | Lev Keiser — behind the scenes, shark costume («Laboratory», 2023) | Бэкстейдж съёмки «Laboratory», 2023: Лев в костюме акулы у зеркала. Behind the scenes, kids photoshoot, costume. | Child in a shark costume in front of a mirror on set | /redheads |
+| 965095 | Lev Keiser — backstage portrait in ring light («Laboratory», 2023) | Бэкстейдж «Laboratory», 2023: Лев в свете кольцевой лампы. Backstage portrait, ring light, redhead boy. | Redhead boy lit by a ring light, backstage | /redheads |
+| 965097 | Lev Keiser — behind the scenes with props («Laboratory», 2023) | Бэкстейдж «Laboratory», 2023: Лев надевает реквизит. Behind the scenes kids shoot, props, studio. | Boy pulling a prop over his head on a photoshoot | /redheads |
+| 998633 | Lev Keiser on set — cast photo, «Дёма Баклушкин» (2023) | Съёмочный день фильма «Как Дёма Баклушкин Бажова прочёл», 2023: общий кадр в классе. Film set, cast photo, Russian family film. | Cast and crew posing in a school classroom on a film set | /podcast |
+| 998634 | Lev Keiser on set — full cast in costume, «Дёма Баклушкин» (2023) | Съёмочный день, 2023: весь состав в костюмах. Movie set, cast in costume, behind the scenes. | Film cast in costumes posing in a classroom | /podcast |
+| 998158 | Lev Keiser and his stunt double on a scooter — film set, 2023 | Лев и дублёр по трюкам Прохор Чапайкин на площадке «Дёмы Баклушкина», 2023. Young actor, stunt double, film set. | Two boys with a scooter on a film set | /podcast |
+| 997920 | Lev Keiser — first shooting day, breaking the plate (2023) | Первый съёмочный день фильма, 2023: традиция разбить тарелку. First day on set, plate tradition, film crew. | Boy and girl holding pieces of a broken plate | /contest |
+| 997967 | Lev Keiser with a plate shard — first day on set, 2023 | Лев с осколком тарелки, первый съёмочный день «Дёмы Баклушкина», 2023. Redhead boy actor, film set tradition. | Redhead boy holding a shard of a broken plate | /contest |
+| 997881 | Lev Keiser — keepsake plate from the first day of filming, 2023 | Памятная тарелочка с первого съёмочного дня фильма, 2023. Keepsake plate, film tradition. | Decorated keepsake plate from a film set | /podcast |
+| 334262 | Lev Keiser — photographer at work, denim jacket, 2023 | Фотограф за работой: Лев в джинсовке и очках. Behind the scenes photoshoot, redhead boy model, 2023. | Photographer shooting a redhead boy in a denim jacket | /contest |
+| 846472 | Lev Keiser — Halloween commercial for Atomstroykompleks, 2022 | Реклама «Атомстройкомплекса» к Хэллоуину, 2022, режиссёр Максим Якимов (Red Pepper Film). Halloween commercial, child actor, elevator scene. | Boy in an elevator, Halloween-themed commercial | /podcast |
+
+## Музыка → Soundstates — visual states / DJ Levka — cover art
+
+Ссылка: https://levkeiser.com/music
+
+| ID | Новое название | Описание | Alt |
+|---|---|---|---|
+| 373009 | DJ Levka — 2AM, lo-fi house cover art (EP Soundstates, 2025) | Обложка трека 2AM из EP Soundstates DJ Levka (Лев Кейсер), 2025: винил, ночная комната. Lo-fi house cover art, vinyl aesthetic, music made without AI. | Vinyl record playing in a dim room with plants, 2AM text |
+| 324783 | DJ Levka — Cloudflute, jazzy lo-fi cover art (EP Soundstates, 2025) | Обложка трека Cloudflute: неоновый лес. DJ Levka, jazzy lo-fi, cover art, dreamy. | Neon-lit forest path with CLOUDFLUTE text |
+| 162353 | DJ Levka — Soundstates EP cover, marble bust collage (2025) | Обложка EP Soundstates DJ Levka, 2025: коллаж с мраморным бюстом и луной. Lo-fi electronic EP cover art, collage. | Collage of a marble bust with the moon and ocean, soundstates text |
+| 703146 | DJ Levka — 2AM cover art, lo-fi house (copy) | как 373009 | как 373009 |
+| 829611 | DJ Levka (Lev Keiser) — redhead kid DJ, casual portrait | DJ Levka — Лев Кейсер, рыжий диджей из Екатеринбурга, уличный портрет. Kid DJ, electronic music producer, redhead. | Redhead boy with a drink outdoors, DJ Levka post |
+| 674105 | DJ Levka — FLOWERS, pier walk video (2024) | Видео на треке FLOWERS DJ Levka: прогулка Льва по пирсу, 2024. Pier walk, autumn video, lo-fi. | Boy walking on a pier by a lake, video still |
+
+## Реклама, 2023 (остаются в 11 y.o.)
+
+Ссылка: https://levkeiser.com/redheads
+
+| ID | Новое название | Описание | Alt |
+|---|---|---|---|
+| 964477 | Lev Keiser — kidswear ad for Chado, backstage (2023) | Бэкстейдж рекламы детской одежды Chado, 2023. Kids clothing ad, backstage, redhead boy model Lev Keiser. | Redhead boy on a kids clothing photoshoot |
+| 964484 | Lev Keiser — Chado kidswear campaign (2023) | Реклама детской одежды Chado с Львом Кейсером, 2023. Kidswear campaign, redhead model. | Boy modelling kids clothing |
+| 964560 | Lev Keiser — kids backpack ad (2023) | Реклама детских рюкзаков, 2023, модель Лев Кейсер. Kids backpack advertising, boy model. | Boy wearing a kids backpack in an ad shoot |
+| 964562 | Lev Keiser — backpack campaign, studio (2023) | Кадр из рекламы рюкзаков, студия, 2023. Backpack ad, boy model. | Boy with a backpack in a studio |
+| 964653 | Lev Keiser — toy store ad for Sima-land (2023) | Реклама игрушек «Сима-лэнд», 2023, модель Лев Кейсер. Toy store ad, kid model. | Boy in a toy store advertising shoot |
+
+## Laboratory промо, 2023 (остаются в 11 y.o.)
+
+Ссылка: https://levkeiser.com/redheads
+
+| ID | Новое название | Описание | Alt |
+|---|---|---|---|
+| 964783 | Lev Keiser and Varvara — «Laboratory» promo, matching outfits (2023) | Промо «Laboratory», 2023: Лев и Варвара. Kids fashion promo, boy and girl. | Boy and girl posing for a fashion promo |
+| 964791 | Lev Keiser — «Laboratory» promo, studio look (2023) | Промо «Laboratory», 2023: Лев, студийный образ. Kids fashion promo, redhead boy model. | Redhead boy in a studio promo shot |
+| 964792 | Lev Keiser — «Laboratory» kidswear promo portrait (2023) | Промо детской одежды «Laboratory», 2023, портрет. Kidswear promo, boy model. | Boy model portrait for a kidswear promo |
+| 964801 | Lev Keiser and Varvara — «Laboratory» duo shot (2023) | Промо «Laboratory», 2023: парный кадр. Kids fashion duo. | Boy and girl in a fashion promo |
+| 964811 | Lev Keiser and Varvara — «Laboratory» editorial (2023) | Промо «Laboratory», 2023, редакционный стиль. Editorial kids fashion. | Boy and girl in an editorial promo shot |
+
+## Фильм «Как Дёма Баклушкин Бажова прочёл», 2023 — остальные → /podcast
+
+| ID | Новое название | Описание | Alt |
+|---|---|---|---|
+| 997788 | Lev Keiser as Dyoma Baklushkin — movie poster (2023) | Афиша фильма «Как Дёма Баклушкин Бажова прочёл», 2023: Лев Кейсер в роли Дёмы. Movie poster, young actor, Russian family film. | Film poster featuring a redhead boy |
+| 998241 | Lev Keiser as Dyoma — in costume on set (2023) | Лев в роли Дёмы Баклушкина на съёмках, 2023. Young actor in period costume, film set. | Boy in period costume on a film set |
+| 998244 | Lev Keiser on set — school uniform scene (2023) | Съёмки «Дёмы Баклушкина», 2023: сцена в школьной форме. Child actor, school scene. | Boy actor in school uniform on set |
+| 998245 | Lev Keiser — film still, classroom scene (2023) | Кадр со съёмок, 2023: сцена в классе. Film still, child actor. | Boy actor in a classroom scene |
+| 998291 | Lev Keiser — between takes on set (2023) | Между дублями на площадке «Дёмы Баклушкина», 2023. Child actor, film set. | Boy actor waiting between takes |
+| 998293 | Lev Keiser as Dyoma Baklushkin — on set (2023) | Лев в роли Дёмы, съёмочная площадка, 2023. Young actor, Russian family film. | Boy actor on a film set |
 
 ## Доски
 
-| Доска | Описание доски | Что внутри |
+| Сейчас | Предложение | Описание доски |
 |---|---|---|
-| Lev Keiser — portfolio | Redhead model portfolio by year, 2018–2026 | все возрастные доски сворачиваются сюда разделами по годам; ничего не перезаливаем |
-| Redhead boy · Lev Keiser | Natural curly red hair. Portraits, film and studio | лучшие 40 портретов (список ниже) |
-| Walks | Runway walks and «Your walk to the track» contest entries. Slow in a fast world | подиум всех лет + ролики/кадры участников конкурса, когда появятся |
-| Soundstates — visual states | Visuals for each track of the Soundstates EP by DJ Levka. Music without AI | 26 кадров |
-| DJ Levka — cover art | Cover art of DJ Levka releases | 10 обложек |
-| Film photography · behind the scenes | Film, sets, monitors, makeup | плёнка, площадка, монитор |
-| LEVKEYSER — moodboard | *(после согласования состава)* | палитра «Дикий лев», слэб-шрифт, марка, бюст, фразы, плёнка |
+| Lev Keiser 4 y.o. … 14 y.o. | оставить (это и есть хронология портфолио), добавить описание | «Lev Keiser — redhead model and actor from Yekaterinburg. Portfolio at age N: shoots, ads, film.» |
+| Redhead boy · Lev Keiser | Lev Keiser — redhead boy model portraits | Portraits of redhead boy model Lev Keiser: curly ginger hair, studio and editorial photography, Yekaterinburg |
+| Walks | Lev Keiser — walks & candid moments | Candid outdoor photos of Lev Keiser: pier, autumn, city walks |
+| Film photography · behind the scenes | ок | ок |
+| DJ Levka — cover art | ок | ок |
+| Soundstates — visual states | ок | ок |
 
-## Архив или новое: что выкладывать постепенно, а что нет
+Профиль (About, 500 знаков) — добавить портфольную строку: «Lev Keiser — redhead model and actor from Yekaterinburg, in front of the camera since age 4; electronic music as DJ Levka. Made without AI. Booking: levkeiser.com»
 
-Постепенность нужна **только новым пинам**, и не из-за «алгоритма любит регулярность»,
-а потому что Pinterest показывает свежие пины в домашней ленте подписчиков и в разделе
-«новое» несколько дней: 26 кадров одним днём — это один показ, 26 кадров за две недели —
-две недели показов. Но это не догма: 3–5 новых пинов в день — нормально.
+## Копии (после API)
 
-**Архив перезаливать не надо вообще.** 557 пинов уже существуют, у них есть возраст и
-история сохранений — это плюс в поиске. С ними делаем другое: открываем пин →
-«Редактировать» → заголовок, описание, ссылка → перенести на новую доску. Массово
-перенести на доску можно через «Выбрать» на доске (bulk move), тексты — только по одному.
-Поэтому: **60 лучших правим руками по таблице, остальные 500 просто переносим в
-portfolio по годам** без правок — они уже там лежат, разделы делаются за минуту.
+- В **Redhead boy**: 12 × Уразбахтина, 249112, 845931, 845859, 846651, 249135
+- В **Walks**: 845971, 674105, 997920, 997967, 829611
+- Обратно в **14 y.o.**: 373009, 324783, 162353; в **12 y.o.**: 334262; в **11 y.o.**: 965094, 965095, 965097, 998633, 998634, 998158, 997920, 997967, 997881
 
-Итого: архив — один вечер (перенос + 60 правок), новое — по 3–5 в день, пока не кончится.
-
-## 60 фотографий — заголовок и описание (EN)
-
-Ссылка для портретов — levkeiser.com/about, для проходок — levkeiser.com/contest,
-для плёнки — levkeiser.com/about.
-
-### Redhead boy · Lev Keiser
-
-| Файл | Заголовок | Описание |
-|---|---|---|
-| 13y-02 | Lev Keiser with a ginger cat | Redhead boy in a mustard coat holding a ginger cat. Studio portrait |
-| 13y-06 | Lifebuoy portrait | Teen redhead model in a beige jacket by the water, autumn light |
-| 13y-07 | Black and white, white tee | Black-and-white full-length portrait, curly red hair, minimal |
-| 13y-14 | Seated on white | Redhead teen sitting on a white cyclorama, white shirt, black jeans |
-| 13y-15 | Daisies | Curly redhead in a blue tee among daisies, summer portrait |
-| 13y-18 | UNREAL sweater | Close-up portrait, black sweater with UNREAL print, curly red hair |
-| 13y-01 | Santa portrait | Redhead teen in a red Santa coat, Christmas shoot |
-| 12y-09 | Vest and stool | Teen boy in a vest sitting on a stool, studio, film look |
-| 12y-10 | Denim jacket | Redhead teen in a denim jacket, studio, natural light |
-| 10y-14 | Cap by the window | Boy in a cap and camel coat sitting by a big window, city behind |
-| 10y-16 | Camel coat smile | Redhead boy in a camel coat and cap, smiling, studio |
-| 10y-17 | Camel coat, hand in hair | Redhead boy adjusting his hair, camel coat, studio |
-| 10y-18 | Black and white cap | Monochrome portrait, cap, coat, curly red hair |
-| 10y-19 | Black and white, hand up | Monochrome portrait, jacket, thoughtful |
-| 10y-20 | Window, black and white | Boy sitting on a windowsill, monochrome, city light |
-| 10y-21 | Christmas sweater b/w | Smiling redhead in a CHRISTMAS sweater, monochrome |
-| 10y-22 | Christmas sweater | Smiling redhead in a green CHRISTMAS sweater |
-| 10y-24 | Curtains and hat | Boy in a poncho and hat between curtains, orange backlight |
-| 10y-25 | Turtleneck portrait | Redhead boy in a black turtleneck, warm light, close-up |
-| 9y-10 | Plaid shirt jump | Redhead boy in a plaid shirt mid-jump, studio |
-| 9y-11 | Camo and sunglasses | Boy in a camouflage jacket and sunglasses, studio |
-| 9y-12 | Red hoodie | Redhead boy in a red hoodie and beanie, studio |
-| 8y-13 | Hands in hair | Redhead boy in a khaki jacket, hands in curly hair |
-| 8y-15 | Khaki jacket | Boy in a khaki jacket, hand on head, warm background |
-| 8y-17 | Santa hat, Christmas lights | Sleeping redhead boy in a Santa hat, bokeh lights |
-| 7y-20 | White shirt, hand on chest | Redhead boy in a white shirt, brown background |
-| 7y-21 | Hand up, white shirt | Redhead boy raising a hand, white shirt, brown background |
-| 7y-22 | Curly close-up | Close-up of a redhead boy with big curls, white shirt |
-| 7y-24 | AWESOME sweater | Redhead boy in a blue AWESOME sweater, hands on head |
-| 7y-25 | AWESOME shout | Redhead boy shouting with joy, blue AWESOME sweater |
-| 6y-05 | Plaid shirt portrait | Redhead boy in a purple plaid shirt, grey background |
-| 6y-09 | Green bomber, gold pattern | Boy in a green bomber with a golden pattern, studio |
-| 6y-11 | Eyes closed, fingers | Redhead boy squinting with fingers, green bomber |
-| 6y-12 | Grey shearling coat | Redhead boy in a grey shearling coat, studio |
-| 6y-23 | Checked blazer | Boy in a checked blazer sitting, studio |
-| 5y-08 | Checked shirt, monstera | Little redhead boy in a checked shirt, monstera leaf |
-| 5y-10 | Boy and ginger cat | Little redhead boy with a ginger cat, studio |
-| 5y-11 | Hugging the cat | Little boy hugging a ginger cat on a stool |
-| 5y-20 | Karate headband | Little boy in a white kimono and headband |
-| 5y-21 | Emotion grid | Six emotions of a little redhead boy, black background |
-
-### Walks (→ levkeiser.com/contest)
-
-| Файл | Заголовок | Описание |
-|---|---|---|
-| 13y-16 / 13y-17 | Runway walk, 2025 | Teen redhead model walking the runway, fashion week |
-| 7y-17 | Orange sweatshirt walk | Redhead boy walking the runway in an orange sweatshirt |
-| 7y-18 | Green vest walk | Redhead boy on the runway in a green vest, kids fashion week |
-| 6y-01 | Walk, 2019 | Little redhead model on the runway, kids fashion week |
-| 5y-01 | First walk | Five-year-old redhead model on a red runway |
-| 5y-04 | Walk in black | Little boy on the runway in black |
-| Fashion Week 20.03.2026 (папка на E) | Runway walk, Acoola show 2026 | Redhead teen on the runway, green tracksuit, fashion week season 24 |
-
-Сюда же — каждый ролик конкурса «Твой выход под трек»: кадр из видео, заголовок
-«Your walk to the track — <имя>», описание «Contest entry: a slow-motion walk to a DJ Levka
-track. Slow in a fast world», ссылка на страницу конкурса.
-
-### Film photography · behind the scenes
-
-| Файл | Заголовок | Описание |
-|---|---|---|
-| 12y-00 / 12y-01 | On the monitor | Film set monitor with a redhead boy in frame, black and white |
-| 11y-05 | Film set, Ural tales | Redhead boy on a film set, scene with an actor, Bazhov tales |
-| 11y-04 | Green screen | Boy on a green screen set with a softbox |
-| 11y-02 | Yellow flower | Redhead boy hiding behind a yellow flower, blue jacket |
-| 10y-01 | Studio behind the scenes | Photographer and redhead boy in a studio, backstage |
-| 10y-02 | Yellow glasses | Redhead boy in yellow glasses and a printed jacket |
-| 9y-06 | Hood up | Boy pulling a hood over curly hair, studio |
-| 6y-16 | Studio, yellow floor | Studio set with a yellow floor, boy in the distance |
-
-### Soundstates — visual states (→ страницы треков)
-
-Заголовок: `Soundstates · <track> — visual state N/5`. Описание одно на трек.
-
-| Трек | Файлы | Описание | Ссылка |
-|---|---|---|---|
-| soundstates | 20–24 | Visual states for the title track of the Soundstates EP by DJ Levka. Electronic music made without AI | levkeiser.com/music/soundstates/soundstates |
-| 2AM | 01–05 | Visual states for 2AM by DJ Levka: night, vinyl, neon | levkeiser.com/music/soundstates/2am |
-| back to the future | 06–10 | Visual states for Back to the Future by DJ Levka: synthwave sunset, neon city | levkeiser.com/music/soundstates/back-to-the-future |
-| cloudflute | 11–15 | Visual states for Cloudflute by DJ Levka: mountains, forest, pink sky | levkeiser.com/music/soundstates/cloudflute |
-| d r e a m | 16–19 | Visual states for d r e a m by DJ Levka: vaporwave rooms and towers | levkeiser.com/music/soundstates/d-r-e-a-m |
-| тизер | 25 | Soundstates EP teaser — plaster bust in space | levkeiser.com/music/soundstates |
-
-### DJ Levka — cover art (→ страницы релизов)
-
-| Файл (uploads) | Заголовок | Описание | Ссылка |
-|---|---|---|---|
-| release-soundstates.jpg | Soundstates — EP cover | Plaster bust in space. Cover art for the Soundstates EP by DJ Levka | /music/soundstates |
-| release-flowers.jpg | Flowers — EP cover | Cover art, Flowers EP by DJ Levka | /music/flowers |
-| release-ikigai.jpg | Ikigai — EP cover | Clouds and mountains, Ikigai EP cover | /music/ikigai |
-| release-glitch.jpg | Glitch — single cover | Pink glitch circuit, single cover | /music/glitch |
-| release-bubblegum.jpg | Bubblegum — single cover | Pop-art bubble, single cover | /music/bubblegum |
-| release-deep-sleep.jpg | Deep Sleep — single cover | Blue forest, single cover | /music/deep-sleep |
-| release-game-over.jpg | Game Over — single cover | Pixel arcade, single cover | /music/game-over |
-| release-berserk.jpg | BERSERK — single cover | Dark warrior, single cover | /music/berserk |
-| release-at-the-jazz-club.jpg | At The Jazz Club — single cover | Jazz club illustration, single cover | /music/at-the-jazz-club |
-| release-welcome.jpg | Welcome — single cover | Astronaut, single cover | /music/welcome |
-
-## Как вставлять
-
-Новые: Create Pin → файл → заголовок → описание → ссылка → доска; 3–5 в день, через
-планировщик — не обязательно. Архив: перенос на доску пачкой через «Выбрать», тексты —
-по одному у 60 отмеченных. Как только в Chrome будет вход в Pinterest, правки архива
-делаю я.
+## Хвосты до API
+- Ссылка /music не встала: 324783, 162353, 703146 (лимит правок).
+- 703146 (копия 2AM) сейчас ведёт на YouTube shorts — заменить на /music.

@@ -1,49 +1,4 @@
 (function () {
-  // ---- Голоса за образы -------------------------------------------------
-  // Один голос с устройства на образ. Идентификатор устройства живёт в
-  // localStorage: без регистрации, но и без накрутки по F5.
-  var VOTER_KEY = 'levkaVoter';
-  var VOTED_KEY = 'levkaVotedLooks';
-
-  function voterId() {
-    try {
-      var id = localStorage.getItem(VOTER_KEY);
-      if (!id) {
-        id = 'v-' + Math.random().toString(36).slice(2, 10) + '-' + Date.now().toString(36);
-        localStorage.setItem(VOTER_KEY, id);
-      }
-      return id;
-    } catch (e) {
-      return 'v-' + Math.random().toString(36).slice(2, 10);
-    }
-  }
-
-  function votedSet() {
-    try { return JSON.parse(localStorage.getItem(VOTED_KEY) || '[]'); } catch (e) { return []; }
-  }
-
-  var voted = votedSet();
-  document.querySelectorAll('.look').forEach(function (fig) {
-    var id = fig.getAttribute('data-look-id');
-    var btn = fig.querySelector('.look-vote');
-    if (!btn) return;
-    if (voted.indexOf(id) !== -1) btn.setAttribute('aria-pressed', 'true');
-    btn.addEventListener('click', function () {
-      if (btn.getAttribute('aria-pressed') === 'true') return;
-      btn.setAttribute('aria-pressed', 'true');
-      fetch('/style/vote/' + id, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ voter: voterId() }),
-      }).then(function (r) { return r.json(); }).then(function (data) {
-        if (!data || !data.ok) { btn.setAttribute('aria-pressed', 'false'); return; }
-        btn.querySelector('.look-vote-count').textContent = data.votes;
-        voted.push(id);
-        try { localStorage.setItem(VOTED_KEY, JSON.stringify(voted)); } catch (e) { /* приватный режим */ }
-      }).catch(function () { btn.setAttribute('aria-pressed', 'false'); });
-    });
-  });
-
   // ---- Игра «Какой год?» ---------------------------------------------------
   // Варианты: правильный год плюс два соседних из тех, что есть в ленте.
   var game = document.querySelector('.walks-game');

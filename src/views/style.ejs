@@ -15,9 +15,10 @@
   { num: '03', title: 'Рыжий', href: '#redhead' },
 ] }) %>
 
-<%# 01 Вдохновительный лев: портфолио, образы и то, что вдохновляет — один раздел.
-    Сюда отправляем кастинги и бренды: кадры, факты, куда писать. Параметры
-    не публикуем, отдаём по запросу — так принято у детских агентств. %>
+<%# 01 Вдохновительный лев. Сюда отправляем кастинги и бренды: история «первых»
+    с четырёх лет, факты, куда писать. Параметры не публикуем, отдаём по запросу —
+    так принято у детских агентств. Лента — «первые разы» 2016–2017 (page_key style-inspires),
+    каждый кадр подписан тем, чем он дорог. %>
 <section class="chapter" id="portfolio">
   <header class="chapter-head">
     <span class="chapter-num">01</span>
@@ -25,14 +26,6 @@
     <a class="chapter-more" href="/brands/media-kit">Медиакит для брендов →</a>
   </header>
   <p class="chapter-deck"><%= texts.portfolio || 'В кадре с четырёх лет: реклама, кино, показы. Работаем по договору с законным представителем.' %></p>
-  <% var portfolioShots = portfolio.filter(function (i) { return i.type === 'photo'; }); %>
-  <% if (portfolioShots.length) { %>
-    <div class="portfolio-grid">
-      <% portfolioShots.forEach(function(item) { %>
-        <img src="<%= thumb(item.file_path, 480) %>" alt="<%= item.title %>" title="<%= item.title %>" loading="lazy">
-      <% }); %>
-    </div>
-  <% } %>
   <ul class="portfolio-facts">
     <li><strong>В кадре</strong>с четырёх лет</li>
     <li><strong>Снимаюсь</strong>реклама, кино, показы, каталоги</li>
@@ -40,48 +33,18 @@
     <li><strong>Город</strong>Екатеринбург, выезд по договорённости</li>
     <li><strong>Параметры</strong>актуальные — по запросу</li>
   </ul>
+
+  <% if (inspireItems.length) { %>
+  <div class="chapter-sub" id="firsts">
+    <h3 class="chapter-subtitle">Первые разы</h3>
+    <p class="chapter-deck"><%= texts.inspires || 'С чего всё началось: первое портфолио, первая реклама, первое дефиле. Четыре и пять лет — и уже в кадре по-настоящему. Подпись под каждым кадром — про то, чем он дорог.' %></p>
+    <%- include('partials/gallery-section', { galleryItems: inspireItems, galleryTitle: '' }) %>
+  </div>
+  <% } %>
+
   <div class="portfolio-actions">
     <a class="btn btn-ghost" href="/podcast#film">Видео и бэкстейдж — в разделе «В кадре»</a>
   </div>
-
-<%# Образы. Не витрина, а вопрос посетителю: какой образ снимать следующим.
-    Голос — один с устройства на образ, счётчик виден всем. %>
-<div class="chapter-sub" id="looks">
-  <h3 class="chapter-subtitle">Образы</h3>
-  <p class="chapter-deck"><%= texts.looks || 'Какой образ снимать следующим? Отметьте: один голос с устройства на образ, итог виден всем.' %></p>
-  <% if (looks.length === 0) { %>
-    <p class="hint">Кадры появятся здесь после первой съёмки для раздела.</p>
-  <% } else { %>
-    <div class="looks-grid">
-      <% looks.forEach(function(item, i) { %>
-        <figure class="look polaroid polaroid-<%= i % 3 %>" data-look-id="<%= item.id %>">
-          <% if (item.type === 'photo') { %>
-            <img src="<%= thumb(item.file_path, 640) %>" srcset="<%= srcset(item.file_path) %>" sizes="(max-width: 640px) 46vw, 260px" alt="<%= item.title %>" loading="lazy">
-          <% } else { %>
-            <video src="<%= item.file_path %>" muted loop playsinline preload="metadata"></video>
-          <% } %>
-          <figcaption class="look-caption">
-            <span class="look-title"><%= item.title %></span>
-            <button type="button" class="look-vote" aria-pressed="false" aria-label="На следующую съёмку">
-              <span class="look-vote-mark" aria-hidden="true">✦</span>
-              <span class="look-vote-count"><%= item.votes %></span>
-            </button>
-          </figcaption>
-        </figure>
-      <% }); %>
-    </div>
-  <% } %>
-</div>
-
-<div class="chapter-sub" id="inspires">
-  <h3 class="chapter-subtitle">Что вдохновляет</h3>
-  <p class="chapter-deck"><%= texts.inspires || 'Съёмки, которые запомнились: самая первая, самая длинная, самая ранняя. Подпись под каждым кадром — про то, чем он дорог.' %></p>
-  <% if (inspireItems.length) { %>
-    <%- include('partials/gallery-section', { galleryItems: inspireItems, galleryTitle: '' }) %>
-  <% } else { %>
-    <p class="hint">Подборка собирается: кадры и ролики с подписями появятся здесь.</p>
-  <% } %>
-</div>
 </section>
 
 <%# 02 Проходка. Подиум по годам, и игра: год спрятан, посетитель угадывает. %>
