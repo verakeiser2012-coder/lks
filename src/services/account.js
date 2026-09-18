@@ -73,4 +73,4 @@ function clearCookie(res) {
   res.setHeader('Set-Cookie', `${COOKIE}=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax`);
 }
 
-module.exports = { COOKIE, TTL_DAYS, findLink, issueLink, middleware, setCookie, clearCookie };
+module.exports = { COOKIE, TTL_DAYS, parseCookies, findLink, issueLink, middleware, setCookie, clearCookie };

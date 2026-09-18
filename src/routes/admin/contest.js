@@ -63,7 +63,7 @@ router.post('/', (req, res) => {
 });
 
 router.get('/submissions', (req, res) => {
-  const submissions = db.prepare('SELECT * FROM contest_submissions ORDER BY created_at DESC').all();
+  const submissions = db.prepare('SELECT s.*, (SELECT COUNT(*) FROM contest_votes v WHERE v.submission_id = s.id) AS votes FROM contest_submissions s ORDER BY created_at DESC').all();
   res.render('admin/contest-submissions', { submissions });
 });
 

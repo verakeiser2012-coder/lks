@@ -105,14 +105,28 @@
 <% } %>
 
 <% if (current.length) { %>
-<section class="link-section">
+<section class="link-section" id="works">
   <h2>Работы сезона<% if (season.name) { %> · <%= season.name %><% } %></h2>
+  <p class="hint contest-vote-hint">
+    <% if (season.voting) { %>Приз зрительских симпатий получает работа с самым большим числом голосов. Жми ♥ под выходами, которые нравятся, — по одному голосу на работу<% if (season.results) { %>, голосование до <%= ruDate(season.results) %><% } %>.<% } else { %>Голосование за приз зрительских симпатий <%= season.notYet ? 'откроется вместе с сезоном' : 'закрыто' %>.<% } %>
+  </p>
   <div class="contest-gallery">
     <% current.forEach(function (w) { %>
-      <figure class="contest-work<%= w.status === 'winner' ? ' is-winner' : '' %>">
-        <% if (w.status === 'winner') { %><span class="contest-badge">Победитель сезона</span><% } else if (w.status === 'shortlisted') { %><span class="contest-badge contest-badge--short">Шорт-лист</span><% } %>
+      <figure class="contest-work<%= (w.status === 'winner' || w.status === 'audience') ? ' is-winner' : '' %>" id="work-<%= w.id %>">
+        <% if (w.status === 'winner') { %><span class="contest-badge">Победитель сезона</span><% } else if (w.status === 'audience') { %><span class="contest-badge">Приз зрителей</span><% } else if (w.status === 'shortlisted') { %><span class="contest-badge contest-badge--short">Шорт-лист</span><% } %>
         <div class="video-embed is-portrait"><iframe src="<%= w.video.embedUrl %>" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="Выход: <%= w.shownName %>"></iframe></div>
-        <figcaption><b><%= w.shownName %></b><% if (w.note) { %><span><%= w.note %></span><% } %></figcaption>
+        <figcaption>
+          <b><%= w.shownName %></b><% if (w.note) { %><span><%= w.note %></span><% } %>
+          <% if (season.voting) { %>
+          <form class="contest-vote" method="POST" action="/contest/vote/<%= w.id %>" data-vote>
+            <button type="submit" class="contest-vote-btn<%= w.voted ? ' is-voted' : '' %>" aria-pressed="<%= w.voted ? 'true' : 'false' %>" title="<%= w.voted ? 'Убрать голос' : 'Голосовать' %>">
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 20.5s-7.6-4.7-9.7-9.4C.8 7.7 3 4 6.6 4c2 0 3.6 1.1 5.4 3 1.8-1.9 3.4-3 5.4-3 3.6 0 5.8 3.7 4.3 7.1-2.1 4.7-9.7 9.4-9.7 9.4z"/></svg>
+              <span data-count><%= w.votes %></span>
+            </button>
+            <small data-msg hidden></small>
+          </form>
+          <% } else if (w.votes) { %><span class="contest-vote-count">♥ <%= w.votes %></span><% } %>
+        </figcaption>
       </figure>
     <% }); %>
   </div>
@@ -124,7 +138,7 @@
   <div class="contest-gallery">
     <% past.forEach(function (w) { %>
       <figure class="contest-work is-winner">
-        <span class="contest-badge"><%= w.season %></span>
+        <span class="contest-badge"><%= w.season %><%= w.status === 'audience' ? ' · зрители' : '' %></span>
         <div class="video-embed is-portrait"><iframe src="<%= w.video.embedUrl %>" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="Выход: <%= w.shownName %>"></iframe></div>
         <figcaption><b><%= w.shownName %></b></figcaption>
       </figure>
@@ -241,6 +255,41 @@
 .contest-badge { position: absolute; z-index: 1; top: 10px; left: 10px; padding: 4px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-gold-ink); background: linear-gradient(180deg, var(--color-gold-shine) 0%, var(--color-gold-bright) 45%, var(--color-accent) 100%); box-shadow: 0 2px 6px rgba(184, 134, 11, 0.35); }
 .contest-badge--short { background: #fff; color: var(--color-accent); border: 1px solid #e6cf8a; box-shadow: none; }
 .contest-work.is-winner .video-embed { outline: 2px solid var(--color-gold-bright); outline-offset: 2px; border-radius: 8px; }
+.contest-vote-hint { max-width: 60ch; }
+.contest-vote { margin-top: 6px; }
+.contest-vote-btn { display: inline-flex; align-items: center; gap: 6px; width: auto; padding: 5px 12px; border: 1px solid #e6cf8a; border-radius: 999px; background: #fff; color: var(--color-gold-deep); font: inherit; font-size: 0.85rem; line-height: 1; cursor: pointer; transition: background 0.15s ease; }
+.contest-vote-btn svg { display: block; fill: none; stroke: var(--color-accent); stroke-width: 1.8; stroke-linejoin: round; }
+.contest-vote-btn:hover { background: #fdf6e0; }
+.contest-vote-btn.is-voted { background: #fdf6e0; }
+.contest-vote-btn.is-voted svg { fill: url(#lk-gold); stroke: var(--color-gold-deep); }
+.contest-vote-btn:disabled { opacity: 0.6; cursor: wait; }
+.contest-vote small { display: block; margin-top: 4px; color: var(--color-muted); }
+.contest-vote-count { color: var(--color-muted); }
 </style>
+
+<script>
+// Голос без перезагрузки: форма уходит через fetch, в ответе — счётчик и состояние.
+document.querySelectorAll('form[data-vote]').forEach(function (form) {
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var btn = form.querySelector('button');
+    var msg = form.querySelector('[data-msg]');
+    if (btn.disabled) return;
+    btn.disabled = true;
+    fetch(form.action, { method: 'POST', credentials: 'same-origin', headers: { 'X-Requested-With': 'fetch', 'Accept': 'application/json' } })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (!d.ok) { msg.textContent = d.error || 'Не получилось, попробуй позже.'; msg.hidden = false; return; }
+        msg.hidden = true;
+        btn.classList.toggle('is-voted', d.voted);
+        btn.setAttribute('aria-pressed', d.voted ? 'true' : 'false');
+        btn.title = d.voted ? 'Убрать голос' : 'Голосовать';
+        form.querySelector('[data-count]').textContent = d.count;
+      })
+      .catch(function () { msg.textContent = 'Нет связи, попробуй позже.'; msg.hidden = false; })
+      .then(function () { btn.disabled = false; });
+  });
+});
+</script>
 
 <%- include('partials/footer') %>

@@ -527,6 +527,16 @@ function init() {
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
     CREATE INDEX IF NOT EXISTS idx_aroma_recipes_email ON aroma_recipes(email);
+    -- Голоса за работы конкурса (приз зрительских симпатий, 18.09.2026):
+    -- один голос на работу с одного браузера, voter — cookie lk_vote.
+    CREATE TABLE IF NOT EXISTS contest_votes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      submission_id INTEGER NOT NULL,
+      voter TEXT NOT NULL,
+      ip TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      UNIQUE(submission_id, voter)
+    );
   `);
 
   // Конкурс «Твой выход под трек» — та же схема согласия родителя (18.09.2026).
@@ -1007,9 +1017,10 @@ function init() {
       + 'случайность. Здесь — рыжие, которые вдохновляют: модели, музыканты, актёры, творческие люди. '
       + 'Подборку собираем сами, без открытой регистрации.',
     contest_intro: 'Сними, как ты выходишь под мой трек — 15–30 секунд вертикального видео. '
-      + 'Судим образ и попадание в музыку, а не рост и параметры. Участникам 18+.',
+      + 'Судим образ и попадание в музыку, а не рост и параметры.',
     contest_prize: 'Главный приз — съёмка в клипе. Дальше: вещь из капсулы и денежный приз от бренда-партнёра '
-      + 'сезона. Победителей объявляем в канале и на этой странице.',
+      + 'сезона. Приз зрительских симпатий — работе с самым большим числом голосов в галерее сезона. '
+      + 'Победителей объявляем в канале и на этой странице.',
     site_alt_name: 'DJ Levka',
     music_featured_title: 'Soundstates',
     music_featured_note: 'Новый EP — попал в кураторский плейлист на следующий день после релиза',

@@ -3,7 +3,7 @@
 <h1>Заявки на конкурс «Твой выход под трек»</h1>
 
 
-<p class="hint">Статусы: <b>new</b> — свежая; <b>approved</b> — показывается в галерее сезона; <b>shortlisted</b> — в галерее с пометкой «шорт-лист»; <b>winner</b> — победитель сезона (в галерее первым и в архиве); <b>rejected</b> — скрыта. Заявки подростков без подтверждения родителя (ждёт согласия) в галерею не ставить.</p>
+<p class="hint">Статусы: <b>new</b> — свежая; <b>approved</b> — показывается в галерее сезона; <b>shortlisted</b> — в галерее с пометкой «шорт-лист»; <b>winner</b> — победитель сезона (в галерее первым и в архиве); <b>audience</b> — приз зрительских симпатий, ставить по столбцу «Голоса» после даты итогов; <b>rejected</b> — скрыта. Заявки подростков без подтверждения родителя (ждёт согласия) в галерею не ставить.</p>
 <table>
   <thead>
     <tr>
@@ -15,6 +15,7 @@
       <th>Возраст</th>
       <th>Согласие</th>
       <th>Статус</th>
+      <th>Голоса</th>
       <th></th>
     </tr>
   </thead>
@@ -37,10 +38,11 @@
           <% } else if (s.age_group === 'child') { %>родитель в форме<% } else { %>сам(а)<% } %>
         </td>
         <td><%= s.status === 'pending_consent' ? 'ждёт согласия' : s.status %></td>
+        <td><%= s.votes || 0 %></td>
         <td>
           <form class="inline" action="/admin/contest/submissions/<%= s.id %>/status" method="POST">
             <select name="status" onchange="this.form.submit()">
-              <% ['new', 'approved', 'shortlisted', 'winner', 'rejected'].forEach(function(st) { %>
+              <% ['new', 'approved', 'shortlisted', 'winner', 'audience', 'rejected'].forEach(function(st) { %>
                 <option value="<%= st %>" <%= s.status === st ? 'selected' : '' %>><%= st %></option>
               <% }); %>
             </select>
