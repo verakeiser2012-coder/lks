@@ -202,8 +202,14 @@
           а на телефоне (≤480) «Обо мне» и RU/EN уходят в раскрывающееся меню. %>
       <div class="shop-nav">
         <%
-          const shopPath = (typeof currentPath === 'string' ? currentPath : '/').split('?')[0];
+          const shopRaw = (typeof currentPath === 'string' ? currentPath : '/').split('?')[0];
+          // Под /en сравниваем без префикса, иначе ни один пункт не подсвечивался.
+          const shopEn = shopRaw === '/en' || shopRaw.startsWith('/en/');
+          const shopPath = shopEn ? (shopRaw.slice(3) || '/') : shopRaw;
           function shopActive(href) { return shopPath === href || shopPath.startsWith(href + '/') ? ' active' : ''; }
+          // «Коллегам» — русская услуга; под /en вместо неё английское предложение «For artists»
+          // со своим флажком services_en_public (см. routes/services.js).
+          const servicesOn = (shopEn ? settings.services_en_public : settings.services_public) === '1' || (typeof isAdmin !== 'undefined' && isAdmin);
         %>
         <div class="shop-links">
           <a href="/about" class="shop-link shop-link-about<%= shopActive('/about') %>">Обо мне</a>
@@ -211,7 +217,7 @@
           <a href="/catalog" class="shop-link<%= shopActive('/catalog') %>">Каталог</a>
           <a href="/drops" class="shop-link<%= shopActive('/drops') %>">Дропы</a>
           <a href="/brands" class="shop-link<%= shopActive('/brands') %>">Брендам</a>
-          <% if (settings.services_public === '1' || (typeof isAdmin !== 'undefined' && isAdmin)) { %><a href="/services" class="shop-link<%= shopActive('/services') %>">Коллегам</a><% } %>
+          <% if (servicesOn) { %><a href="/services" class="shop-link<%= shopActive('/services') %>"><%= shopEn ? 'For artists' : 'Коллегам' %></a><% } %>
         </div>
         <div class="header-tools">
         <audio id="bg-audio" preload="none"></audio>

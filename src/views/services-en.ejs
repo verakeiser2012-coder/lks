@@ -1,0 +1,74 @@
+<%- include('partials/header') %>
+
+<%# Английская страница услуг — своё предложение (российские стриминги и продвижение),
+    не перевод русской. Текст без кириллицы, автоперевод его не трогает. %>
+<h1>Your music in Russia</h1>
+
+<p class="prose">Since 2022 most Western distributors no longer deliver to Yandex Music, VK Music and Zvuk — the stores where Russia actually listens. I'm an independent artist from Yekaterinburg and I've set up my own catalogue there from scratch: releases, artist pages, editorial pitches, rights societies. If you want your music to reach Russian listeners properly, I'll do the same for you. In writing, in English, for a small fee — because we're colleagues.</p>
+
+<div class="link-section offer-section">
+  <h2>Packages</h2>
+  <div class="offer-grid">
+    <% packages.forEach(function(pk) { %>
+      <div class="offer-card" id="package-<%= pk.key %>">
+        <h3><%= pk.title %> — <%= formatPrice(pk.rub) %><%= approx(pk.rub) %></h3>
+        <p><%= pk.lead %></p>
+        <ul class="services-list">
+          <% pk.items.forEach(function(it) { %><li><%= it %></li><% }); %>
+        </ul>
+        <% if (pk.key === 'audit' && auditProduct) { %>
+          <form action="/cart/add" method="POST" class="services-order">
+            <input type="hidden" name="productId" value="<%= auditProduct.id %>">
+            <button class="btn" type="submit">Order the check for <%= formatPrice(auditProduct.price) %></button>
+          </form>
+          <p class="hint">Paste links to your releases at checkout. The report arrives by email within five working days of payment.</p>
+        <% } else if (pk.key !== 'audit') { %>
+          <p class="hint">Ordered after the check, by email.</p>
+        <% } %>
+      </div>
+    <% }); %>
+  </div>
+  <h3 style="margin-top:24px;">Extras</h3>
+  <ul class="services-list services-list-wide">
+    <% extras.forEach(function(ex) { %><li><strong><%= ex[0] %> — <%= formatPrice(ex[1]) %><%= approx(ex[1]) %> per track.</strong> <%= ex[2] %></li><% }); %>
+  </ul>
+  <p class="services-note">Prices are for the whole catalogue, not per track. The check is paid up front and counts toward any package; packages are ordered after the check, once it's clear what you actually need.</p>
+</div>
+
+<div class="link-section">
+  <h2>How it goes</h2>
+  <div class="table-scroll">
+    <table class="music-table services-table">
+      <thead><tr><th>Step</th><th>What happens</th></tr></thead>
+      <tbody>
+        <% stages.forEach(function(st, i) { %>
+          <tr><td><%= i + 1 %>. <%= st[0] %></td><td><%= st[1] %></td></tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="link-section">
+  <h2>Good to know</h2>
+  <ul class="services-list services-list-wide">
+    <li><strong>No calls.</strong> Everything in writing, in English. It's faster, and it all stays on paper.</li>
+    <li><strong>Prices are in rubles.</strong> You pay by Visa or Mastercard issued outside Russia through Robokassa; cards from the USA, Canada, Turkey and a few other countries are not accepted. Your bank converts at its own rate<% if (hasRates) { %> — the euro figures here are today's Bank of Russia rate, for orientation only<% } %>.</li>
+    <li><strong>Your data stays yours.</strong> We never ask for passport scans or store logins. Anything that needs your identity, you enter yourself.</li>
+    <li><strong>Nothing with uncleared samples.</strong> Tracks built on someone else's recordings or quotes can't be delivered or registered — the check flags them so you know before you spend.</li>
+    <li><strong>Rights stay with you.</strong> If we deliver on our account, we sign a non-exclusive licence limited to Russia, terminable with notice. Your main distributor is untouched.</li>
+    <li><strong>Not legal advice.</strong> This is a fellow artist's experience plus working templates and a tested order of steps. Contracts you sign yourself.</li>
+    <li><strong>Provider: sole proprietor Lev Keiser, Russia.</strong> You get a receipt and closing documents, as with any order in the shop.</li>
+  </ul>
+</div>
+
+<div class="link-section">
+  <h2>Where to start</h2>
+  <p class="prose">The shortest way is to <a href="#package-audit">order the check</a> for <%= formatPrice(1000) %><%= approx(1000) %>: paste your release links at checkout, the report comes by email, then decide whether you need a package. Questions and packages — through the form (topic: rights and distribution) or by email at <a href="mailto:info@levkeiser.com">info@levkeiser.com</a>: who you are, links to your releases, where your music is now.</p>
+  <p class="services-cta">
+    <a class="btn" href="#package-audit">Order the check</a>
+    <a class="btn btn-secondary" href="/contact?topic=service">Write to us</a>
+  </p>
+</div>
+
+<%- include('partials/footer') %>

@@ -80,6 +80,8 @@ function rows(sql, params = []) {
 function collectUrls() {
   // Услуга «Коллегам» попадает в карту только когда включена в настройках.
   const servicesPublic = (db.prepare("SELECT value FROM settings WHERE key = 'services_public'").get() || {}).value === '1';
+  // Английская страница услуг — отдельное предложение со своим флажком.
+  const servicesEnPublic = (db.prepare("SELECT value FROM settings WHERE key = 'services_en_public'").get() || {}).value === '1';
   const urls = STATIC_PAGES.filter(([loc]) => loc !== '/services' || servicesPublic).map(([loc, priority]) => ({ loc, priority }));
 
   for (const r of rows("SELECT slug, created_at FROM releases WHERE is_published = 1")) {
@@ -117,8 +119,9 @@ function collectUrls() {
   // Английская версия: те же страницы под /en (новости-переводы уже в списке
   // со своими адресами, русские новости под /en не дублируем).
   const en = ready
-    .filter((u) => !u.loc.startsWith('/en/') && !u.loc.startsWith('/news/'))
+    .filter((u) => !u.loc.startsWith('/en/') && !u.loc.startsWith('/news/') && (u.loc !== '/services' || servicesEnPublic))
     .map((u) => ({ ...u, loc: '/en' + (u.loc === '/' ? '' : u.loc), priority: Math.max(0.3, (u.priority || 0.5) - 0.2) }));
+  if (servicesEnPublic && !servicesPublic) en.push({ loc: '/en/services', priority: 0.4 });
   // Без повторов: /en/news попадал дважды — из списка разделов и как английская
   // копия /news (18.09).
   const seen = new Set();

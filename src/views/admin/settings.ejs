@@ -35,6 +35,10 @@
     <input type="checkbox" name="services_public" value="1" <%= settingsMap.services_public === '1' ? 'checked' : '' %>>
     Показывать услугу «Коллегам за копеечку» посетителям (пункт меню, /services, карта сайта). Пока выключено — страница открыта только вам, когда вы вошли в админку.
   </label>
+  <label class="checkbox-label">
+    <input type="checkbox" name="services_en_public" value="1" <%= settingsMap.services_en_public === '1' ? 'checked' : '' %>>
+    Показывать английское предложение «For artists» на английской версии (пункт меню, /en/services, карта сайта). Это не перевод русской услуги, а своё: российские стриминги, артист-страницы, русский питч. Пока выключено — страницу видите только вы.
+  </label>
   <label>
     Номер счётчика Яндекс.Метрики (только цифры; пусто — счётчик не подключён)
     <input type="text" name="metrika_id" value="<%= settingsMap.metrika_id || '' %>">

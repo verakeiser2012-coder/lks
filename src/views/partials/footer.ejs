@@ -108,7 +108,13 @@
             <a href="/catalog">Каталог</a>
             <a href="/drops">Дропы</a>
             <a href="/brands">Брендам</a>
-            <% if (settings.services_public === '1' || (typeof isAdmin !== 'undefined' && isAdmin)) { %><a href="/services">Коллегам</a><% } %>
+            <%
+              // Под /en — английское предложение «For artists» со своим флажком (см. шапку).
+              const footRaw = (typeof currentPath === 'string' ? currentPath : '/').split('?')[0];
+              const footEn = footRaw === '/en' || footRaw.startsWith('/en/');
+              const footServices = (footEn ? settings.services_en_public : settings.services_public) === '1' || (typeof isAdmin !== 'undefined' && isAdmin);
+            %>
+            <% if (footServices) { %><a href="/services"><%= footEn ? 'For artists' : 'Коллегам' %></a><% } %>
             <a href="/reviews">Отзывы</a>
             <a href="/my">Мой кабинет</a>
           </div>
