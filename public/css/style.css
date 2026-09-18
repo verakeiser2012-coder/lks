@@ -1274,8 +1274,15 @@ form.inline { display: inline; }
 }
 .legal-nav a { color: var(--color-muted); font-size: 0.92rem; }
 .legal-nav a.is-active { color: var(--color-accent); font-weight: 600; }
+/* Документы свёрстаны абзацами в шаблоне, а .prose держит pre-wrap для текста
+   из админки — здесь переносы строк шаблона показывать нельзя (18.09: из-за них
+   абзацы рвались посреди фразы, а между заголовком и текстом зияли пустые строки).
+   Ширина — под чтение, а не во весь контейнер. */
+.legal-prose { white-space: normal; max-width: 78ch; }
 .legal-prose h2 { margin: 28px 0 10px; font-size: 1.15rem; }
 .legal-prose p { margin: 0 0 14px; }
+.legal-prose ul { margin: 0 0 14px; padding-left: 22px; }
+.legal-prose li { margin: 0 0 8px; }
 .footer-legal {
   grid-column: 1 / -1;
   margin-top: 4px;
