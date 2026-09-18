@@ -10,21 +10,53 @@
       catalog: 'Каталог', drops: 'Дропы', brands: 'Брендам', services: 'Коллегам за копеечку', cart: 'Корзина', checkout: 'Оформление заказа',
     };
     const siteBase = [settings.site_name, settings.site_alt_name].filter(Boolean).join(' — ') || 'Лев Кейсер';
+    // Хвост заголовка (18.09): оба имени только на главной и разделах; у вещей,
+    // записей и треков — одно, иначе title уходил за 65 знаков и резался в выдаче.
+    // Музыке — DJ Levka, всему остальному — Лев Кейсер.
+    const seg = (typeof currentPath === 'string' ? currentPath : '/').split('?')[0].replace(/^\/en(\/|$)/, '/').split('/')[1] || '';
+    const isDeep = (typeof currentPath === 'string' ? currentPath : '/').split('?')[0].replace(/^\/en(\/|$)/, '/').split('/').filter(Boolean).length > 1;
+    const shortBase = (seg === 'music' ? settings.site_alt_name : settings.site_name) || siteBase;
     let docTitle;
     if (typeof title !== 'undefined' && title) {
-      docTitle = title + ' — ' + siteBase;
+      docTitle = title + ' — ' + (isDeep ? shortBase : siteBase);
     } else {
-      const seg = (typeof currentPath === 'string' ? currentPath : '/').split('?')[0].replace(/^\/en(\/|$)/, '/').split('/')[1] || '';
       docTitle = SECTION_TITLES[seg]
         ? SECTION_TITLES[seg] + ' — ' + siteBase
         : [siteBase, settings.site_tagline].filter(Boolean).join(' — ');
     }
     const cleanPath = (typeof currentPath === 'string' ? currentPath : '/').split('?')[0];
     const canonicalUrl = (typeof canonicalBase === 'string' ? canonicalBase : '') + (cleanPath === '/' ? '' : cleanPath);
-    const metaDesc = (typeof pageDescription !== 'undefined' && pageDescription)
+    // Описание для выдачи. У разделов — своё (18.09: тринадцать страниц делили
+    // одно описание сайта), у остальных — из маршрута; длиннее 160 знаков
+    // поисковик всё равно не показывает, режем по слову.
+    const SECTION_DESCRIPTIONS = {
+      music: 'Музыка DJ Levka: релизы, треки и клипы Льва Кейсера из Екатеринбурга — Ikigai, Flowers, Soundstates и синглы. Слушать на всех площадках.',
+      catalog: 'Каталог Льва Кейсера: пластинки, флаги и платок с обложками DJ Levka, ароматы и держатели «Бюст», стикеры, DJ-версии и стемы треков.',
+      about: 'Лев Кейсер — вдохновительный парень из Екатеринбурга: музыкант DJ Levka, модель, автор кастомных вещей. Кто он и чем занимается.',
+      news: 'Новости Льва Кейсера и DJ Levka: релизы, плейлисты, съёмки, показы и события вокруг проекта.',
+      diary: 'Дневник Льва Кейсера: личные истории и разборы — про музыку, кадр, вещи и то, что вдохновляет.',
+      style: 'Стиль Льва Кейсера: образы, съёмки и вещи вдохновительного льва — что носит и что вдохновляет.',
+      drops: 'Дропы LEVKEISER: ограниченные серии вещей Льва Кейсера — флаги, пластинки, платки и предметы интерьера.',
+      redheads: 'Рыжие, которые вдохновляют: раздел Льва Кейсера о рыжих людях — истории, портреты и заявка, чтобы попасть в него.',
+      brands: 'Брендам: сотрудничество со Львом Кейсером и DJ Levka — съёмки, музыка для рекламы, коллаборации и медиа-кит.',
+      aroma: 'Карта натуральных ароматов Льва Кейсера: сочетания, ноты и собственные смеси — исследуйте и добавляйте свои.',
+      contest: 'Конкурс «Твой выход под трек»: пройдите под музыку DJ Levka, пришлите видео — лучшие попадут на сайт и в соцсети.',
+      podcast: 'В кадре: выпуски подкаста, кино и рекламные съёмки Льва Кейсера — всё видео в одном месте.',
+      games: 'Поиграть с музыкой DJ Levka: угадай трек, викторина и свой сет из треков Льва Кейсера.',
+      services: 'Коллегам за копеечку: оформление прав на музыку под ключ от ИП Льва Кейсера — аудит каталога, кабинет правообладателя, РАО и площадки.',
+      reviews: 'Отзывы о вещах и музыке Льва Кейсера — что пишут покупатели и слушатели.',
+      contact: 'Написать Льву Кейсеру: форма обращения по заказам, сотрудничеству и выступлениям.',
+      b: 'Бюст Льва Кейсера с NFC-меткой: проверьте номер экземпляра и зарегистрируйте свой.',
+    };
+    const rawDesc = (typeof pageDescription !== 'undefined' && pageDescription)
       ? pageDescription
-      : (settings.meta_description
+      : (SECTION_DESCRIPTIONS[seg]
+        || settings.meta_description
         || [settings.site_tagline, 'Создаю кастомные вещи и музыку.'].filter(Boolean).join('. '));
+    const metaDesc = (function (t) {
+      const one = String(t).replace(/\s+/g, ' ').trim();
+      return one.length <= 160 ? one : one.slice(0, 159).replace(/\s+\S*$/, '') + '…';
+    })(rawDesc);
     const ogImagePath = (typeof pageImage !== 'undefined' && pageImage) ? pageImage : (settings.og_image || '');
     const ogImageUrl = ogImagePath
       ? (ogImagePath.startsWith('http') ? ogImagePath : (typeof canonicalBase === 'string' ? canonicalBase : '') + ogImagePath)
@@ -64,10 +96,20 @@
   <meta name="twitter:title" content="<%= docTitle %>">
   <meta name="twitter:description" content="<%= metaDesc %>">
   <meta name="theme-color" content="#211A12">
+  <%# Структурированные данные (schema.org): маршрут кладёт объекты в jsonLd,
+      сборка и экранирование — utils/jsonld.js. %>
+  <% if (typeof jsonLd !== 'undefined' && jsonLd) { %>
+  <script type="application/ld+json"><%- jsonLd %></script>
+  <% } %>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@500;600;700;800&family=Marck+Script&display=swap" rel="stylesheet">
+  <%# Фавиконка: SVG для современных браузеров, PNG/ICO — для Яндекса, закладок
+      и старых браузеров, apple-touch-icon — для экрана телефона (18.09). %>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="stylesheet" href="/css/style.css">
   <% if (settings.metrika_id && /^\d+$/.test(settings.metrika_id)) { %>
   <%# Метрика ставит свои куки и потому не относится к необходимым.

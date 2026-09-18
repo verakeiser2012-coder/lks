@@ -37,7 +37,7 @@
           <a class="product-card" href="/catalog/<%= product.slug %>">
             <div class="product-image edge-soft">
               <% if (product.image) { %>
-                <img src="<%= thumb(product.image, 640) %>" srcset="<%= srcset(product.image) %>" sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 300px" alt="<%= product.name %>">
+                <img loading="lazy" decoding="async" src="<%= thumb(product.image, 640) %>" srcset="<%= srcset(product.image) %>" sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 300px" alt="<%= product.name %>">
               <% } else { %>
                 <div class="no-image">Нет фото</div>
               <% } %>

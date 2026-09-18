@@ -119,7 +119,10 @@ function collectUrls() {
   const en = ready
     .filter((u) => !u.loc.startsWith('/en/') && !u.loc.startsWith('/news/'))
     .map((u) => ({ ...u, loc: '/en' + (u.loc === '/' ? '' : u.loc), priority: Math.max(0.3, (u.priority || 0.5) - 0.2) }));
-  return ready.concat(en);
+  // Без повторов: /en/news попадал дважды — из списка разделов и как английская
+  // копия /news (18.09).
+  const seen = new Set();
+  return ready.concat(en).filter((u) => !seen.has(u.loc) && seen.add(u.loc));
 }
 
 router.get('/robots.txt', (req, res) => {

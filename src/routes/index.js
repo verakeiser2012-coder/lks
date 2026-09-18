@@ -2,6 +2,7 @@ const express = require('express');
 const { getBanners } = require('../utils/banners');
 const db = require('../db');
 const { getGalleryItems } = require('../utils/gallery');
+const ld = require('../utils/jsonld');
 
 const router = express.Router();
 
@@ -144,6 +145,12 @@ router.get('/', (req, res) => {
     redheadIntro: redheadIntroRow ? redheadIntroRow.value : '',
     redheads,
     galleryItems: getGalleryItems('home'),
+    // Карточка сайта и Льва для поисковика — только на главной: остальным
+    // страницам достаточно ссылки на @id человека.
+    jsonLd: ld.serialize(ld.graph(res.locals.canonicalBase, [
+      ld.website(res.locals.canonicalBase, res.locals.settings),
+      ld.person(res.locals.canonicalBase, res.locals.settings),
+    ])),
   });
 });
 

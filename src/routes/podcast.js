@@ -1,4 +1,5 @@
 const express = require('express');
+const ld = require('../utils/jsonld');
 const db = require('../db');
 const { getBanners } = require('../utils/banners');
 const { parseVideoEmbedUrl } = require('../utils/videoEmbed');
@@ -47,6 +48,13 @@ router.get('/:slug', (req, res, next) => {
     title: episode.title,
     pageImage: episode.cover_image || '',
     pageDescription: episode.description ? episode.description.slice(0, 200) : 'Выпуск подкаста DJ Levka',
+    jsonLd: ld.serialize(ld.graph(res.locals.canonicalBase, [
+      ld.podcastEpisode(res.locals.canonicalBase, episode, 'Подкаст Льва Кейсера'),
+      ld.breadcrumbs(res.locals.canonicalBase, [
+        { name: 'В кадре', url: '/podcast' },
+        { name: episode.title, url: '/podcast/' + episode.slug },
+      ]),
+    ])),
   });
 });
 

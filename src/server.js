@@ -51,6 +51,11 @@ app.use(morgan('dev'));
 // LEVKEISER.STORE — канонический домен магазина, поэтому его главная сразу ведёт в каталог.
 app.use((req, res, next) => {
   const host = toAsciiHost(req.hostname.replace(/^www\./, ''));
+  // www — отдельный адрес для поисковика (18.09): без редиректа www.levkeiser.com
+  // отдавал те же страницы вторым сайтом. Сначала снимаем www, дальше — как обычно.
+  if (/^www\./i.test(req.hostname)) {
+    return res.redirect(301, `${req.protocol}://${host}${req.originalUrl}`);
+  }
   const canonicalTarget = REDIRECT_LOOKUP.get(host);
   if (canonicalTarget) {
     // «Английские» домены (djlevka.com и т. п.) ведут на /en/… канонического сайта.
@@ -78,7 +83,16 @@ app.use(express.json());
 // Уменьшенные версии картинок (/uploads/x.jpg?w=480) — до статики, иначе
 // express.static отдаст полный файл, не глядя на ?w=.
 app.use('/uploads', require('./routes/thumbs'));
-app.use(express.static(path.join(__dirname, '..', 'public')));
+// Кэш статики в браузере (18.09; раньше max-age=0 — каждая страница заново
+// тянула стили и скрипты). Стили и скрипты — час: адреса без версии, после
+// выкладки обновятся сами. Остальное (картинки, звук, видео) — неделя; их
+// уменьшенные копии (?w=) и так лежат год, см. routes/thumbs.js.
+app.use(express.static(path.join(__dirname, '..', 'public'), {
+  maxAge: '7d',
+  setHeaders(res, filePath) {
+    if (/\.(css|js)$/i.test(filePath)) res.setHeader('Cache-Control', 'public, max-age=3600');
+  },
+}));
 // Просмотры страниц (путь + день, без слежки) — после статики, чтобы не считать файлы.
 app.use(require('./middleware/pageViews'));
 

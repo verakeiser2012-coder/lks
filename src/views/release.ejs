@@ -27,7 +27,7 @@
           <button type="button" class="track-row-play" data-src="<%= track.audio %>" data-title="<%= track.title %>" aria-label="Слушать <%= track.title %>">▶</button>
         <% } %>
         <a class="track-row-main" href="/music/<%= release.slug %>/<%= track.slug %><%= track.audio ? '?play=1' : '' %>">
-          <% if (track.cover_image) { %><img class="track-row-cover" src="<%= thumb(track.cover_image, 160) %>" alt=""><% } %>
+          <% if (track.cover_image) { %><img loading="lazy" decoding="async" class="track-row-cover" src="<%= thumb(track.cover_image, 160) %>" alt=""><% } %>
           <span class="track-row-title"><%= track.title %></span>
           <span class="track-row-arrow">→</span>
         </a>
@@ -44,7 +44,7 @@
       <a class="product-card" href="/catalog/<%= product.slug %>">
         <div class="product-image edge-soft">
           <% if (product.image) { %>
-            <img src="<%= thumb(product.image, 640) %>" srcset="<%= srcset(product.image) %>" sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 300px" alt="<%= product.name %>">
+            <img loading="lazy" decoding="async" src="<%= thumb(product.image, 640) %>" srcset="<%= srcset(product.image) %>" sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 300px" alt="<%= product.name %>">
           <% } else { %>
             <div class="no-image">Нет фото</div>
           <% } %>

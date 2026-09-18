@@ -84,7 +84,7 @@
   <div class="podcast-block">
     <div class="podcast-main">
       <% if (podcast.cover) { %>
-        <img class="podcast-cover" src="<%= thumb(podcast.cover, 640) %>" srcset="<%= srcset(podcast.cover) %>" sizes="(max-width: 640px) 92vw, 320px" alt="<%= podcast.title %>">
+        <img loading="lazy" decoding="async" class="podcast-cover" src="<%= thumb(podcast.cover, 640) %>" srcset="<%= srcset(podcast.cover) %>" sizes="(max-width: 640px) 92vw, 320px" alt="<%= podcast.title %>">
       <% } %>
       <div class="podcast-body">
         <p class="podcast-kicker"><%= podcast.date || 'Первый выпуск' %></p>
@@ -103,7 +103,7 @@
     <div class="podcast-around">
       <% if (podcastProduct) { %>
         <a class="podcast-around-card" href="/catalog/<%= podcastProduct.slug %>">
-          <% if (podcastProduct.image) { %><img src="<%= thumb(podcastProduct.image, 320) %>" alt="<%= podcastProduct.name %>"><% } %>
+          <% if (podcastProduct.image) { %><img loading="lazy" decoding="async" src="<%= thumb(podcastProduct.image, 320) %>" alt="<%= podcastProduct.name %>"><% } %>
           <span class="podcast-around-label">Вещь из подкаста</span>
           <span class="podcast-around-title"><%= podcastProduct.name %></span>
           <span class="podcast-around-meta"><%= priceLabel(podcastProduct) %></span>
@@ -111,7 +111,7 @@
       <% } %>
       <% if (podcastTrack) { %>
         <a class="podcast-around-card" href="/music/<%= podcastTrack.release_slug %>/<%= podcastTrack.slug %>">
-          <% if (podcastTrack.image) { %><img src="<%= thumb(podcastTrack.image, 320) %>" alt="<%= podcastTrack.title %>"><% } %>
+          <% if (podcastTrack.image) { %><img loading="lazy" decoding="async" src="<%= thumb(podcastTrack.image, 320) %>" alt="<%= podcastTrack.title %>"><% } %>
           <span class="podcast-around-label">Трек из подкаста</span>
           <span class="podcast-around-title"><%= podcastTrack.title %></span>
           <span class="podcast-around-meta">звучит в разговоре про альбом</span>
@@ -119,7 +119,7 @@
       <% } %>
       <% if (podcastDiary) { %>
         <a class="podcast-around-card" href="/diary/<%= podcastDiary.slug %>">
-          <% if (podcastDiary.cover_image) { %><img src="<%= thumb(podcastDiary.cover_image, 320) %>" alt="<%= podcastDiary.title %>"><% } %>
+          <% if (podcastDiary.cover_image) { %><img loading="lazy" decoding="async" src="<%= thumb(podcastDiary.cover_image, 320) %>" alt="<%= podcastDiary.title %>"><% } %>
           <span class="podcast-around-label">Дневник</span>
           <span class="podcast-around-title">Что осталось за кадром</span>
           <span class="podcast-around-meta">запись по мотивам подкаста</span>
@@ -143,7 +143,7 @@
       <a class="news-card" href="/diary/<%= post.slug %>">
         <div class="news-card-image">
           <% if (post.cover_image) { %>
-            <img src="<%= thumb(post.cover_image, 640) %>" srcset="<%= srcset(post.cover_image) %>" sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 300px" alt="<%= post.title %>">
+            <img loading="lazy" decoding="async" src="<%= thumb(post.cover_image, 640) %>" srcset="<%= srcset(post.cover_image) %>" sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 300px" alt="<%= post.title %>">
           <% } else { %>
             <div class="no-image">Нет фото</div>
           <% } %>
@@ -171,7 +171,7 @@
       <% redheads.forEach(function(person, i) { %>
         <div class="redheads-home-card polaroid polaroid-<%= i % 3 %>">
           <% if (person.photo) { %>
-            <img src="<%= thumb(person.photo, 320) %>" alt="<%= person.name %>">
+            <img loading="lazy" decoding="async" src="<%= thumb(person.photo, 320) %>" alt="<%= person.name %>">
           <% } else { %>
             <div class="no-image">Нет фото</div>
           <% } %>
@@ -206,7 +206,7 @@
           <a class="product-card product-card--dark" href="/catalog/<%= product.slug %>">
             <div class="product-image edge-soft">
               <% if (product.image) { %>
-                <img src="<%= thumb(product.image, 640) %>" srcset="<%= srcset(product.image) %>" sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 300px" alt="<%= product.name %>">
+                <img loading="lazy" decoding="async" src="<%= thumb(product.image, 640) %>" srcset="<%= srcset(product.image) %>" sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 300px" alt="<%= product.name %>">
               <% } else { %>
                 <div class="no-image">Нет фото</div>
               <% } %>
@@ -236,7 +236,7 @@
       <a class="news-card tilt-<%= i % 3 %>" href="/news/<%= post.slug %>">
         <div class="news-card-image">
           <% if (coverByNewsId[post.id]) { %>
-            <img src="<%= thumb(coverByNewsId[post.id], 640) %>" srcset="<%= srcset(coverByNewsId[post.id]) %>" sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 300px" alt="<%= post.title %>">
+            <img loading="lazy" decoding="async" src="<%= thumb(coverByNewsId[post.id], 640) %>" srcset="<%= srcset(coverByNewsId[post.id]) %>" sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 300px" alt="<%= post.title %>">
           <% } else { %>
             <div class="no-image">Нет фото</div>
           <% } %>

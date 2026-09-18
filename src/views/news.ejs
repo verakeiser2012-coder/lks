@@ -21,7 +21,7 @@
       <a class="news-card" href="<%= lang === 'en' ? '/en/news/' : '/news/' %><%= post.slug %>">
         <div class="news-card-image">
           <% if (coverByNewsId[post.id]) { %>
-            <img src="<%= thumb(coverByNewsId[post.id], 640) %>" srcset="<%= srcset(coverByNewsId[post.id]) %>" sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 300px" alt="<%= post.title %>">
+            <img loading="lazy" decoding="async" src="<%= thumb(coverByNewsId[post.id], 640) %>" srcset="<%= srcset(coverByNewsId[post.id]) %>" sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 300px" alt="<%= post.title %>">
           <% } else { %>
             <div class="no-image"><%= lang === 'en' ? 'No photo' : 'Нет фото' %></div>
           <% } %>

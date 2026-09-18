@@ -20,7 +20,7 @@
     <% people.forEach(function(person) { %>
       <div class="spotlight-card">
         <% if (person.photo) { %>
-          <img class="spotlight-photo" src="<%= thumb(person.photo, 640) %>" srcset="<%= srcset(person.photo) %>" sizes="(max-width: 640px) 92vw, 300px" alt="<%= person.name %>">
+          <img loading="lazy" decoding="async" class="spotlight-photo" src="<%= thumb(person.photo, 640) %>" srcset="<%= srcset(person.photo) %>" sizes="(max-width: 640px) 92vw, 300px" alt="<%= person.name %>">
         <% } else { %>
           <div class="spotlight-photo spotlight-initial" aria-hidden="true"><%= person.name.trim().charAt(0) %></div>
         <% } %>

@@ -1,4 +1,5 @@
 const express = require('express');
+const ld = require('../utils/jsonld');
 const { getBanners } = require('../utils/banners');
 const db = require('../db');
 
@@ -69,6 +70,7 @@ router.get('/:slug', (req, res) => {
     ? db.prepare('SELECT * FROM collections WHERE id = ? AND is_published = 1').get(product.collection_id)
     : null;
 
+  const reviews = require('./reviews').approved('AND product_id = ?', [product.id]);
   res.render('product', {
     title: product.name,
     product,
@@ -81,7 +83,15 @@ router.get('/:slug', (req, res) => {
     // Описание для поиска — первый абзац, не длиннее 200 знаков: полный текст поисковики обрезают сами и некрасиво.
     pageDescription: (product.description || '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').split(/\n{2,}/)[0].replace(/\s+/g, ' ').trim().slice(0, 200),
     pageType: 'product',
-    reviews: require('./reviews').approved('AND product_id = ?', [product.id]),
+    reviews,
+    jsonLd: ld.serialize(ld.graph(res.locals.canonicalBase, [
+      ld.product(res.locals.canonicalBase, product, { category: category ? category.name : undefined, reviews }),
+      ld.breadcrumbs(res.locals.canonicalBase, [
+        { name: 'Каталог', url: '/catalog' },
+        ...(category ? [{ name: category.name, url: '/catalog?category=' + category.slug }] : []),
+        { name: product.name, url: '/catalog/' + product.slug },
+      ]),
+    ])),
   });
 });
 

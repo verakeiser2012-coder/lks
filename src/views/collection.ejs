@@ -21,7 +21,7 @@
       <a class="product-card" href="/catalog/<%= product.slug %>">
         <div class="product-image">
           <% if (product.image) { %>
-            <img src="<%= thumb(product.image, 640) %>" srcset="<%= srcset(product.image) %>" sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 300px" alt="<%= product.name %>">
+            <img loading="lazy" decoding="async" src="<%= thumb(product.image, 640) %>" srcset="<%= srcset(product.image) %>" sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 300px" alt="<%= product.name %>">
           <% } else { %>
             <div class="no-image">Нет фото</div>
           <% } %>
@@ -42,7 +42,7 @@
         <a class="news-card" href="/diary/<%= p.slug %>">
           <div class="news-card-image">
             <% if (p.cover_image) { %>
-              <img src="<%= thumb(p.cover_image, 640) %>" srcset="<%= srcset(p.cover_image) %>" sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 300px" alt="<%= p.title %>" loading="lazy">
+              <img loading="lazy" decoding="async" src="<%= thumb(p.cover_image, 640) %>" srcset="<%= srcset(p.cover_image) %>" sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 300px" alt="<%= p.title %>" loading="lazy">
             <% } else { %>
               <div class="no-image">Нет фото</div>
             <% } %>

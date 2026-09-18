@@ -12,7 +12,7 @@
   <div class="set-pick" role="group" aria-label="Треки">
     <% tracks.forEach(function(t) { %>
       <button type="button" class="set-track" data-slug="<%= t.slug %>" data-title="<%= t.title %>">
-        <% if (t.cover) { %><img src="<%= thumb(t.cover, 160) %>" alt=""><% } %>
+        <% if (t.cover) { %><img loading="lazy" decoding="async" src="<%= thumb(t.cover, 160) %>" alt=""><% } %>
         <span class="set-track-title"><%= t.title %></span>
         <span class="set-track-order" aria-hidden="true"></span>
       </button>

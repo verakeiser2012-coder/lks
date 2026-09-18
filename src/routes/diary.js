@@ -1,4 +1,5 @@
 const express = require('express');
+const ld = require('../utils/jsonld');
 const crypto = require('crypto');
 const { getBanners } = require('../utils/banners');
 const db = require('../db');
@@ -73,6 +74,16 @@ router.get('/:slug', (req, res) => {
     pageImage: cover,
     pageDescription: post.excerpt || String(post.content || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 200),
     pageType: 'article',
+    jsonLd: ld.serialize(ld.graph(res.locals.canonicalBase, [
+      ld.article(res.locals.canonicalBase, post, {
+        type: 'BlogPosting', url: '/diary/' + post.slug, image: cover,
+        description: post.excerpt || post.content,
+      }),
+      ld.breadcrumbs(res.locals.canonicalBase, [
+        { name: 'Дневник', url: '/diary' },
+        { name: post.title, url: '/diary/' + post.slug },
+      ]),
+    ])),
   });
 });
 

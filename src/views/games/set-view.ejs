@@ -10,7 +10,7 @@
   <ol class="set-list">
     <% picked.forEach(function(t, i) { %>
       <li class="set-item" data-src="<%= t.src %>">
-        <% if (t.cover) { %><img src="<%= thumb(t.cover, 160) %>" alt=""><% } %>
+        <% if (t.cover) { %><img loading="lazy" decoding="async" src="<%= thumb(t.cover, 160) %>" alt=""><% } %>
         <span class="set-item-title"><a href="<%= t.url %>"><%= t.title %></a></span>
         <span class="set-item-release"><%= t.release %></span>
         <span class="set-item-state" aria-hidden="true"></span>

@@ -22,7 +22,7 @@
       <% items.forEach(function(item) { %>
         <tr>
           <td>
-            <% if (item.product.image) { %><img src="<%= thumb(item.product.image, 160) %>" alt=""><% } %>
+            <% if (item.product.image) { %><img loading="lazy" decoding="async" src="<%= thumb(item.product.image, 160) %>" alt=""><% } %>
             <a href="/catalog/<%= item.product.slug %>"><%= item.product.name %></a>
             <% if (item.variant) { %><span style="color:var(--color-muted); font-size:0.85rem;"> · <%= item.variant %></span><% } %>
           </td>

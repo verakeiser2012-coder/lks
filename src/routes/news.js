@@ -1,4 +1,5 @@
 const express = require('express');
+const ld = require('../utils/jsonld');
 const db = require('../db');
 const { getBanners } = require('../utils/banners');
 
@@ -68,6 +69,16 @@ function createNewsRouter(lang) {
       // Первый абзац без разметки — то, что человек и так увидит под заголовком.
       pageDescription: String(post.content || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 200),
       pageType: 'article',
+      jsonLd: ld.serialize(ld.graph(res.locals.canonicalBase, [
+        ld.article(res.locals.canonicalBase, post, {
+          type: 'NewsArticle', url: langAlt[lang], image: cover ? cover.file_path : '',
+          description: post.content, lang,
+        }),
+        ld.breadcrumbs(res.locals.canonicalBase, [
+          { name: lang === 'en' ? 'News' : 'Новости', url: lang === 'en' ? '/en/news' : '/news' },
+          { name: post.title, url: langAlt[lang] },
+        ]),
+      ])),
     });
   });
 

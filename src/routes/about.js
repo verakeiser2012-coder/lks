@@ -1,6 +1,7 @@
 const express = require('express');
 const db = require('../db');
 const { groupLinks, socialLinksGroup } = require('../utils/links');
+const ld = require('../utils/jsonld');
 
 const router = express.Router();
 
@@ -23,7 +24,10 @@ router.get('/', (req, res) => {
   // Соцсети — из раздела «Соцсети» админки; ставим после «Где слушать».
   const linkGroups = groupLinks(links);
   linkGroups.splice(Math.min(1, linkGroups.length), 0, socialLinksGroup('Где читать и смотреть', { lang: req.lang }));
-  res.render('about', { aboutText, media, mails: MAILS, linkGroups });
+  res.render('about', {
+    aboutText, media, mails: MAILS, linkGroups,
+    jsonLd: ld.serialize(ld.graph(res.locals.canonicalBase, [ld.person(res.locals.canonicalBase, res.locals.settings)])),
+  });
 });
 
 module.exports = router;

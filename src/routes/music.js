@@ -1,4 +1,5 @@
 const express = require('express');
+const ld = require('../utils/jsonld');
 const { getBanners } = require('../utils/banners');
 const db = require('../db');
 const { groupLinks, socialLinksGroup } = require('../utils/links');
@@ -119,6 +120,11 @@ router.get('/', (req, res) => {
     releases: releases.map((r) => ({ ...r, trackCount: countMap[r.id] || 0 })),
     tracks: looseTracks,
     galleryItems: getGalleryItems('music'),
+    jsonLd: ld.serialize(ld.graph(res.locals.canonicalBase, [
+      ld.person(res.locals.canonicalBase, res.locals.settings),
+      { ...ld.musicGroup(res.locals.canonicalBase, res.locals.settings),
+        album: releases.map((r) => ({ '@type': 'MusicAlbum', name: r.title, url: res.locals.canonicalBase + '/music/' + r.slug })) },
+    ])),
   });
 });
 
@@ -253,6 +259,14 @@ router.get('/:releaseSlug', (req, res, next) => {
       return (text.length >= 60 ? text : `${base}. ${text}`.trim()).slice(0, 200);
     })(),
     pageType: 'music.album',
+    jsonLd: ld.serialize(ld.graph(res.locals.canonicalBase, [
+      ld.musicGroup(res.locals.canonicalBase, res.locals.settings),
+      ld.musicAlbum(res.locals.canonicalBase, release, tracks),
+      ld.breadcrumbs(res.locals.canonicalBase, [
+        { name: 'Музыка DJ Levka', url: '/music' },
+        { name: release.title, url: '/music/' + release.slug },
+      ]),
+    ])),
   });
 });
 
@@ -301,6 +315,15 @@ router.get('/:releaseSlug/:trackSlug', (req, res, next) => {
       return (text.length >= 60 ? text : `${base} ${text}`.trim()).slice(0, 200);
     })(),
     pageType: 'music.song',
+    jsonLd: ld.serialize(ld.graph(res.locals.canonicalBase, [
+      ld.musicGroup(res.locals.canonicalBase, res.locals.settings),
+      ld.musicRecording(res.locals.canonicalBase, track, release),
+      ld.breadcrumbs(res.locals.canonicalBase, [
+        { name: 'Музыка DJ Levka', url: '/music' },
+        { name: release.title, url: '/music/' + release.slug },
+        { name: track.title, url: '/music/' + release.slug + '/' + track.slug },
+      ]),
+    ])),
   });
 });
 

@@ -29,14 +29,18 @@ const router = express.Router();
 // запускают её параллельно.
 const inFlight = new Map();
 
-async function ensureThumb(file, width) {
+// WebP (18.09): браузер, который его понимает, присылает image/webp в Accept —
+// ему та же миниатюра уходит в WebP, это на треть легче JPEG при том же
+// качестве. Лежит рядом, в подпапке webp/, отдельным файлом; старым браузерам
+// по-прежнему JPEG/PNG. В ответе Vary: Accept, чтобы кэши не перепутали.
+async function ensureThumb(file, width, webp) {
   const src = path.join(uploadsDir, file);
-  const outDir = path.join(cacheDir, String(width));
-  const out = path.join(outDir, file);
+  const outDir = webp ? path.join(cacheDir, String(width), 'webp') : path.join(cacheDir, String(width));
+  const out = webp ? path.join(outDir, file + '.webp') : path.join(outDir, file);
   if (fs.existsSync(out)) return out;
   if (!fs.existsSync(src)) return null;
 
-  const key = `${width}/${file}`;
+  const key = `${width}/${webp ? 'webp/' : ''}${file}`;
   if (inFlight.has(key)) return inFlight.get(key);
 
   const job = (async () => {
@@ -46,8 +50,8 @@ async function ensureThumb(file, width) {
     let pipeline = sharp(src, { failOn: 'none' })
       .rotate()
       .resize({ width, withoutEnlargement: true });
-    if (ext === '.png') pipeline = pipeline.png({ compressionLevel: 9 });
-    else if (ext === '.webp') pipeline = pipeline.webp({ quality: 80 });
+    if (webp || ext === '.webp') pipeline = pipeline.webp({ quality: 80 });
+    else if (ext === '.png') pipeline = pipeline.png({ compressionLevel: 9 });
     else pipeline = pipeline.jpeg({ quality: 80, progressive: true, mozjpeg: true });
     await pipeline.toFile(tmp);
     fs.renameSync(tmp, out);
@@ -65,11 +69,14 @@ router.get('/:file', (req, res, next) => {
   const file = path.basename(req.params.file);
   if (!/^[\w.-]+$/.test(file) || !isResizable('/uploads/' + file)) return next();
 
-  ensureThumb(file, width)
+  const webp = /image\/webp/i.test(String(req.headers.accept || ''));
+  ensureThumb(file, width, webp)
     .then((out) => {
       if (!out) return next();
       // Кэш на год: имя файла случайное, при замене картинки меняется и адрес.
       res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      res.setHeader('Vary', 'Accept');
+      if (webp) res.type('image/webp');
       res.sendFile(out);
     })
     .catch((err) => {
