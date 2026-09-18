@@ -50,6 +50,10 @@
       <%= !person || person.is_published ? 'checked' : '' %>>
     Опубликован
   </label>
+  <label style="display:flex; align-items:center; gap:8px;">
+    <input type="checkbox" name="isMinor" value="1" style="width:auto;display:inline-block;" <%= person && person.is_minor ? 'checked' : '' %>>
+    <span>Несовершеннолетний — на сайте только имя без фамилии и без ссылки</span>
+  </label>
   <button class="btn" type="submit">Сохранить</button>
 </form>
 

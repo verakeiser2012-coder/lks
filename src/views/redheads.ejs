@@ -25,11 +25,12 @@
           <div class="spotlight-photo spotlight-initial" aria-hidden="true"><%= person.name.trim().charAt(0) %></div>
         <% } %>
         <div class="spotlight-body">
-          <div class="spotlight-name"><%= person.name %></div>
+          <%# Несовершеннолетние (18.09): только имя без фамилии, ссылок на соцсети нет. %>
+          <div class="spotlight-name"><%= person.is_minor ? String(person.name).trim().split(/\s+/)[0] : person.name %></div>
           <% if (person.role) { %><div class="spotlight-role"><%= person.role %></div><% } %>
           <% if (person.note) { %><p class="spotlight-note"><%= person.note %></p><% } %>
           <% if (person.photo && person.photo_credit) { %><p class="spotlight-credit"><%- person.photo_credit %></p><% } %>
-          <% if (person.link_url) { %>
+          <% if (person.link_url && !person.is_minor) { %>
             <a class="spotlight-link" href="<%= person.link_url %>" target="_blank" rel="noopener">
               <%= person.link_label || 'Смотреть' %> →
             </a>
@@ -49,16 +50,32 @@
     брендам для съёмок и рекламных кампаний — попадание в неё может стать не просто витриной, а реальным
     приглашением на проект.
   </p>
-  <% if (submitted) { %>
+  <p style="color:var(--color-muted); max-width:60ch;">
+    Возраст не ограничен. Если вам от 14 до 17 — заявку подаёте сами, а согласие подтверждает родитель
+    по ссылке из письма. За детей до 14 лет заявку подаёт родитель или законный представитель.
+    Несовершеннолетних мы показываем только по имени, без фамилии и без ссылок, а предложения брендов
+    передаём через родителя.
+  </p>
+  <% if (submitted === 'teen') { %>
+    <div class="flash flash-success">Спасибо! Заявка записана, а родителю ушло письмо со ссылкой для подтверждения. Как только он подтвердит — мы её рассмотрим.</div>
+  <% } else if (submitted) { %>
     <div class="flash flash-success">Спасибо! Заявка отправлена, мы её рассмотрим.</div>
   <% } %>
   <% if (error) { %>
     <div class="flash flash-error"><%= error %></div>
   <% } %>
+  <% const age = values.age || 'adult'; %>
   <form action="/redheads/submit" method="POST" style="max-width:480px;" id="submit">
   <input type="text" name="website" value="" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;" aria-hidden="true">
+    <%# Кто подаёт заявку — от этого зависит, чьё согласие нужно и кому писать (18.09). %>
+    <fieldset class="age-field">
+      <legend>Кто подаёт заявку *</legend>
+      <label class="age-option"><input type="radio" name="age" value="adult" <%= age === 'adult' ? 'checked' : '' %>> <span>Мне есть 18 лет</span></label>
+      <label class="age-option"><input type="radio" name="age" value="teen" <%= age === 'teen' ? 'checked' : '' %>> <span>Мне от 14 до 17 лет — согласие подтвердит родитель по почте</span></label>
+      <label class="age-option"><input type="radio" name="age" value="child" <%= age === 'child' ? 'checked' : '' %>> <span>Я родитель или законный представитель, ребёнку меньше 14</span></label>
+    </fieldset>
     <label>
-      Имя *
+      <span data-age-label data-adult="Имя *" data-teen="Ваше имя *" data-child="Имя ребёнка *">Имя *</span>
       <input type="text" name="name" value="<%= values.name || '' %>" required>
     </label>
     <label>
@@ -74,20 +91,53 @@
       <input type="url" name="linkUrl" value="<%= values.linkUrl || '' %>" placeholder="https://...">
     </label>
     <label>
-      Контакт для связи (почта или телеграм) *
+      <span data-age-label data-adult="Контакт для связи (почта или телеграм) *" data-teen="Ваш контакт (почта или телеграм) *" data-child="Ваш контакт как родителя (почта или телеграм) *">Контакт для связи (почта или телеграм) *</span>
       <input type="text" name="contact" value="<%= values.contact || '' %>" required>
     </label>
-    <label style="display:flex; align-items:flex-start; gap:8px;">
-      <input type="checkbox" name="ageConsent" value="1" style="width:auto; margin-top:4px;" <%= values.ageConsent ? 'checked' : '' %> required>
-      <span>Мне есть 18 лет, либо согласие законного представителя на участие получено *</span>
-    </label>
+    <div class="guardian-fields" data-guardian <%= age === 'adult' ? 'hidden' : '' %>>
+      <label>
+        <span data-age-label data-teen="Имя родителя или законного представителя *" data-child="Ваше имя (родителя) *">Имя родителя или законного представителя *</span>
+        <input type="text" name="guardianName" value="<%= values.guardianName || '' %>">
+      </label>
+      <label>
+        <span data-age-label data-teen="Почта родителя — туда придёт ссылка для подтверждения *" data-child="Ваша почта *">Почта родителя *</span>
+        <input type="email" name="guardianContact" value="<%= values.guardianContact || '' %>" placeholder="name@example.com">
+      </label>
+    </div>
     <label style="display:flex; align-items:flex-start; gap:8px;">
       <input type="checkbox" name="dataConsent" value="1" style="width:auto; margin-top:4px;" <%= values.dataConsent ? 'checked' : '' %> required>
-      <span>Даю согласие на обработку персональных данных в соответствии с
+      <span data-age-label
+            data-adult="Даю согласие на обработку персональных данных и публикацию фото и имени в подборке в соответствии с политикой конфиденциальности *"
+            data-teen="Даю согласие на обработку моих данных в соответствии с политикой конфиденциальности; публикацию фото и имени отдельно подтвердит родитель *"
+            data-child="Как законный представитель даю согласие на обработку данных ребёнка и публикацию его фото и имени в подборке в соответствии с политикой конфиденциальности *"
+      >Даю согласие на обработку персональных данных и публикацию фото и имени в подборке в соответствии с
       <a href="/legal/privacy" target="_blank" rel="noopener">политикой конфиденциальности</a> *</span>
     </label>
     <button class="btn" type="submit">Отправить заявку</button>
   </form>
+  <script>
+    // Поля родителя и подписи меняются от выбора возраста; без скрипта форма
+    // тоже работает — сервер проверяет всё сам.
+    (function () {
+      var form = document.getElementById('submit');
+      if (!form) return;
+      var box = form.querySelector('[data-guardian]');
+      var labels = form.querySelectorAll('[data-age-label]');
+      var privacy = '<a href="/legal/privacy" target="_blank" rel="noopener">политикой конфиденциальности</a>';
+      function apply() {
+        var v = (form.querySelector('input[name="age"]:checked') || {}).value || 'adult';
+        box.hidden = v === 'adult';
+        box.querySelectorAll('input').forEach(function (i) { i.required = v !== 'adult'; });
+        labels.forEach(function (el) {
+          var t = el.getAttribute('data-' + v) || el.getAttribute('data-adult');
+          if (!t) return;
+          el.innerHTML = t.replace('политикой конфиденциальности', privacy);
+        });
+      }
+      form.querySelectorAll('input[name="age"]').forEach(function (r) { r.addEventListener('change', apply); });
+      apply();
+    })();
+  </script>
 </section>
 
 <%- include('partials/footer') %>

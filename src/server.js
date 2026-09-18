@@ -87,10 +87,13 @@ app.use('/uploads', require('./routes/thumbs'));
 // тянула стили и скрипты). Стили и скрипты — час: адреса без версии, после
 // выкладки обновятся сами. Остальное (картинки, звук, видео) — неделя; их
 // уменьшенные копии (?w=) и так лежат год, см. routes/thumbs.js.
+// Под pm2 (сервер) — кэш, при локальном npm start — без него: иначе правка стилей
+// не видна в браузере целый час (pm2 кладёт в окружение pm_id).
+const underPm2 = process.env.pm_id !== undefined;
 app.use(express.static(path.join(__dirname, '..', 'public'), {
-  maxAge: '7d',
+  maxAge: underPm2 ? '7d' : 0,
   setHeaders(res, filePath) {
-    if (/\.(css|js)$/i.test(filePath)) res.setHeader('Cache-Control', 'public, max-age=3600');
+    if (underPm2 && /\.(css|js)$/i.test(filePath)) res.setHeader('Cache-Control', 'public, max-age=3600');
   },
 }));
 // Просмотры страниц (путь + день, без слежки) — после статики, чтобы не считать файлы.

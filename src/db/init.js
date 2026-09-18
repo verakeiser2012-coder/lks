@@ -487,6 +487,27 @@ function init() {
   if (!redheadSubmissionCols.some((c) => c.name === 'data_consent')) {
     db.exec("ALTER TABLE redhead_submissions ADD COLUMN data_consent INTEGER NOT NULL DEFAULT 0");
   }
+  // Несовершеннолетние в «Рыжих» (18.09.2026): возрастная группа заявки, родитель
+  // или законный представитель и его подтверждение. Для 14–17 согласие родителя
+  // подтверждается ссылкой из письма (токен), за детей до 14 заявку подаёт сам
+  // родитель. Подтверждение хранится с датой и адресом — это и есть согласие
+  // в электронной форме (152-ФЗ, ст. 152.1 ГК).
+  for (const [col, ddl] of [
+    ['age_group', "TEXT NOT NULL DEFAULT 'adult'"],
+    ['guardian_name', "TEXT NOT NULL DEFAULT ''"],
+    ['guardian_contact', "TEXT NOT NULL DEFAULT ''"],
+    ['consent_token', 'TEXT'],
+    ['consent_confirmed_at', 'TEXT'],
+    ['consent_ip', 'TEXT'],
+  ]) {
+    if (!redheadSubmissionCols.some((c) => c.name === col)) {
+      db.exec(`ALTER TABLE redhead_submissions ADD COLUMN ${col} ${ddl}`);
+    }
+  }
+  // Несовершеннолетний на витрине: только имя без фамилии и без внешней ссылки.
+  if (!spotlightCols.some((c) => c.name === 'is_minor')) {
+    db.exec("ALTER TABLE redhead_spotlights ADD COLUMN is_minor INTEGER NOT NULL DEFAULT 0");
+  }
 
   const contestSubmissionCols = db.prepare('PRAGMA table_info(contest_submissions)').all();
   if (!contestSubmissionCols.some((c) => c.name === 'data_consent')) {

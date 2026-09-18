@@ -45,7 +45,7 @@ router.get('/new', (req, res) => {
 });
 
 router.post('/', uploadImage.single('photo'), (req, res) => {
-  const { name, role, note, linkUrl, linkLabel, sortOrder, isPublished } = req.body;
+  const { name, role, note, linkUrl, linkLabel, sortOrder, isPublished, isMinor } = req.body;
   if (!name) {
     return res.render('admin/redhead-form', { person: req.body, error: 'Укажите имя.' });
   }
@@ -53,9 +53,9 @@ router.post('/', uploadImage.single('photo'), (req, res) => {
   const photo = req.file ? `/uploads/${req.file.filename}` : '';
 
   db.prepare(`
-    INSERT INTO redhead_spotlights (name, role, note, link_url, link_label, photo, sort_order, is_published)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-  `).run(name, role || '', note || '', linkUrl || '', linkLabel || '', photo, Number(sortOrder) || 0, isPublished ? 1 : 0);
+    INSERT INTO redhead_spotlights (name, role, note, link_url, link_label, photo, sort_order, is_published, is_minor)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(name, role || '', note || '', linkUrl || '', linkLabel || '', photo, Number(sortOrder) || 0, isPublished ? 1 : 0, isMinor ? 1 : 0);
 
   res.redirect('/admin/redheads');
 });
@@ -70,7 +70,7 @@ router.post('/:id', uploadImage.single('photo'), (req, res) => {
   const person = db.prepare('SELECT * FROM redhead_spotlights WHERE id = ?').get(req.params.id);
   if (!person) return res.status(404).render('404');
 
-  const { name, role, note, linkUrl, linkLabel, sortOrder, isPublished } = req.body;
+  const { name, role, note, linkUrl, linkLabel, sortOrder, isPublished, isMinor } = req.body;
   if (!name) {
     return res.render('admin/redhead-form', { person: { ...person, ...req.body }, error: 'Укажите имя.' });
   }
@@ -79,9 +79,9 @@ router.post('/:id', uploadImage.single('photo'), (req, res) => {
 
   db.prepare(`
     UPDATE redhead_spotlights
-    SET name = ?, role = ?, note = ?, link_url = ?, link_label = ?, photo = ?, sort_order = ?, is_published = ?
+    SET name = ?, role = ?, note = ?, link_url = ?, link_label = ?, photo = ?, sort_order = ?, is_published = ?, is_minor = ?
     WHERE id = ?
-  `).run(name, role || '', note || '', linkUrl || '', linkLabel || '', photo, Number(sortOrder) || 0, isPublished ? 1 : 0, person.id);
+  `).run(name, role || '', note || '', linkUrl || '', linkLabel || '', photo, Number(sortOrder) || 0, isPublished ? 1 : 0, isMinor ? 1 : 0, person.id);
 
   res.redirect('/admin/redheads');
 });
@@ -100,11 +100,15 @@ router.post('/submissions/:id/approve', (req, res) => {
   const submission = db.prepare('SELECT * FROM redhead_submissions WHERE id = ?').get(req.params.id);
   if (!submission) return res.status(404).render('404');
 
+  // Заявка подростка без подтверждённого согласия родителя на витрину не идёт.
+  if (submission.age_group === 'teen' && !submission.consent_confirmed_at) return res.redirect('/admin/redheads/submissions');
+
   const maxSort = db.prepare('SELECT MAX(sort_order) AS m FROM redhead_spotlights').get().m;
+  const minor = submission.age_group !== 'adult' ? 1 : 0;
   db.prepare(`
-    INSERT INTO redhead_spotlights (name, role, note, link_url, link_label, sort_order, is_published)
-    VALUES (?, ?, ?, ?, ?, ?, 1)
-  `).run(submission.name, submission.role, submission.note, submission.link_url, 'Смотреть', (maxSort || 0) + 1);
+    INSERT INTO redhead_spotlights (name, role, note, link_url, link_label, sort_order, is_published, is_minor)
+    VALUES (?, ?, ?, ?, ?, ?, 1, ?)
+  `).run(submission.name, submission.role, submission.note, submission.link_url, 'Смотреть', (maxSort || 0) + 1, minor);
 
   db.prepare("UPDATE redhead_submissions SET status = 'approved' WHERE id = ?").run(submission.id);
   res.redirect('/admin/redheads/submissions');
