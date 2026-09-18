@@ -84,16 +84,17 @@ app.use(express.json());
 // express.static отдаст полный файл, не глядя на ?w=.
 app.use('/uploads', require('./routes/thumbs'));
 // Кэш статики в браузере (18.09; раньше max-age=0 — каждая страница заново
-// тянула стили и скрипты). Стили и скрипты — час: адреса без версии, после
-// выкладки обновятся сами. Остальное (картинки, звук, видео) — неделя; их
-// уменьшенные копии (?w=) и так лежат год, см. routes/thumbs.js.
+// тянула стили и скрипты). Стили и скрипты — неделя: в адресах версия
+// (?v=assetVer, см. ниже), после выкладки адрес меняется и браузер берёт новое.
+// Остальное (картинки, звук, видео) — тоже неделя; их уменьшенные копии (?w=)
+// и так лежат год, см. routes/thumbs.js.
 // Под pm2 (сервер) — кэш, при локальном npm start — без него: иначе правка стилей
 // не видна в браузере целый час (pm2 кладёт в окружение pm_id).
 const underPm2 = process.env.pm_id !== undefined;
 app.use(express.static(path.join(__dirname, '..', 'public'), {
   maxAge: underPm2 ? '7d' : 0,
   setHeaders(res, filePath) {
-    if (underPm2 && /\.(css|js)$/i.test(filePath)) res.setHeader('Cache-Control', 'public, max-age=3600');
+    if (underPm2 && /\.(css|js)$/i.test(filePath)) res.setHeader('Cache-Control', 'public, max-age=604800');
   },
 }));
 // Просмотры страниц (путь + день, без слежки) — после статики, чтобы не считать файлы.

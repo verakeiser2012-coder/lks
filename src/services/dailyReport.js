@@ -52,7 +52,6 @@ function collect(day) {
 
   const reactions = {
     diaryMarks: count(`SELECT COUNT(*) AS c FROM diary_marks WHERE ${between('created_at')}`),
-    lookVotes: count(`SELECT COUNT(*) AS c FROM look_votes WHERE ${between('created_at')}`),
     plays: count(`SELECT COUNT(*) AS c FROM track_plays WHERE ${between('played_at')}`),
     views: db.prepare('SELECT COALESCE(SUM(hits), 0) AS c FROM page_views WHERE day = ?').get(day).c,
     topPages: db.prepare('SELECT path, hits FROM page_views WHERE day = ? ORDER BY hits DESC LIMIT 5').all(day),
@@ -108,7 +107,7 @@ function renderText(r) {
   sec('Заявки на конкурс', r.contest, (x) => `${x.name} — ${x.video_url}`);
   sec(`Заказы`, r.orders, (o) => `№${o.id} ${o.customer_name} — ${o.total} ₽, ${o.payment_status === 'paid' ? 'оплачен' : 'не оплачен'}`);
   if (r.ordersPaid.length) lines.push(`  Оплачено на ${r.ordersSum} ₽`);
-  lines.push('', `Реакции: просмотров ${r.reactions.views}, прослушиваний ${r.reactions.plays}, оценок в дневнике ${r.reactions.diaryMarks}, голосов за образы ${r.reactions.lookVotes}`);
+  lines.push('', `Реакции: просмотров ${r.reactions.views}, прослушиваний ${r.reactions.plays}, оценок в дневнике ${r.reactions.diaryMarks}`);
   if (r.reactions.topPages.length) lines.push('  Страницы: ' + r.reactions.topPages.map((p) => `${p.path} (${p.hits})`).join(', '));
   lines.push('', 'Соцсети');
   lines.push(`  Вышло: ${r.social.published.length} (своих ${r.social.own.length}, импорт с площадок ${r.social.imported.length})`

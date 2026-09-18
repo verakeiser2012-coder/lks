@@ -469,14 +469,9 @@ function init() {
       UNIQUE(post_id, voter)
     );
 
-    CREATE TABLE IF NOT EXISTS look_votes (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      item_id INTEGER NOT NULL REFERENCES gallery_items(id) ON DELETE CASCADE,
-      voter TEXT NOT NULL,
-      created_at TEXT NOT NULL DEFAULT (datetime('now')),
-      UNIQUE(item_id, voter)
-    );
   `);
+  // Голосование за «Образы» снято 18.09.2026 вместе с разделом — таблицу убираем.
+  db.exec('DROP TABLE IF EXISTS look_votes');
 
   // Фото знаменитостей берём с Wikimedia Commons под CC — лицензия требует
   // указать автора и лицензию рядом с фото, для этого своя колонка.

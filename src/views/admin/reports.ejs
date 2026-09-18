@@ -71,8 +71,7 @@
 <p>
   Просмотров страниц — <strong><%= report.reactions.views %></strong>,
   прослушиваний в плеере — <strong><%= report.reactions.plays %></strong>,
-  оценок в дневнике — <strong><%= report.reactions.diaryMarks %></strong>,
-  голосов за образы — <strong><%= report.reactions.lookVotes %></strong>.
+  оценок в дневнике — <strong><%= report.reactions.diaryMarks %></strong>.
 </p>
 <% if (report.reactions.topPages.length) { %>
   <p class="hint">Самое посещаемое: <% report.reactions.topPages.forEach(function (p, i) { %><%= i ? ' · ' : '' %><a href="<%= p.path %>" target="_blank" rel="noopener"><%= p.path %></a> (<%= p.hits %>)<% }); %></p>
