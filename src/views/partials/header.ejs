@@ -132,6 +132,16 @@
 <body>
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <defs>
+      <%# Золото для значков (18.09): один градиент на весь документ, иконки берут
+          его через CSS fill/stroke: url(#lk-gold). Координаты в единицах viewBox
+          иконки (0…24), а не рамки фигуры — иначе у тонкой линии рамка нулевой
+          высоты и градиент пропадает. %>
+      <linearGradient id="lk-gold" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="24">
+        <stop offset="0" stop-color="#fffbe6"/>
+        <stop offset="0.35" stop-color="#f0c419"/>
+        <stop offset="0.75" stop-color="#b8860b"/>
+        <stop offset="1" stop-color="#7a5512"/>
+      </linearGradient>
       <filter id="gold-emboss" x="-30%" y="-30%" width="160%" height="160%">
         <feGaussianBlur in="SourceAlpha" stdDeviation="2.6" result="blur"/>
         <feDiffuseLighting in="blur" surfaceScale="7" diffuseConstant="1.15" lighting-color="#e0a418" result="diffuse">

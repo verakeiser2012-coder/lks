@@ -2976,3 +2976,72 @@ h1.mk-cover-name { margin: 0; }
 /* Лицензии IPEX */
 .track-license { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--color-border); }
 .music-license p { max-width: 640px; line-height: 1.6; margin-bottom: 14px; }
+
+/* ── Золотые значки (18.09.2026) ─────────────────────────────────────────
+   То же золото, что у знака и кнопки корзины: градиент #lk-gold задан в
+   шапке (partials/header), значки берут его через fill/stroke. Заливные
+   иконки (fill="currentColor") — заливкой, контурные (stroke="currentColor")
+   — обводкой; трогать оба сразу нельзя, иначе контурная иконка зальётся. */
+.badge-icon circle { fill: url(#lk-gold); }
+.badge-icon path { stroke: var(--color-gold-ink); }
+
+.bg-audio-link {
+  background: linear-gradient(180deg, var(--color-gold-shine) 0%, var(--color-gold-bright) 45%, var(--color-accent) 100%);
+  color: var(--color-gold-ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 -2px 3px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(184, 134, 11, 0.35);
+}
+.bg-audio-link:hover { background: linear-gradient(180deg, var(--color-gold-shine) 0%, var(--color-gold-bright) 60%, var(--color-accent) 100%); color: var(--color-gold-ink); }
+
+.to-top {
+  background: linear-gradient(180deg, var(--color-gold-shine) 0%, var(--color-gold-bright) 45%, var(--color-accent) 100%);
+  color: var(--color-gold-ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 -2px 3px rgba(0, 0, 0, 0.15), 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+.to-top:hover { background: linear-gradient(180deg, var(--color-gold-shine) 0%, var(--color-gold-bright) 60%, var(--color-accent) 100%); }
+
+/* Соцсети в подвале: на белом кружке золотой знак; при наведении — как было, кружок золотой, знак тёмный */
+.social-icon svg[fill="currentColor"] { fill: url(#lk-gold); }
+.social-icon:hover svg[fill="currentColor"] { fill: var(--color-gold-ink); }
+
+/* Кнопки «поделиться» */
+.share-btn { border-color: #e6cf8a; }
+.share-btn svg[fill="currentColor"] { fill: url(#lk-gold); }
+.share-btn svg[stroke="currentColor"], .share-btn svg [stroke="currentColor"] { stroke: url(#lk-gold); }
+.share-btn:hover { border-color: var(--color-accent); background: #fffaf0; }
+
+/* Ссылка на band.link в таблице релизов */
+.bandlink-icon { stroke: url(#lk-gold); }
+
+/* Звёзды отзывов */
+.review-stars {
+  background: linear-gradient(180deg, var(--color-gold-shine) 0%, var(--color-gold-bright) 40%, var(--color-accent) 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.review-stars .review-stars-off { background: none; -webkit-text-fill-color: var(--color-border); color: var(--color-border); }
+
+/* Кнопки воспроизведения: в списке треков, в бегущей строке; выбранная оценка в дневнике */
+.track-row-play:hover, .track-row-play.is-playing,
+.diary-mark.is-mine {
+  background: linear-gradient(180deg, var(--color-gold-shine) 0%, var(--color-gold-bright) 45%, var(--color-accent) 100%);
+  border-color: var(--color-accent);
+  color: var(--color-gold-ink);
+}
+.music-ticker__play.is-playing {
+  background: linear-gradient(180deg, var(--color-gold-shine) 0%, var(--color-gold-bright) 45%, var(--color-accent) 100%);
+  color: var(--color-gold-ink);
+}
+
+/* Кнопка меню на телефоне: полоски золотые */
+.nav-toggle-bar { background: linear-gradient(90deg, var(--color-accent), var(--color-gold-bright)); }
+
+/* Кнопка Telegram в блоке «Обсуждаем в канале» — золотая, как остальные наши кнопки;
+   ВКонтакте, X и Facebook остаются в своих фирменных цветах. */
+.channel-cta-btn:not(.channel-cta-btn--vk):not(.channel-cta-btn--x):not(.channel-cta-btn--fb) {
+  background: linear-gradient(180deg, var(--color-gold-shine) 0%, var(--color-gold-bright) 45%, var(--color-accent) 100%);
+  color: var(--color-gold-ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 -2px 3px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(184, 134, 11, 0.35);
+}
+.channel-cta-btn:not(.channel-cta-btn--vk):not(.channel-cta-btn--x):not(.channel-cta-btn--fb):hover {
+  background: linear-gradient(180deg, var(--color-gold-shine) 0%, var(--color-gold-bright) 60%, var(--color-accent) 100%);
+  color: var(--color-gold-ink);
+}
