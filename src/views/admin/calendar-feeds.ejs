@@ -14,6 +14,36 @@
 <% if (notice) { %>
   <div class="flash flash-success"><%= notice %></div>
 <% } %>
+<% if (error) { %>
+  <div class="flash flash-error"><%= error %></div>
+<% } %>
+
+<%# Спонтанные публикации мимо календаря — репост в X, пост в Facebook, статья в Дзене.
+    Просим только ссылку: площадку и время определяем сами. Блок переехал сюда с календаря
+    (18.09.2026): записал — и тут же видишь, в какую полосу легло. %>
+<section class="feed-log">
+  <div class="feed-head">
+    <h2>Уже в ленте</h2>
+    <form class="feed-form" action="/admin/calendar/log" method="POST">
+      <input type="url" name="url" placeholder="Ссылка на публикацию" required>
+      <input type="text" name="text" placeholder="О чём — необязательно">
+      <button class="btn" type="submit">Записать</button>
+    </form>
+  </div>
+  <p class="feed-hint">Опубликовали руками — вставьте ссылку. Площадку и время определим сами, запись появится в полосе площадки ниже.</p>
+  <% if (gaps.length) { %>
+    <p class="feed-hint" style="margin-top:12px;"><b>Вышло не везде</b> — можно перепостить:</p>
+    <ul class="feed-gaps">
+      <% gaps.forEach(function (p) { %>
+        <li>
+          <span class="feed-when"><%= String(p.scheduled_at).slice(5, 16).replace('-', '.') %></span>
+          <a href="/admin/calendar/<%= p.id %>"><%= String(p.text).split('\n')[0].slice(0, 60) || '(без текста)' %></a>
+          <span class="feed-missing">→ <% p.missing.forEach(function (n, i) { %><%= i ? ', ' : '' %><%= n.label %><% }); %></span>
+        </li>
+      <% }); %>
+    </ul>
+  <% } %>
+</section>
 
 <p class="hint">
   По одной полосе на каждую подключённую соцсеть: что там уже лежит, когда было последнее и сколько

@@ -44,10 +44,7 @@ router.get('/', (req, res) => {
 
   const upcoming = listUpcoming(7);
   const pending = listPendingApproval();
-  const published = listRecentlyPublished();
   const archivedCount = listArchived().length;
-  const calendarError = req.session.calendarError || null;
-  req.session.calendarError = null;
   for (const post of upcoming) {
     if (!targetsByPost[post.id]) targetsByPost[post.id] = getTargets(post.id);
   }
@@ -75,9 +72,7 @@ router.get('/', (req, res) => {
   }
 
   res.render('admin/calendar', {
-    published,
     archivedCount,
-    calendarError,
     pending,
     year,
     month,
@@ -109,17 +104,18 @@ router.get('/', (req, res) => {
 router.post('/log', (req, res) => {
   const url = String(req.body.url || '').trim();
   const key = detectNetwork(url);
+  // Форма живёт на странице лент (с 18.09.2026): там же видно, куда запись легла.
   if (!key) {
-    req.session.calendarError = url
+    req.session.feedsError = url
       ? 'Не удалось понять площадку по ссылке. Проверьте адрес или заведите пост вручную.'
       : 'Вставьте ссылку на публикацию.';
-    return res.redirect('/admin/calendar');
+    return res.redirect('/admin/calendar/feeds');
   }
 
-  const known = db.prepare('SELECT key FROM social_networks WHERE key = ?').get(key);
+  const known = db.prepare('SELECT key, label FROM social_networks WHERE key = ?').get(key);
   if (!known) {
-    req.session.calendarError = `Площадка «${key}» не заведена в соцсетях — добавьте её, чтобы вести учёт.`;
-    return res.redirect('/admin/calendar');
+    req.session.feedsError = `Площадка «${key}» не заведена в соцсетях — добавьте её, чтобы вести учёт.`;
+    return res.redirect('/admin/calendar/feeds');
   }
 
   const when = normalizeScheduledAt(req.body.scheduled_at) ||
@@ -138,7 +134,8 @@ router.post('/log', (req, res) => {
     db.exec('ROLLBACK');
     throw err;
   }
-  res.redirect('/admin/calendar');
+  req.session.feedsNotice = `Записано в ленту «${known.label}».`;
+  res.redirect('/admin/calendar/feeds');
 });
 
 /**
@@ -286,8 +283,13 @@ router.post('/hashtags', (req, res) => {
 
 router.get('/feeds', (req, res) => {
   const notice = req.session.feedsNotice || '';
+  const error = req.session.feedsError || '';
   delete req.session.feedsNotice;
-  res.render('admin/calendar-feeds', { feeds: listFeedsByNetwork(12), notice });
+  delete req.session.feedsError;
+  // «Вышло не везде» — свежие публикации, у которых остались живые площадки без поста:
+  // подсказка для перепоста, раньше жила в блоке «Уже в ленте» на календаре.
+  const gaps = listRecentlyPublished(12).filter((p) => p.missing.length > 0).slice(0, 8);
+  res.render('admin/calendar-feeds', { feeds: listFeedsByNetwork(12), notice, error, gaps });
 });
 
 // Не ждать часового импорта: нажала — и через несколько секунд ленты свежие.
