@@ -95,7 +95,7 @@ natural curly red hair. Рыжий Лев Кейсер, съёмка на плё
 API Pinterest v5 даёт создание пинов, но: Trial-доступ — пины видны только автору
 (песочница), Standard — после видео-демо и проверки 1–4 недели. Пока это не стоит
 вечера работы: 1–2 пина в день руками в планировщике Pinterest быстрее, чем прохождение
-проверки. Вернуться к API, когда пинов станет больше пяти в день.
+проверки. Решение владельца 18.09.2026: API Pinterest (developers.pinterest.com) не использовать вообще — пины только руками через планировщик.
 
 ## 4. Порядок действий
 
@@ -107,5 +107,4 @@ API Pinterest v5 даёт создание пинов, но: Trial-доступ 
 6. Через месяц смотрим статистику бизнес-аккаунта: показы, сохранения, клики на сайт.
 
 Источники по практике: [iMusician — Pinterest for musicians](https://imusician.pro/en/resources/blog/pinterest-for-musicians),
-[Pinterest access tiers](https://developers.pinterest.com/docs/key-concepts/access-tiers/),
 [Pinterest в России 2026](https://ria.ru/20260426/pinterest-2089020564.html).
