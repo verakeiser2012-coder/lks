@@ -1,0 +1,102 @@
+<%- include('partials/header') %>
+
+<div class="admin-toolbar">
+  <h1>Коллегам за копеечку</h1>
+  <div>
+    <span class="badge">клиентов: <%= clients.length %></span>
+    <% if (auditOrders) { %>&nbsp;<a class="badge badge-scheduled" href="/admin/orders">заказов аудита: <%= auditOrders %></a><% } %>
+    &nbsp;&nbsp;
+    <a href="/services" target="_blank" rel="noopener">Страница услуги ↗</a>
+    &nbsp;·&nbsp;
+    <a href="/en/services" target="_blank" rel="noopener">For artists ↗</a>
+    &nbsp;·&nbsp;
+    <a href="/admin/settings">Показывать / скрыть</a>
+  </div>
+</div>
+
+<p class="admin-hint">
+  Заявки приходят двумя путями: <b>аудит</b> покупают как товар в магазине (он в «Заказах»), а пакеты и вопросы
+  идут через бота в Telegram и MAX — его клиенты ниже. Тексты пакетов и цены — в коде страницы
+  (<code>src/routes/services.js</code>), видимость разделов — галочки в «Настройках».
+  Русская услуга: <b><%= servicesPublic ? 'показывается' : 'скрыта' %></b>, английская «For artists»:
+  <b><%= servicesEnPublic ? 'показывается' : 'скрыта' %></b>.
+</p>
+
+<% if (notice) { %><div class="flash flash-success"><%= notice %></div><% } %>
+<% if (error) { %><div class="flash flash-error"><%= error %></div><% } %>
+
+<% if (!botConfigured) { %>
+  <div class="flash flash-error">На этой машине нет <code>bot/.env</code> — смена этапа и сообщения клиентам работают только на сервере, где крутится бот.</div>
+<% } %>
+
+<% if (clients.length === 0) { %>
+  <p>Клиентов у бота пока нет. Папка данных: <code><%= dataDir %></code>.</p>
+<% } %>
+
+<% clients.forEach(function (c) { %>
+  <div class="message-card" id="client-<%= c.key %>">
+    <div class="message-head">
+      <strong><%= c.name %></strong>
+      <% if (c.username) { %><span>@<%= c.username %></span><% } %>
+      <span class="badge"><%= c.network %></span>
+      <span style="color:var(--color-muted,#777); font-size:0.85rem;">с <%= c.created %> · id <%= c.key %></span>
+    </div>
+
+    <p style="margin:8px 0 4px;"><b>Этап:</b> <%= c.stage || '—' %></p>
+    <form class="inline" action="/admin/kollegam/<%= c.key %>/stage" method="POST" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
+      <input type="text" name="stage" placeholder="Новый этап — клиент получит уведомление" style="flex:1 1 320px;" required>
+      <button class="btn btn-small" type="submit">Сменить этап</button>
+    </form>
+
+    <p style="margin:0 0 4px;"><b>Анкета:</b> <%= c.formDone ? 'заполнена' : 'на вопросе ' + c.formStep + ' из 7' %></p>
+    <% if (c.answers.length) { %>
+      <table style="margin:0 0 12px; font-size:0.9rem;">
+        <tbody>
+          <% c.answers.forEach(function (a) { %>
+            <tr><td style="white-space:nowrap; color:var(--color-muted,#777);"><%= a.label %></td><td><%- a.value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\n/g, '<br>') %></td></tr>
+          <% }); %>
+        </tbody>
+      </table>
+    <% } %>
+
+    <details style="margin:0 0 12px;">
+      <summary><b>Треки и файлы</b> — треков в списке: <%= c.trackList.length %>, файлов: <%= c.filesCount %></summary>
+      <% if (c.tracks.length) { %>
+        <ul style="margin:8px 0;">
+          <% c.tracks.forEach(function (t) { %>
+            <li><b><%= t.track %></b>:
+              <% t.files.forEach(function (f, i) { %><%= i ? ', ' : ' ' %><a href="/admin/kollegam/<%= c.key %>/files/<%= encodeURIComponent(t.track) %>/<%= encodeURIComponent(f.name) %>"><%= f.name %></a> <small>(<%= Math.round(f.size / 1024) %> КБ)</small><% }); %>
+            </li>
+          <% }); %>
+        </ul>
+      <% } else { %>
+        <p class="admin-hint" style="margin:8px 0;">Файлов ещё нет.</p>
+      <% } %>
+      <form action="/admin/kollegam/<%= c.key %>/tracks" method="POST" style="margin-top:8px;">
+        <label>
+          Список треков для кнопок бота — по одному названию на строку (дополняет текущий)
+          <textarea name="tracks" rows="3" placeholder="Hotline&#10;Ikigai"><%= c.trackList.join('\n') %></textarea>
+        </label>
+        <button class="btn btn-small" type="submit">Задать треки</button>
+      </form>
+    </details>
+
+    <form action="/admin/kollegam/<%= c.key %>/msg" method="POST" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px;">
+      <input type="text" name="text" placeholder="Сообщение клиенту от имени бота" style="flex:1 1 320px;" required>
+      <button class="btn btn-small" type="submit">Отправить</button>
+    </form>
+
+    <% if (c.log.length) { %>
+      <details>
+        <summary>Журнал — последние <%= c.log.length %></summary>
+        <ul style="margin:8px 0; font-size:0.85rem; color:var(--color-muted,#777);">
+          <% c.log.forEach(function (e) { %>
+            <li><%= String(e.t || '').slice(0, 16).replace('T', ' ') %> · <%= e.type %><% if (e.stage) { %>: <%= e.stage %><% } %><% if (e.text) { %>: <%= String(e.text).slice(0, 120) %><% } %><% if (e.name) { %>: <%= e.name %><% } %></li>
+          <% }); %>
+        </ul>
+      </details>
+    <% } %>
+  </div>
+<% }); %>
+
+<%- include('partials/footer') %>

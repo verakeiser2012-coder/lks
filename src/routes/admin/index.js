@@ -28,6 +28,7 @@ const tagsRoutes = require('./tags');
 const translationsRoutes = require('./translations');
 const visibilityRoutes = require('./visibility');
 const creativesRoutes = require('./creatives');
+const kollegamRoutes = require('./kollegam');
 const reportsRoutes = require('./reports');
 const { translateMany } = require('../../services/translate');
 const dailyReport = require('../../services/dailyReport');
@@ -114,5 +115,6 @@ router.use('/nfc', tagsRoutes);
 router.use('/translations', translationsRoutes);
 router.use('/visibility', visibilityRoutes);
 router.use('/creatives', creativesRoutes);
+router.use('/kollegam', kollegamRoutes);
 
 module.exports = router;
