@@ -11,7 +11,17 @@ public/uploads/*
 npm-debug.log*
 deploy/keys/
 .claude/
-tools/
+# tools/ — мастерская макетов: в git только скрипты и шрифты (мегабайты),
+# рендеры, бэкапы, ffmpeg, аудио и черновики (гигабайты) остаются вне репозитория
+tools/*
+!tools/*.py
+!tools/*.js
+!tools/*.ps1
+!tools/*.sh
+!tools/*.md
+!tools/fonts/
+tools/fonts/*
+!tools/fonts/*.ttf
 PLAN.md
 storage/digital/*
 storage/thumbs/
