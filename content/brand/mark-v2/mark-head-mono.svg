@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Знак «Голова», одноцветный (18.09.2026): круг цвета Пыль и девять оранжевых кудрей Гривы. Заменил силуэт в профиль. -->
+  <circle cx="14.1" cy="44.4" r="6.0" fill="#211A12"/><circle cx="11.9" cy="35.3" r="6.6" fill="#211A12"/><circle cx="14.0" cy="26.4" r="7.0" fill="#211A12"/><circle cx="20.0" cy="19.4" r="7.2" fill="#211A12"/><circle cx="28.4" cy="15.9" r="7.2" fill="#211A12"/><circle cx="37.6" cy="16.3" r="7.2" fill="#211A12"/><circle cx="45.6" cy="20.9" r="7.0" fill="#211A12"/><circle cx="50.7" cy="28.5" r="6.6" fill="#211A12"/><circle cx="51.8" cy="37.4" r="6.0" fill="#211A12"/>
+  <circle cx="32" cy="36" r="16.5" fill="#FFFFFF" stroke="#211A12" stroke-width="2.5"/>
+</svg>
