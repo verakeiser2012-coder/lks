@@ -1,20 +1,25 @@
 <% if (typeof galleryItems !== 'undefined' && galleryItems.length > 0) { %>
+  <%# storyMode: третья кнопка «История» — кадр в точке увеличения растёт, подпись
+      раскрывается, лента едет сама (public/js/gallery-story.js). Включается только
+      там, где партиал вызван с { storyMode: true }; остальные ленты сайта не трогает. %>
+  <% var story = typeof storyMode !== 'undefined' && storyMode; %>
   <section class="link-section">
     <%# Лента или плитка: кнопки переключают все ленты страницы, выбор помнится в браузере. %>
     <div class="gallery-head">
       <h2><%= typeof galleryTitle !== 'undefined' ? galleryTitle : 'Фото и видео' %></h2>
       <div class="strip-toggle" role="group" aria-label="Вид галереи">
+        <% if (story) { %><button type="button" class="strip-toggle__btn" data-strip-view="story">История</button><% } %>
         <button type="button" class="strip-toggle__btn active" data-strip-view="strip">Лента</button>
         <button type="button" class="strip-toggle__btn" data-strip-view="grid">Плитка</button>
       </div>
     </div>
-    <div class="filmstrip"><div class="filmstrip-track">
+    <div class="filmstrip<%= story ? ' filmstrip--story-capable' : '' %>"<%= story ? ' data-story="1"' : '' %>><div class="filmstrip-track">
       <% galleryItems.forEach(function(item, idx) {
         var isEmbed = item.type === 'video' && item.file_path.indexOf('http') === 0;
       %>
         <% var gLang = (typeof lang !== 'undefined' && lang === 'en') ? 'en' : 'ru'; %>
         <% var dG = item.shot_date || item.created_at || ''; var markG = dG ? ' · ' + formatDateShort(dG, gLang).toUpperCase() : ''; %>
-        <div class="film-cell" data-code="LEVKEYSER · 35 MM" data-num="<%= gLang === 'en' ? 'FRAME' : 'КАДР' %> <%= String(idx + 1).padStart(2, '0') %><%= markG %>">
+        <div class="film-cell" data-code="LEVKEYSER · 35 MM" data-num="<%= gLang === 'en' ? 'FRAME' : 'КАДР' %> <%= String(idx + 1).padStart(2, '0') %><%= markG %>"<%= story ? ' data-year="' + (dG ? String(dG).slice(0, 4) : '') + '"' : '' %>>
         <div class="gallery-item edge-soft <%= item.type === 'video' && !isEmbed ? 'is-video' : '' %> <%= isEmbed ? 'is-embed' : '' %>">
           <% if (item.type === 'photo') { %>
             <img src="<%= thumb(item.file_path, 640) %>" alt="<%= item.title %>" loading="lazy">
@@ -27,9 +32,20 @@
           <% } %>
           <% if (item.title) { %><div class="gallery-caption"><%= item.title %></div><% } %>
         </div>
+        <% if (story && item.title) { %><div class="story-caption"><% if (dG) { %><span class="story-caption__year"><%= String(dG).slice(0, 4) %></span><% } %><span class="story-caption__text"><%= item.title %></span></div><% } %>
         </div>
       <% }); %>
     </div></div>
+    <% if (story) { %>
+    <div class="story-bar" hidden>
+      <button type="button" class="story-bar__btn story-bar__prev" aria-label="Предыдущий кадр">‹</button>
+      <button type="button" class="story-bar__btn story-bar__play" aria-label="Пауза" data-playing="1">❚❚</button>
+      <button type="button" class="story-bar__btn story-bar__next" aria-label="Следующий кадр">›</button>
+      <span class="story-bar__count"><span class="story-bar__cur">1</span> / <span class="story-bar__total"><%= galleryItems.length %></span></span>
+      <span class="story-bar__progress"><span class="story-bar__fill"></span></span>
+    </div>
+    <script src="/js/gallery-story.js" defer></script>
+    <% } %>
   </section>
   <% if (typeof stripToggleScript === 'undefined') { %>
   <script>
@@ -39,9 +55,18 @@
       (function () {
         var KEY = 'levkaGalleryView';
         function apply(view) {
-          document.querySelectorAll('.filmstrip').forEach(function (s) { s.classList.toggle('filmstrip--grid', view === 'grid'); });
-          document.querySelectorAll('.strip-toggle__btn').forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-strip-view') === view); });
+          document.querySelectorAll('.filmstrip').forEach(function (s) {
+            s.classList.toggle('filmstrip--grid', view === 'grid');
+            // «История» есть не у всех лент: где её нет, показываем обычную ленту.
+            s.classList.toggle('filmstrip--story', view === 'story' && s.hasAttribute('data-story'));
+          });
+          document.querySelectorAll('.strip-toggle').forEach(function (g) {
+            var has = !!g.querySelector('[data-strip-view="story"]');
+            var v = view === 'story' && !has ? 'strip' : view;
+            g.querySelectorAll('.strip-toggle__btn').forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-strip-view') === v); });
+          });
           try { localStorage.setItem(KEY, view); } catch (e) {}
+          document.dispatchEvent(new CustomEvent('gallery:view', { detail: view }));
         }
         document.addEventListener('click', function (e) {
           var b = e.target.closest('.strip-toggle__btn');
@@ -49,7 +74,9 @@
         });
         var saved = null;
         try { saved = localStorage.getItem(KEY); } catch (e) {}
-        if (saved === 'grid') apply('grid');
+        // По умолчанию — «История», если она на странице есть и пользователь не выбирал иное.
+        if (saved === 'grid' || saved === 'story') apply(saved);
+        else if (!saved && document.querySelector('.filmstrip[data-story]')) apply('story');
       })();
     }
   </script>

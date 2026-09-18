@@ -2871,6 +2871,57 @@ label { display: block; margin-bottom: 14px; font-weight: 500; }
 .diary-inline:hover figcaption, .diary-inline:focus-within figcaption { opacity: 1; }
 @media (hover: none) { .diary-inline figcaption { opacity: 1; } }
 
+/* «История» у кинолент: кадр в точке увеличения (центр) растёт и оживает,
+   под ним раскрывается подпись, лента едет сама (js/gallery-story.js).
+   Соседние кадры остаются маленькими и в сепии — как плёнка на просмотровом столе. */
+.filmstrip.filmstrip--story { scroll-snap-type: none; scrollbar-width: none; outline: none; }
+.filmstrip.filmstrip--story::-webkit-scrollbar { display: none; }
+.filmstrip.filmstrip--story .filmstrip-track { padding-top: 40px; padding-bottom: 118px; align-items: flex-start; }
+/* пустые края, чтобы первый и последний кадр могли встать в центр */
+.filmstrip.filmstrip--story .filmstrip-track::before,
+.filmstrip.filmstrip--story .filmstrip-track::after { content: ''; flex: 0 0 calc(50vw - 170px); max-width: 420px; }
+.filmstrip.filmstrip--story .film-cell { cursor: pointer; transition: opacity 0.5s ease; }
+.filmstrip.filmstrip--story .film-cell:not(.is-focus) { opacity: 0.55; }
+.filmstrip.filmstrip--story .gallery-item { height: 160px; transition: height 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.filmstrip.filmstrip--story .gallery-item img,
+.filmstrip.filmstrip--story .gallery-item video { max-width: 460px; transition: filter 0.7s ease, max-width 0.7s ease; }
+.filmstrip.filmstrip--story .film-cell.is-focus .gallery-item { height: 300px; box-shadow: 0 0 0 1px rgba(247, 243, 234, 0.2), 0 18px 40px rgba(0, 0, 0, 0.55); }
+.filmstrip.filmstrip--story .film-cell.is-focus .gallery-item img,
+.filmstrip.filmstrip--story .film-cell.is-focus .gallery-item video { filter: none; }
+.filmstrip.filmstrip--story .film-cell.is-focus::before,
+.filmstrip.filmstrip--story .film-cell.is-focus::after { color: #F7F3EA; opacity: 1; }
+.filmstrip.filmstrip--story .gallery-caption { display: none; }
+/* подпись истории: под кадром, раскрывается только у кадра в фокусе */
+.story-caption {
+  position: absolute; left: 0; right: 0; top: calc(100% + 26px);
+  max-height: 0; overflow: hidden; opacity: 0; transform: translateY(6px);
+  color: #F7F3EA; font-size: 0.92rem; line-height: 1.35;
+  transition: opacity 0.45s ease 0.25s, transform 0.45s ease 0.25s, max-height 0.45s ease;
+  pointer-events: none;
+}
+.filmstrip:not(.filmstrip--story) .story-caption { display: none; }
+.filmstrip.filmstrip--story .film-cell.is-focus .story-caption { max-height: 96px; opacity: 1; transform: none; }
+.story-caption__year { display: block; font-family: 'Courier New', monospace; font-size: 0.7rem; letter-spacing: 0.16em; color: #D99A2B; margin-bottom: 3px; }
+.story-caption__text { display: block; }
+/* панель: ‹ ❚❚ › 3/12 и полоска, сколько осталось до следующего кадра */
+.story-bar { display: flex; align-items: center; gap: 8px; margin: -8px 0 18px; padding: 0 4px; font-size: 0.8rem; color: var(--color-muted); }
+.story-bar__btn { border: 1px solid var(--color-border); background: transparent; color: var(--color-text); width: 32px; height: 32px; border-radius: 50%; font: inherit; font-size: 0.85rem; line-height: 1; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+.story-bar__btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.story-bar__play { font-size: 0.7rem; }
+.story-bar__count { font-variant-numeric: tabular-nums; margin-left: 4px; }
+.story-bar__progress { flex: 1; height: 2px; background: var(--color-border); border-radius: 2px; overflow: hidden; margin-left: 8px; }
+.story-bar__fill { display: block; height: 100%; width: 100%; background: var(--color-accent); transform: scaleX(0); transform-origin: left; }
+@media (max-width: 700px) {
+  .filmstrip.filmstrip--story .filmstrip-track::before,
+  .filmstrip.filmstrip--story .filmstrip-track::after { flex-basis: calc(50vw - 120px); }
+  .filmstrip.filmstrip--story .film-cell.is-focus .gallery-item { height: 240px; }
+  .filmstrip.filmstrip--story .gallery-item img, .filmstrip.filmstrip--story .gallery-item video { max-width: calc(100vw - 48px); }
+  .story-caption { font-size: 0.85rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .filmstrip.filmstrip--story .gallery-item, .filmstrip.filmstrip--story .film-cell, .story-caption { transition: none; }
+}
+
 /* «Плитка» у кинолент — обычная сетка без перфорации и подписей плёнки. */
 .filmstrip.filmstrip--grid { background: none; padding: 0; border: 0; }
 .filmstrip.filmstrip--grid .filmstrip-track { background: none; padding: 0; gap: 12px; }
