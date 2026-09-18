@@ -6,8 +6,11 @@ const pinterest = require('./connectors/pinterest');
 const tiktok = require('./connectors/tiktok');
 const manual = require('./connectors/manual');
 const siteNews = require('./connectors/siteNews');
+const rutube = require('./connectors/rutube');
+const ok = require('./connectors/ok');
+const max = require('./connectors/max');
 
-const connectors = { telegram, vk, youtube, instagram, pinterest, tiktok, news: siteNews, manual };
+const connectors = { telegram, vk, youtube, instagram, pinterest, tiktok, rutube, ok, max, news: siteNews, manual };
 
 function getConnector(key) {
   return connectors[key] || manual;

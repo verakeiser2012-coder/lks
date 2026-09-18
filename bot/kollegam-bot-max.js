@@ -82,14 +82,30 @@ function normalize(m) {
 const bot = createBot({ transport, data: DATA, adminId: process.env.MAX_ADMIN_ID, keyPrefix: 'max_', network: 'max' });
 
 const markerFile = path.join(DATA, 'max-marker');
+const chatsFile = path.join(DATA, 'max-chats.json');
+async function rememberChat(chatId) {
+  if (chatId === undefined || chatId === null) return;
+  let info = {};
+  try { info = await mx('GET', `/chats/${chatId}`); } catch (e) { info = {}; }
+  let list = [];
+  try { list = JSON.parse(fs.readFileSync(chatsFile, 'utf8')); } catch (e) { list = []; }
+  const entry = { chat_id: chatId, type: info.type || '', title: info.title || '', link: info.link || '', added: new Date().toISOString() };
+  list = list.filter((c) => String(c.chat_id) !== String(chatId)).concat(entry);
+  fs.writeFileSync(chatsFile, JSON.stringify(list, null, 2));
+  console.log(`MAX: бот добавлен в ${entry.type || 'чат'} «${entry.title}» chat_id=${chatId}`);
+}
 let marker = fs.existsSync(markerFile) ? Number(fs.readFileSync(markerFile, 'utf8')) || undefined : undefined;
 async function loop() {
   for (;;) {
     try {
-      const { updates, marker: next } = await mx('GET', '/updates', { marker, timeout: 60, types: 'message_created,message_callback,bot_started' });
+      const { updates, marker: next } = await mx('GET', '/updates', { marker, timeout: 60, types: 'message_created,message_callback,bot_started,bot_added' });
       for (const u of updates || []) {
         try {
-          if (u.update_type === 'bot_started') {
+          if (u.update_type === 'bot_added') {
+            // Бота добавили в чат или канал: запоминаем chat_id — GET /chats закрыт с июня 2026,
+            // и сайту (коннектор MAX, публикация в канал) взять его больше неоткуда.
+            await rememberChat(u.chat_id).catch((e) => console.error('bot_added', e.message));
+          } else if (u.update_type === 'bot_started') {
             const s = u.user || {};
             await bot.onMessage({ chatId: s.user_id, text: '/start', started: true, from: { username: s.username, firstName: s.name } });
           } else if (u.update_type === 'message_created' && u.message && u.message.recipient && u.message.recipient.chat_type === 'dialog') {

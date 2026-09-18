@@ -59,6 +59,17 @@ async function publishTarget(post, target) {
   const connector = getConnector(network.connector);
   const credentials = parseCredentials(network);
 
+  // Коннектор есть, а ключи ещё не вписаны (Rutube/ОК/MAX подключаются постепенно, 18.09):
+  // ведём себя как «вручную», а не сыплем ошибками «не указан токен» по каждому посту.
+  const hasKeys = !connector.fields || connector.fields.length === 0
+    || connector.fields.some((f) => String(credentials[f.name] || '').trim());
+  if (!hasKeys) {
+    db.prepare(`
+      UPDATE social_post_targets SET status = 'manual', error = '', updated_at = datetime('now') WHERE id = ?
+    `).run(target.id);
+    return;
+  }
+
   try {
     const result = await connector.publish({ ...post, text: captionFor(post, network) }, credentials, network);
     db.prepare(`
