@@ -15,6 +15,30 @@
     Текст про приз
     <textarea name="prize" rows="3"><%= prize %></textarea>
   </label>
+  <fieldset style="border:1px solid var(--color-border); border-radius:8px; padding:12px 14px; margin:0 0 16px;">
+    <legend style="padding:0 6px;">Сезон</legend>
+    <label>
+      Название сезона (пишется в каждую заявку; по нему — галерея и архив)
+      <input type="text" name="season" value="<%= season.season %>" placeholder="Осень 2026 — зима 2027">
+    </label>
+    <label>
+      Старт приёма работ
+      <input type="date" name="seasonStart" value="<%= season.season_start %>">
+    </label>
+    <label>
+      Приём работ до (включительно)
+      <input type="date" name="seasonEnd" value="<%= season.season_end %>">
+    </label>
+    <label>
+      Итоги — дата объявления
+      <input type="date" name="resultsDate" value="<%= season.results_date %>">
+    </label>
+    <label>
+      Жюри — по одному человеку на строку («Имя — кто это»)
+      <textarea name="jury" rows="4" placeholder="Лев Кейсер — автор треков, DJ Levka&#10;Юлия, мастерская благовоний «Груша» — партнёр сезона"><%= season.jury %></textarea>
+    </label>
+    <p class="hint">После даты окончания форма закрывается и показывает «приём работ закрыт, итоги — дата». Пока даты пустые — приём открыт без сроков.</p>
+  </fieldset>
   <label>
     Ссылка на шаблон для монтажа (CapCut и подобные)
     <input type="url" name="templateUrl" value="<%= templateUrl %>" placeholder="https://...">

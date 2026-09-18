@@ -109,6 +109,24 @@ app.use(
   })
 );
 
+// Версия статики для адресов стилей и скриптов (?v=…). Браузер держит css/js час
+// (см. статику выше), и без версии после выкладки страница час живёт с новой разметкой и
+// старыми стилями. Версия — время последней правки файлов в css/ и js/, считается
+// при старте: выкладка = scp + перезапуск pm2, так что после неё адреса меняются сами.
+const assetVer = (() => {
+  try {
+    const fs = require('fs');
+    let latest = 0;
+    for (const dir of ['css', 'js']) {
+      const base = path.join(__dirname, '..', 'public', dir);
+      for (const f of fs.readdirSync(base)) latest = Math.max(latest, fs.statSync(path.join(base, f)).mtimeMs);
+    }
+    return Math.round(latest / 1000).toString(36);
+  } catch (e) { return '1'; }
+})();
+
+app.locals.assetVer = assetVer;
+
 // Общие данные, доступные во всех шаблонах
 app.use((req, res, next) => {
   res.locals.settings = getSettings();

@@ -5,6 +5,23 @@
   <% if (intro) { %><p class="hero-tagline"><%- renderLinkedText(intro) %></p><% } %>
 </section>
 
+<%
+  // Даты в человеческом виде: 2027-01-15 → 15 января 2027
+  const MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+  const ruDate = (iso) => { const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})$/); return m ? `${Number(m[3])} ${MONTHS[Number(m[2]) - 1]} ${m[1]}` : iso; };
+%>
+<% if (season.name || season.end || season.results) { %>
+<section class="contest-season">
+  <div class="contest-season-row">
+    <% if (season.name) { %><div class="contest-season-item"><span class="contest-season-label">Сезон</span><strong><%= season.name %></strong></div><% } %>
+    <% if (season.start && season.notYet) { %><div class="contest-season-item"><span class="contest-season-label">Старт</span><strong><%= ruDate(season.start) %></strong></div><% } %>
+    <% if (season.end) { %><div class="contest-season-item"><span class="contest-season-label"><%= (season.open || season.notYet) ? 'Приём работ до' : 'Приём работ закрыт' %></span><strong><%= ruDate(season.end) %></strong></div><% } %>
+    <% if (season.results) { %><div class="contest-season-item"><span class="contest-season-label">Итоги</span><strong><%= ruDate(season.results) %></strong></div><% } %>
+  </div>
+  <p class="hint">Два сезона в год, как в моде: осень — зима и весна — лето. У каждого свой победитель.</p>
+</section>
+<% } %>
+
 <section class="link-section">
   <h2>Как участвовать</h2>
   <ol class="contest-steps">
@@ -69,8 +86,15 @@
   </ul>
   <p class="hint">
     Мы не оцениваем рост, параметры и модельный опыт — это не кастинг.
-    В жюри вместе со мной сидят взрослые из индустрии и представитель бренда-партнёра сезона.
   </p>
+  <% if (season.jury.length) { %>
+    <h3 class="contest-jury-title">Жюри сезона</h3>
+    <ul class="contest-jury">
+      <% season.jury.forEach(function (j) { %><li><b><%= j.who %></b><% if (j.role) { %> — <%= j.role %><% } %></li><% }); %>
+    </ul>
+  <% } else { %>
+    <p class="hint">В жюри вместе со мной — люди из индустрии и представитель партнёра сезона; состав объявим до старта.</p>
+  <% } %>
 </section>
 
 <% if (prize) { %>
@@ -80,11 +104,40 @@
   </section>
 <% } %>
 
+<% if (current.length) { %>
+<section class="link-section">
+  <h2>Работы сезона<% if (season.name) { %> · <%= season.name %><% } %></h2>
+  <div class="contest-gallery">
+    <% current.forEach(function (w) { %>
+      <figure class="contest-work<%= w.status === 'winner' ? ' is-winner' : '' %>">
+        <% if (w.status === 'winner') { %><span class="contest-badge">Победитель сезона</span><% } else if (w.status === 'shortlisted') { %><span class="contest-badge contest-badge--short">Шорт-лист</span><% } %>
+        <div class="video-embed is-portrait"><iframe src="<%= w.video.embedUrl %>" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="Выход: <%= w.shownName %>"></iframe></div>
+        <figcaption><b><%= w.shownName %></b><% if (w.note) { %><span><%= w.note %></span><% } %></figcaption>
+      </figure>
+    <% }); %>
+  </div>
+</section>
+<% } %>
+<% if (past.length) { %>
+<section class="link-section">
+  <h2>Победители прошлых сезонов</h2>
+  <div class="contest-gallery">
+    <% past.forEach(function (w) { %>
+      <figure class="contest-work is-winner">
+        <span class="contest-badge"><%= w.season %></span>
+        <div class="video-embed is-portrait"><iframe src="<%= w.video.embedUrl %>" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="Выход: <%= w.shownName %>"></iframe></div>
+        <figcaption><b><%= w.shownName %></b></figcaption>
+      </figure>
+    <% }); %>
+  </div>
+</section>
+<% } %>
+
 <section class="link-section redhead-apply">
   <h2>Участвовать</h2>
   <p style="color:var(--color-muted); max-width:60ch;">
-    Ссылка подойдёт любая — YouTube, TikTok, VK, Rutube или Instagram, главное чтобы видео открывалось
-    без регистрации.
+    Выложи видео в VK Клипы (там есть мои треки), в VK Видео, YouTube Shorts или Rutube и пришли ссылку —
+    так работа попадёт в галерею сезона. Видео должно открываться без регистрации.
   </p>
   <p style="color:var(--color-muted); max-width:60ch;">
     Возраст не ограничен. Если тебе от 14 до 17 — заявку подаёшь сам, а согласие подтверждает родитель
@@ -99,6 +152,9 @@
   <% if (error) { %>
     <div class="flash flash-error"><%= error %></div>
   <% } %>
+  <% if (!season.open) { %>
+    <div class="flash flash-error"><%= season.notYet ? 'Приём работ откроется ' + ruDate(season.start) + '.' : 'Приём работ этого сезона закрыт' + (season.results ? ', итоги — ' + ruDate(season.results) : '') + '.' %></div>
+  <% } else { %>
   <% const age = values.age || 'adult'; %>
   <form action="/contest/submit" method="POST" style="max-width:480px;" id="submit" data-age-form>
   <input type="text" name="website" value="" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;" aria-hidden="true">
@@ -146,7 +202,8 @@
     </label>
     <button class="btn" type="submit">Отправить заявку</button>
   </form>
-  <script src="/js/age-form.js" defer></script>
+  <script src="/js/age-form.js?v=<%= assetVer %>" defer></script>
+  <% } %>
 </section>
 
 <section class="link-section contest-sponsor">
@@ -162,5 +219,28 @@
   </p>
   <p><a class="btn" href="/brands">Стать партнёром сезона</a></p>
 </section>
+
+
+<style>
+/* Конкурс: сезон, жюри, галерея работ (18.09). Стили страницы здесь, а не в style.css. */
+.contest-season { margin: 0 0 32px; padding: 16px 20px; border: 1px solid #e6cf8a; border-radius: var(--radius); background: #fdf6e0; }
+.contest-season-row { display: flex; flex-wrap: wrap; gap: 10px 32px; }
+.contest-season-item { display: flex; flex-direction: column; gap: 2px; }
+.contest-season-label { font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-muted); }
+.contest-season-item strong { font-family: var(--font-display); font-size: 1.05rem; }
+.contest-season .hint { margin: 10px 0 0; }
+.contest-jury-title { margin: 18px 0 8px; font-size: 1rem; }
+.contest-jury { max-width: 60ch; margin: 0; padding-left: 20px; color: var(--color-muted); }
+.contest-jury li { margin-bottom: 6px; }
+.contest-jury b { color: var(--color-text); }
+.contest-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; }
+.contest-work { position: relative; margin: 0; }
+.contest-work .video-embed { max-width: none; }
+.contest-work figcaption { margin-top: 8px; display: flex; flex-direction: column; gap: 2px; font-size: 0.9rem; }
+.contest-work figcaption span { color: var(--color-muted); font-size: 0.85rem; }
+.contest-badge { position: absolute; z-index: 1; top: 10px; left: 10px; padding: 4px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-gold-ink); background: linear-gradient(180deg, var(--color-gold-shine) 0%, var(--color-gold-bright) 45%, var(--color-accent) 100%); box-shadow: 0 2px 6px rgba(184, 134, 11, 0.35); }
+.contest-badge--short { background: #fff; color: var(--color-accent); border: 1px solid #e6cf8a; box-shadow: none; }
+.contest-work.is-winner .video-embed { outline: 2px solid var(--color-gold-bright); outline-offset: 2px; border-radius: 8px; }
+</style>
 
 <%- include('partials/footer') %>

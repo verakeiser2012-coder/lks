@@ -18,11 +18,24 @@ function loadTemplateUrl() {
   return row ? row.value : '';
 }
 
+// Сезоны конкурса — два в год, как в моде: «Осень 2026 — зима 2027», «Весна — лето 2027».
+// Название сезона пишется в заявку при подаче, по нему строится галерея и архив победителей.
+const SEASON_KEYS = ['contest_season', 'contest_season_start', 'contest_season_end', 'contest_results_date', 'contest_jury'];
+function loadSeason() {
+  const out = {};
+  for (const k of SEASON_KEYS) {
+    const row = db.prepare('SELECT value FROM settings WHERE key = ?').get(k);
+    out[k.replace('contest_', '')] = row ? row.value : '';
+  }
+  return out;
+}
+
 router.get('/', (req, res) => {
   res.render('admin/contest', {
     intro: loadIntro(),
     prize: loadPrize(),
     templateUrl: loadTemplateUrl(),
+    season: loadSeason(),
     saved: false,
   });
 });
@@ -35,10 +48,16 @@ router.post('/', (req, res) => {
   upsert.run('contest_intro', req.body.intro || '');
   upsert.run('contest_prize', req.body.prize || '');
   upsert.run('contest_template_url', req.body.templateUrl || '');
+  upsert.run('contest_season', String(req.body.season || '').trim());
+  upsert.run('contest_season_start', String(req.body.seasonStart || '').trim());
+  upsert.run('contest_season_end', String(req.body.seasonEnd || '').trim());
+  upsert.run('contest_results_date', String(req.body.resultsDate || '').trim());
+  upsert.run('contest_jury', String(req.body.jury || '').trim());
   res.render('admin/contest', {
     intro: req.body.intro || '',
     prize: req.body.prize || '',
     templateUrl: req.body.templateUrl || '',
+    season: loadSeason(),
     saved: true,
   });
 });

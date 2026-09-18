@@ -532,6 +532,7 @@ function init() {
   // Конкурс «Твой выход под трек» — та же схема согласия родителя (18.09.2026).
   const contestCols = db.prepare('PRAGMA table_info(contest_submissions)').all();
   for (const [col, ddl] of [
+    ['season', "TEXT NOT NULL DEFAULT ''"],
     ['age_group', "TEXT NOT NULL DEFAULT 'adult'"],
     ['guardian_name', "TEXT NOT NULL DEFAULT ''"],
     ['guardian_contact', "TEXT NOT NULL DEFAULT ''"],

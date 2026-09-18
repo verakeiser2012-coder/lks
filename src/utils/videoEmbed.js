@@ -21,7 +21,8 @@ function parseVideoEmbedUrl(url) {
     return { provider: 'rutube', embedUrl: `https://rutube.ru/play/embed/${m[1]}` };
   }
 
-  m = trimmed.match(/(?:vk\.com|vkvideo\.ru)\/video(-?\d+)_(\d+)/i);
+  // VK Клипы (vk.com/clip-1_2) встраиваются тем же плеером, что и видео.
+  m = trimmed.match(/(?:vk\.com|vkvideo\.ru)\/(?:video|clip)(-?\d+)_(\d+)/i);
   if (m) {
     return { provider: 'vk', embedUrl: `https://vk.com/video_ext.php?oid=${m[1]}&id=${m[2]}&hd=2` };
   }

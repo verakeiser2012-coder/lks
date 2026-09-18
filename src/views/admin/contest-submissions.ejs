@@ -2,10 +2,13 @@
 
 <h1>Заявки на конкурс «Твой выход под трек»</h1>
 
+
+<p class="hint">Статусы: <b>new</b> — свежая; <b>approved</b> — показывается в галерее сезона; <b>shortlisted</b> — в галерее с пометкой «шорт-лист»; <b>winner</b> — победитель сезона (в галерее первым и в архиве); <b>rejected</b> — скрыта. Заявки подростков без подтверждения родителя (ждёт согласия) в галерею не ставить.</p>
 <table>
   <thead>
     <tr>
       <th>Имя</th>
+      <th>Сезон</th>
       <th>Видео</th>
       <th>Комментарий</th>
       <th>Контакт</th>
@@ -19,6 +22,7 @@
     <% submissions.forEach(function(s) { %>
       <tr>
         <td><%= s.name %></td>
+        <td><small><%= s.season || "—" %></small></td>
         <td><a href="<%= s.video_url %>" target="_blank" rel="noopener">видео ↗</a></td>
         <td style="max-width:220px;"><%= s.note %></td>
         <td><%= s.contact %></td>
@@ -36,7 +40,7 @@
         <td>
           <form class="inline" action="/admin/contest/submissions/<%= s.id %>/status" method="POST">
             <select name="status" onchange="this.form.submit()">
-              <% ['new', 'shortlisted', 'winner', 'rejected'].forEach(function(st) { %>
+              <% ['new', 'approved', 'shortlisted', 'winner', 'rejected'].forEach(function(st) { %>
                 <option value="<%= st %>" <%= s.status === st ? 'selected' : '' %>><%= st %></option>
               <% }); %>
             </select>
