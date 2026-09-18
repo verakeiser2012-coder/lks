@@ -508,6 +508,20 @@ function init() {
   if (!spotlightCols.some((c) => c.name === 'is_minor')) {
     db.exec("ALTER TABLE redhead_spotlights ADD COLUMN is_minor INTEGER NOT NULL DEFAULT 0");
   }
+  // Конкурс «Твой выход под трек» — та же схема согласия родителя (18.09.2026).
+  const contestCols = db.prepare('PRAGMA table_info(contest_submissions)').all();
+  for (const [col, ddl] of [
+    ['age_group', "TEXT NOT NULL DEFAULT 'adult'"],
+    ['guardian_name', "TEXT NOT NULL DEFAULT ''"],
+    ['guardian_contact', "TEXT NOT NULL DEFAULT ''"],
+    ['consent_token', 'TEXT'],
+    ['consent_confirmed_at', 'TEXT'],
+    ['consent_ip', 'TEXT'],
+  ]) {
+    if (!contestCols.some((c) => c.name === col)) {
+      db.exec(`ALTER TABLE contest_submissions ADD COLUMN ${col} ${ddl}`);
+    }
+  }
 
   const contestSubmissionCols = db.prepare('PRAGMA table_info(contest_submissions)').all();
   if (!contestSubmissionCols.some((c) => c.name === 'data_consent')) {

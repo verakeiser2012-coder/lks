@@ -1,0 +1,45 @@
+<%- include('partials/header', { title: 'Согласие родителя — «' + kind.section + '»', pageDescription: 'Подтверждение согласия родителя на участие подростка: ' + kind.section + '.' }) %>
+
+<section class="link-section consent-page">
+  <% if (state === 'missing') { %>
+    <h1>Ссылка не найдена</h1>
+    <p>Такой заявки нет — возможно, ссылка скопирована не целиком или заявка уже удалена.
+      Если вы получали письмо от нас, напишите на <a href="mailto:info@levkeiser.com">info@levkeiser.com</a>.</p>
+  <% } else if (state === 'already') { %>
+    <h1>Согласие уже подтверждено</h1>
+    <p>Спасибо! Заявка <strong><%= s.name %></strong> у нас, мы её рассмотрим. Отозвать согласие можно в любой момент
+      письмом на <a href="mailto:info@levkeiser.com">info@levkeiser.com</a>.</p>
+  <% } else if (state === 'confirmed') { %>
+    <h1>Спасибо, согласие получено</h1>
+    <p>Заявка <strong><%= s.name %></strong> принята к рассмотрению. Если она подойдёт, мы напишем на указанные
+      контакты. Отозвать согласие можно в любой момент письмом на <a href="mailto:info@levkeiser.com">info@levkeiser.com</a> —
+      данные удалим.</p>
+  <% } else if (state === 'declined') { %>
+    <h1>Заявка удалена</h1>
+    <p>Мы удалили заявку и все данные из неё. Спасибо, что ответили.</p>
+  <% } else { %>
+    <h1>Согласие родителя</h1>
+    <p class="hero-tagline" style="margin-top:0;">«<%= kind.section %>» — <%= kind.about %>.</p>
+    <p><strong><%= s.name %></strong> (от 14 до 17 лет) <%= kind.verb %> и указал(а) вас как родителя
+      или законного представителя. Без вашего согласия мы её не рассматриваем.</p>
+    <% const d = describe ? describe(s, true) : ''; if (d) { %><p class="hint"><%= d %></p><% } %>
+
+    <h2>Что появится на сайте, если заявку примем</h2>
+    <ul><% kind.will.forEach(function (w) { %><li><%= w %></li><% }); %></ul>
+    <h2>Чего на сайте не будет</h2>
+    <ul><% kind.wont.forEach(function (w) { %><li><%= w %></li><% }); %></ul>
+    <p>Согласие можно отозвать в любой момент письмом на <a href="mailto:info@levkeiser.com">info@levkeiser.com</a> — данные удалим.
+      Как мы обращаемся с данными: <a href="/legal/privacy">политика обработки персональных данных</a>.</p>
+
+    <form method="POST" action="<%= kind.consentPath %><%= s.consent_token %>" class="consent-actions">
+      <button class="btn" type="submit" name="action" value="confirm">Подтверждаю согласие на обработку данных и публикацию</button>
+      <button class="btn btn-ghost" type="submit" name="action" value="decline">Не согласен — удалить заявку</button>
+    </form>
+    <p class="hint" style="margin-top:12px;">Нажимая «Подтверждаю», вы как законный представитель даёте согласие на обработку
+      персональных данных <%= s.name %> и на публикацию имени и изображения (ст. 152.1 ГК РФ, 152-ФЗ).
+      Дата и адрес подтверждения сохраняются.</p>
+  <% } %>
+  <p style="margin-top:24px;"><a href="<%= kind.sectionUrl %>">← В раздел «<%= kind.section %>»</a></p>
+</section>
+
+<%- include('partials/footer') %>

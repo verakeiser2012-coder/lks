@@ -65,7 +65,7 @@
     <div class="flash flash-error"><%= error %></div>
   <% } %>
   <% const age = values.age || 'adult'; %>
-  <form action="/redheads/submit" method="POST" style="max-width:480px;" id="submit">
+  <form action="/redheads/submit" method="POST" style="max-width:480px;" id="submit" data-age-form>
   <input type="text" name="website" value="" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;" aria-hidden="true">
     <%# Кто подаёт заявку — от этого зависит, чьё согласие нужно и кому писать (18.09). %>
     <fieldset class="age-field">
@@ -115,29 +115,7 @@
     </label>
     <button class="btn" type="submit">Отправить заявку</button>
   </form>
-  <script>
-    // Поля родителя и подписи меняются от выбора возраста; без скрипта форма
-    // тоже работает — сервер проверяет всё сам.
-    (function () {
-      var form = document.getElementById('submit');
-      if (!form) return;
-      var box = form.querySelector('[data-guardian]');
-      var labels = form.querySelectorAll('[data-age-label]');
-      var privacy = '<a href="/legal/privacy" target="_blank" rel="noopener">политикой конфиденциальности</a>';
-      function apply() {
-        var v = (form.querySelector('input[name="age"]:checked') || {}).value || 'adult';
-        box.hidden = v === 'adult';
-        box.querySelectorAll('input').forEach(function (i) { i.required = v !== 'adult'; });
-        labels.forEach(function (el) {
-          var t = el.getAttribute('data-' + v) || el.getAttribute('data-adult');
-          if (!t) return;
-          el.innerHTML = t.replace('политикой конфиденциальности', privacy);
-        });
-      }
-      form.querySelectorAll('input[name="age"]').forEach(function (r) { r.addEventListener('change', apply); });
-      apply();
-    })();
-  </script>
+  <script src="/js/age-form.js" defer></script>
 </section>
 
 <%- include('partials/footer') %>

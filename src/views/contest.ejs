@@ -84,18 +84,33 @@
   <h2>Участвовать</h2>
   <p style="color:var(--color-muted); max-width:60ch;">
     Ссылка подойдёт любая — YouTube, TikTok, VK, Rutube или Instagram, главное чтобы видео открывалось
-    без регистрации. Челлендж для участников от 18 лет.
+    без регистрации.
   </p>
-  <% if (submitted) { %>
+  <p style="color:var(--color-muted); max-width:60ch;">
+    Возраст не ограничен. Если тебе от 14 до 17 — заявку подаёшь сам, а согласие подтверждает родитель
+    по ссылке из письма. За детей до 14 лет заявку подаёт родитель или законный представитель.
+    Несовершеннолетних показываем только по имени, приз и предложения брендов передаём через родителя.
+  </p>
+  <% if (submitted === 'teen') { %>
+    <div class="flash flash-success">Спасибо! Заявка записана, а родителю ушло письмо со ссылкой для подтверждения. Как только он подтвердит — мы её рассмотрим.</div>
+  <% } else if (submitted) { %>
     <div class="flash flash-success">Спасибо! Заявка отправлена, мы её рассмотрим.</div>
   <% } %>
   <% if (error) { %>
     <div class="flash flash-error"><%= error %></div>
   <% } %>
-  <form action="/contest/submit" method="POST" style="max-width:480px;">
+  <% const age = values.age || 'adult'; %>
+  <form action="/contest/submit" method="POST" style="max-width:480px;" id="submit" data-age-form>
   <input type="text" name="website" value="" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;" aria-hidden="true">
+    <%# Кто подаёт заявку — от этого зависит, чьё согласие нужно и кому писать (18.09). %>
+    <fieldset class="age-field">
+      <legend>Кто подаёт заявку *</legend>
+      <label class="age-option"><input type="radio" name="age" value="adult" <%= age === 'adult' ? 'checked' : '' %>> <span>Мне есть 18 лет</span></label>
+      <label class="age-option"><input type="radio" name="age" value="teen" <%= age === 'teen' ? 'checked' : '' %>> <span>Мне от 14 до 17 лет — согласие подтвердит родитель по почте</span></label>
+      <label class="age-option"><input type="radio" name="age" value="child" <%= age === 'child' ? 'checked' : '' %>> <span>Я родитель или законный представитель, ребёнку меньше 14</span></label>
+    </fieldset>
     <label>
-      Имя *
+      <span data-age-label data-adult="Имя *" data-teen="Твоё имя *" data-child="Имя ребёнка *">Имя *</span>
       <input type="text" name="name" value="<%= values.name || '' %>" required>
     </label>
     <label>
@@ -107,20 +122,31 @@
       <textarea name="note" rows="3"><%= values.note || '' %></textarea>
     </label>
     <label>
-      Контакт для связи (почта или телеграм) *
+      <span data-age-label data-adult="Контакт для связи (почта или телеграм) *" data-teen="Твой контакт (почта или телеграм) *" data-child="Ваш контакт как родителя (почта или телеграм) *">Контакт для связи (почта или телеграм) *</span>
       <input type="text" name="contact" value="<%= values.contact || '' %>" required>
     </label>
-    <label style="display:flex; align-items:flex-start; gap:8px;">
-      <input type="checkbox" name="ageConsent" value="1" style="width:auto; margin-top:4px;" <%= values.ageConsent ? 'checked' : '' %> required>
-      <span>Мне есть 18 лет *</span>
-    </label>
+    <div class="guardian-fields" data-guardian <%= age === 'adult' ? 'hidden' : '' %>>
+      <label>
+        <span data-age-label data-teen="Имя родителя или законного представителя *" data-child="Ваше имя (родителя) *">Имя родителя или законного представителя *</span>
+        <input type="text" name="guardianName" value="<%= values.guardianName || '' %>">
+      </label>
+      <label>
+        <span data-age-label data-teen="Почта родителя — туда придёт ссылка для подтверждения *" data-child="Ваша почта *">Почта родителя *</span>
+        <input type="email" name="guardianContact" value="<%= values.guardianContact || '' %>" placeholder="name@example.com">
+      </label>
+    </div>
     <label style="display:flex; align-items:flex-start; gap:8px;">
       <input type="checkbox" name="dataConsent" value="1" style="width:auto; margin-top:4px;" <%= values.dataConsent ? 'checked' : '' %> required>
-      <span>Даю согласие на обработку персональных данных в соответствии с
+      <span data-age-label
+            data-adult="Даю согласие на обработку персональных данных и показ моего видео и имени на сайте и в соцсетях конкурса в соответствии с политикой конфиденциальности *"
+            data-teen="Даю согласие на обработку моих данных в соответствии с политикой конфиденциальности; показ видео и имени отдельно подтвердит родитель *"
+            data-child="Как законный представитель даю согласие на обработку данных ребёнка и показ его видео и имени на сайте и в соцсетях конкурса в соответствии с политикой конфиденциальности *"
+      >Даю согласие на обработку персональных данных и показ моего видео и имени на сайте и в соцсетях конкурса в соответствии с
       <a href="/legal/privacy" target="_blank" rel="noopener">политикой конфиденциальности</a> *</span>
     </label>
     <button class="btn" type="submit">Отправить заявку</button>
   </form>
+  <script src="/js/age-form.js" defer></script>
 </section>
 
 <section class="link-section contest-sponsor">

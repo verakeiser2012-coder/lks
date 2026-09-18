@@ -9,7 +9,8 @@
       <th>Видео</th>
       <th>Комментарий</th>
       <th>Контакт</th>
-      <th>18+/согласие</th>
+      <th>Возраст</th>
+      <th>Согласие</th>
       <th>Статус</th>
       <th></th>
     </tr>
@@ -21,8 +22,17 @@
         <td><a href="<%= s.video_url %>" target="_blank" rel="noopener">видео ↗</a></td>
         <td style="max-width:220px;"><%= s.note %></td>
         <td><%= s.contact %></td>
-        <td><%= s.age_consent ? 'Да' : 'Нет' %></td>
-        <td><%= s.status %></td>
+        <td>
+          <% if (s.age_group === 'teen') { %>14–17<br><small><%= s.guardian_name %>, <%= s.guardian_contact %></small>
+          <% } else if (s.age_group === 'child') { %>до 14, подал родитель<br><small><%= s.guardian_name %>, <%= s.guardian_contact %></small>
+          <% } else { %>18+<% } %>
+        </td>
+        <td>
+          <% if (s.age_group === 'teen') { %>
+            <%= s.consent_confirmed_at ? 'родитель подтвердил ' + formatDateShort(s.consent_confirmed_at) : 'ждёт письма родителя' %>
+          <% } else if (s.age_group === 'child') { %>родитель в форме<% } else { %>сам(а)<% } %>
+        </td>
+        <td><%= s.status === 'pending_consent' ? 'ждёт согласия' : s.status %></td>
         <td>
           <form class="inline" action="/admin/contest/submissions/<%= s.id %>/status" method="POST">
             <select name="status" onchange="this.form.submit()">

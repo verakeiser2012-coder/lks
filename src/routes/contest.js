@@ -2,6 +2,7 @@ const express = require('express');
 const db = require('../db');
 const { isBot, overLimit } = require('../middleware/antispam');
 const { notify } = require('../services/mail');
+const consent = require('../services/guardianConsent');
 
 const router = express.Router();
 
@@ -21,73 +22,71 @@ function loadTemplateUrl() {
   return row ? row.value : '';
 }
 
-router.get('/', (req, res) => {
-  res.render('contest', {
+function pageData(extra) {
+  return {
     intro: loadIntro(),
     prize: loadPrize(),
     templateUrl: loadTemplateUrl(),
     submitted: false,
     error: null,
     values: {},
-  });
+    ...extra,
+  };
+}
+
+router.get('/', (req, res) => {
+  res.render('contest', pageData({}));
 });
 
-router.post('/submit', (req, res) => {
+// Возраст и согласие родителя — та же схема, что в «Рыжих» (18.09.2026):
+// 14–17 подтверждает родитель по письму, до 14 подаёт родитель.
+// См. services/guardianConsent.js.
+const describe = (s) =>
+  `Имя: ${s.name}\nКонтакт: ${s.contact}\nВидео: ${s.video_url}\nКомментарий: ${s.note || '—'}`;
+
+router.post('/submit', async (req, res) => {
   if (isBot(req) || overLimit('contest', req, 3)) {
     return res.redirect('/contest?sent=1');
   }
-  const { name, contact, videoUrl, note, ageConsent, dataConsent } = req.body;
+  const { name, contact, videoUrl, note, dataConsent } = req.body;
+  const fail = (error) => res.render('contest', pageData({ error, values: req.body }));
 
-  if (!name || !contact || !videoUrl) {
-    return res.render('contest', {
-      intro: loadIntro(),
-      prize: loadPrize(),
-      templateUrl: loadTemplateUrl(),
-      submitted: false,
-      error: 'Укажите имя, контакт и ссылку на видео.',
-      values: req.body,
+  if (!name || !contact || !videoUrl) return fail('Укажите имя, контакт и ссылку на видео.');
+  const a = consent.parseAge(req.body);
+  if (a.error) return fail(a.error);
+  if (!dataConsent) return fail('Подтвердите согласие на обработку персональных данных.');
+
+  const info = db.prepare(`
+    INSERT INTO contest_submissions
+      (name, contact, video_url, note, age_consent, data_consent, status,
+       age_group, guardian_name, guardian_contact, consent_token, consent_confirmed_at, consent_ip)
+    VALUES (?, ?, ?, ?, 1, 1, ?, ?, ?, ?, ?, ?, ?)
+  `).run(name, contact, videoUrl, note || '', a.status,
+    a.age, a.guardian, a.guardianMail, a.token, a.confirmedAt, a.confirmedAt ? req.ip : null);
+
+  if (a.age === 'teen') {
+    const error = await consent.sendLetter('contest', {
+      name, guardianName: a.guardian, guardianMail: a.guardianMail, token: a.token, base: res.locals.canonicalBase,
     });
+    if (error) {
+      db.prepare('DELETE FROM contest_submissions WHERE id = ?').run(info.lastInsertRowid);
+      return fail(error);
+    }
+    return res.render('contest', pageData({ submitted: 'teen' }));
   }
-
-  if (!ageConsent) {
-    return res.render('contest', {
-      intro: loadIntro(),
-      prize: loadPrize(),
-      templateUrl: loadTemplateUrl(),
-      submitted: false,
-      error: 'Участвовать можно с 18 лет — подтвердите возраст.',
-      values: req.body,
-    });
-  }
-
-  if (!dataConsent) {
-    return res.render('contest', {
-      intro: loadIntro(),
-      prize: loadPrize(),
-      templateUrl: loadTemplateUrl(),
-      submitted: false,
-      error: 'Подтвердите согласие на обработку персональных данных.',
-      values: req.body,
-    });
-  }
-
-  db.prepare(`
-    INSERT INTO contest_submissions (name, contact, video_url, note, age_consent, data_consent) VALUES (?, ?, ?, ?, 1, 1)
-  `).run(name, contact, videoUrl, note || '');
 
   notify(
-    `Новая заявка на конкурс: ${name}`,
-    `Имя: ${name}\nКонтакт: ${contact}\nВидео: ${videoUrl}\nКомментарий: ${note || '—'}\n\nПосмотреть: /admin/contest/submissions`
+    `Новая заявка на конкурс: ${name}${a.age === 'child' ? ' (ребёнок до 14, подал родитель)' : ''}`,
+    describe({ name, contact, video_url: videoUrl, note })
+      + (a.age === 'child' ? `\nРодитель: ${a.guardian}, ${a.guardianMail}` : '')
+      + '\n\nПосмотреть: /admin/contest/submissions'
   );
 
-  res.render('contest', {
-    intro: loadIntro(),
-    prize: loadPrize(),
-    templateUrl: loadTemplateUrl(),
-    submitted: true,
-    error: null,
-    values: {},
-  });
+  res.render('contest', pageData({ submitted: true }));
 });
+
+consent.mountConsentRoutes(router, 'contest', (s, forPage) => (forPage
+  ? `Видео из заявки: ${s.video_url}`
+  : describe(s)));
 
 module.exports = router;
