@@ -76,7 +76,7 @@ const EN_PACKAGES = [
   {
     key: 'audit',
     title: 'Catalogue check',
-    rub: 1000,
+    rub: 3000,
     lead: 'Where your music stands in Russia today. Ordered here; the fee counts toward any package.',
     items: [
       'which of your releases are on Yandex Music, VK Music and Zvuk — and which never arrived',
@@ -89,8 +89,8 @@ const EN_PACKAGES = [
   {
     key: 'presence',
     title: 'Artist presence',
-    rub: 5000,
-    lead: 'Your artist pages and one release, set up the way Russian editors and listeners expect. Minus 1 000 ₽ if the check is paid.',
+    rub: 15000,
+    lead: 'Your artist pages and one release, set up the way Russian editors and listeners expect. Minus 3 000 ₽ if the check is paid.',
     items: [
       'claimed and verified artist pages on Yandex Music and VK, with a Russian bio and your photos',
       'Russian spelling and transliteration of your name agreed with you and fixed across the stores',
@@ -102,8 +102,8 @@ const EN_PACKAGES = [
   {
     key: 'full',
     title: 'Russian stores + presence',
-    rub: 12000,
-    lead: 'Everything above plus delivery of your catalogue to the Russian stores. Minus 1 000 ₽ if the check is paid.',
+    rub: 36000,
+    lead: 'Everything above plus delivery of your catalogue to the Russian stores. Minus 3 000 ₽ if the check is paid.',
     items: [
       'delivery of your catalogue to Yandex Music, VK Music and Zvuk through a Russian distributor — on your own account where the distributor accepts foreign artists, otherwise on ours under a non-exclusive licence for Russia only',
       'Russian-side metadata: titles, credits, ISRC and UPC kept identical to your main distributor',
@@ -115,9 +115,9 @@ const EN_PACKAGES = [
 ];
 
 const EN_EXTRAS = [
-  ['DJ version (Extended Mix)', 2000,
+  ['DJ version (Extended Mix)', 6000,
     '16-bar intro and outro, a breakdown, a straight grid — the version a DJ will actually play. WAV + MP3 with BPM and key in the tags.'],
-  ['Stems for remixes', 1000,
+  ['Stems for remixes', 3000,
     'From your project: drums, bass, melody and vocal as separate files, with a note on the remix licence.'],
 ];
 
@@ -133,7 +133,9 @@ const EN_STAGES = [
 
 async function renderEn(req, res) {
   if (res.locals.settings.services_en_public !== '1' && !res.locals.isAdmin) return res.status(404).render('404');
-  const auditProduct = db.prepare("SELECT id, price FROM products WHERE slug = 'audit-kataloga' AND is_active = 1").get() || null;
+  // Свой товар-услуга (lang = 'en', в русском каталоге не показывается), цена втрое выше русского аудита —
+  // решение владельца 18.09: зарубежному артисту и объём другой, и переписка на английском.
+  const auditProduct = db.prepare("SELECT id, price FROM products WHERE slug = 'catalogue-check' AND is_active = 1").get() || null;
   const rates = await cbr.rates();
   // «≈ €10» рядом с рублями — ориентир по курсу ЦБ; без курса показываем только рубли.
   const approx = (rub) => (rates && rates.EUR ? ` (≈ €${Math.round(rub / rates.EUR)})` : '');

@@ -69,6 +69,18 @@
       на оформлении покупатель обязан вписать ссылки на релизы, после оплаты приходит письмо нам и ему.
     </p>
     <label>
+      Где показывать в каталоге
+      <select name="lang">
+        <option value="" <%= !product || !product.lang ? 'selected' : '' %>>Везде — и в русской, и в английской версии</option>
+        <option value="en" <%= product && product.lang === 'en' ? 'selected' : '' %>>Только на английской версии (/en)</option>
+        <option value="ru" <%= product && product.lang === 'ru' ? 'selected' : '' %>>Только в русской версии</option>
+      </select>
+    </label>
+    <p style="color:#666; font-size:0.85rem; margin:4px 0 12px;">
+      Для товаров с текстом на одном языке: «Catalogue check» для зарубежных артистов — только /en,
+      «Аудит каталога» с РАО и ВОИС — только русская. По прямой ссылке карточка открывается всегда.
+    </p>
+    <label>
       Файл товара
       <input type="file" name="digitalFile" accept=".mp3,.wav,.flac,.aiff,.aif,.zip">
     </label>

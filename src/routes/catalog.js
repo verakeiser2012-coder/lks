@@ -8,6 +8,8 @@ const router = express.Router();
 router.get('/', (req, res) => {
   const categories = db.prepare('SELECT * FROM categories ORDER BY name').all();
   const { category } = req.query;
+  // Товары со своим языком витрины (products.lang) показываем только в своей версии.
+  const lang = req.lang === 'en' ? 'en' : 'ru';
 
   let products;
   if (category === 'cifrovye-tovary') {
@@ -17,23 +19,23 @@ router.get('/', (req, res) => {
       .prepare(`
         SELECT p.* FROM products p
         LEFT JOIN categories c ON c.id = p.category_id
-        WHERE p.is_active = 1 AND ((p.is_digital = 1 AND p.is_service = 0) OR c.slug = ?)
+        WHERE p.is_active = 1 AND ((p.is_digital = 1 AND p.is_service = 0) OR c.slug = ?) AND (p.lang = '' OR p.lang = ?)
         ORDER BY p.created_at DESC
       `)
-      .all(category);
+      .all(category, lang);
   } else if (category) {
     products = db
       .prepare(`
         SELECT p.* FROM products p
         JOIN categories c ON c.id = p.category_id
-        WHERE p.is_active = 1 AND c.slug = ?
+        WHERE p.is_active = 1 AND c.slug = ? AND (p.lang = '' OR p.lang = ?)
         ORDER BY p.created_at DESC
       `)
-      .all(category);
+      .all(category, lang);
   } else {
     products = db
-      .prepare('SELECT * FROM products WHERE is_active = 1 ORDER BY created_at DESC')
-      .all();
+      .prepare("SELECT * FROM products WHERE is_active = 1 AND (lang = '' OR lang = ?) ORDER BY created_at DESC")
+      .all(lang);
   }
 
   // Страница категории — со своим заголовком, чтобы не дублировать общий «Каталог».

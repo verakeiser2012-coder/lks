@@ -380,6 +380,11 @@ function init() {
   if (!productCols.some((c) => c.name === 'is_service')) {
     db.exec('ALTER TABLE products ADD COLUMN is_service INTEGER NOT NULL DEFAULT 0');
   }
+  // Язык витрины: '' — везде, 'en' — только под /en (например «Catalogue check» для зарубежных
+  // артистов), 'ru' — только в русском каталоге. Карточка по прямой ссылке открывается всегда.
+  if (!productCols.some((c) => c.name === 'lang')) {
+    db.exec("ALTER TABLE products ADD COLUMN lang TEXT NOT NULL DEFAULT ''");
+  }
   // Параметры для карточки: покупатель должен видеть, что именно получит,
   // до оформления заказа, а не писать нам с вопросами
   if (!productCols.some((c) => c.name === 'lead_time')) {
